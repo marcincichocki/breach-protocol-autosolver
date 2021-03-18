@@ -12,7 +12,7 @@ import { resolveBreachProtocol, captureScreen } from './robot';
 import configs from './configs.json';
 import { createLogger } from './util';
 
-const log = createLogger(true);
+const log = createLogger(false);
 
 log('Loading workers...');
 
