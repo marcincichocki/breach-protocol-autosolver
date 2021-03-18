@@ -2,4 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v0.1.0...v0.1.1) (2021-03-18)
+
+
+### Bug Fixes
+
+* disable logger by default ([e94206f](https://github.com/marcincichocki/breach-protocol-autosolver/commit/e94206f9afd1f88db7d741cd35ff63ea02f548d9))
+* resolve ts compilation error ([aa113c7](https://github.com/marcincichocki/breach-protocol-autosolver/commit/aa113c771a7127af0348ee3f75913b15e9f5061d))
+
 ## 0.1.0 (2021-03-18)
