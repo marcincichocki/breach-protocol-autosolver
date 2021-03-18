@@ -1,0 +1,12 @@
+diff --git a/node_modules/tesseract.js/src/worker/node/spawnWorker.js b/node_modules/tesseract.js/src/worker/node/spawnWorker.js
+index 2901948..a2147c4 100644
+--- a/node_modules/tesseract.js/src/worker/node/spawnWorker.js
++++ b/node_modules/tesseract.js/src/worker/node/spawnWorker.js
+@@ -11,5 +11,6 @@ let debugPort = 9229;
+  */
+ module.exports = ({ workerPath }) => {
+   debugPort += 1;
+-  return fork(workerPath, { execArgv: [`--debug-port=${debugPort}`] });
++  return fork(workerPath);
++  // return fork(workerPath, { execArgv: [`--debug-port=${debugPort}`] });
+ };

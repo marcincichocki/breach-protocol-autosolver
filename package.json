@@ -13,7 +13,8 @@
     "watch-node": "nodemon dist/index.js",
     "watch": "concurrently \"npm:watch-ts\" \"npm:watch-node\"",
     "watch-test": "npm run test -- --watchAll",
-    "release": "standard-version"
+    "release": "standard-version",
+    "postinstall": "patch-package"
   },
   "author": "Marcin Cichocki <marcincichocki1993@gmail.com>",
   "license": "MIT",
@@ -24,6 +25,7 @@
     "concurrently": "^5.3.0",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
+    "patch-package": "^6.4.7",
     "pkg": "^4.4.9",
     "standard-version": "^9.1.0",
     "ts-jest": "^26.4.4",
