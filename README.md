@@ -18,7 +18,7 @@ Then enter breach protocol minigame and use `Ctrl+,`(`,` is Del on numpad) keybi
 
 ## Custom keybind
 
-[Use this table as a reference for keycodes](https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/lihnux/input-event-codes.h#L65)
+[Use this table as a reference for keycodes](https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/linux/input-event-codes.h#L65)
 
 And pass `--keybind` option to main binary.
 
