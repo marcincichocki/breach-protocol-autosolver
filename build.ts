@@ -18,7 +18,6 @@ async function buildBinary() {
     output,
   });
 
-  // TODO: add LICESNSEs(?)
   const files = [
     // nircmd
     './vendor/nircmd/nircmd.exe',
