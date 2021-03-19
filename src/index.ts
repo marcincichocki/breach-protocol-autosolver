@@ -15,7 +15,7 @@ import { createLogger } from './util';
 
 // Default keybind: Ctrl+,(Left Ctrl+NumPad Del)
 const argv = minimist(process.argv.slice(2));
-const KEYBIND = argv.keybind ? argv.keybind.split(',').map(Number) : [29, 83];
+const keyBind = argv.keyBind ? argv.keyBind.split(',').map(Number) : [29, 83];
 
 const log = createLogger(false);
 
@@ -24,7 +24,7 @@ log('Loading workers...');
 loadWorkers(configs as BreachProtocolFragmentConfig[]).then((workers) => {
   log('Done!');
 
-  iohook.registerShortcut(KEYBIND, () => main(workers));
+  iohook.registerShortcut(keyBind, () => main(workers));
   iohook.start();
 });
 

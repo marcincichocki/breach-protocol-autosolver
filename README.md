@@ -16,18 +16,18 @@ unzip it, and launch `breach-protocol-autosolver-#{version}.exe`
 
 Then enter breach protocol minigame and use `Ctrl+,`(`,` is Del on numpad) keybind to launch autosolver.
 
-## Custom keybind
+## Custom key bind
 
-[Use this table as a reference for keycodes](https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/linux/input-event-codes.h#L65)
+[Use this table as a reference for key codes](https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/linux/input-event-codes.h#L65)
 
-And pass `--keybind` option to main binary.
+And pass `--key-bind` option to main binary.
 
 ```bash
-./breach-protocol-autosolver-1.0.0.exe --keybind 29,53 # Ctrl+/
-./breach-protocol-autosolver-1.0.0.exe --keybind 42,69 # LShift+Numlock
+./breach-protocol-autosolver-1.0.0.exe --key-bind 29,53 # Ctrl+/
+./breach-protocol-autosolver-1.0.0.exe --key-bind 42,69 # LShift+Numlock
 ```
 
-It is advised to create shortcut with preferred keybind.
+It is advised to create shortcut with preferred combination.
 
 ### Development
 
