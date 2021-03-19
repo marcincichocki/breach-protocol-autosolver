@@ -14,7 +14,7 @@ This program automatically solves any\* breach protocol(enemies, terminals or sh
 
 unzip it, and launch `breach-protocol-autosolver-#{version}.exe`
 
-Then enter breach protocol minigame and use `Ctrl+,`(`,` is Del on numpad) keybind to launch autosolver.
+Then enter breach protocol minigame and use `Ctrl+,`(`,` is Del on numpad) key bind to launch autosolver.
 
 ## Custom key bind
 
