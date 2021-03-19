@@ -18,6 +18,12 @@
     "postinstall": "patch-package"
   },
   "author": "Marcin Cichocki <marcincichocki1993@gmail.com>",
+  "homepage": "https://github.com/marcincichocki/breach-protocol-autosolver#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marcincichocki/breach-protocol-autosolver.git"
+  },
+  "bugs": "https://github.com/marcincichocki/breach-protocol-autosolver/issues",
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^9.0.8",
