@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.0.0...v1.1.0) (2021-03-19)
+
+
+### Features
+
+* add --key-bind option ([436ea44](https://github.com/marcincichocki/breach-protocol-autosolver/commit/436ea44868a2989df5ae1981a5d9bf5f0fb39c63))
+
 ## [1.0.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v0.1.1...v1.0.0) (2021-03-19)
 
 
