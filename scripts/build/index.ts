@@ -3,15 +3,19 @@ import fs from 'fs-extra';
 import path from 'path';
 import upxFactory from 'upx';
 import { ZipAFolder } from 'zip-a-folder';
-import { name, version } from './package.json';
+import { name, version } from '../../package.json';
 
 const upx = upxFactory({ better: true });
 const dest = './build';
 const fileName = `${name}-${version}`;
 const output = path.join(dest, `${fileName}.exe`);
 
+function removeDest() {
+  return fs.remove(dest);
+}
+
 async function buildBinary() {
-  await fs.remove(dest);
+  await removeDest();
   await compile({
     input: './dist/index.js',
     resources: ['./BreachProtocol.traineddata'],
@@ -60,6 +64,7 @@ async function main() {
   await buildBinary();
   await compress();
   await ZipAFolder.zip(dest, `${fileName}.zip`);
+  await removeDest();
 }
 
 main();
