@@ -3,16 +3,20 @@ import fs from 'fs-extra';
 import path from 'path';
 import { name, version } from './package.json';
 
-(async () => {
-  await fs.remove('./build');
+const DEST = './build';
+
+async function buildBinary() {
+  await fs.remove(DEST);
+
+  const output = path.join(DEST, `${name}-${version}.exe`);
+
   await compile({
     input: './dist/index.js',
     resources: ['./BreachProtocol.traineddata'],
-    output: `./build/${name}-${version}.exe`,
+    output,
   });
 
   // TODO: add LICESNSEs(?)
-  // Some files might be missing on platform different than windows
   const files = [
     // nircmd
     './vendor/nircmd/nircmd.exe',
@@ -38,6 +42,6 @@ import { name, version } from './package.json';
   ];
 
   for (const file of files) {
-    await fs.copy(file, path.join('./build', file));
+    await fs.copy(file, path.join(DEST, file));
   }
-})();
+}
