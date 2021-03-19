@@ -46,6 +46,7 @@
   "dependencies": {
     "iohook": "^0.6.6",
     "is-wsl": "^2.2.0",
+    "minimist": "^1.2.5",
     "screenshot-desktop": "^1.12.3",
     "sharp": "^0.27.2",
     "tesseract.js": "^2.1.4"
