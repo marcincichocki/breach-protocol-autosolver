@@ -5,8 +5,8 @@ This program automatically solves any\* breach protocol(enemies, terminals or sh
 \*_Might not work with tutorial of breach protocol_
 
 ## Video showcase:
-[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://user-images.githubusercontent.com/10232391/111820491-dd7e6780-88e1-11eb-9fad-93cf1a07c82a.mp4)
 
+[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://user-images.githubusercontent.com/10232391/111820491-dd7e6780-88e1-11eb-9fad-93cf1a07c82a.mp4)
 
 ## Installation and usage
 
@@ -15,6 +15,19 @@ This program automatically solves any\* breach protocol(enemies, terminals or sh
 unzip it, and launch `breach-protocol-autosolver-#{version}.exe`
 
 Then enter breach protocol minigame and use `Ctrl+,`(`,` is Del on numpad) keybind to launch autosolver.
+
+## Custom keybind
+
+[Use this table as a reference for keycodes](https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/lihnux/input-event-codes.h#L65)
+
+And pass `--keybind` option to main binary.
+
+```bash
+./breach-protocol-autosolver-1.0.0.exe --keybind 29,53 # Ctrl+/
+./breach-protocol-autosolver-1.0.0.exe --keybind 42,69 # LShift+Numlock
+```
+
+It is advised to create shortcut with preferred keybind.
 
 ### Development
 
