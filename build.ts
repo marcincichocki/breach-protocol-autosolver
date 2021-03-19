@@ -2,12 +2,13 @@ import { compile } from 'nexe';
 import fs from 'fs-extra';
 import path from 'path';
 import upxFactory from 'upx';
+import { ZipAFolder } from 'zip-a-folder';
 import { name, version } from './package.json';
 
-const upx = upxFactory();
-
+const upx = upxFactory({ better: true });
 const dest = './build';
-const output = path.join(dest, `${name}-${version}.exe`);
+const fileName = `${name}-${version}`;
+const output = path.join(dest, `${fileName}.exe`);
 
 async function buildBinary() {
   await fs.remove(dest);
@@ -48,7 +49,10 @@ async function buildBinary() {
 }
 
 async function compress() {
-  const filesToCompress = [output];
+  const filesToCompress = [
+    output,
+    path.join(dest, './node_modules/sharp/build/Release/libvips-42.dll'),
+  ];
 
   await Promise.all(filesToCompress.map((f) => upx(f).start()));
 }
@@ -56,6 +60,7 @@ async function compress() {
 async function main() {
   await buildBinary();
   await compress();
+  await ZipAFolder.zip(dest, `${fileName}.zip`);
 }
 
 main();

@@ -33,7 +33,8 @@
     "ts-jest": "^26.4.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3",
-    "upx": "^1.0.6"
+    "upx": "^1.0.6",
+    "zip-a-folder": "^0.1.0"
   },
   "dependencies": {
     "iohook": "^0.6.6",
