@@ -1,15 +1,16 @@
 import { compile } from 'nexe';
 import fs from 'fs-extra';
 import path from 'path';
+import upxFactory from 'upx';
 import { name, version } from './package.json';
 
-const DEST = './build';
+const upx = upxFactory();
+
+const dest = './build';
+const output = path.join(dest, `${name}-${version}.exe`);
 
 async function buildBinary() {
-  await fs.remove(DEST);
-
-  const output = path.join(DEST, `${name}-${version}.exe`);
-
+  await fs.remove(dest);
   await compile({
     input: './dist/index.js',
     resources: ['./BreachProtocol.traineddata'],
@@ -42,6 +43,19 @@ async function buildBinary() {
   ];
 
   for (const file of files) {
-    await fs.copy(file, path.join(DEST, file));
+    await fs.copy(file, path.join(dest, file));
   }
 }
+
+async function compress() {
+  const filesToCompress = [output];
+
+  await Promise.all(filesToCompress.map((f) => upx(f).start()));
+}
+
+async function main() {
+  await buildBinary();
+  await compress();
+}
+
+main();
