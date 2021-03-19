@@ -4,6 +4,10 @@ This program automatically solves any\* breach protocol(enemies, terminals or sh
 
 \*_Might not work with tutorial of breach protocol_
 
+## Video showcase:
+[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://user-images.githubusercontent.com/10232391/111820491-dd7e6780-88e1-11eb-9fad-93cf1a07c82a.mp4)
+
+
 ## Installation and usage
 
 [Download latest release](https://github.com/marcincichocki/breach-protocol-autosolver/releases/latest)
