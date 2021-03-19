@@ -1,12 +1,14 @@
 import { compile } from 'nexe';
 import fs from 'fs-extra';
 import path from 'path';
+import { name, version } from './package.json';
 
 (async () => {
   await fs.remove('./build');
   await compile({
     input: './dist/index.js',
-    asset: './BreachProtocol.traineddata',
+    resources: ['./BreachProtocol.traineddata'],
+    output: `./build/${name}-${version}.exe`,
   });
 
   // TODO: add LICESNSEs(?)
