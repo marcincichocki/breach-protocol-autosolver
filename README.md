@@ -29,6 +29,14 @@ And pass `--key-bind` option to main binary.
 
 It is advised to create shortcut with preferred combination.
 
+## OCR issues
+
+OCR was tested on following resolutions:
+
+ - 1440p(2560x1440)
+
+Please note that FidelityFX resolution scaling does not seem to impact resolution of breach protocol, therefore it's better to use it instead of lowering resolution to increase framerate. On lower resolutions and/or aspect ratios OCR might be inacurate.
+
 ### Development
 
 NOTE: due to usage of many platform dependent packages, this repo **might** not compile on wsl(may require `VcXsrv` and other things). It's therefore advised to build it only on Windows.
