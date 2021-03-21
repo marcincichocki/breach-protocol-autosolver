@@ -12,11 +12,13 @@ import {
 
 export type FragmentId = keyof BreachProtocolRawData;
 
+export type Resolution = '1920x1080' | '2560x1440' | '3840x2160';
+
 export interface BreachProtocolFragmentConfig {
   id: FragmentId;
   p1: Point;
   p2: Point;
-  threshold: number;
+  threshold: Record<Resolution, number>;
   whitelist: string[];
 }
 
@@ -79,8 +81,9 @@ class BreachProtocolFragment {
 
   async ocr() {
     const { width, height } = await this.image.metadata();
+    const threshold = this.getThreshold(width, height);
     const boundingBox = this.getBoundingBox(width, height);
-    const buffer = await this.processImage(boundingBox).toBuffer();
+    const buffer = await this.processImage(boundingBox, threshold).toBuffer();
     const { data } = await this.worker.recognize(buffer);
 
     return new BreachProtocolFragmentOCRResult(
@@ -88,6 +91,17 @@ class BreachProtocolFragment {
       data,
       boundingBox
     );
+  }
+
+  private getThreshold(width: number, height: number) {
+    const resolution = `${width}x${height}` as Resolution;
+    const threshold = this.config.threshold[resolution];
+
+    if (threshold == null) {
+      throw new Error(`Unsuported resolution: ${resolution}`);
+    }
+
+    return threshold;
   }
 
   /**
@@ -104,11 +118,11 @@ class BreachProtocolFragment {
     } as sharp.Region;
   }
 
-  private processImage(boundingBox: sharp.Region) {
+  private processImage(boundingBox: sharp.Region, threshold: number) {
     return this.image
       .removeAlpha()
       .extract(boundingBox)
-      .threshold(this.config.threshold)
+      .threshold(threshold)
       .negate();
   }
 }
