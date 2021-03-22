@@ -49,7 +49,7 @@ describe('ocr', () => {
     }
   });
 
-  fit('should correctly ocr 1920x1080 images', async () => {
+  it('should correctly ocr 1920x1080 images', async () => {
     await compareOcrToJson('1920x1080', workers);
   });
 
@@ -67,10 +67,6 @@ async function compareOcrToJson(
   workers: Record<FragmentId, Tesseract.Worker>
 ) {
   for (const entry of (registry as Registry)[resolution]) {
-    if (entry.fileName !== '2.png') {
-      continue;
-    }
-    console.log(resolution, entry.fileName);
     const file = path.join('./data', resolution, entry.fileName);
     const { rawData } = await breachProtocolOCR(file, workers);
 

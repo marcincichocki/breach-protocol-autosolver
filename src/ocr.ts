@@ -22,11 +22,26 @@ export interface BreachProtocolFragmentConfig {
   whitelist: string[];
 }
 
+interface BreachProtocolFragmentBoundingBox extends sharp.Region {
+  outerWidth: number;
+  outerHeight: number;
+}
+
 class BreachProtocolFragmentOCRResult {
+  /** Percentage that padding in buffer box takes. */
+  private readonly padding = 0.00937;
+
+  /** Percentage that buffer square takes. */
+  private readonly square = 0.0164;
+
+  /** Percentage that gap between buffer squares takes. */
+  private readonly gap = 0.00546;
+
   constructor(
     public readonly id: FragmentId,
     public readonly data: Tesseract.Page,
-    public readonly boundingBox: sharp.Region
+    public readonly boundingBox: BreachProtocolFragmentBoundingBox,
+    private fragment: Buffer
   ) {}
 
   static toRawData(data: BreachProtocolFragmentOCRResult[]) {
@@ -37,6 +52,37 @@ class BreachProtocolFragmentOCRResult {
         }),
       {} as BreachProtocolRawData
     );
+  }
+
+  private getSizeOfBufferBox() {
+    const step = 3; // rgb
+    const rowLength = this.boundingBox.width * step;
+    const row = this.fragment.subarray(0, rowLength);
+    let size = 0;
+
+    for (let i = step - 1; i < row.length; i += step) {
+      const isWhite = row.slice(i - 2, i).every((x) => x === 255);
+
+      if (isWhite) {
+        size += 1;
+      }
+    }
+
+    return size;
+  }
+
+  private getBufferSizeFromPixels() {
+    let size = this.getSizeOfBufferBox() / this.boundingBox.outerWidth;
+    let bufferSize = 0;
+
+    size -= 2 * this.padding;
+
+    while (size > 0) {
+      size -= this.square + this.gap;
+      bufferSize += 1;
+    }
+
+    return bufferSize;
   }
 
   private getLines() {
@@ -52,7 +98,9 @@ class BreachProtocolFragmentOCRResult {
   }
 
   private getBufferSize(lines: string[]) {
-    return lines.slice(-1)[0].replace(/\s/g, '').length;
+    // fallback?
+    // return lines.slice(-1)[0].replace(/\s/g, '' ).length;
+    return this.getBufferSizeFromPixels();
   }
 
   toRawData() {
@@ -73,6 +121,8 @@ class BreachProtocolFragmentOCRResult {
 }
 
 class BreachProtocolFragment {
+  private isBufferSizeFragment = this.config.id === 'bufferSize';
+
   constructor(
     private readonly config: BreachProtocolFragmentConfig,
     private image: sharp.Sharp,
@@ -83,13 +133,20 @@ class BreachProtocolFragment {
     const { width, height } = await this.image.metadata();
     const threshold = this.getThreshold(width, height);
     const boundingBox = this.getBoundingBox(width, height);
-    const buffer = await this.processImage(boundingBox, threshold).toBuffer();
+    const fragment = await this.processImage(boundingBox, threshold);
+    const buffer = await fragment.clone().toBuffer();
     const { data } = await this.worker.recognize(buffer);
+    const rawBuffer = this.isBufferSizeFragment
+      ? await fragment.clone().raw().toBuffer()
+      : null;
+
+    // await fragment.clone().toFile(`./${this.config.id}.png`);
 
     return new BreachProtocolFragmentOCRResult(
       this.config.id,
       data,
-      boundingBox
+      boundingBox,
+      rawBuffer
     );
   }
 
@@ -115,7 +172,9 @@ class BreachProtocolFragment {
       top: Math.round(p1.y * height),
       width: Math.round((p2.x - p1.x) * width),
       height: Math.round((p2.y - p1.y) * height),
-    } as sharp.Region;
+      outerWidth: width,
+      outerHeight: height,
+    } as BreachProtocolFragmentBoundingBox;
   }
 
   private processImage(boundingBox: sharp.Region, threshold: number) {
