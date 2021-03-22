@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "private": true,
   "jest": {
-    "preset": "ts-jest"
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "scripts": {
     "test": "jest",

@@ -12,19 +12,36 @@ import {
 
 export type FragmentId = keyof BreachProtocolRawData;
 
+export type Resolution = '1920x1080' | '2560x1440' | '3840x2160';
+
 export interface BreachProtocolFragmentConfig {
   id: FragmentId;
   p1: Point;
   p2: Point;
-  threshold: number;
+  threshold: Record<Resolution, number>;
   whitelist: string[];
 }
 
+interface BreachProtocolFragmentBoundingBox extends sharp.Region {
+  outerWidth: number;
+  outerHeight: number;
+}
+
 class BreachProtocolFragmentOCRResult {
+  /** Percentage that padding in buffer box takes. */
+  private readonly padding = 0.00937;
+
+  /** Percentage that buffer square takes. */
+  private readonly square = 0.0164;
+
+  /** Percentage that gap between buffer squares takes. */
+  private readonly gap = 0.00546;
+
   constructor(
     public readonly id: FragmentId,
     public readonly data: Tesseract.Page,
-    public readonly boundingBox: sharp.Region
+    public readonly boundingBox: BreachProtocolFragmentBoundingBox,
+    private rawBuffer: Buffer
   ) {}
 
   static toRawData(data: BreachProtocolFragmentOCRResult[]) {
@@ -35,6 +52,45 @@ class BreachProtocolFragmentOCRResult {
         }),
       {} as BreachProtocolRawData
     );
+  }
+
+  private getSizeOfBufferBox() {
+    const step = 3; // rgb
+    const rowLength = this.boundingBox.width * step;
+    const row = this.rawBuffer.subarray(0, rowLength);
+    let size = 0;
+
+    for (let i = step - 1; i < row.length; i += step) {
+      const isWhite = row.slice(i - 2, i).every((x) => x === 255);
+
+      if (isWhite) {
+        size += 1;
+      }
+    }
+
+    return size;
+  }
+
+  private getBufferSizeFromPixels() {
+    let size = this.getSizeOfBufferBox() / this.boundingBox.outerWidth;
+    let bufferSize = 0;
+
+    size -= 2 * this.padding;
+
+    while (size > 0) {
+      size -= this.square + this.gap;
+      bufferSize += 1;
+    }
+
+    return bufferSize;
+  }
+
+  // TODO: add ocr strategy as fallback
+  // NOTE: this strategy require diffrent threshold values!
+  private getBufferSizeFromOCR(lines: string[]) {
+    if (lines.length) {
+      return lines.slice(-1)[0].replace(/\s/g, '').length;
+    }
   }
 
   private getLines() {
@@ -49,8 +105,8 @@ class BreachProtocolFragmentOCRResult {
     return lines.map((l) => l.split(' '));
   }
 
-  private getBufferSize(lines: string[]) {
-    return lines.slice(-1)[0].replace(/\s/g, '').length;
+  private getBufferSize() {
+    return this.getBufferSizeFromPixels();
   }
 
   toRawData() {
@@ -62,7 +118,7 @@ class BreachProtocolFragmentOCRResult {
       case 'daemons':
         return this.getRawSequences(lines);
       case 'bufferSize':
-        return this.getBufferSize(lines);
+        return this.getBufferSize();
       default: {
         throw new Error('Incorrect fragment id!');
       }
@@ -71,6 +127,8 @@ class BreachProtocolFragmentOCRResult {
 }
 
 class BreachProtocolFragment {
+  private isBufferSizeFragment = this.config.id === 'bufferSize';
+
   constructor(
     private readonly config: BreachProtocolFragmentConfig,
     private image: sharp.Sharp,
@@ -79,15 +137,32 @@ class BreachProtocolFragment {
 
   async ocr() {
     const { width, height } = await this.image.metadata();
+    const threshold = this.getThreshold(width, height);
     const boundingBox = this.getBoundingBox(width, height);
-    const buffer = await this.processImage(boundingBox).toBuffer();
+    const fragment = await this.processImage(boundingBox, threshold);
+    const buffer = await fragment.clone().toBuffer();
     const { data } = await this.worker.recognize(buffer);
+    const rawBuffer = this.isBufferSizeFragment
+      ? await fragment.clone().raw().toBuffer()
+      : null;
 
     return new BreachProtocolFragmentOCRResult(
       this.config.id,
       data,
-      boundingBox
+      boundingBox,
+      rawBuffer
     );
+  }
+
+  private getThreshold(width: number, height: number) {
+    const resolution = `${width}x${height}` as Resolution;
+    const threshold = this.config.threshold[resolution];
+
+    if (threshold == null) {
+      throw new Error(`Unsuported resolution: ${resolution}`);
+    }
+
+    return threshold;
   }
 
   /**
@@ -101,14 +176,16 @@ class BreachProtocolFragment {
       top: Math.round(p1.y * height),
       width: Math.round((p2.x - p1.x) * width),
       height: Math.round((p2.y - p1.y) * height),
-    } as sharp.Region;
+      outerWidth: width,
+      outerHeight: height,
+    } as BreachProtocolFragmentBoundingBox;
   }
 
-  private processImage(boundingBox: sharp.Region) {
+  private processImage(boundingBox: sharp.Region, threshold: number) {
     return this.image
       .removeAlpha()
       .extract(boundingBox)
-      .threshold(this.config.threshold)
+      .threshold(threshold)
       .negate();
   }
 }
