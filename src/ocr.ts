@@ -41,7 +41,7 @@ class BreachProtocolFragmentOCRResult {
     public readonly id: FragmentId,
     public readonly data: Tesseract.Page,
     public readonly boundingBox: BreachProtocolFragmentBoundingBox,
-    private fragment: Buffer
+    private rawBuffer: Buffer
   ) {}
 
   static toRawData(data: BreachProtocolFragmentOCRResult[]) {
@@ -57,7 +57,7 @@ class BreachProtocolFragmentOCRResult {
   private getSizeOfBufferBox() {
     const step = 3; // rgb
     const rowLength = this.boundingBox.width * step;
-    const row = this.fragment.subarray(0, rowLength);
+    const row = this.rawBuffer.subarray(0, rowLength);
     let size = 0;
 
     for (let i = step - 1; i < row.length; i += step) {
@@ -98,7 +98,6 @@ class BreachProtocolFragmentOCRResult {
   }
 
   private getBufferSize(lines: string[]) {
-    // fallback?
     // return lines.slice(-1)[0].replace(/\s/g, '' ).length;
     return this.getBufferSizeFromPixels();
   }
@@ -139,8 +138,6 @@ class BreachProtocolFragment {
     const rawBuffer = this.isBufferSizeFragment
       ? await fragment.clone().raw().toBuffer()
       : null;
-
-    // await fragment.clone().toFile(`./${this.config.id}.png`);
 
     return new BreachProtocolFragmentOCRResult(
       this.config.id,
