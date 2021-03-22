@@ -10,6 +10,8 @@ This program automatically solves any\* breach protocol(enemies, terminals or sh
 
 ## Installation and usage
 
+NOTE: check out supported [resolutions and gamma setting](#supported-resolutions) before downloading.
+
 [Download latest release](https://github.com/marcincichocki/breach-protocol-autosolver/releases/latest)
 
 unzip it, and launch `breach-protocol-autosolver-#{version}.exe`
@@ -29,13 +31,21 @@ And pass `--key-bind` option to main binary.
 
 It is advised to create shortcut with preferred combination.
 
-## OCR issues
+## Supported resolutions
 
 OCR was tested on following resolutions:
 
- - 1440p(2560x1440)
+- 1080p(1920x1080)
+- 1440p(2560x1440)
+- 2160p(3840x2160)
+
+Resolutions lower than native monitor resolution are likely to case OCR errors.
 
 Please note that FidelityFX resolution scaling does not seem to impact resolution of breach protocol, therefore it's better to use it instead of lowering resolution to increase framerate. On lower resolutions and/or aspect ratios OCR might be inacurate.
+
+## Gamma
+
+Cyberpunk 2077 gamma setting can completly block OCR. Supported values range from `0.95` to `1.75`.
 
 ### Development
 
