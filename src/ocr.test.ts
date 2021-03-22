@@ -6,7 +6,7 @@ import {
   Resolution,
 } from './ocr';
 import configs from './configs.json';
-import registry from '../data/registry.json';
+import registry from './bp-registry/registry.json';
 import { BufferSize } from './common';
 import path from 'path';
 
@@ -16,21 +16,6 @@ interface RegistryEntry {
   grid: string[];
   bufferSize: BufferSize;
 }
-
-/**
- * 1080p:
- *  - grid: 120
- *  - buffer: 200
- *  - daemons: 45
- * 1440p:
- *  - grid: 120
- *  - buffer: 178(200?)
- *  - daemons: 45
- * 4k:
- *  - grid: 120(?)
- *  - buffer: 225
- *  - daemons: 10
- */
 
 type Registry = Record<Resolution, RegistryEntry[]>;
 
@@ -67,7 +52,7 @@ async function compareOcrToJson(
   workers: Record<FragmentId, Tesseract.Worker>
 ) {
   for (const entry of (registry as Registry)[resolution]) {
-    const file = path.join('./data', resolution, entry.fileName);
+    const file = path.join('./src/bp-registry', resolution, entry.fileName);
     const { rawData } = await breachProtocolOCR(file, workers);
 
     expect(rawData.grid).toEqual(entry.grid);

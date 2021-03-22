@@ -85,6 +85,14 @@ class BreachProtocolFragmentOCRResult {
     return bufferSize;
   }
 
+  // TODO: add ocr strategy as fallback
+  // NOTE: this strategy require diffrent threshold values!
+  private getBufferSizeFromOCR(lines: string[]) {
+    if (lines.length) {
+      return lines.slice(-1)[0].replace(/\s/g, '').length;
+    }
+  }
+
   private getLines() {
     return this.data.text.split('\n').filter(Boolean);
   }
@@ -97,8 +105,7 @@ class BreachProtocolFragmentOCRResult {
     return lines.map((l) => l.split(' '));
   }
 
-  private getBufferSize(lines: string[]) {
-    // return lines.slice(-1)[0].replace(/\s/g, '' ).length;
+  private getBufferSize() {
     return this.getBufferSizeFromPixels();
   }
 
@@ -111,7 +118,7 @@ class BreachProtocolFragmentOCRResult {
       case 'daemons':
         return this.getRawSequences(lines);
       case 'bufferSize':
-        return this.getBufferSize(lines);
+        return this.getBufferSize();
       default: {
         throw new Error('Incorrect fragment id!');
       }
