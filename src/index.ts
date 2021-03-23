@@ -1,5 +1,4 @@
 import iohook from 'iohook';
-import minimist from 'minimist';
 import { transformRawData } from './common';
 import { BreachProtocol } from './game';
 import { produceSequences } from './sequence';
@@ -13,19 +12,51 @@ import { resolveBreachProtocol, captureScreen } from './robot';
 import configs from './configs.json';
 import { createLogger, options } from './util';
 
+import screenshot from 'screenshot-desktop';
+import { prompt } from 'inquirer';
+
 const log = createLogger(false);
 
-log('Loading workers...');
+(async () => {
+  log('Loading workers...');
 
-loadWorkers(configs as BreachProtocolFragmentConfig[]).then((workers) => {
+  const workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
+
   log('Done!');
 
-  iohook.registerShortcut(options.keyBind, () => main(workers));
-  iohook.start();
-});
+  const displays = await screenshot.listDisplays();
+  const screenId = await getScreenId(displays);
 
-async function main(workers: Record<FragmentId, Tesseract.Worker>) {
-  const buffer = await captureScreen();
+  // TODO: add advanced logging
+  console.log(`Starting autosolver on screen: ${screenId}`);
+
+  iohook.registerShortcut(options.keyBind, () => main(workers, screenId));
+  iohook.start();
+})();
+
+async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
+  if (displays.length > 1) {
+    const choices = displays.map((d) => ({
+      name: `${d.name} (${d.width}x${d.height})`,
+      value: d.id,
+    }));
+
+    return prompt({
+      name: 'screenId',
+      message: 'On which monitor Cyberpunk 2077 is running?',
+      type: 'list',
+      choices,
+    }).then((d) => d.screenId);
+  }
+
+  return displays[0].id;
+}
+
+async function main(
+  workers: Record<FragmentId, Tesseract.Worker>,
+  screenId: string
+) {
+  const buffer = await captureScreen(screenId);
   const { rawData, squarePositionMap } = await breachProtocolOCR(
     buffer,
     workers
