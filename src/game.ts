@@ -94,10 +94,10 @@ export class BreachProtocol {
 
     const unit = this.unitsMap.get(square)[dir];
     const found = unit.filter((s) => String(gridMap.get(s)) === sequence[0]);
-    const newSquares =
-      found.length && !ignoreFound
-        ? found
-        : unit.filter((s) => gridMap.get(s) !== null);
+    const useFound = found.length && !ignoreFound;
+    const newSquares = useFound
+      ? found
+      : unit.filter((s) => gridMap.get(s) !== null);
 
     for (let newSquare of newSquares) {
       const newPath = subPath.slice();
@@ -106,12 +106,11 @@ export class BreachProtocol {
       newPath.push(newSquare);
       newGrid.set(newSquare, null);
 
-      const newSequence =
-        found.length && !ignoreFound
-          ? sequence.slice(1)
-          : String(gridMap.get(newSquare)) === fullSequence[0]
-          ? fullSequence.slice(1)
-          : fullSequence;
+      const newSequence = useFound
+        ? sequence.slice(1)
+        : String(gridMap.get(newSquare)) === fullSequence[0]
+        ? fullSequence.slice(1)
+        : fullSequence;
 
       const result = this.findPath(
         newSequence,
