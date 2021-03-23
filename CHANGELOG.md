@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.1...v1.2.2) (2021-03-23)
+
+
+### Bug Fixes
+
+* resolve infinite call stack error ([923fadd](https://github.com/marcincichocki/breach-protocol-autosolver/commit/923fadde73678b1c683c91a77fb0c4c0a79ac939))
+
 ### [1.2.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.0...v1.2.1) (2021-03-23)
 
 
