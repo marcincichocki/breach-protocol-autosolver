@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.0...v1.2.1) (2021-03-23)
+
+
+### Bug Fixes
+
+* allow search restart ([f864876](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f86487617b3ac89847b3368414b3a034e6054a6a)), closes [#8](https://github.com/marcincichocki/breach-protocol-autosolver/issues/8)
+
 ## [1.2.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.1.1...v1.2.0) (2021-03-23)
 
 
