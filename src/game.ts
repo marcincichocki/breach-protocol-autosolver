@@ -130,7 +130,7 @@ export class BreachProtocol {
 
     // If buffer is empty, but there are no results, restart
     // search and match any square.
-    if (bufferLeft === this.bufferSize) {
+    if (bufferLeft === this.bufferSize && !ignoreFound) {
       return this.findPath(fullSequence, true);
     }
 
