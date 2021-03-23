@@ -20,32 +20,43 @@ const log = createLogger(false);
 
 (async () => {
   log('Loading workers...');
+
   const workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
+
   log('Done!');
+
   const displays = await screenshot.listDisplays();
+  const screenId = await getDisplayId(displays);
 
-  if (displays.length) {
-    const choices = displays.map((d) => ({
-      name: `${d.id} - ${d.name}(${d.width}x${d.height})`,
-      value: d.id,
-    }));
+  console.log({ screenId });
 
-    const answer = await prompt({
-      name: 'id',
-      message: 'Choose on which monitor Cyberpunk 2077 is running: ',
-      type: 'list',
-      choices,
-    });
-
-    console.log({ answer });
-  }
-
-  iohook.registerShortcut(options.keyBind, () => main(workers));
+  iohook.registerShortcut(options.keyBind, () => main(workers, screenId));
   iohook.start();
 })();
 
-async function main(workers: Record<FragmentId, Tesseract.Worker>) {
-  const buffer = await captureScreen();
+async function getDisplayId(displays: screenshot.ScreenshotDisplayOutput[]) {
+  if (displays.length > 1) {
+    const choices = displays.map((d) => ({
+      name: `${d.name} (${d.width}x${d.height})`,
+      value: d.id,
+    }));
+
+    return prompt({
+      name: 'screenId',
+      message: 'On which monitor Cyberpunk 2077 is running?',
+      type: 'list',
+      choices,
+    }).then((d) => d.screenId);
+  }
+
+  return displays[0].id;
+}
+
+async function main(
+  workers: Record<FragmentId, Tesseract.Worker>,
+  screenId: string
+) {
+  const buffer = await captureScreen(screenId);
   const { rawData, squarePositionMap } = await breachProtocolOCR(
     buffer,
     workers

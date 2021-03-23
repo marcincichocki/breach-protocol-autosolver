@@ -18,11 +18,11 @@ export async function resolveBreachProtocol(
   }
 }
 
-export async function captureScreen() {
+export async function captureScreen(screen: string) {
   // Move pointer away to not mess with ocr.
   await movePointerAway();
 
-  return screenshot({ format: 'png' });
+  return screenshot({ format: 'png', screen });
 }
 
 async function nircmd(command: string, options = {}) {
