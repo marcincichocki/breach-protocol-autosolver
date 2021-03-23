@@ -15,7 +15,6 @@ import { createLogger, options } from './util';
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
 
-console.clear();
 const log = createLogger(false);
 
 (async () => {
@@ -26,15 +25,13 @@ const log = createLogger(false);
   log('Done!');
 
   const displays = await screenshot.listDisplays();
-  const screenId = await getDisplayId(displays);
-
-  console.log({ screenId });
+  const screenId = await getScreenId(displays);
 
   iohook.registerShortcut(options.keyBind, () => main(workers, screenId));
   iohook.start();
 })();
 
-async function getDisplayId(displays: screenshot.ScreenshotDisplayOutput[]) {
+async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
   if (displays.length > 1) {
     const choices = displays.map((d) => ({
       name: `${d.name} (${d.width}x${d.height})`,
