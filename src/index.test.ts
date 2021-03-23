@@ -9,11 +9,18 @@ import {
 import { findOverlaps, Sequence, produceSequences } from './sequence';
 
 import data from './test-data.json';
+import registry from './bp-registry/registry.json';
 import { unique } from './util';
 
-const transformedData = data.map((d) =>
-  transformRawData(d as BreachProtocolRawData)
-);
+const registryBreachProtocols = [
+  ...registry['1920x1080'],
+  ...registry['2560x1440'],
+  ...registry['3840x2160'],
+] as BreachProtocolRawData[];
+
+const transformedData = data
+  .concat(registryBreachProtocols)
+  .map((d) => transformRawData(d as BreachProtocolRawData));
 
 describe('utilities', () => {
   test('should produce unique list', () => {
