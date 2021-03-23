@@ -78,6 +78,7 @@ export class BreachProtocol {
 
   private findPath(
     sequence: string,
+    ignoreFound = false,
     gridMap: Map<string, string> = this.gridMap,
     square: string = 'A1',
     dir: 0 | 1 = 0,
@@ -93,9 +94,10 @@ export class BreachProtocol {
 
     const unit = this.unitsMap.get(square)[dir];
     const found = unit.filter((s) => String(gridMap.get(s)) === sequence[0]);
-    const newSquares = found.length
-      ? found
-      : unit.filter((s) => gridMap.get(s) !== null);
+    const newSquares =
+      found.length && !ignoreFound
+        ? found
+        : unit.filter((s) => gridMap.get(s) !== null);
 
     for (let newSquare of newSquares) {
       const newPath = subPath.slice();
@@ -104,14 +106,16 @@ export class BreachProtocol {
       newPath.push(newSquare);
       newGrid.set(newSquare, null);
 
-      const newSequence = found.length
-        ? sequence.slice(1)
-        : String(gridMap.get(newSquare)) === fullSequence[0]
-        ? fullSequence.slice(1)
-        : fullSequence;
+      const newSequence =
+        found.length && !ignoreFound
+          ? sequence.slice(1)
+          : String(gridMap.get(newSquare)) === fullSequence[0]
+          ? fullSequence.slice(1)
+          : fullSequence;
 
       const result = this.findPath(
         newSequence,
+        false,
         newGrid,
         newSquare,
         (dir ^ 1) as 0 | 1,
@@ -123,6 +127,12 @@ export class BreachProtocol {
       if (result) {
         return result;
       }
+    }
+
+    // If buffer is empty, but there is no results, restart search
+    // search and ignore found squares.
+    if (bufferLeft === this.bufferSize) {
+      return this.findPath(fullSequence, true);
     }
 
     return null;
