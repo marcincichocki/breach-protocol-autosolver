@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.1.1...v1.2.0) (2021-03-23)
+
+
+### Features
+
+* add multi monitor support ([f6e9fcc](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f6e9fcce3c485683b7a4b0cd6bd4b3b0a2648244)), closes [#5](https://github.com/marcincichocki/breach-protocol-autosolver/issues/5)
+
+
+### Bug Fixes
+
+* improve ocr accuracy on 1080p and 2160p ([de74f3c](https://github.com/marcincichocki/breach-protocol-autosolver/commit/de74f3ce51da06bf7b287f4746a426dd2fcbb1de)), closes [#4](https://github.com/marcincichocki/breach-protocol-autosolver/issues/4)
+
 ### [1.1.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.1.0...v1.1.1) (2021-03-20)
 
 
