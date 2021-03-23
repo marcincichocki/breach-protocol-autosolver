@@ -27,6 +27,9 @@ const log = createLogger(false);
   const displays = await screenshot.listDisplays();
   const screenId = await getScreenId(displays);
 
+  // TODO: add advanced logging
+  console.log(`Starting autosolver on screen: ${screenId}`);
+
   iohook.registerShortcut(options.keyBind, () => main(workers, screenId));
   iohook.start();
 })();
