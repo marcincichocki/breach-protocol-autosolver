@@ -23,8 +23,8 @@ declare module 'screenshot-desktop' {
   ): Promise<Buffer> | Promise<string>;
 
   namespace screenshot {
-    function listDisplays(): Promise<ScreenshotDisplayOutput>;
-    function availableDisplays(): Promise<ScreenshotDisplayOutput>;
+    function listDisplays(): Promise<ScreenshotDisplayOutput[]>;
+    function availableDisplays(): Promise<ScreenshotDisplayOutput[]>;
 
     function parseDisplayOutput(output: string): ScreenshotDisplayOutput;
 
