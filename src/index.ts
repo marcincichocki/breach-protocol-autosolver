@@ -14,6 +14,8 @@ import { createLogger, options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
+import sharp from 'sharp';
+import { join } from 'path';
 
 const log = createLogger(false);
 
@@ -54,9 +56,19 @@ async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
 
 async function main(
   workers: Record<FragmentId, Tesseract.Worker>,
-  screenId: string
+  screenId: string,
+  debug = true
 ) {
   const buffer = await captureScreen(screenId);
+
+  if (debug) {
+    const image = sharp(buffer);
+    const fileName = `${new Date().toISOString()}.png`;
+    const path = join(process.cwd(), 'debug', fileName);
+
+    await image.toFile(path);
+  }
+
   const { rawData, squarePositionMap } = await breachProtocolOCR(
     buffer,
     workers
