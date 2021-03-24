@@ -2,6 +2,9 @@ import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
 import { Point } from './util';
+import sanitize from 'sanitize-filename';
+import { join } from 'path';
+import { readdir, statSync } from 'fs-extra';
 
 export async function resolveBreachProtocol(
   path: string[],
@@ -18,11 +21,32 @@ export async function resolveBreachProtocol(
   }
 }
 
-export async function captureScreen(screen: string) {
+export async function captureScreen(screen: string, limit = 10) {
   // Move pointer away to not mess with ocr.
   await movePointerAway();
 
-  return screenshot({ format: 'png', screen });
+  const dir = await readdir('./debug');
+  const images = dir.filter((f) => f.endsWith('.png'));
+
+  if (images.length >= limit) {
+    // remove oldest
+    const oldest = images
+      .map((file) => {
+        const { mtime } = statSync(join('./debug', file));
+
+        return { mtime, file };
+      })
+      .sort((a, b) => {
+        return a.mtime.getTime() - b.mtime.getTime();
+      })[0];
+
+    console.log('oldest file', oldest.file);
+  }
+
+  const safeDate = sanitize(new Date().toISOString());
+  const filename = join('./debug', `${safeDate}.png`);
+
+  return screenshot({ format: 'png', screen, filename });
 }
 
 async function nircmd(command: string, options = {}) {

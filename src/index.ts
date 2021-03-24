@@ -60,15 +60,6 @@ async function main(
   debug = true
 ) {
   const buffer = await captureScreen(screenId);
-
-  if (debug) {
-    const image = sharp(buffer);
-    const fileName = `${new Date().toISOString()}.png`;
-    const path = join(process.cwd(), 'debug', fileName);
-
-    await image.toFile(path);
-  }
-
   const { rawData, squarePositionMap } = await breachProtocolOCR(
     buffer,
     workers
