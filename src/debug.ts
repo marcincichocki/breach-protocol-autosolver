@@ -45,12 +45,12 @@ export function getScreenShotPath() {
   return join(debug, `${name}.png`);
 }
 
-interface RawSequence {
+export interface RawSequence {
   value: string[];
   parts: string[][];
 }
 
-interface BreachProtocolDebugEntry extends BreachProtocolRawData {
+export interface BreachProtocolDebugEntry extends BreachProtocolRawData {
   version: string;
   fileName: string;
   path: string[];
