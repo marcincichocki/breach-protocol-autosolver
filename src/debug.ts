@@ -10,6 +10,9 @@ import {
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
 import { BreachProtocolRawData } from './common';
+import { BreachProtocolResult } from './game';
+import { Sequence } from './sequence';
+import { options } from './util';
 
 const debug = './debug';
 
@@ -23,12 +26,12 @@ function findOldestFile(files: string[], dir: string) {
     .sort((a, b) => a.ctime.getTime() - b.ctime.getTime())[0];
 }
 
-export async function removeOldestImage(limit: number) {
+export async function removeOldestImage() {
   ensureDirSync(debug);
 
   const images = readdirSync(debug).filter((f) => f.endsWith('.png'));
 
-  if (images.length < limit) return;
+  if (images.length < options.debugLimit) return;
 
   const { file } = findOldestFile(images, debug);
 
@@ -42,13 +45,49 @@ export function getScreenShotPath() {
   return join(debug, `${name}.png`);
 }
 
-interface BreachProtocolDebugEntry extends BreachProtocolRawData {
-  version: string;
-  timestamp: string;
-  fileName: string;
+interface RawSequence {
+  value: string[];
+  parts: string[][];
 }
 
-export function createDebugJson(data: BreachProtocolDebugEntry, limit: number) {
+interface BreachProtocolDebugEntry extends BreachProtocolRawData {
+  version: string;
+  fileName: string;
+  path: string[];
+  sequence: RawSequence;
+  resolvedSequence: RawSequence;
+  sequences: RawSequence[];
+}
+
+export class BreachProtocolDebug {
+  constructor(
+    public version: string,
+    public fileName: string,
+    public rawData: BreachProtocolRawData,
+    public result: BreachProtocolResult,
+    public seqeunces: Sequence[]
+  ) {}
+
+  toJSON() {
+    const { version, fileName } = this;
+    const sequences = this.seqeunces.map((s) => s.toHex());
+    const resolvedSequence = this.result.getResolvedSequence().toHex();
+    const sequence = this.result.sequence.toHex();
+    const path = this.result.path;
+
+    return {
+      version,
+      fileName,
+      path,
+      sequence,
+      resolvedSequence,
+      sequences,
+      ...this.rawData,
+    } as BreachProtocolDebugEntry;
+  }
+}
+
+export function appendToDebugJson(data: BreachProtocolDebug) {
   const file = join(debug, 'debug.json');
 
   ensureFileSync(file);
@@ -61,9 +100,9 @@ export function createDebugJson(data: BreachProtocolDebugEntry, limit: number) {
 
   json.unshift(data);
 
-  if (json.length > limit) {
+  if (json.length > options.debugLimit) {
     json.pop();
   }
 
-  return writeJsonSync(file, json);
+  return writeJsonSync(file, json, { spaces: 2 });
 }

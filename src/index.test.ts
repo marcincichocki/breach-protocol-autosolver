@@ -116,7 +116,9 @@ describe('Breach protocol solve', () => {
 
     results.forEach((result) => {
       expect(result.path.length).toBeLessThanOrEqual(bufferSize);
-      expect(result.getResolvedSequence()).toContain(result.sequence.value);
+      expect(result.getResolvedSequence().value).toContain(
+        result.sequence.value
+      );
     });
   });
 
@@ -127,7 +129,9 @@ describe('Breach protocol solve', () => {
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
-      expect(result.getResolvedSequence()).toContain(result.sequence.value);
+      expect(result.getResolvedSequence().value).toContain(
+        result.sequence.value
+      );
     });
   });
 });

@@ -15,6 +15,13 @@ export class Sequence {
   partsToHex() {
     return this.parts.map((p) => this.valueToHex(p));
   }
+
+  toHex() {
+    return {
+      value: this.valueToHex(),
+      parts: this.partsToHex(),
+    };
+  }
 }
 
 /**

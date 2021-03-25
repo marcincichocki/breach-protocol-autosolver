@@ -19,10 +19,10 @@ export async function resolveBreachProtocol(
   }
 }
 
-export async function captureScreen(screen: string, limit = 10) {
+export async function captureScreen(screen: string) {
   // Move pointer away to not mess with ocr.
   await movePointerAway();
-  await removeOldestImage(limit);
+  await removeOldestImage();
 
   const filename = getScreenShotPath();
 

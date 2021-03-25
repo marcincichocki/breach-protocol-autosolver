@@ -14,8 +14,9 @@ import { createLogger, options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
-import { createDebugJson } from './debug';
-import { version } from '../package.json';
+import { BreachProtocolDebug, appendToDebugJson } from './debug';
+
+const { version } = require('../package.json');
 
 const log = createLogger(false);
 
@@ -56,12 +57,11 @@ async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
 
 async function main(
   workers: Record<FragmentId, Tesseract.Worker>,
-  screenId: string,
-  debug = true
+  screenId: string
 ) {
-  const buffer = await captureScreen(screenId);
+  const fileName = (await captureScreen(screenId)) as string;
   const { rawData, squarePositionMap } = await breachProtocolOCR(
-    buffer,
+    fileName,
     workers
   );
   const data = transformRawData(rawData);
@@ -69,21 +69,19 @@ async function main(
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
 
-  if (debug) {
-    createDebugJson(
-      {
-        fileName: buffer as string,
-        timestamp: null,
-        version,
-        ...rawData,
-      },
-      10
-    );
-  }
-
   log({ data, sequences, result });
 
   await resolveBreachProtocol(result.path, squarePositionMap);
+
+  const debugData = new BreachProtocolDebug(
+    version,
+    fileName,
+    rawData,
+    result,
+    sequences
+  );
+
+  appendToDebugJson(debugData);
 
   log('Done!');
 }
