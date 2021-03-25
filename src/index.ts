@@ -14,8 +14,8 @@ import { createLogger, options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
-import sharp from 'sharp';
-import { join } from 'path';
+import { createDebugJson } from './debug';
+import { version } from '../package.json';
 
 const log = createLogger(false);
 
@@ -68,6 +68,18 @@ async function main(
   const sequences = produceSequences(data.tDaemons, data.bufferSize);
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
+
+  if (debug) {
+    createDebugJson(
+      {
+        fileName: buffer as string,
+        timestamp: null,
+        version,
+        ...rawData,
+      },
+      10
+    );
+  }
 
   log({ data, sequences, result });
 

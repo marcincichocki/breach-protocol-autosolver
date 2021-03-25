@@ -1,6 +1,15 @@
-import { ensureDirSync, readdirSync, remove, statSync } from 'fs-extra';
+import {
+  ensureDirSync,
+  ensureFileSync,
+  readdirSync,
+  readJsonSync,
+  remove,
+  statSync,
+  writeJsonSync,
+} from 'fs-extra';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
+import { BreachProtocolRawData } from './common';
 
 const debug = './debug';
 
@@ -31,4 +40,30 @@ export function getScreenShotPath() {
   const name = sanitize(now, { replacement: ' ' });
 
   return join(debug, `${name}.png`);
+}
+
+interface BreachProtocolDebugEntry extends BreachProtocolRawData {
+  version: string;
+  timestamp: string;
+  fileName: string;
+}
+
+export function createDebugJson(data: BreachProtocolDebugEntry, limit: number) {
+  const file = join(debug, 'debug.json');
+
+  ensureFileSync(file);
+
+  let json = readJsonSync(file, { throws: false });
+
+  if (!json) {
+    json = [];
+  }
+
+  json.unshift(data);
+
+  if (json.length > limit) {
+    json.pop();
+  }
+
+  return writeJsonSync(file, json);
 }
