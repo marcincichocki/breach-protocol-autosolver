@@ -14,6 +14,7 @@ import { BreachProtocolResult } from './game';
 import { Sequence } from './sequence';
 import { options } from './util';
 
+const { version } = require('../package.json');
 const debug = './debug';
 
 function findOldestFile(files: string[], dir: string) {
@@ -61,7 +62,6 @@ export interface BreachProtocolDebugEntry extends BreachProtocolRawData {
 
 export class BreachProtocolDebug {
   constructor(
-    public version: string,
     public fileName: string,
     public rawData: BreachProtocolRawData,
     public result: BreachProtocolResult,
@@ -69,7 +69,7 @@ export class BreachProtocolDebug {
   ) {}
 
   toJSON() {
-    const { version, fileName } = this;
+    const { fileName } = this;
     const sequences = this.seqeunces.map((s) => s.toHex());
     const resolvedSequence = this.result.getResolvedSequence().toHex();
     const sequence = this.result.sequence.toHex();

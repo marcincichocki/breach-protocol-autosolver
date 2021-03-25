@@ -16,8 +16,6 @@ import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
 import { BreachProtocolDebug, appendToDebugJson } from './debug';
 
-const { version } = require('../package.json');
-
 const log = createLogger(false);
 
 (async () => {
@@ -74,7 +72,6 @@ async function main(
   await resolveBreachProtocol(result.path, squarePositionMap);
 
   const debugData = new BreachProtocolDebug(
-    version,
     fileName,
     rawData,
     result,
