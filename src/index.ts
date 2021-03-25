@@ -15,10 +15,13 @@ import { createLogger, options } from './util';
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
 import { BreachProtocolDebug, appendToDebugJson } from './debug';
+import { checkForUpdates } from './updates';
 
 const log = createLogger(false);
 
 (async () => {
+  await checkForUpdates();
+
   log('Loading workers...');
 
   const workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
