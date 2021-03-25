@@ -14,6 +14,7 @@ import { createLogger, options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
+import { BreachProtocolDebug, appendToDebugJson } from './debug';
 
 const log = createLogger(false);
 
@@ -56,9 +57,9 @@ async function main(
   workers: Record<FragmentId, Tesseract.Worker>,
   screenId: string
 ) {
-  const buffer = await captureScreen(screenId);
+  const fileName = (await captureScreen(screenId)) as string;
   const { rawData, squarePositionMap } = await breachProtocolOCR(
-    buffer,
+    fileName,
     workers
   );
   const data = transformRawData(rawData);
@@ -69,6 +70,15 @@ async function main(
   log({ data, sequences, result });
 
   await resolveBreachProtocol(result.path, squarePositionMap);
+
+  const debugData = new BreachProtocolDebug(
+    fileName,
+    rawData,
+    result,
+    sequences
+  );
+
+  appendToDebugJson(debugData);
 
   log('Done!');
 }

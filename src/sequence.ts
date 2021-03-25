@@ -1,4 +1,5 @@
 import { BufferSize, byBufferSize, toHex } from './common';
+import { RawSequence } from './debug';
 import { permute, swap, unique } from './util';
 
 export class Sequence {
@@ -14,6 +15,13 @@ export class Sequence {
 
   partsToHex() {
     return this.parts.map((p) => this.valueToHex(p));
+  }
+
+  toHex() {
+    return {
+      value: this.valueToHex(),
+      parts: this.partsToHex(),
+    } as RawSequence;
   }
 }
 

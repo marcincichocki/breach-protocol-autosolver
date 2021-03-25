@@ -8,7 +8,7 @@ import {
 } from './common';
 import { Sequence } from './sequence';
 
-class BreachProtocolResult {
+export class BreachProtocolResult {
   constructor(
     public readonly sequence: Sequence,
     public readonly path: string[],
@@ -19,7 +19,11 @@ class BreachProtocolResult {
    * Produces sequence from resolved path.
    */
   getResolvedSequence() {
-    return this.path.map((s) => this.breachProtocol.gridMap.get(s)).join('');
+    const value = this.path
+      .map((s) => this.breachProtocol.gridMap.get(s))
+      .join('');
+
+    return new Sequence(value, this.sequence.parts);
   }
 }
 

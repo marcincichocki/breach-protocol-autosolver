@@ -2,6 +2,7 @@ import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
 import { Point } from './util';
+import { getScreenShotPath, removeOldestScreenShot } from './debug';
 
 export async function resolveBreachProtocol(
   path: string[],
@@ -21,8 +22,11 @@ export async function resolveBreachProtocol(
 export async function captureScreen(screen: string) {
   // Move pointer away to not mess with ocr.
   await movePointerAway();
+  await removeOldestScreenShot();
 
-  return screenshot({ format: 'png', screen });
+  const filename = getScreenShotPath();
+
+  return screenshot({ format: 'png', screen, filename });
 }
 
 async function nircmd(command: string, options = {}) {
