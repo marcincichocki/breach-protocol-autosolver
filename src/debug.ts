@@ -17,24 +17,24 @@ import { options } from './util';
 const { version } = require('../package.json');
 const debug = './debug';
 
-function findOldestFile(files: string[], dir: string) {
+function findOldestScreenShot(files: string[]) {
   return files
     .map((file) => {
-      const { ctime } = statSync(join(dir, file));
+      const { ctime } = statSync(join(debug, file));
 
       return { ctime, file };
     })
     .sort((a, b) => a.ctime.getTime() - b.ctime.getTime())[0];
 }
 
-export async function removeOldestImage() {
+export async function removeOldestScreenShot() {
   ensureDirSync(debug);
 
   const images = readdirSync(debug).filter((f) => f.endsWith('.png'));
 
   if (images.length < options.debugLimit) return;
 
-  const { file } = findOldestFile(images, debug);
+  const { file } = findOldestScreenShot(images);
 
   return remove(join(debug, file));
 }
