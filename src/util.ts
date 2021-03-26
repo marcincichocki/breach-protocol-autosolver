@@ -48,12 +48,14 @@ export function createLogger(enable = false) {
 function parseOptions(args: string[]) {
   const argv = minimist(args, {
     string: ['key-bind', 'debug-limit'],
+    boolean: ['skip-update-check'],
   });
 
   // Default key bind: Ctrl+, (Left Ctrl+NumPad Dot)
   // Table with key codes: https://github.com/torvalds/linux/blob/8b12a62a4e3ed4ae99c715034f557eb391d6b196/include/uapi/linux/input-event-codes.h#L65
   let keyBind = [29, 83];
   let debugLimit = 5;
+  let skipUpdateCheck = false;
 
   if (argv['key-bind']) {
     keyBind = argv['key-bind'].split(',').filter(Boolean).map(Number);
@@ -63,9 +65,14 @@ function parseOptions(args: string[]) {
     debugLimit = Number(argv['debug-limit']);
   }
 
+  if (argv['skip-update-check']) {
+    skipUpdateCheck = argv['skip-update-check'];
+  }
+
   return {
     keyBind,
     debugLimit,
+    skipUpdateCheck,
   };
 }
 

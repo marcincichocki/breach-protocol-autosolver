@@ -46,10 +46,12 @@
     "zip-a-folder": "^0.1.0"
   },
   "dependencies": {
+    "@octokit/rest": "^18.4.0",
     "inquirer": "^8.0.0",
     "iohook": "^0.6.6",
     "is-wsl": "^2.2.0",
     "minimist": "^1.2.5",
+    "open": "^8.0.4",
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.3",
     "sharp": "^0.27.2",
