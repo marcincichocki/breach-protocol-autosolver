@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.2...v1.3.0) (2021-03-26)
+
+
+### Features
+
+* check for updates on startup ([af7eed6](https://github.com/marcincichocki/breach-protocol-autosolver/commit/af7eed6ad0c10743ab365d8641c2ece524e21c7d))
+* save screenshot and ocr data ([d71261e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/d71261ee42c6cc35b29348e672151cee80a8075d))
+
 ### [1.2.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.1...v1.2.2) (2021-03-23)
 
 
