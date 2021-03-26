@@ -24,7 +24,7 @@ describe('ocr', () => {
 
   beforeAll(async () => {
     workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
-  });
+  }, 30000);
 
   afterAll(async () => {
     for (const fragmentId in workers) {
