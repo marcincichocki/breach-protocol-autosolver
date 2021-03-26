@@ -20,6 +20,7 @@ async function buildBinary() {
     input: './dist/index.js',
     resources: ['./BreachProtocol.traineddata'],
     output,
+    build: true,
   });
 
   const files = [
