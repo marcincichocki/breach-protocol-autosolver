@@ -20,6 +20,7 @@ async function buildBinary() {
     input: './dist/index.js',
     resources: ['./BreachProtocol.traineddata'],
     output,
+    targets: ['windows-x64-12.18.2'],
   });
 
   const files = [
