@@ -30,6 +30,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: breach-protocol-autosolver-${{ github.sha }}
-          path: dist/breach-protocol-autosolver-*.zip
+          path: build/
           if-no-files-found: error
           retention-days: 7

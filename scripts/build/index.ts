@@ -65,7 +65,6 @@ async function main() {
   await buildBinary();
   await compress();
   await ZipAFolder.zip(dest, path.join('./dist', `${fileName}.zip`));
-  await removeDest();
 }
 
 main();
