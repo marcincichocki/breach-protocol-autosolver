@@ -9,13 +9,13 @@ const owner = 'marcincichocki';
 const repo = 'breach-protocol-autosolver';
 
 export async function checkForUpdates() {
-  console.info(
-    'Checking for updates... To disable it pass --skip-update-check flag'
-  );
-
   if (options.skipUpdateCheck) {
     return;
   }
+
+  console.info(
+    'Checking for updates...\n Use flag --skip-update-check to disable it.'
+  );
 
   const { data } = await client.repos.getLatestRelease({ owner, repo });
 
@@ -34,5 +34,7 @@ export async function checkForUpdates() {
 
       process.exit(0);
     }
+  } else {
+    console.info('Up to date.');
   }
 }
