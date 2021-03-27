@@ -8,6 +8,7 @@ import {
   cross,
   generateSquareMap,
   BreachProtocolRawData,
+  validateRawData,
 } from './common';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -249,9 +250,12 @@ export async function breachProtocolOCR(
       .map((f) => f.ocr())
   );
 
+  const rawData = BreachProtocolFragmentOCRResult.toRawData(results);
+
+  validateRawData(rawData);
+
   const gridResult = results.find((r) => r.id === 'grid');
   const squarePositionMap = getPositionSquareMap(gridResult);
-  const rawData = BreachProtocolFragmentOCRResult.toRawData(results);
 
   return {
     squarePositionMap,
