@@ -131,8 +131,6 @@ describe('OCR data validation', () => {
     invalidGrids.forEach((grid) => {
       expect(() => validateRawData({ ...base, grid })).toThrow();
     });
-
-    expect(() => validateRawData({ ...base, grid })).not.toThrow();
   });
 
   it('should throw an error if daemons are invalid', () => {
@@ -147,8 +145,6 @@ describe('OCR data validation', () => {
     invalidDaemons.forEach((daemons) => {
       expect(() => validateRawData({ ...base, daemons })).toThrow();
     });
-
-    expect(() => validateRawData({ ...base, daemons })).not.toThrow();
   });
 
   it('should throw an error if buffer size is invalid', () => {
@@ -158,8 +154,6 @@ describe('OCR data validation', () => {
     invalidBufferSizes.forEach((bufferSize) => {
       expect(() => validateRawData({ ...base, bufferSize })).toThrow();
     });
-
-    expect(() => validateRawData({ ...base, bufferSize })).not.toThrow();
   });
 });
 
