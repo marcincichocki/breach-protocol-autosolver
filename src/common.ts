@@ -1,6 +1,9 @@
 import { Sequence } from './sequence';
+import { unique } from './util';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'];
+export const BUFFER_SIZE_MIN = 4;
+export const BUFFER_SIZE_MAX = 8;
 
 const values = HEX_NUMBERS.map((x, i) => String.fromCharCode(i + 97));
 const HEX_MAP = new Map(HEX_NUMBERS.map((k, i) => [k, values[i]]));
@@ -97,4 +100,35 @@ export function transformRawData({
     daemons,
     bufferSize,
   };
+}
+
+function validateSymbols(symbols: string[]) {
+  if (!symbols.length) {
+    // [].every(() => {}) returns true
+    return false;
+  }
+
+  return symbols.filter(unique).every((s) => HEX_NUMBERS.includes(s));
+}
+
+function validateBufferSize(n: number) {
+  return Number.isInteger(n) && n >= BUFFER_SIZE_MIN && n <= BUFFER_SIZE_MAX;
+}
+
+function isSquare(n: number) {
+  return n > 0 && Math.sqrt(n) % 1 === 0;
+}
+
+export function validateRawData({
+  grid,
+  daemons,
+  bufferSize,
+}: BreachProtocolRawData) {
+  const isGridValid = validateSymbols(grid) && isSquare(grid.length);
+  const areDaemonsValid = validateSymbols(daemons.flat());
+  const isBufferValid = validateBufferSize(bufferSize);
+
+  if (!isGridValid || !areDaemonsValid || !isBufferValid) {
+    throw new Error('OCR data is not valid!');
+  }
 }

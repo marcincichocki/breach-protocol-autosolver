@@ -5,6 +5,8 @@ import {
   generateSquareMap,
   transformRawData,
   BreachProtocolRawData,
+  validateRawData,
+  BufferSize,
 } from './common';
 import { findOverlaps, Sequence, produceSequences } from './sequence';
 
@@ -95,6 +97,64 @@ test('should create sequences', () => {
   expect(overlaps[4]).toEqual(['54321']); // 5)
   expect(overlaps[5].sort()).toEqual(['121412', '214121']); // 6
   expect(overlaps[6].sort()).toEqual(['25412', '41254']); // 7)
+});
+
+describe('OCR data validation', () => {
+  // prettier-ignore
+  const grid = [
+    'BD', 'E9', '1C', '7A',
+    'FF', '55', '55', '1C',
+    '7A', '7A', 'BD', 'BD',
+    '1C', '55', 'E9', 'E9'
+  ];
+  const daemons = [
+    ['BD', 'E9'],
+    ['1C', '7A'],
+    ['FF', '55'],
+  ];
+  const bufferSize: BufferSize = 6;
+
+  it('should pass it if data is valid', () => {
+    expect(() => validateRawData({ grid, daemons, bufferSize })).not.toThrow();
+  });
+
+  it('should throw an error if grid is invalid', () => {
+    const base = { daemons, bufferSize };
+    const invalidGrids = [
+      grid.map((s, i) => (i === 5 ? '57' : s)),
+      grid.map((s, i) => (i === 9 ? 'asd' : s)),
+      grid.map(() => ' '),
+      grid.slice(1),
+      [] as string[],
+    ];
+
+    invalidGrids.forEach((grid) => {
+      expect(() => validateRawData({ ...base, grid })).toThrow();
+    });
+  });
+
+  it('should throw an error if daemons are invalid', () => {
+    const base = { grid, bufferSize };
+    const invalidDaemons = [
+      daemons.map(() => ['B7']),
+      daemons.map(() => ['asd']),
+      daemons.map(() => [' ']),
+      daemons.map(() => [] as string[]),
+    ];
+
+    invalidDaemons.forEach((daemons) => {
+      expect(() => validateRawData({ ...base, daemons })).toThrow();
+    });
+  });
+
+  it('should throw an error if buffer size is invalid', () => {
+    const base = { grid, daemons };
+    const invalidBufferSizes = [NaN, 3, 9, 2 * Math.PI] as BufferSize[];
+
+    invalidBufferSizes.forEach((bufferSize) => {
+      expect(() => validateRawData({ ...base, bufferSize })).toThrow();
+    });
+  });
 });
 
 describe('Breach protocol solve', () => {

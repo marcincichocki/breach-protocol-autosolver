@@ -16,6 +16,7 @@ import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
 import { BreachProtocolDebug, appendToDebugJson } from './debug';
 import { checkForUpdates } from './updates';
+import { remove } from 'fs-extra';
 
 const log = createLogger(false);
 
@@ -61,22 +62,31 @@ async function main(
   screenId: string
 ) {
   const fileName = (await captureScreen(screenId)) as string;
-  const { rawData, squarePositionMap } = await breachProtocolOCR(
-    fileName,
-    workers
-  );
-  const data = transformRawData(rawData);
+  let ocr = null;
+
+  try {
+    ocr = await breachProtocolOCR(fileName, workers);
+  } catch (e) {
+    await remove(fileName);
+
+    console.error(e.message);
+
+    // exit early because data is invalid.
+    return;
+  }
+
+  const data = transformRawData(ocr.rawData);
   const sequences = produceSequences(data.tDaemons, data.bufferSize);
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
 
   log({ data, sequences, result });
 
-  await resolveBreachProtocol(result.path, squarePositionMap);
+  await resolveBreachProtocol(result.path, ocr.squarePositionMap);
 
   const debugData = new BreachProtocolDebug(
     fileName,
-    rawData,
+    ocr.rawData,
     result,
     sequences
   );
