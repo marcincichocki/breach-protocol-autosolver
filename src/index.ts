@@ -69,7 +69,7 @@ async function main(
   } catch (e) {
     await remove(fileName);
 
-    console.error(e);
+    console.error(e.message);
 
     // exit early because data is invalid.
     return;
