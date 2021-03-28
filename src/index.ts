@@ -31,11 +31,16 @@ import ora from 'ora';
 
   const displays = await screenshot.listDisplays();
   const screenId = await getScreenId(displays);
+  let isRunning = false;
 
   iohook.registerShortcut(options.keyBind, async () => {
+    if (isRunning) return;
+    isRunning = true;
+
     await main(workers, screenId);
 
     console.info(t`READY`);
+    isRunning = false;
   });
 
   iohook.start();
