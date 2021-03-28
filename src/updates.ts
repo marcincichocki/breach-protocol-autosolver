@@ -23,7 +23,7 @@ export async function checkForUpdates() {
 
     const { download } = await prompt({
       type: 'confirm',
-      message: `There is new version(${data.tag_name}) available. Download and exit?`,
+      message: t`NEW_VERSION_AVAILABLE ${data.tag_name}`,
       name: 'download',
       default: true,
     });
