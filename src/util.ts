@@ -70,7 +70,7 @@ function parseOptions(args: string[]) {
     skipUpdateCheck = argv['skip-update-check'];
   }
 
-  if (argv['lang']) {
+  if (argv['lang'] && ['en', 'pl'].includes(argv['lang'])) {
     lang = argv['lang'];
   }
 
