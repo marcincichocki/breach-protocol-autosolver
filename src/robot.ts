@@ -3,6 +3,7 @@ import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
 import { Point } from './util';
 import { getScreenShotPath, removeOldestScreenShot } from './debug';
+import { t } from './translate';
 
 export async function resolveBreachProtocol(
   path: string[],
@@ -33,7 +34,7 @@ async function nircmd(command: string, options = {}) {
   const bin = './vendor/nircmd/nircmd.exe';
 
   if (process.platform !== 'win32' && !isWsl) {
-    throw new Error('Only windows is supported');
+    throw new Error(t`UNSUPORTED_OS`);
   }
 
   return new Promise((resolve, reject) => {

@@ -10,6 +10,7 @@ import {
   BreachProtocolRawData,
   validateRawData,
 } from './common';
+import { t } from './translate';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -160,7 +161,7 @@ class BreachProtocolFragment {
     const threshold = this.config.threshold[resolution];
 
     if (threshold == null) {
-      throw new Error(`Unsuported resolution: ${resolution}`);
+      throw new Error(t`UNSUPORTED_RESOLUTION_ERROR ${resolution}`);
     }
 
     return threshold;

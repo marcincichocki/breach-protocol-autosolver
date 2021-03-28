@@ -10,33 +10,36 @@ import {
 } from './ocr';
 import { resolveBreachProtocol, captureScreen } from './robot';
 import configs from './configs.json';
-import { createLogger, options } from './util';
+import { options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
 import { BreachProtocolDebug, appendToDebugJson } from './debug';
 import { checkForUpdates } from './updates';
 import { remove } from 'fs-extra';
-
-const log = createLogger(false);
+import { t } from './translate';
+import ora from 'ora';
 
 (async () => {
+  console.clear();
+
   await checkForUpdates();
 
-  log('Loading workers...');
-
+  const l1 = ora(t`LOADING_WORKERS_START`).start();
   const workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
-
-  log('Done!');
+  l1.succeed();
 
   const displays = await screenshot.listDisplays();
   const screenId = await getScreenId(displays);
 
-  // TODO: add advanced logging
-  console.log(`Starting autosolver on screen: ${screenId}`);
+  iohook.registerShortcut(options.keyBind, async () => {
+    await main(workers, screenId);
 
-  iohook.registerShortcut(options.keyBind, () => main(workers, screenId));
+    console.info(t`READY`);
+  });
+
   iohook.start();
+  console.info(t`READY`);
 })();
 
 async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
@@ -48,7 +51,7 @@ async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {
 
     return prompt({
       name: 'screenId',
-      message: 'On which monitor Cyberpunk 2077 is running?',
+      message: t`CHOOSE_MONITOR`,
       type: 'list',
       choices,
     }).then((d) => d.screenId);
@@ -61,26 +64,29 @@ async function main(
   workers: Record<FragmentId, Tesseract.Worker>,
   screenId: string
 ) {
+  const log = ora(t`CAPTURE_SCREEN ${screenId}`).start();
   const fileName = (await captureScreen(screenId)) as string;
   let ocr = null;
 
   try {
+    log.text = t`OCR_START`;
     ocr = await breachProtocolOCR(fileName, workers);
   } catch (e) {
+    log.fail(e.message);
     await remove(fileName);
-
-    console.error(e.message);
 
     // exit early because data is invalid.
     return;
   }
+
+  log.text = t`SOLVER_START`;
 
   const data = transformRawData(ocr.rawData);
   const sequences = produceSequences(data.tDaemons, data.bufferSize);
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
 
-  log({ data, sequences, result });
+  log.text = t`DEBUG`;
 
   await resolveBreachProtocol(result.path, ocr.squarePositionMap);
 
@@ -93,5 +99,5 @@ async function main(
 
   appendToDebugJson(debugData);
 
-  log('Done!');
+  log.succeed(t`SOLVER_DONE`);
 }

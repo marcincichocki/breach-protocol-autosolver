@@ -47,7 +47,7 @@ export function createLogger(enable = false) {
 
 function parseOptions(args: string[]) {
   const argv = minimist(args, {
-    string: ['key-bind', 'debug-limit'],
+    string: ['key-bind', 'debug-limit', 'lang'],
     boolean: ['skip-update-check'],
   });
 
@@ -56,6 +56,7 @@ function parseOptions(args: string[]) {
   let keyBind = [29, 83];
   let debugLimit = 5;
   let skipUpdateCheck = false;
+  let lang = 'en';
 
   if (argv['key-bind']) {
     keyBind = argv['key-bind'].split(',').filter(Boolean).map(Number);
@@ -69,10 +70,15 @@ function parseOptions(args: string[]) {
     skipUpdateCheck = argv['skip-update-check'];
   }
 
+  if (argv['lang'] && ['en', 'pl'].includes(argv['lang'])) {
+    lang = argv['lang'];
+  }
+
   return {
     keyBind,
     debugLimit,
     skipUpdateCheck,
+    lang,
   };
 }
 

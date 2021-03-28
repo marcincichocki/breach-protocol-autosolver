@@ -2,6 +2,8 @@ import { Octokit } from '@octokit/rest';
 import { prompt } from 'inquirer';
 import open from 'open';
 import { options } from './util';
+import { t } from './translate';
+import ora from 'ora';
 
 const { version } = require('../package.json');
 const client = new Octokit();
@@ -13,16 +15,15 @@ export async function checkForUpdates() {
     return;
   }
 
-  console.info(
-    'Checking for updates...\n Use flag --skip-update-check to disable it.'
-  );
-
+  const m1 = ora(t`CHECK_FOR_UPDATES`).start();
   const { data } = await client.repos.getLatestRelease({ owner, repo });
 
   if (!data.tag_name.endsWith(version)) {
+    m1.succeed();
+
     const { download } = await prompt({
       type: 'confirm',
-      message: `There is new version(${data.tag_name}) available. Download and exit?`,
+      message: t`NEW_VERSION_AVAILABLE ${data.tag_name}`,
       name: 'download',
       default: true,
     });
@@ -35,6 +36,6 @@ export async function checkForUpdates() {
       process.exit(0);
     }
   } else {
-    console.info('Up to date.');
+    m1.succeed(t`UP_TO_DATE`);
   }
 }
