@@ -2,7 +2,7 @@ import { Octokit } from '@octokit/rest';
 import { prompt } from 'inquirer';
 import open from 'open';
 import { options } from './util';
-import { t } from './log';
+import { t } from './translate';
 import ora from 'ora';
 
 const { version } = require('../package.json');
