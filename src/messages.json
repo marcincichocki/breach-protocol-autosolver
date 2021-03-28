@@ -1,0 +1,32 @@
+{
+  "en": {
+    "CHECK_FOR_UPDATES": "Checking for updates..",
+    "UP_TO_DATE": "Up to date.",
+    "LOADING_WORKERS_START": "Loading tesseract..",
+    "CHOOSE_MONITOR": "On which monitor Cyberpunk 2077 is running?",
+    "READY": "Listening for key bind..",
+    "OCR_DATA_INVALID": "OCR data is not valid. Skipping.",
+    "CAPTURE_SCREEN": "Capturing screen \"{0}\"..",
+    "OCR_START": "Starting OCR..",
+    "SOLVER_START": "Solving..",
+    "DEBUG": "Saving debug info..",
+    "SOLVER_DONE": "Success.",
+    "UNKNOWN_KEY_ERROR": "Unknown key: \"{0}\"",
+    "NEW_VERSION_AVAILABLE": "There is new version({0}) available. Download and exit?"
+  },
+  "pl": {
+    "CHECK_FOR_UPDATES": "Sprawdzam dostępność aktualizacji..",
+    "UP_TO_DATE": "Aktualna wersja programu.",
+    "LOADING_WORKERS_START": "Ładowanie tesseracta..",
+    "CHOOSE_MONITOR": "Na którym monitorze jest uruchomiony Cyberpunk 2077?",
+    "READY": "Czekam na skrót..",
+    "OCR_DATA_INVALID": "Dane z OCRa są niepoprawne. Pomijam.",
+    "CAPTURE_SCREEN": "Robię zrzut ekranu \"{0}\"..",
+    "OCR_START": "Rozpoczynam OCR..",
+    "SOLVER_START": "Rozwiązuję..",
+    "DEBUG": "Zapisuję dane debugowania..",
+    "SOLVER_DONE": "Sukces.",
+    "UNKNOWN_KEY_ERROR": "Nienzany klucz: \"{0}\"",
+    "NEW_VERSION_AVAILABLE": "Jest dostępna nowa wersja({0}). Pobrać i wyjść?"
+  }
+}
