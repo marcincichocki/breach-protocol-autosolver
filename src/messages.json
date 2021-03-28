@@ -11,8 +11,10 @@
     "SOLVER_START": "Solving..",
     "DEBUG": "Saving debug info..",
     "SOLVER_DONE": "Success.",
-    "UNKNOWN_KEY_ERROR": "Unknown key: \"{0}\"",
-    "NEW_VERSION_AVAILABLE": "There is new version({0}) available. Download and exit?"
+    "UNKNOWN_KEY_ERROR": "Unknown key: \"{0}\".",
+    "NEW_VERSION_AVAILABLE": "There is new version({0}) available. Download and exit?",
+    "UNSUPORTED_RESOLUTION_ERROR": "Unsuported resolution: \"{0}\".",
+    "UNSUPORTED_OS": "Only Windows is supported."
   },
   "pl": {
     "CHECK_FOR_UPDATES": "Sprawdzam dostępność aktualizacji..",
@@ -26,7 +28,9 @@
     "SOLVER_START": "Rozwiązuję..",
     "DEBUG": "Zapisuję dane debugowania..",
     "SOLVER_DONE": "Sukces.",
-    "UNKNOWN_KEY_ERROR": "Nienzany klucz: \"{0}\"",
-    "NEW_VERSION_AVAILABLE": "Jest dostępna nowa wersja({0}). Pobrać i wyjść?"
+    "UNKNOWN_KEY_ERROR": "Nienzany klucz: \"{0}\".",
+    "NEW_VERSION_AVAILABLE": "Jest dostępna nowa wersja({0}). Pobrać i wyjść?",
+    "UNSUPORTED_RESOLUTION_ERROR": "Nieobsługiwana rozdzielczość: \"{0}\".",
+    "UNSUPORTED_OS": "Tylko system Windows jest obsługiwany."
   }
 }
