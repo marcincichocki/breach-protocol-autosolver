@@ -14,7 +14,7 @@
     "watch-node": "nodemon dist/index.js",
     "watch": "concurrently \"npm:watch-ts\" \"npm:watch-node\"",
     "watch-test": "npm run test -- --watchAll",
-    "release": "standard-version",
+    "release": "standard-version -s",
     "build": "tsc && ts-node scripts/build/index.ts",
     "postinstall": "patch-package"
   },
