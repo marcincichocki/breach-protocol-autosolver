@@ -19,6 +19,7 @@ import { checkForUpdates } from './updates';
 import { remove } from 'fs-extra';
 import { t } from './translate';
 import ora from 'ora';
+import { play } from 'sound-play';
 
 (async () => {
   console.clear();
@@ -77,6 +78,9 @@ async function main(
     log.text = t`OCR_START`;
     ocr = await breachProtocolOCR(fileName, workers);
   } catch (e) {
+    const path = 'C:/Windows/Media/Windows Foreground.wav';
+    play(path);
+
     log.fail(e.message);
     await remove(fileName);
 
