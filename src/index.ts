@@ -78,7 +78,7 @@ async function main(
     log.text = t`OCR_START`;
     ocr = await breachProtocolOCR(fileName, workers);
   } catch (e) {
-    if (options.sound) {
+    if (!options.disableSound) {
       play(options.soundPath);
     }
 

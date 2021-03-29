@@ -48,7 +48,7 @@ export function createLogger(enable = false) {
 function parseOptions(args: string[]) {
   const argv = minimist(args, {
     string: ['key-bind', 'debug-limit', 'lang', 'sound-path'],
-    boolean: ['skip-update-check', 'sound'],
+    boolean: ['skip-update-check', 'disable-sound'],
   });
 
   // Default key bind: Ctrl+, (Left Ctrl+NumPad Dot)
@@ -58,7 +58,7 @@ function parseOptions(args: string[]) {
   let skipUpdateCheck = false;
   let lang = 'en';
   let soundPath = 'C:/Windows/Media/Windows Foreground.wav';
-  let sound = true;
+  let disableSound = false;
 
   if (argv['key-bind']) {
     keyBind = argv['key-bind'].split(',').filter(Boolean).map(Number);
@@ -80,8 +80,8 @@ function parseOptions(args: string[]) {
     soundPath = argv['sound-path'];
   }
 
-  if (argv['sound']) {
-    sound = argv['sound'];
+  if (argv['disable-sound']) {
+    disableSound = argv['disable-sound'];
   }
 
   return {
@@ -90,7 +90,7 @@ function parseOptions(args: string[]) {
     skipUpdateCheck,
     lang,
     soundPath,
-    sound,
+    disableSound,
   };
 }
 
