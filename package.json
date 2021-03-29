@@ -56,6 +56,7 @@
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.3",
     "sharp": "^0.27.2",
+    "sound-play": "^1.1.0",
     "tesseract.js": "^2.1.4"
   }
 }
