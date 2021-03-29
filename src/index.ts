@@ -78,8 +78,9 @@ async function main(
     log.text = t`OCR_START`;
     ocr = await breachProtocolOCR(fileName, workers);
   } catch (e) {
-    const path = 'C:/Windows/Media/Windows Foreground.wav';
-    play(path);
+    if (options.sound) {
+      play(options.soundPath);
+    }
 
     log.fail(e.message);
     await remove(fileName);
