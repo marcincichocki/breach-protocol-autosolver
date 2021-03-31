@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { prompt } from 'inquirer';
 import open from 'open';
-import { options } from './util';
+import { options } from './cli';
 import { t } from './translate';
 import ora from 'ora';
 

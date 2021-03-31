@@ -1,3 +1,4 @@
+import { options } from './cli';
 import iohook from 'iohook';
 import { transformRawData } from './common';
 import { BreachProtocol } from './game';
@@ -10,7 +11,6 @@ import {
 } from './ocr';
 import { resolveBreachProtocol, captureScreen } from './robot';
 import configs from './configs.json';
-import { options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';

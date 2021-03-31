@@ -1,5 +1,5 @@
 import messages from './messages.json';
-import { options } from './util';
+import { options } from './cli';
 
 // ISO 639-1
 export type Lang = 'en' | 'pl';

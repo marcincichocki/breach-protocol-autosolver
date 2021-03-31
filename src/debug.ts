@@ -12,7 +12,7 @@ import sanitize from 'sanitize-filename';
 import { BreachProtocolRawData } from './common';
 import { BreachProtocolResult } from './game';
 import { Sequence } from './sequence';
-import { options } from './util';
+import { options } from './cli';
 
 const { version } = require('../package.json');
 const debug = './debug';
