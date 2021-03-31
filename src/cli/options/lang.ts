@@ -1,7 +1,6 @@
 import { Option } from 'commander';
 import messages from '../../messages.json';
-
-type Lang = keyof typeof messages;
+import { Lang } from '../../translate';
 
 const availableLangs = Object.keys(messages) as Lang[];
 const flags = '--lang <lang>';

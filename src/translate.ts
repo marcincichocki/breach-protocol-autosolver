@@ -2,9 +2,9 @@ import messages from './messages.json';
 import { options } from './cli';
 
 // ISO 639-1
-export type Lang = 'en' | 'pl';
+export type Lang = keyof typeof messages;
 
-const dict = messages[options.lang as Lang];
+let dict: typeof messages[Lang] = null;
 
 /**
  * Translate message for given key and values.
@@ -21,6 +21,10 @@ const dict = messages[options.lang as Lang];
  * @returns Translated message.
  */
 export function t(keys: TemplateStringsArray, ...values: any[]) {
+  if (!dict) {
+    dict = messages[options.lang];
+  }
+
   const key = keys[0].trim() as keyof typeof dict;
 
   if (!(key in dict)) {
