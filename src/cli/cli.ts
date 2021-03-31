@@ -1,13 +1,40 @@
 import { Command } from 'commander';
+import {
+  keyBindOption,
+  debugLimitOption,
+  langOption,
+  soundPathOption,
+  skipUpdateCheckOption,
+  disableSoundOption,
+  KeyBindOption,
+  DebugLimitOption,
+  LangOption,
+  SoundPathOption,
+  SkipUpdateCheckOption,
+  DisableSoundOption,
+} from './options';
+
+type Options = KeyBindOption &
+  DebugLimitOption &
+  LangOption &
+  SoundPathOption &
+  SkipUpdateCheckOption &
+  DisableSoundOption;
 
 const { version, name } = require('../../package.json');
 
-const program = new Command(name);
+export const program = new Command(name);
 
 program
   .version(version)
-  .option('-k, --key-bind', 'key to bind autosolver to', '29,83');
+  .addOption(keyBindOption)
+  .addOption(debugLimitOption)
+  .addOption(langOption)
+  .addOption(soundPathOption)
+  .addOption(skipUpdateCheckOption)
+  .addOption(disableSoundOption);
 
 program.parse();
 
-console.log(program.opts());
+// TODO: override exit?
+export const options = program.opts() as Options;
