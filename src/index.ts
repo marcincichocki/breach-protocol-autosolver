@@ -1,3 +1,4 @@
+import { options, program } from './cli';
 import iohook from 'iohook';
 import { transformRawData } from './common';
 import { BreachProtocol } from './game';
@@ -10,7 +11,6 @@ import {
 } from './ocr';
 import { resolveBreachProtocol, captureScreen } from './robot';
 import configs from './configs.json';
-import { options } from './util';
 
 import screenshot from 'screenshot-desktop';
 import { prompt } from 'inquirer';
@@ -20,9 +20,17 @@ import { remove } from 'fs-extra';
 import { t } from './translate';
 import ora from 'ora';
 import { play } from 'sound-play';
+import { pressAnyKey } from './util';
 
 (async () => {
   console.clear();
+
+  try {
+    program.parse();
+  } catch (e) {
+    await pressAnyKey();
+    process.exit(1);
+  }
 
   await checkForUpdates();
 
