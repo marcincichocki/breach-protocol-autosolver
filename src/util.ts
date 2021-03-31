@@ -42,3 +42,10 @@ export class Point {
 export function createLogger(enable = false) {
   return (...args: any[]) => (enable ? console.log.apply(this, args) : null);
 }
+
+export function pressAnyKey() {
+  return new Promise((r) => {
+    process.stdin.resume();
+    process.stdin.once('data', r);
+  });
+}

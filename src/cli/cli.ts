@@ -23,9 +23,7 @@ type Options = KeyBindOption &
 
 const { version, name } = require('../../package.json');
 
-export const program = new Command(name);
-
-program
+export const program = new Command(name)
   .version(version)
   .addOption(keyBindOption)
   .addOption(debugLimitOption)
@@ -33,15 +31,6 @@ program
   .addOption(soundPathOption)
   .addOption(skipUpdateCheckOption)
   .addOption(disableSoundOption)
-  .exitOverride((e) => {
-    console.error(e.message);
-    console.log('\nPress any key to exit');
-
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.on('data', () => process.exit(1));
-  });
-
-program.parse();
+  .exitOverride();
 
 export const options = program.opts() as Options;

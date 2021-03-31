@@ -1,4 +1,4 @@
-import { options } from './cli';
+import { options, program } from './cli';
 import iohook from 'iohook';
 import { transformRawData } from './common';
 import { BreachProtocol } from './game';
@@ -20,9 +20,17 @@ import { remove } from 'fs-extra';
 import { t } from './translate';
 import ora from 'ora';
 import { play } from 'sound-play';
+import { pressAnyKey } from './util';
 
 (async () => {
   console.clear();
+
+  try {
+    program.parse();
+  } catch (e) {
+    await pressAnyKey();
+    process.exit(1);
+  }
 
   await checkForUpdates();
 
