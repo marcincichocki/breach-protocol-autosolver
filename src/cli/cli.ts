@@ -32,9 +32,16 @@ program
   .addOption(langOption)
   .addOption(soundPathOption)
   .addOption(skipUpdateCheckOption)
-  .addOption(disableSoundOption);
+  .addOption(disableSoundOption)
+  .exitOverride((e) => {
+    console.error(e.message);
+    console.log('\nPress any key to exit');
+
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.on('data', () => process.exit(1));
+  });
 
 program.parse();
 
-// TODO: override exit?
 export const options = program.opts() as Options;
