@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.3.0...v1.4.0) (2021-04-01)
+
+
+### Features
+
+* add flag validation and help ([6a3d214](https://github.com/marcincichocki/breach-protocol-autosolver/commit/6a3d2142fa2d62f529a8a4c987f7e81af4dfcaf4))
+* add logger translations ([45e94ee](https://github.com/marcincichocki/breach-protocol-autosolver/commit/45e94eebe896bd420eb099c04de6263fbb72506e)), closes [#22](https://github.com/marcincichocki/breach-protocol-autosolver/issues/22)
+* add OCR data validation ([f1b6a0a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f1b6a0a4bda4143b0604392c8f9fb125a35c284f))
+* add sound effect on OCR error ([990f43f](https://github.com/marcincichocki/breach-protocol-autosolver/commit/990f43f0587d3b8824a32eaa53d65b869c651072)), closes [#19](https://github.com/marcincichocki/breach-protocol-autosolver/issues/19)
+
+
+### Bug Fixes
+
+* block event listener during OCR ([f4c69c4](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f4c69c489f9cb8b6db2fdd34dab818282caf7a0a)), closes [#23](https://github.com/marcincichocki/breach-protocol-autosolver/issues/23)
+
 ## [1.3.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.2.2...v1.3.0) (2021-03-26)
 
 
