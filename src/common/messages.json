@@ -14,7 +14,9 @@
     "UNKNOWN_KEY_ERROR": "Unknown key: \"{0}\".",
     "NEW_VERSION_AVAILABLE": "There is new version({0}) available. Download and exit?",
     "UNSUPORTED_RESOLUTION_ERROR": "Unsuported resolution: \"{0}\".",
-    "UNSUPORTED_OS": "Only Windows is supported."
+    "UNSUPORTED_OS": "Only Windows is supported.",
+    "INVALID_LANG_ERROR": "Invalid language code. Expected one of {0} but got \"{1}\".",
+    "LANG_NOT_SET": "Dictionary has not been set. Did you call `setLang`?"
   },
   "pl": {
     "CHECK_FOR_UPDATES": "Sprawdzam dostępność aktualizacji..",
@@ -31,6 +33,8 @@
     "UNKNOWN_KEY_ERROR": "Nienzany klucz: \"{0}\".",
     "NEW_VERSION_AVAILABLE": "Jest dostępna nowa wersja({0}). Pobrać i wyjść?",
     "UNSUPORTED_RESOLUTION_ERROR": "Nieobsługiwana rozdzielczość: \"{0}\".",
-    "UNSUPORTED_OS": "Tylko system Windows jest obsługiwany."
+    "UNSUPORTED_OS": "Tylko system Windows jest obsługiwany.",
+    "INVALID_LANG_ERROR": "Niepoprawny kod jezyka. Oczekiwano jednego z listy {0} ale otrzymano \"{1}\".",
+    "LANG_NOT_SET": "Słownik nie został ustawiony. Czy wywołałeś funkcję `setLang`?"
   }
 }

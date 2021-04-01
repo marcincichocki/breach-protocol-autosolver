@@ -2,12 +2,13 @@ import messages from './messages.json';
 
 // ISO 639-1
 export type Lang = keyof typeof messages;
+export const availableLangs = Object.keys(messages) as Lang[];
 
 let dict: typeof messages[Lang] = null;
 
 export function setLang(lang: Lang) {
-  if (!Object.keys(messages).includes(lang)) {
-    throw new BreachProtocolError('TODO ADD MESSAGE');
+  if (!availableLangs.includes(lang)) {
+    throw new Error(t`INVALID_LANG_ERROR ${availableLangs.join(' ')} ${lang}`);
   }
 
   dict = messages[lang];
@@ -32,22 +33,14 @@ export function setLang(lang: Lang) {
  */
 export function t(keys: TemplateStringsArray, ...values: any[]) {
   if (!dict) {
-    throw new BreachProtocolError(' TODO: ADD MESSAGE ');
+    throw new Error(t`LANG_NOT_SET`);
   }
 
   const key = keys[0].trim() as keyof typeof dict;
 
   if (!(key in dict)) {
-    throw new BreachProtocolError('UNKNOWN_KEY_ERROR', key);
+    throw new Error(t`UNKNOWN_KEY_ERROR ${key}`);
   }
 
   return dict[key].replace(/{(\d)}/g, (m, i) => values[i]);
-}
-
-export class BreachProtocolError extends Error {
-  readonly name = this.constructor.name;
-
-  constructor(key: string, ...values: string[]) {
-    super(t.call(null, [key], values));
-  }
 }

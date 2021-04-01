@@ -1,4 +1,4 @@
-import { BreachProtocolError, unique } from '@/common';
+import { t, unique } from '@/common';
 import { Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'];
@@ -129,6 +129,6 @@ export function validateRawData({
   const isBufferValid = validateBufferSize(bufferSize);
 
   if (!isGridValid || !areDaemonsValid || !isBufferValid) {
-    throw new BreachProtocolError('OCR_DATA_INVALID');
+    throw new Error(t`OCR_DATA_INVALID`);
   }
 }

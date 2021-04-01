@@ -1,8 +1,6 @@
-import { Lang } from '@/common';
+import { availableLangs, Lang } from '@/common';
 import { Option } from 'commander';
-import messages from '@/common/messages.json';
 
-const availableLangs = Object.keys(messages) as Lang[];
 const flags = '--lang <lang>';
 const description = 'Language of text interface.';
 
