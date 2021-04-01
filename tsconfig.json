@@ -13,6 +13,7 @@
       "DOM"
     ],
     "resolveJsonModule": true,
+    "importHelpers": true,
     "typeRoots": [
       "./node_modules/@types", 
       "./types"

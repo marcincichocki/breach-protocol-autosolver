@@ -1,2 +1,4 @@
-export * from './bootstrap';
-export * from './register';
+import { bootstrap } from './bootstrap';
+import { register } from './register';
+
+bootstrap().then(register);
