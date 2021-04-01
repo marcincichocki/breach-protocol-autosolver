@@ -6,7 +6,7 @@ export type Lang = keyof typeof messages;
 let dict: typeof messages[Lang] = null;
 
 export function setLang(lang: Lang) {
-  if (!(lang in Object.keys(messages))) {
+  if (!Object.keys(messages).includes(lang)) {
     throw new BreachProtocolError('TODO ADD MESSAGE');
   }
 
