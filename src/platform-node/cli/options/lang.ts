@@ -1,6 +1,6 @@
 import { Lang } from '@/common';
 import { Option } from 'commander';
-import messages from '../../../messages.json';
+import messages from '../../../common/messages.json';
 
 const availableLangs = Object.keys(messages) as Lang[];
 const flags = '--lang <lang>';
