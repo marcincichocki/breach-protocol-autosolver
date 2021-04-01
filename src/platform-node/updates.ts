@@ -5,7 +5,7 @@ import open from 'open';
 import ora from 'ora';
 import { options } from './cli';
 
-const { version } = require('@@/package.json');
+const { version } = require('../../package.json');
 const client = new Octokit();
 const owner = 'marcincichocki';
 const repo = 'breach-protocol-autosolver';
