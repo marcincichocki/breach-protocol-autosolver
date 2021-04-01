@@ -21,7 +21,7 @@ type Options = KeyBindOption &
   SkipUpdateCheckOption &
   DisableSoundOption;
 
-const { version, name } = require('../../package.json');
+const { version, name } = require('../../../package.json');
 
 export const program = new Command(name)
   .version(version)

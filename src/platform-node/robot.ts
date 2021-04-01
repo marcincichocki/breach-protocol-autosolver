@@ -1,9 +1,8 @@
+import { Point, t } from '@/common';
 import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
-import { Point } from './util';
 import { getScreenShotPath, removeOldestScreenShot } from './debug';
-import { t } from './translate';
 
 export async function resolveBreachProtocol(
   path: string[],

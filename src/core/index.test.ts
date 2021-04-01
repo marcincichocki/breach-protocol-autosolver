@@ -1,18 +1,18 @@
-import { BreachProtocol } from './game';
+import registry from '../bp-registry/registry.json';
+// NOTE: paths don't work because tests are excluded
+import { unique } from '../common';
 import {
-  cross,
-  getUnits,
-  generateSquareMap,
-  transformRawData,
   BreachProtocolRawData,
-  validateRawData,
   BufferSize,
+  cross,
+  generateSquareMap,
+  getUnits,
+  transformRawData,
+  validateRawData,
 } from './common';
-import { findOverlaps, Sequence, produceSequences } from './sequence';
-
+import { BreachProtocol } from './game';
+import { findOverlaps, produceSequences, Sequence } from './sequence';
 import data from './test-data.json';
-import registry from './bp-registry/registry.json';
-import { unique } from './util';
 
 const registryBreachProtocols = [
   ...registry['1920x1080'],

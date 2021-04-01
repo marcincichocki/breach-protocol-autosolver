@@ -1,10 +1,18 @@
 import messages from './messages.json';
-import { options } from './cli';
 
 // ISO 639-1
 export type Lang = keyof typeof messages;
+export const availableLangs = Object.keys(messages) as Lang[];
 
 let dict: typeof messages[Lang] = null;
+
+export function setLang(lang: Lang) {
+  if (!availableLangs.includes(lang)) {
+    throw new Error(t`INVALID_LANG_ERROR ${availableLangs.join(' ')} ${lang}`);
+  }
+
+  dict = messages[lang];
+}
 
 /**
  * Translate message for given key and values.
@@ -14,6 +22,9 @@ let dict: typeof messages[Lang] = null;
  * const m2 = t`SOME_OTHER_KEY ${42} ${new Date().toLocaleString()}`;
  * ```
  *
+ * NOTE: platform provider MUST call {@see setLang} before
+ * using this function.
+ *
  * @param keys Key of translation. NOTE: even though
  *     template string use array of strings as first
  *     element we only use 1st.
@@ -22,7 +33,7 @@ let dict: typeof messages[Lang] = null;
  */
 export function t(keys: TemplateStringsArray, ...values: any[]) {
   if (!dict) {
-    dict = messages[options.lang];
+    throw new Error(t`LANG_NOT_SET`);
   }
 
   const key = keys[0].trim() as keyof typeof dict;

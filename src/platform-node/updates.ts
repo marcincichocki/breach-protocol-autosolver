@@ -1,11 +1,11 @@
+import { t } from '@/common';
 import { Octokit } from '@octokit/rest';
 import { prompt } from 'inquirer';
 import open from 'open';
-import { options } from './cli';
-import { t } from './translate';
 import ora from 'ora';
+import { options } from './cli';
 
-const { version } = require('../package.json');
+const { version } = require('../../package.json');
 const client = new Octokit();
 const owner = 'marcincichocki';
 const repo = 'breach-protocol-autosolver';
