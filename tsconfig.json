@@ -19,10 +19,8 @@
     ],
     "baseUrl": "./src",
     "paths": {
-      "@/core": ["core"],
-      "@/platform-node": ["platform-node"],
-      "@/common": ["common"],
-      "@@": ["../"]
+      "@/*": ["./*"],
+      "@@/*": ["../../*"]
     }
   },
   "include": [

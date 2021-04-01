@@ -17,7 +17,7 @@ import { join } from 'path';
 import sanitize from 'sanitize-filename';
 import { options } from './cli';
 
-const { version } = require('@@root/package.json');
+const { version } = require('@@/package.json');
 const debug = './debug';
 
 function findOldestScreenShot(files: string[]) {
