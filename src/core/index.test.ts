@@ -1,5 +1,5 @@
 import registry from '../bp-registry/registry.json';
-// NOTE: using mapped imports doesn't work by default in tests.
+// NOTE: paths don't work because tests are excluded
 import { unique } from '../common';
 import {
   BreachProtocolRawData,
