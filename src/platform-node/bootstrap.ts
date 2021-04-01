@@ -3,7 +3,7 @@ import { BreachProtocolFragmentConfig, loadWorkers } from '@/core';
 import { prompt } from 'inquirer';
 import ora from 'ora';
 import screenshot from 'screenshot-desktop';
-import configs from '../core/configs.json';
+import configs from '@/core/configs.json';
 import { program, options } from './cli';
 import { checkForUpdates } from './updates';
 
