@@ -1,10 +1,10 @@
 import {
+  BufferSize,
   COLS,
-  ROWS,
   cross,
   generateSquareMap,
   getUnits,
-  BufferSize,
+  ROWS,
 } from './common';
 import { Sequence } from './sequence';
 

@@ -1,16 +1,15 @@
+import { BreachProtocolError, Point } from '@/common';
 import sharp from 'sharp';
 import { createWorker } from 'tesseract.js';
-import { Point } from './util';
-import configs from './configs.json';
 import {
-  ROWS,
+  BreachProtocolRawData,
   COLS,
   cross,
   generateSquareMap,
-  BreachProtocolRawData,
+  ROWS,
   validateRawData,
 } from './common';
-import { t } from './translate';
+import configs from './configs.json';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -161,7 +160,7 @@ class BreachProtocolFragment {
     const threshold = this.config.threshold[resolution];
 
     if (threshold == null) {
-      throw new Error(t`UNSUPORTED_RESOLUTION_ERROR ${resolution}`);
+      throw new BreachProtocolError('UNSUPORTED_RESOLUTION_ERROR', resolution);
     }
 
     return threshold;

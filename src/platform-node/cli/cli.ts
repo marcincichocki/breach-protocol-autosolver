@@ -21,7 +21,8 @@ type Options = KeyBindOption &
   SkipUpdateCheckOption &
   DisableSoundOption;
 
-const { version, name } = require('../../package.json');
+// TODO: add absolute path to root
+const { version, name } = require('../../../package.json');
 
 export const program = new Command(name)
   .version(version)

@@ -1,14 +1,17 @@
+import { t } from '@/common';
+import {
+  BreachProtocol,
+  breachProtocolOCR,
+  FragmentId,
+  produceSequences,
+  transformRawData,
+} from '@/core';
 import { remove } from 'fs-extra';
 import ora from 'ora';
 import { play } from 'sound-play';
 import { options } from './cli';
-import { transformRawData } from './common';
 import { appendToDebugJson, BreachProtocolDebug } from './debug';
-import { BreachProtocol } from './game';
-import { breachProtocolOCR, FragmentId } from './ocr';
 import { captureScreen, resolveBreachProtocol } from './robot';
-import { produceSequences } from './sequence';
-import { t } from './translate';
 
 export async function solveBreachProtocol(
   workers: Record<FragmentId, Tesseract.Worker>,

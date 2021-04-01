@@ -1,6 +1,10 @@
+import { permute, swap, unique } from '@/common';
 import { BufferSize, byBufferSize, toHex } from './common';
-import { RawSequence } from './debug';
-import { permute, swap, unique } from './util';
+
+export interface RawSequence {
+  value: string[];
+  parts: string[][];
+}
 
 export class Sequence {
   constructor(public readonly value: string, public readonly parts?: string[]) {

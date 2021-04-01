@@ -1,12 +1,11 @@
+import { pressAnyKey, t, setLang } from '@/common';
+import { BreachProtocolFragmentConfig, loadWorkers } from '@/core';
 import { prompt } from 'inquirer';
 import ora from 'ora';
 import screenshot from 'screenshot-desktop';
-import { program } from './cli';
-import configs from './configs.json';
-import { BreachProtocolFragmentConfig, loadWorkers } from './ocr';
-import { t } from './translate';
+import configs from '../core/configs.json';
+import { program, options } from './cli';
 import { checkForUpdates } from './updates';
-import { pressAnyKey } from './util';
 
 export async function bootstrap() {
   console.clear();
@@ -17,6 +16,8 @@ export async function bootstrap() {
     await pressAnyKey();
     process.exit(1);
   }
+
+  setLang(options.lang);
 
   await checkForUpdates();
 

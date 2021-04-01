@@ -1,4 +1,10 @@
 import {
+  BreachProtocolRawData,
+  BreachProtocolResult,
+  RawSequence,
+  Sequence,
+} from '@/core';
+import {
   ensureDirSync,
   ensureFileSync,
   readdirSync,
@@ -9,12 +15,9 @@ import {
 } from 'fs-extra';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
-import { BreachProtocolRawData } from './common';
-import { BreachProtocolResult } from './game';
-import { Sequence } from './sequence';
 import { options } from './cli';
 
-const { version } = require('../package.json');
+const { version } = require('@@root/package.json');
 const debug = './debug';
 
 function findOldestScreenShot(files: string[]) {
@@ -44,11 +47,6 @@ export function getScreenShotPath() {
   const name = sanitize(now, { replacement: ' ' });
 
   return join(debug, `${name}.png`);
-}
-
-export interface RawSequence {
-  value: string[];
-  parts: string[][];
 }
 
 export interface BreachProtocolDebugEntry extends BreachProtocolRawData {

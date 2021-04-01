@@ -1,8 +1,8 @@
+import { t } from '@/common';
+import { FragmentId } from '@/core';
 import iohook from 'iohook';
 import { options } from './cli';
-import { FragmentId } from './ocr';
 import { solveBreachProtocol } from './solve';
-import { t } from './translate';
 
 export function register({
   workers,

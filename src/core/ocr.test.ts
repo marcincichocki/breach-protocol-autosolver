@@ -1,14 +1,14 @@
+import path from 'path';
+import registry from '../bp-registry/registry.json';
+import { BufferSize } from './common';
+import configs from './configs.json';
 import {
   BreachProtocolFragmentConfig,
-  loadWorkers,
   breachProtocolOCR,
   FragmentId,
+  loadWorkers,
   Resolution,
 } from './ocr';
-import configs from './configs.json';
-import registry from './bp-registry/registry.json';
-import { BufferSize } from './common';
-import path from 'path';
 
 interface RegistryEntry {
   fileName: string;

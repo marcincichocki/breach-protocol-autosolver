@@ -1,10 +1,17 @@
 import messages from './messages.json';
-import { options } from './cli';
 
 // ISO 639-1
 export type Lang = keyof typeof messages;
 
 let dict: typeof messages[Lang] = null;
+
+export function setLang(lang: Lang) {
+  if (!(lang in Object.keys(messages))) {
+    throw new BreachProtocolError('TODO ADD MESSAGE');
+  }
+
+  dict = messages[lang];
+}
 
 /**
  * Translate message for given key and values.
@@ -14,6 +21,9 @@ let dict: typeof messages[Lang] = null;
  * const m2 = t`SOME_OTHER_KEY ${42} ${new Date().toLocaleString()}`;
  * ```
  *
+ * NOTE: platform provider MUST call {@see setLang} before
+ * using this function.
+ *
  * @param keys Key of translation. NOTE: even though
  *     template string use array of strings as first
  *     element we only use 1st.
@@ -22,14 +32,22 @@ let dict: typeof messages[Lang] = null;
  */
 export function t(keys: TemplateStringsArray, ...values: any[]) {
   if (!dict) {
-    dict = messages[options.lang];
+    throw new BreachProtocolError(' TODO: ADD MESSAGE ');
   }
 
   const key = keys[0].trim() as keyof typeof dict;
 
   if (!(key in dict)) {
-    throw new Error(t`UNKNOWN_KEY_ERROR ${key}`);
+    throw new BreachProtocolError('UNKNOWN_KEY_ERROR', key);
   }
 
   return dict[key].replace(/{(\d)}/g, (m, i) => values[i]);
+}
+
+export class BreachProtocolError extends Error {
+  readonly name = this.constructor.name;
+
+  constructor(key: string, ...values: string[]) {
+    super(t.call(null, [key], values));
+  }
 }

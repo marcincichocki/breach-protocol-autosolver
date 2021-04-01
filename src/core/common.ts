@@ -1,6 +1,5 @@
+import { BreachProtocolError, unique } from '@/common';
 import { Sequence } from './sequence';
-import { unique } from './util';
-import { t } from './translate';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'];
 export const BUFFER_SIZE_MIN = 4;
@@ -130,6 +129,6 @@ export function validateRawData({
   const isBufferValid = validateBufferSize(bufferSize);
 
   if (!isGridValid || !areDaemonsValid || !isBufferValid) {
-    throw new Error(t`OCR_DATA_INVALID`);
+    throw new BreachProtocolError('OCR_DATA_INVALID');
   }
 }
