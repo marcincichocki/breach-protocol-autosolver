@@ -42,6 +42,7 @@ class BreachProtocolFragmentOCRResult {
   private readonly correctionMap = new Map<string, HexNumber>([
     ['1E', '1C'],
     ['EB', 'E9'],
+    ['F9', 'E9'],
   ]);
 
   constructor(
