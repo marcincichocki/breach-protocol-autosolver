@@ -84,7 +84,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "ar-1080p.png",
+      "fileName": "ar.png",
       "daemons": [
         ["1C", "1C", "E9"],
         ["E9", "1C"],
@@ -100,7 +100,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "th-1080p.png",
+      "fileName": "th.png",
       "daemons": [
         ["E9", "BD", "1C"],
         ["BD", "FF", "BD", "E9"],
@@ -118,7 +118,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "ja-1080p.png",
+      "fileName": "ja.png",
       "daemons": [
         ["1C", "E9"],
         ["55", "BD", "E9"],
@@ -134,7 +134,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "ko-1080p.png",
+      "fileName": "ko.png",
       "daemons": [
         ["1C", "55", "BD"],
         ["55", "E9", "55"],
@@ -332,24 +332,6 @@
         "55", "55", "1C", "1C", "55", "7A", "BD",
         "BD", "E9", "7A", "BD", "BD", "55", "FF",
         "1C", "1C", "E9", "1C", "7A", "E9", "1C"
-      ],
-      "bufferSize": 8
-    },
-    {
-      "fileName": "zh-TW.png",
-      "daemons": [
-        ["55", "BD", "E9"],
-        ["E9", "BD", "BD", "1C"],
-        ["E9", "BD", "BD", "55"]
-      ],
-      "grid": [
-        "FF", "1C", "55", "E9", "1C", "FF", "FF",
-        "55", "55", "7A", "E9", "1C", "FF", "BD",
-        "FF", "FF", "55", "55", "BD", "55", "1C",
-        "E9", "BD", "55", "BD", "E9", "1C", "1C",
-        "BD", "1C", "BD", "BD", "55", "BD", "7A",
-        "FF", "55", "FF", "7A", "1C", "FF", "FF",
-        "7A", "1C", "E9", "E9", "FF", "7A", "BD"
       ],
       "bufferSize": 8
     }
