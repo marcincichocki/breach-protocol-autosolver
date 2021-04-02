@@ -33,7 +33,7 @@ export function setLang(lang: Lang) {
  */
 export function t(keys: TemplateStringsArray, ...values: any[]) {
   if (!dict) {
-    throw new Error(t`LANG_NOT_SET`);
+    throw new Error('Dictionary has not been set. Did you call `setLang`?');
   }
 
   const key = keys[0].trim() as keyof typeof dict;
