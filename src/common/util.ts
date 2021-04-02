@@ -49,3 +49,13 @@ export function pressAnyKey() {
     process.stdin.once('data', r);
   });
 }
+
+export function chunk(str: string, size: number) {
+  const chunks = [];
+
+  for (let i = 0; i < str.length; i += size) {
+    chunks.push(str.slice(i, i + size));
+  }
+
+  return chunks;
+}

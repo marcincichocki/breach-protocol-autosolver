@@ -1,4 +1,4 @@
-import { Point, t } from '@/common';
+import { chunk, Point, t } from '@/common';
 import sharp from 'sharp';
 import { createWorker } from 'tesseract.js';
 import {
@@ -94,6 +94,14 @@ class BreachProtocolFragmentOCRResult {
     }
   }
 
+  // In cn localisation font and font spacing is different. Sometimes
+  // symbols are recognized widthout whitespaces which cause errors.
+  // It's better to remove every whitespace character and then
+  // chunk it.
+  private chunkLine(line: string) {
+    return chunk(line.replace(/\s/g, ''), 2);
+  }
+
   private getLines() {
     return this.data.text.split('\n').filter(Boolean);
   }
@@ -103,7 +111,7 @@ class BreachProtocolFragmentOCRResult {
   }
 
   private getRawSequences(lines: string[]) {
-    return lines.map((l) => l.split(' '));
+    return lines.map((l) => this.chunkLine(l));
   }
 
   private getBufferSize() {
