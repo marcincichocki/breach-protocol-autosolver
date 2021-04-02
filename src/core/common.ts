@@ -1,7 +1,8 @@
 import { t, unique } from '@/common';
 import { Sequence } from './sequence';
 
-export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'];
+export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
+export type HexNumber = typeof HEX_NUMBERS[number];
 export const BUFFER_SIZE_MIN = 4;
 export const BUFFER_SIZE_MAX = 8;
 
@@ -16,7 +17,7 @@ export function toHex(value: string) {
   }
 }
 
-export function fromHex(key: string) {
+export function fromHex(key: HexNumber) {
   return HEX_MAP.get(key);
 }
 
@@ -108,7 +109,9 @@ function validateSymbols(symbols: string[]) {
     return false;
   }
 
-  return symbols.filter(unique).every((s) => HEX_NUMBERS.includes(s));
+  return symbols
+    .filter(unique)
+    .every((s) => HEX_NUMBERS.includes(s as HexNumber));
 }
 
 function validateBufferSize(n: number) {

@@ -6,6 +6,7 @@ import {
   COLS,
   cross,
   generateSquareMap,
+  HexNumber,
   ROWS,
   validateRawData,
 } from './common';
@@ -37,6 +38,11 @@ class BreachProtocolFragmentOCRResult {
 
   /** Percentage that gap between buffer squares takes. */
   private readonly gap = 0.00546;
+
+  private readonly correctionMap = new Map<string, HexNumber>([
+    ['1E', '1C'],
+    ['EB', 'E9'],
+  ]);
 
   constructor(
     public readonly id: FragmentId,
@@ -94,12 +100,42 @@ class BreachProtocolFragmentOCRResult {
     }
   }
 
-  // In cn localisation font and font spacing is different. Sometimes
-  // symbols are recognized widthout whitespaces which cause errors.
-  // It's better to remove every whitespace character and then
-  // chunk it.
+  /**
+   * In some localizations font and font spacing is different. Sometimes
+   * symbols are recognized without whitespaces which cause errors.
+   *
+   * It's better to remove every whitespace character and then to chunk it.
+   *
+   * @param line OCR line to chunk.
+   * @returns Array of chunks.
+   */
   private chunkLine(line: string) {
     return chunk(line.replace(/\s/g, ''), 2);
+  }
+
+  /**
+   * Try to ammend any OCR errors that are caused by custom
+   * font used by some localizations.
+   *
+   * @param symbol Symbol to ammend.
+   * @returns Correct symbol.
+   */
+  private amendSymbol(symbol: string) {
+    if (this.correctionMap.has(symbol)) {
+      return this.correctionMap.get(symbol);
+    }
+
+    return symbol;
+  }
+
+  /**
+   * Try to parse OCR line to remove any errors.
+   *
+   * @param line OCR line to parse.
+   * @returns Chunked and corrected line.
+   */
+  private parseLine(line: string) {
+    return this.chunkLine(line).map((s) => this.amendSymbol(s));
   }
 
   private getLines() {
@@ -107,11 +143,11 @@ class BreachProtocolFragmentOCRResult {
   }
 
   private getRawGrid(lines: string[]) {
-    return lines.flatMap((l) => l.split(' '));
+    return lines.flatMap((l) => this.parseLine(l));
   }
 
   private getRawSequences(lines: string[]) {
-    return lines.map((l) => this.chunkLine(l));
+    return lines.map((l) => this.parseLine(l));
   }
 
   private getBufferSize() {
