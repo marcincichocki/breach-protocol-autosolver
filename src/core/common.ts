@@ -103,6 +103,17 @@ export function transformRawData({
   };
 }
 
+export class BreachProtocolValidationError extends Error {
+  readonly name = this.constructor.name;
+
+  constructor(
+    public message: string,
+    public readonly data: BreachProtocolRawData
+  ) {
+    super(message);
+  }
+}
+
 function validateSymbols(symbols: string[]) {
   if (!symbols.length) {
     // [].every(() => {}) returns true
@@ -132,6 +143,10 @@ export function validateRawData({
   const isBufferValid = validateBufferSize(bufferSize);
 
   if (!isGridValid || !areDaemonsValid || !isBufferValid) {
-    throw new Error(t`OCR_DATA_INVALID`);
+    throw new BreachProtocolValidationError(t`OCR_DATA_INVALID`, {
+      grid,
+      daemons,
+      bufferSize,
+    });
   }
 }
