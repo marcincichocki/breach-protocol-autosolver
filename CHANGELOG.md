@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.4.0...v1.4.1) (2021-04-03)
+
+
+### Bug Fixes
+
+* improve ocr accuracy for eastern languages ([ade70f2](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ade70f23786c81f903120979fb6740676d9939e4))
+* only save debug info on validation error ([abf8636](https://github.com/marcincichocki/breach-protocol-autosolver/commit/abf8636426e19ac5c7cdab4ab7f7717d39f98940))
+* prevent infinite call stack in translations ([ee1f432](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ee1f4327629be4a077f3e29bb8cbccbe883c506a))
+
 ## [1.4.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.3.0...v1.4.0) (2021-04-01)
 
 
