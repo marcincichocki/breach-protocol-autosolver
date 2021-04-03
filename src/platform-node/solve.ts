@@ -2,6 +2,7 @@ import { t } from '@/common';
 import {
   BreachProtocol,
   breachProtocolOCR,
+  BreachProtocolValidationError,
   FragmentId,
   produceSequences,
   transformRawData,
@@ -25,17 +26,25 @@ export async function solveBreachProtocol(
     log.text = t`OCR_START`;
     ocr = await breachProtocolOCR(fileName, workers);
   } catch (e) {
-    if (!options.disableSound) {
-      play(options.soundPath);
+    if (e instanceof BreachProtocolValidationError) {
+      if (!options.disableSound) {
+        play(options.soundPath);
+      }
+
+      log.text = t`DEBUG`;
+      const debugData = new BreachProtocolDebug(fileName, e.data);
+      appendToDebugJson(debugData);
+
+      log.fail(e.message);
+
+      // exit early because data is invalid.
+      return;
     }
 
-    log.fail(e.message);
-    await remove(fileName);
-
-    // exit early because data is invalid.
-    return;
+    throw e;
   }
 
+  await remove(fileName);
   log.text = t`SOLVER_START`;
 
   const data = transformRawData(ocr.rawData);
@@ -43,18 +52,7 @@ export async function solveBreachProtocol(
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
 
-  log.text = t`DEBUG`;
-
   await resolveBreachProtocol(result.path, ocr.squarePositionMap);
-
-  const debugData = new BreachProtocolDebug(
-    fileName,
-    ocr.rawData,
-    result,
-    sequences
-  );
-
-  appendToDebugJson(debugData);
 
   log.succeed(t`SOLVER_DONE`);
 }
