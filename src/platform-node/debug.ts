@@ -49,39 +49,17 @@ export function getScreenShotPath() {
   return join(debug, `${name}.png`);
 }
 
-export interface BreachProtocolDebugEntry extends BreachProtocolRawData {
-  version: string;
-  fileName: string;
-  path: string[];
-  sequence: RawSequence;
-  resolvedSequence: RawSequence;
-  sequences: RawSequence[];
-}
-
 export class BreachProtocolDebug {
-  constructor(
-    public fileName: string,
-    public rawData: BreachProtocolRawData,
-    public result: BreachProtocolResult,
-    public seqeunces: Sequence[]
-  ) {}
+  constructor(public fileName: string, public rawData: BreachProtocolRawData) {}
 
   toJSON() {
     const { fileName } = this;
-    const sequences = this.seqeunces.map((s) => s.toHex());
-    const resolvedSequence = this.result.getResolvedSequence().toHex();
-    const sequence = this.result.sequence.toHex();
-    const path = this.result.path;
 
     return {
       version,
       fileName,
-      path,
-      sequence,
-      resolvedSequence,
-      sequences,
       ...this.rawData,
-    } as BreachProtocolDebugEntry;
+    };
   }
 }
 
