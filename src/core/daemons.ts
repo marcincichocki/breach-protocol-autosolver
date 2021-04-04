@@ -93,11 +93,11 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
     return p.map((d, i) => p.slice(0, i + 1));
   });
   const permutationsIds = basePermutations.map(getPermutationId);
-  const allPermutations = basePermutations.filter((p, i) => {
+  const permutations = basePermutations.filter((p, i) => {
     return unique(getPermutationId(p), i, permutationsIds);
   });
 
-  return allPermutations
+  return permutations
     .map(sequenceFrom)
     .filter((s) => s.length <= bufferSize)
     .sort((s1, s2) => {
