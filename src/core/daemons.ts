@@ -83,26 +83,27 @@ export class Sequence2 {
   constructor(public value: HexNumber[], public parts: Daemon[]) {}
 }
 
-const getUniqueIds = (p: Daemon[]) => p.map((d) => d.tValue).join();
+function getPermutationId(p: Daemon[]) {
+  return p.map((d) => d.tValue).join();
+}
 
 export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
-  const base = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
-  const permutations = permute(base).flatMap((p) =>
-    p.map((d, i) => p.slice(0, i + 1))
-  );
-  const permutationsIds = permutations.map(getUniqueIds);
+  const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
+  const basePermutations = permute(baseDaemons).flatMap((p) => {
+    return p.map((d, i) => p.slice(0, i + 1));
+  });
+  const permutationsIds = basePermutations.map(getPermutationId);
+  const allPermutations = basePermutations.filter((p, i) => {
+    return unique(getPermutationId(p), i, permutationsIds);
+  });
 
-  return (
-    permutations
-      // move it to flatmap above?
-      .filter((p, i) => unique(getUniqueIds(p), i, permutationsIds))
-      .map(sequenceFrom)
-      .filter((s) => s.length <= bufferSize)
-      .sort((s1, s2) => {
-        const byStrength = s2.strength - s1.strength;
-        const byLength = s1.value.length - s2.value.length;
+  return allPermutations
+    .map(sequenceFrom)
+    .filter((s) => s.length <= bufferSize)
+    .sort((s1, s2) => {
+      const byStrength = s2.strength - s1.strength;
+      const byLength = s1.value.length - s2.value.length;
 
-        return byStrength || byLength;
-      })
-  );
+      return byStrength || byLength;
+    });
 }
