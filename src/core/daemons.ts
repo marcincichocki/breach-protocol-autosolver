@@ -1,4 +1,4 @@
-import { permute, unique } from '@/common';
+import { permute, unique, uniqueBy } from '@/common';
 import { BufferSize, fromHex, HexNumber, toHex } from './common';
 
 // Simple memo, only use with primitives
@@ -25,10 +25,12 @@ export class Daemon {
 
   readonly length = this.value.length;
 
+  public isChild = false;
+
   constructor(
     public readonly value: HexNumber[],
     public readonly index: number,
-    public children?: Daemon[],
+    public children: Daemon[] = [],
     id?: string
   ) {}
 }
@@ -65,7 +67,7 @@ export function sequenceFrom(permutation: Daemon[]) {
   //   .split('')
   //   .map(toHex);
   const parts = permutation.flatMap((d) =>
-    d.children ? d.children.concat(d) : d
+    d.children.length ? [d].concat(d.children) : d
   );
 
   return new Sequence2(value, parts);
@@ -89,7 +91,34 @@ function getPermutationId(p: Daemon[]) {
 
 export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
   const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
-  const basePermutations = permute(baseDaemons).flatMap((p) => {
+
+  // normalize deamons
+  for (let i = 0; i < baseDaemons.length; i++) {
+    const d1 = baseDaemons[i];
+
+    for (let j = 0; j < baseDaemons.length; j++) {
+      if (i === j) {
+        continue;
+      }
+
+      const d2 = baseDaemons[j];
+
+      if (d1.tValue.includes(d2.tValue) && !d1.isChild) {
+        d1.children.push(d2);
+        d2.isChild = true;
+        console.log('%s includes %s', d1.index, d2.index);
+      }
+    }
+  }
+
+  const childSequences = baseDaemons
+    .filter(uniqueBy('tValue'))
+    .filter((d) => d.isChild)
+    .map((d) => sequenceFrom([d]));
+
+  const basePermutations = permute(
+    baseDaemons.filter((d) => !d.isChild)
+  ).flatMap((p) => {
     return p.map((d, i) => p.slice(0, i + 1));
   });
   const permutationsIds = basePermutations.map(getPermutationId);
@@ -99,6 +128,7 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
 
   return permutations
     .map(sequenceFrom)
+    .concat(childSequences)
     .filter((s) => s.length <= bufferSize)
     .sort((s1, s2) => {
       const byStrength = s2.strength - s1.strength;
