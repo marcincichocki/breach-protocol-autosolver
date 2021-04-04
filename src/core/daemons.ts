@@ -103,7 +103,7 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
 
       const d2 = baseDaemons[j];
 
-      if (d1.tValue.includes(d2.tValue) && !d1.isChild) {
+      if (d1.tValue.includes(d2.tValue)) {
         d1.children.push(d2);
         d2.isChild = true;
         console.log('%s includes %s', d1.index, d2.index);
