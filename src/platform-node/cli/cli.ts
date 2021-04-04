@@ -12,8 +12,8 @@ import {
   SkipUpdateCheckOption,
   soundPathOption,
   SoundPathOption,
-  ThresholdBuffer,
-  thresholdBufferOption,
+  ThresholdBufferSize,
+  thresholdBufferSizeOption,
   ThresholdDaemons,
   thresholdDaemonsOption,
   ThresholdGrid,
@@ -28,7 +28,7 @@ type Options = KeyBindOption &
   DisableSoundOption &
   ThresholdDaemons &
   ThresholdGrid &
-  ThresholdBuffer;
+  ThresholdBufferSize;
 
 const { version, name } = require('../../../package.json');
 
@@ -42,7 +42,7 @@ export const program = new Command(name)
   .addOption(disableSoundOption)
   .addOption(thresholdDaemonsOption)
   .addOption(thresholdGridOption)
-  .addOption(thresholdBufferOption)
+  .addOption(thresholdBufferSizeOption)
   .exitOverride();
 
 export const options = program.opts() as Options;

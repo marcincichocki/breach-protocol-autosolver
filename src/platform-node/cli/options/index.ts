@@ -7,6 +7,9 @@ export {
   skipUpdateCheckOption,
 } from './skip-update-check';
 export { SoundPathOption, soundPathOption } from './sound-path';
-export { ThresholdBuffer, thresholdBufferOption } from './threshold-buffer';
+export {
+  ThresholdBufferSize,
+  thresholdBufferSizeOption,
+} from './threshold-buffer-size';
 export { ThresholdDaemons, thresholdDaemonsOption } from './threshold-daemons';
 export { ThresholdGrid, thresholdGridOption } from './threshold-grid';
