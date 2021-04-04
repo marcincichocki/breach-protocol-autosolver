@@ -76,6 +76,7 @@ export class Sequence {
 
   readonly indexes = this.parts.map((d) => d.index);
 
+  /** Strength is calculated by index of daemon. */
   readonly strength = this.parts
     .map((d) => d.index + 1)
     .reduce((a, b) => a + b, 0);
@@ -128,7 +129,7 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
     .filter((s) => s.length <= bufferSize)
     .sort((s1, s2) => {
       const byStrength = s2.strength - s1.strength;
-      const byLength = s1.value.length - s2.value.length;
+      const byLength = s1.length - s2.length;
 
       return byStrength || byLength;
     });
