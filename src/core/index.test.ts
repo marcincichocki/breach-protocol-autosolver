@@ -7,11 +7,13 @@ import {
   cross,
   generateSquareMap,
   getUnits,
+  HexNumber,
   transformRawData,
   validateRawData,
 } from './common';
 import { BreachProtocol } from './game';
-import { findOverlaps, produceSequences, Sequence } from './sequence';
+import { Daemon, makeSequences } from './sequence';
+import { Sequence, findOverlap } from './sequence';
 import data from './test-data.json';
 
 const registryBreachProtocols = [
@@ -84,19 +86,13 @@ test('should create sequences', () => {
     ['2211', '111'], // 3) two overlaps in end dir
     ['123', '345'], // 4) standard same start end
     ['543', '321'], // 5) standard same end start
-    ['121', '21412'], // 6) both strings share start and end, sort to ensure predictable order
-    ['254', '412'], // 7) another example of both start end
-  ]
-    .map((s) => <[Sequence, Sequence]>s.map((s2) => new Sequence(s2)))
-    .map((s) => findOverlaps(...s).map((s2) => s2.value));
+  ].map((s) => findOverlap(s[0], s[1]));
 
-  expect(overlaps[0]).toEqual([]); // 1)
-  expect(overlaps[1]).toEqual(['22211']); // 2)
-  expect(overlaps[2]).toEqual(['22111']); // 3)
-  expect(overlaps[3]).toEqual(['12345']); // 4)
-  expect(overlaps[4]).toEqual(['54321']); // 5)
-  expect(overlaps[5].sort()).toEqual(['121412', '214121']); // 6
-  expect(overlaps[6].sort()).toEqual(['25412', '41254']); // 7)
+  expect(overlaps[0]).toEqual('121345'); // 1)
+  expect(overlaps[1]).toEqual('22211'); // 2)
+  expect(overlaps[2]).toEqual('22111'); // 3)
+  expect(overlaps[3]).toEqual('12345'); // 4)
+  expect(overlaps[4]).toEqual('54321'); // 5)
 });
 
 describe('OCR data validation', () => {
@@ -164,20 +160,20 @@ describe('Breach protocol solve', () => {
     const g1 = new BreachProtocol(grid, bufferSize);
     const results = [
       // case 1) all symbols are accesible from the start.
-      'dda',
+      ['55', '55', 'E9'],
       // case 2) one or more symbols are not in chain, but fallback values
       // contain starting value of sequence.
-      'dab',
+      ['55', 'E9', '1C'],
       // case 3) no starting value at all in one or more units. Sequence
       // will start from the start every time that happens until we run
       // out of buffer.
-      'add',
-    ].map((s) => g1.solve([new Sequence(s)]));
+      ['E9', '55', '55'],
+    ].map((s: HexNumber[]) => g1.solve([new Sequence(s, [new Daemon(s, 0)])]));
 
     results.forEach((result) => {
       expect(result.path.length).toBeLessThanOrEqual(bufferSize);
-      expect(result.getResolvedSequence().value).toContain(
-        result.sequence.value
+      expect(result.getResolvedSequence().tValue).toContain(
+        result.sequence.tValue
       );
     });
   });
@@ -185,12 +181,12 @@ describe('Breach protocol solve', () => {
   it('should find best sequences and solve BPs from raw data', () => {
     transformedData.forEach((d, i) => {
       const game = new BreachProtocol(d.tGrid, d.bufferSize);
-      const sequences = produceSequences(d.tDaemons, d.bufferSize);
+      const sequences = makeSequences(d.daemons, d.bufferSize);
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
-      expect(result.getResolvedSequence().value).toContain(
-        result.sequence.value
+      expect(result.getResolvedSequence().tValue).toContain(
+        result.sequence.tValue
       );
     });
   });
