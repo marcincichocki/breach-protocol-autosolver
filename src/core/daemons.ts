@@ -1,4 +1,4 @@
-import { permute, unique, uniqueBy } from '@/common';
+import { permute, uniqueBy, uniqueWith } from '@/common';
 import { BufferSize, fromHex, HexNumber, toHex } from './common';
 
 // Simple memo, only use with primitives
@@ -59,13 +59,6 @@ export function sequenceFrom(permutation: Daemon[]) {
   }
 
   const value = tValue.split('').map(toHex);
-
-  // this will fail? when called with single argument.
-  // const value = permutation
-  //   .map((d) => d.tValue)
-  //   .reduce((prev, curr) => findOverlap(prev, curr))
-  //   .split('')
-  //   .map(toHex);
   const parts = permutation.flatMap((d) =>
     d.children.length ? [d].concat(d.children) : d
   );
@@ -74,13 +67,15 @@ export function sequenceFrom(permutation: Daemon[]) {
 }
 
 export class Sequence2 {
-  tValue = this.value.map(fromHex).join('');
+  readonly tValue = this.value.map(fromHex).join('');
 
-  length = this.value.length;
+  readonly length = this.value.length;
 
-  indexes = this.parts.map((d) => d.index);
+  readonly indexes = this.parts.map((d) => d.index);
 
-  strength = this.parts.map((d) => d.index + 1).reduce((a, b) => a + b, 0);
+  readonly strength = this.parts
+    .map((d) => d.index + 1)
+    .reduce((a, b) => a + b, 0);
 
   constructor(public value: HexNumber[], public parts: Daemon[]) {}
 }
@@ -89,19 +84,17 @@ function getPermutationId(p: Daemon[]) {
   return p.map((d) => d.tValue).join();
 }
 
-export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
-  const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
-
+function detectChildDaemons(daemons: Daemon[]) {
   // normalize deamons
-  for (let i = 0; i < baseDaemons.length; i++) {
-    const d1 = baseDaemons[i];
+  for (let i = 0; i < daemons.length; i++) {
+    const d1 = daemons[i];
 
-    for (let j = 0; j < baseDaemons.length; j++) {
+    for (let j = 0; j < daemons.length; j++) {
       if (i === j) {
         continue;
       }
 
-      const d2 = baseDaemons[j];
+      const d2 = daemons[j];
 
       if (d1.tValue.includes(d2.tValue)) {
         d1.children.push(d2);
@@ -111,23 +104,27 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
     }
   }
 
-  const childSequences = baseDaemons
+  return daemons;
+}
+
+export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
+  const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
+  detectChildDaemons(baseDaemons);
+
+  // These sequences are created out of daemons that overlap completly.
+  const childDaemons = baseDaemons.filter((d) => d.isChild);
+  const regularDaemons = baseDaemons.filter((d) => !d.isChild);
+
+  const childSequences = childDaemons
     .filter(uniqueBy('tValue'))
-    .filter((d) => d.isChild)
     .map((d) => sequenceFrom([d]));
 
-  const basePermutations = permute(
-    baseDaemons.filter((d) => !d.isChild)
-  ).flatMap((p) => {
-    return p.map((d, i) => p.slice(0, i + 1));
-  });
-  const permutationsIds = basePermutations.map(getPermutationId);
-  const permutations = basePermutations.filter((p, i) => {
-    return unique(getPermutationId(p), i, permutationsIds);
-  });
+  const sequences = permute(regularDaemons)
+    .flatMap((p) => p.map((d, i) => p.slice(0, i + 1)))
+    .filter(uniqueWith(getPermutationId))
+    .map(sequenceFrom);
 
-  return permutations
-    .map(sequenceFrom)
+  return sequences
     .concat(childSequences)
     .filter((s) => s.length <= bufferSize)
     .sort((s1, s2) => {

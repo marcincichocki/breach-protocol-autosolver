@@ -3,13 +3,17 @@ export function unique<T>(value: T, index: number, array: T[]) {
 }
 
 export function uniqueBy<T>(prop: keyof T) {
+  return uniqueWith<T, T[keyof T]>((o) => o[prop]);
+}
+
+export function uniqueWith<T, R>(accessor: (obj: T) => R) {
   let cache = null as T[keyof T][];
 
   return (value: T, index: number, array: T[]) => {
-    const propValue = value[prop];
+    const propValue = accessor.call(this, value);
 
     if (!cache) {
-      cache = array.map((x) => x[prop]);
+      cache = array.map((x) => accessor.call(this, x));
     }
 
     return unique(propValue, index, cache);
