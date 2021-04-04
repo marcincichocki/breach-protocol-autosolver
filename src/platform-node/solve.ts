@@ -4,7 +4,7 @@ import {
   breachProtocolOCR,
   BreachProtocolValidationError,
   FragmentId,
-  produceSequences,
+  makeSequences,
   transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
@@ -48,7 +48,7 @@ export async function solveBreachProtocol(
   log.text = t`SOLVER_START`;
 
   const data = transformRawData(ocr.rawData);
-  const sequences = produceSequences(data.tDaemons, data.bufferSize);
+  const sequences = makeSequences(data.daemons, data.bufferSize);
   const game = new BreachProtocol(data.tGrid, data.bufferSize);
   const result = game.solve(sequences);
 

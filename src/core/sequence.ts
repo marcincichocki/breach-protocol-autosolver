@@ -1,6 +1,11 @@
 import { permute, uniqueBy, uniqueWith } from '@/common';
 import { BufferSize, fromHex, HexNumber, toHex } from './common';
 
+export interface RawSequence {
+  value: string[];
+  parts: string[][];
+}
+
 // Simple memo, only use with primitives
 function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
   const cache = new Map<string, R>();
