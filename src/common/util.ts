@@ -20,6 +20,21 @@ export function uniqueWith<T, R>(accessor: (obj: T) => R) {
   };
 }
 
+// Simple memo, only use with primitives
+export function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
+  const cache = new Map<string, R>();
+
+  return ((...args: any[]) => {
+    const key = args.join();
+
+    if (!cache.has(key)) {
+      cache.set(key, fn.apply(this, args));
+    }
+
+    return cache.get(key);
+  }) as T;
+}
+
 export function swap<T1 = any, T2 = any>([a, b]: readonly [T1, T2]): [
   b: T2,
   a: T1

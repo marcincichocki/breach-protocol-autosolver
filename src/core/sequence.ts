@@ -1,24 +1,9 @@
-import { permute, uniqueBy, uniqueWith } from '@/common';
+import { permute, uniqueBy, uniqueWith, memoize } from '@/common';
 import { BufferSize, fromHex, HexNumber, toHex } from './common';
 
 export interface RawSequence {
   value: string[];
   parts: string[][];
-}
-
-// Simple memo, only use with primitives
-function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
-  const cache = new Map<string, R>();
-
-  return ((...args: any[]) => {
-    const key = args.join('');
-
-    if (!cache.has(key)) {
-      cache.set(key, fn.apply(this, args));
-    }
-
-    return cache.get(key);
-  }) as T;
 }
 
 export class Daemon {
@@ -69,11 +54,13 @@ export function findOverlap(s1: string, s2: string) {
   return s1 + s2;
 }
 
-export function sequenceFrom(permutation: Daemon[]) {
+export const memoizedFindOverlap = memoize(findOverlap);
+
+export function getSequenceFromPermutation(permutation: Daemon[]) {
   let { tValue } = permutation[0];
 
   for (let i = 1; i < permutation.length; i++) {
-    tValue = findOverlap(tValue, permutation[i].tValue);
+    tValue = memoizedFindOverlap(tValue, permutation[i].tValue);
   }
 
   const value = tValue.split('').map(toHex);
@@ -129,12 +116,12 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
 
   const childSequences = childDaemons
     .filter(uniqueBy('tValue'))
-    .map((d) => sequenceFrom([d]));
+    .map((d) => getSequenceFromPermutation([d]));
 
   const regularSequences = permute(regularDaemons)
     .flatMap((p) => p.map((d, i) => p.slice(0, i + 1)))
     .filter(uniqueWith(getPermutationId))
-    .map(sequenceFrom);
+    .map(getSequenceFromPermutation);
 
   return regularSequences
     .concat(childSequences)
