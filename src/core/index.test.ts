@@ -1,6 +1,4 @@
 import registry from '../bp-registry/registry.json';
-// NOTE: paths don't work because tests are excluded
-import { unique } from '../common';
 import {
   BreachProtocolRawData,
   BufferSize,
@@ -27,11 +25,6 @@ const transformedData = data
   .map((d) => transformRawData(d as BreachProtocolRawData));
 
 describe('utilities', () => {
-  test('should produce unique list', () => {
-    expect([1, 2, 1, 1].filter(unique)).toEqual([1, 2]);
-    expect(['abc', 'abcd', 'abc'].filter(unique)).toEqual(['abc', 'abcd']);
-  });
-
   test('should combine 2 strings', () => {
     const a = 'ab';
     const b = '12';
