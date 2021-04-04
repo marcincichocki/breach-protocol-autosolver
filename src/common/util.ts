@@ -2,6 +2,20 @@ export function unique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;
 }
 
+export function uniqueBy<T>(prop: keyof T) {
+  let cache = null as T[keyof T][];
+
+  return (value: T, index: number, array: T[]) => {
+    const propValue = value[prop];
+
+    if (!cache) {
+      cache = array.map((x) => x[prop]);
+    }
+
+    return unique(propValue, index, cache);
+  };
+}
+
 export function swap<T1 = any, T2 = any>([a, b]: readonly [T1, T2]): [
   b: T2,
   a: T1
