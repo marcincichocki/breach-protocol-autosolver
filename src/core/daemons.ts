@@ -16,23 +16,36 @@ function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
   }) as T;
 }
 
-// Deamon must be immutable
-// since we pass it around in array
-// copying its reference etc
-// SHOULD DAEMON SAVE FULL OVERLAP CHILDREN??
 export class Daemon {
   readonly tValue = this.value.map(fromHex).join('');
 
   readonly length = this.value.length;
 
-  public isChild = false;
+  get isChild() {
+    return !!this.parent;
+  }
+
+  private parent: Daemon = null;
+
+  private children: Daemon[] = [];
 
   constructor(
     public readonly value: HexNumber[],
     public readonly index: number,
-    public children: Daemon[] = [],
     id?: string
   ) {}
+
+  addChild(child: Daemon) {
+    this.children = [child, ...this.children];
+  }
+
+  setParent(parent: Daemon) {
+    this.parent = parent;
+  }
+
+  getParts() {
+    return this.children.length ? [this, ...this.children] : [this];
+  }
 }
 
 const findOverlap = memoize((s1: string, s2: string) => {
@@ -59,9 +72,7 @@ export function sequenceFrom(permutation: Daemon[]) {
   }
 
   const value = tValue.split('').map(toHex);
-  const parts = permutation.flatMap((d) =>
-    d.children.length ? [d].concat(d.children) : d
-  );
+  const parts = permutation.flatMap((d) => d.getParts());
 
   return new Sequence2(value, parts);
 }
@@ -84,8 +95,7 @@ function getPermutationId(p: Daemon[]) {
   return p.map((d) => d.tValue).join();
 }
 
-function detectChildDaemons(daemons: Daemon[]) {
-  // normalize deamons
+function markChildDaemons(daemons: Daemon[]) {
   for (let i = 0; i < daemons.length; i++) {
     const d1 = daemons[i];
 
@@ -97,19 +107,16 @@ function detectChildDaemons(daemons: Daemon[]) {
       const d2 = daemons[j];
 
       if (d1.tValue.includes(d2.tValue)) {
-        d1.children.push(d2);
-        d2.isChild = true;
-        console.log('%s includes %s', d1.index, d2.index);
+        d1.addChild(d2);
+        d2.setParent(d1);
       }
     }
   }
-
-  return daemons;
 }
 
 export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
   const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
-  detectChildDaemons(baseDaemons);
+  markChildDaemons(baseDaemons);
 
   // These sequences are created out of daemons that overlap completly.
   const childDaemons = baseDaemons.filter((d) => d.isChild);
@@ -119,12 +126,12 @@ export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
     .filter(uniqueBy('tValue'))
     .map((d) => sequenceFrom([d]));
 
-  const sequences = permute(regularDaemons)
+  const regularSequences = permute(regularDaemons)
     .flatMap((p) => p.map((d, i) => p.slice(0, i + 1)))
     .filter(uniqueWith(getPermutationId))
     .map(sequenceFrom);
 
-  return sequences
+  return regularSequences
     .concat(childSequences)
     .filter((s) => s.length <= bufferSize)
     .sort((s1, s2) => {
