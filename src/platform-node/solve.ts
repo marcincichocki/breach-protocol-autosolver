@@ -48,15 +48,15 @@ export async function solveBreachProtocol(
   log.succeed(t`SOLVER_DONE`);
 }
 
-function tryToOCRBreachProtocol(
+async function tryToOCRBreachProtocol(
   fileName: string,
   workers: Record<FragmentId, Tesseract.Worker>,
   log: ora.Ora
 ) {
-  try {
-    log.text = t`OCR_START`;
+  log.text = t`OCR_START`;
 
-    return breachProtocolOCR(fileName, workers);
+  try {
+    return await breachProtocolOCR(fileName, workers);
   } catch (e) {
     if (e instanceof BreachProtocolValidationError) {
       if (!options.disableSound) {
