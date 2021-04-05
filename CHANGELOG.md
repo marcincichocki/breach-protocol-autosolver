@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.4.1...v1.5.0) (2021-04-05)
+
+
+### Features
+
+* add ability to specify custom threshold ([90d2008](https://github.com/marcincichocki/breach-protocol-autosolver/commit/90d20081d5e92d7d88dc40cfee126d939ba5cdba))
+* improve sequence generation logic ([4bb07dc](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4bb07dcff3250cd455b90ae4d4eb2396117eeb19)), closes [#20](https://github.com/marcincichocki/breach-protocol-autosolver/issues/20) [#35](https://github.com/marcincichocki/breach-protocol-autosolver/issues/35)
+
 ### [1.4.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.4.0...v1.4.1) (2021-04-03)
 
 
