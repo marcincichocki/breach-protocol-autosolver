@@ -5,7 +5,7 @@ export interface ThresholdDaemons {
   thresholdDaemons: number;
 }
 
-const flags = '--theshold-daemons <n>';
+const flags = '--threshold-daemons <n>';
 const description =
   'Value in the range 0-255 representing the level at which the threshold will be applied to daemons image fragment.';
 
