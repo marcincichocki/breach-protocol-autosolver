@@ -15,6 +15,10 @@ export class Daemon {
     return !!this.parent;
   }
 
+  get isParent() {
+    return !!this.children.length;
+  }
+
   private parent: Daemon = null;
 
   private children: Daemon[] = [];
@@ -54,7 +58,7 @@ export function findOverlap(s1: string, s2: string) {
   return s1 + s2;
 }
 
-export const memoizedFindOverlap = memoize(findOverlap);
+const memoizedFindOverlap = memoize(findOverlap);
 
 export function getSequenceFromPermutation(permutation: Daemon[]) {
   let { tValue } = permutation[0];
@@ -88,16 +92,20 @@ function getPermutationId(p: Daemon[]) {
   return p.map((d) => d.tValue).join();
 }
 
-function markChildDaemons(daemons: Daemon[]) {
-  for (let i = 0; i < daemons.length; i++) {
-    const d1 = daemons[i];
+export function parseDaemons(
+  daemons: HexNumber[][]
+): [regular: Daemon[], children: Daemon[]] {
+  const baseDaemons = daemons.map((d, i) => new Daemon(d, i));
 
-    for (let j = 0; j < daemons.length; j++) {
+  for (let i = 0; i < baseDaemons.length; i++) {
+    const d1 = baseDaemons[i];
+
+    for (let j = 0; j < baseDaemons.length; j++) {
       if (i === j) {
         continue;
       }
 
-      const d2 = daemons[j];
+      const d2 = baseDaemons[j];
 
       if (d1.tValue.includes(d2.tValue)) {
         d1.addChild(d2);
@@ -105,16 +113,16 @@ function markChildDaemons(daemons: Daemon[]) {
       }
     }
   }
-}
-
-export function makeSequences(daemons: string[][], bufferSize: BufferSize) {
-  const baseDaemons = daemons.map((d, i) => new Daemon(d as HexNumber[], i));
-  markChildDaemons(baseDaemons);
 
   // These sequences are created out of daemons that overlap completly.
   const childDaemons = baseDaemons.filter((d) => d.isChild);
   const regularDaemons = baseDaemons.filter((d) => !d.isChild);
 
+  return [regularDaemons, childDaemons];
+}
+
+export function makeSequences(daemons: HexNumber[][], bufferSize: BufferSize) {
+  const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(uniqueBy('tValue'))
     .map((d) => getSequenceFromPermutation([d]));

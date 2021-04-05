@@ -72,22 +72,6 @@ describe('utilities', () => {
   });
 });
 
-test('should create sequences', () => {
-  const overlaps = [
-    ['121', '345'], // 1) no overlap
-    ['222', '2211'], // 2) two overlaps in start dir
-    ['2211', '111'], // 3) two overlaps in end dir
-    ['123', '345'], // 4) standard same start end
-    ['543', '321'], // 5) standard same end start
-  ].map((s) => findOverlap(s[0], s[1]));
-
-  expect(overlaps[0]).toEqual('121345'); // 1)
-  expect(overlaps[1]).toEqual('22211'); // 2)
-  expect(overlaps[2]).toEqual('22111'); // 3)
-  expect(overlaps[3]).toEqual('12345'); // 4)
-  expect(overlaps[4]).toEqual('54321'); // 5)
-});
-
 describe('OCR data validation', () => {
   // prettier-ignore
   const grid = [
@@ -174,7 +158,7 @@ describe('Breach protocol solve', () => {
   it('should find best sequences and solve BPs from raw data', () => {
     transformedData.forEach((d, i) => {
       const game = new BreachProtocol(d.tGrid, d.bufferSize);
-      const sequences = makeSequences(d.daemons, d.bufferSize);
+      const sequences = makeSequences(d.daemons as HexNumber[][], d.bufferSize);
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
