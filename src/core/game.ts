@@ -5,6 +5,7 @@ import {
   generateSquareMap,
   getUnits,
   ROWS,
+  toHex,
 } from './common';
 import { Sequence } from './sequence';
 
@@ -21,7 +22,7 @@ export class BreachProtocolResult {
   getResolvedSequence() {
     const value = this.path
       .map((s) => this.breachProtocol.gridMap.get(s))
-      .join('');
+      .map(toHex);
 
     return new Sequence(value, this.sequence.parts);
   }
@@ -55,7 +56,7 @@ export class BreachProtocol {
   ) {}
 
   solveForSequence(sequence: Sequence) {
-    const path = this.findPath(sequence.value);
+    const path = this.findPath(sequence.tValue);
 
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }

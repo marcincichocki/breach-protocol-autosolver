@@ -2,6 +2,39 @@ export function unique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;
 }
 
+export function uniqueBy<T>(prop: keyof T) {
+  return uniqueWith<T, T[keyof T]>((o) => o[prop]);
+}
+
+export function uniqueWith<T, R>(fn: (obj: T) => R) {
+  let cache = null as T[keyof T][];
+
+  return (value: T, index: number, array: T[]) => {
+    const propValue = fn.call(this, value);
+
+    if (!cache) {
+      cache = array.map((x) => fn.call(this, x));
+    }
+
+    return unique(propValue, index, cache);
+  };
+}
+
+// Simple memo, only use with primitives
+export function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
+  const cache = new Map<string, R>();
+
+  return ((...args: any[]) => {
+    const key = args.join();
+
+    if (!cache.has(key)) {
+      cache.set(key, fn.apply(this, args));
+    }
+
+    return cache.get(key);
+  }) as T;
+}
+
 export function swap<T1 = any, T2 = any>([a, b]: readonly [T1, T2]): [
   b: T2,
   a: T1

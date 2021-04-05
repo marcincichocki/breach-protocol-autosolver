@@ -1,9 +1,4 @@
-import {
-  BreachProtocolRawData,
-  BreachProtocolResult,
-  RawSequence,
-  Sequence,
-} from '@/core';
+import { BreachProtocolRawData } from '@/core';
 import {
   ensureDirSync,
   ensureFileSync,

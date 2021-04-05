@@ -1,17 +1,17 @@
 import registry from '../bp-registry/registry.json';
-// NOTE: paths don't work because tests are excluded
-import { unique } from '../common';
 import {
   BreachProtocolRawData,
   BufferSize,
   cross,
   generateSquareMap,
   getUnits,
+  HexNumber,
   transformRawData,
   validateRawData,
 } from './common';
 import { BreachProtocol } from './game';
-import { findOverlaps, produceSequences, Sequence } from './sequence';
+import { Daemon, makeSequences } from './sequence';
+import { Sequence, findOverlap } from './sequence';
 import data from './test-data.json';
 
 const registryBreachProtocols = [
@@ -25,11 +25,6 @@ const transformedData = data
   .map((d) => transformRawData(d as BreachProtocolRawData));
 
 describe('utilities', () => {
-  test('should produce unique list', () => {
-    expect([1, 2, 1, 1].filter(unique)).toEqual([1, 2]);
-    expect(['abc', 'abcd', 'abc'].filter(unique)).toEqual(['abc', 'abcd']);
-  });
-
   test('should combine 2 strings', () => {
     const a = 'ab';
     const b = '12';
@@ -77,37 +72,15 @@ describe('utilities', () => {
   });
 });
 
-test('should create sequences', () => {
-  const overlaps = [
-    ['121', '345'], // 1) no overlap
-    ['222', '2211'], // 2) two overlaps in start dir
-    ['2211', '111'], // 3) two overlaps in end dir
-    ['123', '345'], // 4) standard same start end
-    ['543', '321'], // 5) standard same end start
-    ['121', '21412'], // 6) both strings share start and end, sort to ensure predictable order
-    ['254', '412'], // 7) another example of both start end
-  ]
-    .map((s) => <[Sequence, Sequence]>s.map((s2) => new Sequence(s2)))
-    .map((s) => findOverlaps(...s).map((s2) => s2.value));
-
-  expect(overlaps[0]).toEqual([]); // 1)
-  expect(overlaps[1]).toEqual(['22211']); // 2)
-  expect(overlaps[2]).toEqual(['22111']); // 3)
-  expect(overlaps[3]).toEqual(['12345']); // 4)
-  expect(overlaps[4]).toEqual(['54321']); // 5)
-  expect(overlaps[5].sort()).toEqual(['121412', '214121']); // 6
-  expect(overlaps[6].sort()).toEqual(['25412', '41254']); // 7)
-});
-
 describe('OCR data validation', () => {
   // prettier-ignore
-  const grid = [
+  const grid: HexNumber[] = [
     'BD', 'E9', '1C', '7A',
     'FF', '55', '55', '1C',
     '7A', '7A', 'BD', 'BD',
     '1C', '55', 'E9', 'E9'
   ];
-  const daemons = [
+  const daemons: HexNumber[][] = [
     ['BD', 'E9'],
     ['1C', '7A'],
     ['FF', '55'],
@@ -125,8 +98,8 @@ describe('OCR data validation', () => {
       grid.map((s, i) => (i === 9 ? 'asd' : s)),
       grid.map(() => ' '),
       grid.slice(1),
-      [] as string[],
-    ];
+      [],
+    ] as HexNumber[][];
 
     invalidGrids.forEach((grid) => {
       expect(() => validateRawData({ ...base, grid })).toThrow();
@@ -140,7 +113,7 @@ describe('OCR data validation', () => {
       daemons.map(() => ['asd']),
       daemons.map(() => [' ']),
       daemons.map(() => [] as string[]),
-    ];
+    ] as HexNumber[][][];
 
     invalidDaemons.forEach((daemons) => {
       expect(() => validateRawData({ ...base, daemons })).toThrow();
@@ -164,20 +137,20 @@ describe('Breach protocol solve', () => {
     const g1 = new BreachProtocol(grid, bufferSize);
     const results = [
       // case 1) all symbols are accesible from the start.
-      'dda',
+      ['55', '55', 'E9'],
       // case 2) one or more symbols are not in chain, but fallback values
       // contain starting value of sequence.
-      'dab',
+      ['55', 'E9', '1C'],
       // case 3) no starting value at all in one or more units. Sequence
       // will start from the start every time that happens until we run
       // out of buffer.
-      'add',
-    ].map((s) => g1.solve([new Sequence(s)]));
+      ['E9', '55', '55'],
+    ].map((s: HexNumber[]) => g1.solve([new Sequence(s, [new Daemon(s, 0)])]));
 
     results.forEach((result) => {
       expect(result.path.length).toBeLessThanOrEqual(bufferSize);
-      expect(result.getResolvedSequence().value).toContain(
-        result.sequence.value
+      expect(result.getResolvedSequence().tValue).toContain(
+        result.sequence.tValue
       );
     });
   });
@@ -185,12 +158,12 @@ describe('Breach protocol solve', () => {
   it('should find best sequences and solve BPs from raw data', () => {
     transformedData.forEach((d, i) => {
       const game = new BreachProtocol(d.tGrid, d.bufferSize);
-      const sequences = produceSequences(d.tDaemons, d.bufferSize);
+      const sequences = makeSequences(d.daemons, d.bufferSize);
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
-      expect(result.getResolvedSequence().value).toContain(
-        result.sequence.value
+      expect(result.getResolvedSequence().tValue).toContain(
+        result.sequence.tValue
       );
     });
   });
