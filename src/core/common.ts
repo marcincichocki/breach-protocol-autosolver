@@ -76,8 +76,8 @@ export function byBufferSize(bufferSize: BufferSize) {
 }
 
 export interface BreachProtocolRawData {
-  grid: string[];
-  daemons: string[][];
+  grid: HexNumber[];
+  daemons: HexNumber[][];
   bufferSize: BufferSize;
 }
 

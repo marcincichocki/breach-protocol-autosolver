@@ -74,13 +74,13 @@ describe('utilities', () => {
 
 describe('OCR data validation', () => {
   // prettier-ignore
-  const grid = [
+  const grid: HexNumber[] = [
     'BD', 'E9', '1C', '7A',
     'FF', '55', '55', '1C',
     '7A', '7A', 'BD', 'BD',
     '1C', '55', 'E9', 'E9'
   ];
-  const daemons = [
+  const daemons: HexNumber[][] = [
     ['BD', 'E9'],
     ['1C', '7A'],
     ['FF', '55'],
@@ -98,8 +98,8 @@ describe('OCR data validation', () => {
       grid.map((s, i) => (i === 9 ? 'asd' : s)),
       grid.map(() => ' '),
       grid.slice(1),
-      [] as string[],
-    ];
+      [],
+    ] as HexNumber[][];
 
     invalidGrids.forEach((grid) => {
       expect(() => validateRawData({ ...base, grid })).toThrow();
@@ -113,7 +113,7 @@ describe('OCR data validation', () => {
       daemons.map(() => ['asd']),
       daemons.map(() => [' ']),
       daemons.map(() => [] as string[]),
-    ];
+    ] as HexNumber[][][];
 
     invalidDaemons.forEach((daemons) => {
       expect(() => validateRawData({ ...base, daemons })).toThrow();
@@ -158,7 +158,7 @@ describe('Breach protocol solve', () => {
   it('should find best sequences and solve BPs from raw data', () => {
     transformedData.forEach((d, i) => {
       const game = new BreachProtocol(d.tGrid, d.bufferSize);
-      const sequences = makeSequences(d.daemons as HexNumber[][], d.bufferSize);
+      const sequences = makeSequences(d.daemons, d.bufferSize);
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
