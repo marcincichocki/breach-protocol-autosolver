@@ -1,17 +1,23 @@
 import { Command } from 'commander';
 import {
-  keyBindOption,
   debugLimitOption,
-  langOption,
-  soundPathOption,
-  skipUpdateCheckOption,
-  disableSoundOption,
-  KeyBindOption,
   DebugLimitOption,
-  LangOption,
-  SoundPathOption,
-  SkipUpdateCheckOption,
+  disableSoundOption,
   DisableSoundOption,
+  keyBindOption,
+  KeyBindOption,
+  langOption,
+  LangOption,
+  skipUpdateCheckOption,
+  SkipUpdateCheckOption,
+  soundPathOption,
+  SoundPathOption,
+  ThresholdBufferSize,
+  thresholdBufferSizeOption,
+  ThresholdDaemons,
+  thresholdDaemonsOption,
+  ThresholdGrid,
+  thresholdGridOption,
 } from './options';
 
 type Options = KeyBindOption &
@@ -19,7 +25,10 @@ type Options = KeyBindOption &
   LangOption &
   SoundPathOption &
   SkipUpdateCheckOption &
-  DisableSoundOption;
+  DisableSoundOption &
+  ThresholdDaemons &
+  ThresholdGrid &
+  ThresholdBufferSize;
 
 const { version, name } = require('../../../package.json');
 
@@ -31,6 +40,9 @@ export const program = new Command(name)
   .addOption(soundPathOption)
   .addOption(skipUpdateCheckOption)
   .addOption(disableSoundOption)
+  .addOption(thresholdDaemonsOption)
+  .addOption(thresholdGridOption)
+  .addOption(thresholdBufferSizeOption)
   .exitOverride();
 
 export const options = program.opts() as Options;

@@ -14,7 +14,7 @@ import configs from './configs.json';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
-export type Resolution = '1920x1080' | '2560x1440' | '3840x2160';
+export type Resolution = 'any' | '1920x1080' | '2560x1440' | '3840x2160';
 
 export interface BreachProtocolFragmentConfig {
   id: FragmentId;
@@ -208,7 +208,7 @@ class BreachProtocolFragment {
       throw new Error(t`UNSUPORTED_RESOLUTION_ERROR ${resolution}`);
     }
 
-    return threshold;
+    return this.config.threshold['any'] ?? threshold;
   }
 
   /**
@@ -286,11 +286,17 @@ function getPositionSquareMap({
 
 export async function breachProtocolOCR(
   input: string | Buffer,
-  workers: Record<FragmentId, Tesseract.Worker>
+  workers: Record<FragmentId, Tesseract.Worker>,
+  thresholds?: Partial<Record<FragmentId, number>>
 ) {
   const image = sharp(input);
   const results = await Promise.all(
     (configs as BreachProtocolFragmentConfig[])
+      .map((c) => {
+        c.threshold['any'] = thresholds?.[c.id];
+
+        return c;
+      })
       .map((c) => new BreachProtocolFragment(c, image.clone(), workers[c.id]))
       .map((f) => f.ocr())
   );

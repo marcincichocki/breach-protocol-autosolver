@@ -56,7 +56,11 @@ async function tryToOCRBreachProtocol(
   log.text = t`OCR_START`;
 
   try {
-    return await breachProtocolOCR(fileName, workers);
+    return await breachProtocolOCR(fileName, workers, {
+      bufferSize: options.thresholdBufferSize,
+      daemons: options.thresholdDaemons,
+      grid: options.thresholdGrid,
+    });
   } catch (e) {
     if (e instanceof BreachProtocolValidationError) {
       if (!options.disableSound) {
