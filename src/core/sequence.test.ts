@@ -100,12 +100,8 @@ describe('sequences', () => {
   });
 
   it('should create correct sequences out of raw daemons', () => {
-    // prettier-ignore
-    // no overlaps
-    const s1 = makeSequences([
-      ['1C', '1C'], 
-      ['55']
-    ], 5);
+    // No overlaps.
+    const s1 = makeSequences([['1C', '1C'], ['55']], 5);
 
     expect(s1.length).toBe(4);
     expect(s1.map((s) => s.value)).toEqual([
@@ -115,36 +111,94 @@ describe('sequences', () => {
       ['1C', '1C'],
     ]);
 
-    // prettier-ignore
-    // full overlap
-    const s2 = makeSequences([
-      ['7A', 'BD', 'BD'],
-      ['BD', 'BD'],
-      ['7A', '7A'],
-    ], 8);
+    // Full overlap
+    const s2 = makeSequences(
+      [
+        ['7A', 'BD', 'BD'],
+        ['BD', 'BD'],
+        ['7A', '7A'],
+      ],
+      8
+    );
 
     expect(s2.length).toBe(5);
 
-    // prettier-ignore
-    // small buffer
-    const s3 = makeSequences([
-      ['E9', 'E9', 'BD'],
-      ['FF', 'FF']
-    ], 4)
+    // Small buffer.
+    const s3 = makeSequences(
+      [
+        ['E9', 'E9', 'BD'],
+        ['FF', 'FF'],
+      ],
+      4
+    );
 
     expect(s3.length).toBe(2);
 
-    // prettier-ignore
-    // overlap
-    const s4 = makeSequences([
-      ['1C', '55', '55'],
-      ['55', 'FF'],
-      ['FF', 'FF']
-    ], 8)
+    // No child daemons, but there is overlap
+    // between regular daemons.
+    const s4 = makeSequences(
+      [
+        ['1C', '55', '55'],
+        ['55', 'FF'],
+        ['FF', 'FF'],
+      ],
+      8
+    );
 
-    expect(s4.length).toBe(15);
-    expect(s4[0].strength).toBe(6);
-    expect(s4[0].length).toBe(5);
-    expect(s4[s4.length - 1].strength).toBe(1);
+    expect(s4.length).toBe(14);
+
+    // Duplicated daemon with no overlap.
+    const s5 = makeSequences(
+      [
+        ['1C', '1C'],
+        ['1C', '1C'],
+        ['BD', '1C', '55'],
+      ],
+      7
+    );
+
+    expect(s5.length).toBe(4);
+
+    // Multiple overlaps and duplicates.
+    const s6 = makeSequences(
+      [['1C', '1C'], ['1C'], ['1C', '1C', '1C'], ['1C', '1C']],
+      8
+    );
+
+    expect(s6.map((s) => s.value)).toEqual([
+      ['1C', '1C', '1C'],
+      ['1C', '1C'],
+      ['1C'],
+    ]);
+    expect(s6.length).toBe(3);
+
+    // Duplicate with partial overlap.
+    const s7 = makeSequences(
+      [
+        ['BD', '55', '1C'],
+        ['1C', '1C'],
+        ['BD', '55', '1C'],
+      ],
+      7
+    );
+
+    expect(s7.map((s) => s.value)).toEqual([
+      ['BD', '55', '1C', '1C'],
+      ['1C', '1C', 'BD', '55', '1C'],
+      ['BD', '55', '1C'],
+      ['1C', '1C'],
+    ]);
+    expect(s7.length).toBe(4);
+
+    // Only duplicate.
+    const s8 = makeSequences(
+      [
+        ['1C', '1C'],
+        ['1C', '1C'],
+      ],
+      7
+    );
+
+    expect(s8.length).toBe(1);
   });
 });
