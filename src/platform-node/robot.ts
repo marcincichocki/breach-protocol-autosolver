@@ -88,5 +88,5 @@ function sleep(delay: number = options.delay) {
 }
 
 function exit() {
-  return nircmd('senkeypress esc');
+  return nircmd('sendkeypress esc');
 }
