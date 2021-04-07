@@ -8,7 +8,8 @@ import { getScreenShotPath, removeOldestScreenShot } from './debug';
 export async function resolveBreachProtocol(
   path: string[],
   squareMap: Map<string, Point>,
-  didBreachProtocolExit: boolean
+  willBreachProtocolExit: boolean,
+  shouldForceClose: boolean
 ) {
   const to = await mouseMove();
 
@@ -20,8 +21,17 @@ export async function resolveBreachProtocol(
     await sleep();
   }
 
-  if (!didBreachProtocolExit && !options.disableAutoExit) {
+  if (!willBreachProtocolExit && !options.disableAutoExit) {
     await exit();
+
+    // Sometimes sequence does not use every daemon, and there might be
+    // a case in which sequence ended, but there is still anough space
+    // in a buffer to fit last sequence. However since it is impossible
+    // to find correct squares, autosolver stopped.
+    if (shouldForceClose) {
+      console.log('FORCE CLOSING!');
+      await exit();
+    }
   }
 }
 

@@ -43,12 +43,22 @@ export async function solveBreachProtocol(
     return;
   }
 
-  const didBreachProtocolExit = result.path.length === data.bufferSize;
+  const willBreachProtocolExit = result.path.length === data.bufferSize;
+  const notUsedDaemons = data.daemons.filter(
+    (d, i) => !result.sequence.indexes.includes(i)
+  );
+  const notUsedDaemonsSize = notUsedDaemons
+    .map((d) => d.length)
+    .reduce((a, b) => a + b, 0);
+  const shouldForceClose = notUsedDaemonsSize
+    ? result.path.length + notUsedDaemonsSize <= data.bufferSize
+    : false;
 
   await resolveBreachProtocol(
     result.path,
     ocr.squarePositionMap,
-    didBreachProtocolExit
+    willBreachProtocolExit,
+    shouldForceClose
   );
 
   log.succeed(t`SOLVER_DONE`);
