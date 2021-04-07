@@ -1,8 +1,10 @@
+import { HexNumber } from './common';
 import {
   findOverlap,
   getSequenceFromPermutation,
   makeSequences,
   parseDaemons,
+  Sequence,
 } from './sequence';
 
 describe('sequences', () => {
@@ -84,7 +86,7 @@ describe('sequences', () => {
 
     expect(s2.length).toBe(4);
     expect(s2.value).toEqual(p2.flatMap((d) => d.value));
-    expect(s2.strength).toBe(3);
+    expect(s2.strength).toBe(4);
     expect(s2.tValue).toBe(p2.map((d) => d.tValue).join(''));
 
     const [p3] = parseDaemons([
@@ -96,55 +98,175 @@ describe('sequences', () => {
 
     expect(s3.length).toBe(4);
     expect(s3.value).toEqual(['1C', '1C', '1C', 'BD']);
-    expect(s3.strength).toBe(6);
+    expect(s3.strength).toBe(9);
   });
 
   it('should create correct sequences out of raw daemons', () => {
-    // prettier-ignore
-    // no overlaps
-    const s1 = makeSequences([
-      ['1C', '1C'], 
-      ['55']
-    ], 5);
+    // No overlaps.
+    const s1 = makeSequences([['1C', '1C'], ['55']], 5);
 
-    expect(s1.length).toBe(4);
-    expect(s1.map((s) => s.value)).toEqual([
+    expectSequencesToContainDaemons(s1, [[0, 1], [0, 1], [1], [0]]);
+    expectSequencesToEqual(s1, [
       ['1C', '1C', '55'],
       ['55', '1C', '1C'],
       ['55'],
       ['1C', '1C'],
     ]);
 
-    // prettier-ignore
-    // full overlap
-    const s2 = makeSequences([
+    // Full overlap
+    const s2 = makeSequences(
+      [
+        ['7A', 'BD', 'BD'],
+        ['BD', 'BD'],
+        ['7A', '7A'],
+      ],
+      8
+    );
+
+    expectSequencesToContainDaemons(s2, [
+      [0, 1, 2],
+      [0, 1, 2],
+      [2],
+      [0, 1],
+      [1],
+    ]);
+    expectSequencesToEqual(s2, [
+      ['7A', '7A', 'BD', 'BD'],
+      ['7A', 'BD', 'BD', '7A', '7A'],
+      ['7A', '7A'],
       ['7A', 'BD', 'BD'],
       ['BD', 'BD'],
-      ['7A', '7A'],
-    ], 8);
+    ]);
 
-    expect(s2.length).toBe(5);
+    // Small buffer.
+    const s3 = makeSequences(
+      [
+        ['E9', 'E9', 'BD'],
+        ['FF', 'FF'],
+      ],
+      4
+    );
 
-    // prettier-ignore
-    // small buffer
-    const s3 = makeSequences([
+    expectSequencesToContainDaemons(s3, [[1], [0]]);
+    expectSequencesToEqual(s3, [
+      ['FF', 'FF'],
       ['E9', 'E9', 'BD'],
-      ['FF', 'FF']
-    ], 4)
+    ]);
 
-    expect(s3.length).toBe(2);
+    // No child daemons, but there is overlap
+    // between regular daemons.
+    const s4 = makeSequences(
+      [
+        ['1C', '55', '55'],
+        ['55', 'FF'],
+        ['FF', 'FF'],
+      ],
+      8
+    );
 
-    // prettier-ignore
-    // overlap
-    const s4 = makeSequences([
-      ['1C', '55', '55'],
+    expectSequencesToContainDaemons(s4, [
+      [0, 1, 2],
+      [0, 1, 2],
+      [0, 1, 2],
+      [0, 1, 2],
+      [0, 1, 2],
+      [0, 1, 2],
+      [1, 2],
+      [1, 2],
+      [0, 2],
+      [2],
+      [0, 1],
+      [0, 1],
+      [1],
+      [0],
+    ]);
+    expectSequencesToEqual(s4, [
+      ['1C', '55', '55', 'FF', 'FF'],
+      ['FF', 'FF', '1C', '55', '55', 'FF'],
+      ['55', 'FF', 'FF', '1C', '55', '55'],
+      ['55', 'FF', '1C', '55', '55', 'FF', 'FF'],
+      ['1C', '55', '55', 'FF', 'FF', '55', 'FF'],
+      ['FF', 'FF', '55', 'FF', '1C', '55', '55'],
+      ['55', 'FF', 'FF'],
+      ['FF', 'FF', '55', 'FF'],
+      ['FF', 'FF', '1C', '55', '55'],
+      ['FF', 'FF'],
+      ['1C', '55', '55', 'FF'],
+      ['55', 'FF', '1C', '55', '55'],
       ['55', 'FF'],
-      ['FF', 'FF']
-    ], 8)
+      ['1C', '55', '55'],
+    ]);
 
-    expect(s4.length).toBe(15);
-    expect(s4[0].strength).toBe(6);
-    expect(s4[0].length).toBe(5);
-    expect(s4[s4.length - 1].strength).toBe(1);
+    // Duplicated daemon with no overlap.
+    const s5 = makeSequences(
+      [
+        ['1C', '1C'],
+        ['1C', '1C'],
+        ['BD', '1C', '55'],
+      ],
+      7
+    );
+
+    expectSequencesToContainDaemons(s5, [[0, 1, 2], [0, 1, 2], [2], [0, 1]]);
+    expectSequencesToEqual(s5, [
+      ['1C', '1C', 'BD', '1C', '55'],
+      ['BD', '1C', '55', '1C', '1C'],
+      ['BD', '1C', '55'],
+      ['1C', '1C'],
+    ]);
+
+    // Multiple overlaps and duplicates.
+    const s6 = makeSequences(
+      [['1C', '1C'], ['1C'], ['1C', '1C', '1C'], ['1C', '1C']],
+      8
+    );
+
+    expectSequencesToContainDaemons(s6, [[0, 1, 2, 3], [0, 1, 3], [1]]);
+    expectSequencesToEqual(s6, [['1C', '1C', '1C'], ['1C', '1C'], ['1C']]);
+
+    // Duplicate with partial overlap.
+    const s7 = makeSequences(
+      [
+        ['BD', '55', '1C'],
+        ['1C', '1C'],
+        ['BD', '55', '1C'],
+      ],
+      7
+    );
+
+    expectSequencesToEqual(s7, [
+      ['BD', '55', '1C', '1C'],
+      ['1C', '1C', 'BD', '55', '1C'],
+      ['BD', '55', '1C'],
+      ['1C', '1C'],
+    ]);
+    expectSequencesToContainDaemons(s7, [[0, 1, 2], [0, 1, 2], [0, 2], [1]]);
+
+    // Only duplicate.
+    const s8 = makeSequences(
+      [
+        ['1C', '1C'],
+        ['1C', '1C'],
+      ],
+      7
+    );
+
+    expectSequencesToContainDaemons(s8, [[0, 1]]);
+    expectSequencesToEqual(s8, [['1C', '1C']]);
   });
 });
+
+function expectSequencesToEqual(sequences: Sequence[], values: HexNumber[][]) {
+  sequences.forEach((s, i) => expect(s.value).toEqual(values[i]));
+}
+
+function expectSequencesToContainDaemons(
+  sequences: Sequence[],
+  indexes: number[][]
+) {
+  sequences.forEach((s, i) => expectSequenceToContainDaemons(s, indexes[i]));
+}
+
+function expectSequenceToContainDaemons(sequence: Sequence, indexes: number[]) {
+  expect(sequence.indexes.sort()).toEqual(indexes.sort());
+}

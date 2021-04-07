@@ -1,5 +1,5 @@
-import { t, unique } from '@/common';
-import { Sequence } from './sequence';
+import { t, unique, uniqueBy } from '@/common';
+import { Daemon, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
@@ -73,6 +73,13 @@ export function generateSquareMap<T>(
  */
 export function byBufferSize(bufferSize: BufferSize) {
   return (s: Sequence) => s.value.length <= bufferSize;
+}
+
+/**
+ * Get unique list of {@link Sequence} or {@link Daemon} by their value.
+ */
+export function byUniqueValue() {
+  return uniqueBy<Sequence | Daemon>('tValue');
 }
 
 export interface BreachProtocolRawData {

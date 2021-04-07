@@ -1,5 +1,12 @@
-import { permute, uniqueBy, uniqueWith, memoize } from '@/common';
-import { BufferSize, fromHex, HexNumber, toHex } from './common';
+import { memoize, permute, uniqueWith } from '@/common';
+import {
+  BufferSize,
+  byBufferSize,
+  byUniqueValue,
+  fromHex,
+  HexNumber,
+  toHex,
+} from './common';
 
 export interface RawSequence {
   value: string[];
@@ -82,7 +89,7 @@ export class Sequence {
 
   /** Strength is calculated by index of daemon. */
   readonly strength = this.parts
-    .map((d) => d.index + 1)
+    .map((d) => 2 * d.index + 1)
     .reduce((a, b) => a + b, 0);
 
   constructor(public value: HexNumber[], public readonly parts: Daemon[]) {}
@@ -107,7 +114,8 @@ export function parseDaemons(
 
       const d2 = baseDaemons[j];
 
-      if (d1.tValue.includes(d2.tValue)) {
+      // Prevent marking child as a parent.
+      if (d1.tValue.includes(d2.tValue) && !d1.isChild) {
         d1.addChild(d2);
         d2.setParent(d1);
       }
@@ -124,7 +132,7 @@ export function parseDaemons(
 export function makeSequences(daemons: HexNumber[][], bufferSize: BufferSize) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
-    .filter(uniqueBy('tValue'))
+    .filter(byUniqueValue())
     .map((d) => getSequenceFromPermutation([d]));
 
   const regularSequences = permute(regularDaemons)
@@ -134,7 +142,8 @@ export function makeSequences(daemons: HexNumber[][], bufferSize: BufferSize) {
 
   return regularSequences
     .concat(childSequences)
-    .filter((s) => s.length <= bufferSize)
+    .filter(byUniqueValue())
+    .filter(byBufferSize(bufferSize))
     .sort((s1, s2) => {
       const byStrength = s2.strength - s1.strength;
       const byLength = s1.length - s2.length;
