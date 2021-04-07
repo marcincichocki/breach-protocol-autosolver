@@ -86,7 +86,7 @@ describe('sequences', () => {
 
     expect(s2.length).toBe(4);
     expect(s2.value).toEqual(p2.flatMap((d) => d.value));
-    expect(s2.strength).toBe(3);
+    expect(s2.strength).toBe(4);
     expect(s2.tValue).toBe(p2.map((d) => d.tValue).join(''));
 
     const [p3] = parseDaemons([
@@ -98,7 +98,7 @@ describe('sequences', () => {
 
     expect(s3.length).toBe(4);
     expect(s3.value).toEqual(['1C', '1C', '1C', 'BD']);
-    expect(s3.strength).toBe(6);
+    expect(s3.strength).toBe(9);
   });
 
   it('should create correct sequences out of raw daemons', () => {
@@ -137,7 +137,6 @@ describe('sequences', () => {
       ['7A', 'BD', 'BD'],
       ['BD', 'BD'],
     ]);
-    expect(s2.length).toBe(5);
 
     // Small buffer.
     const s3 = makeSequences(
@@ -197,7 +196,6 @@ describe('sequences', () => {
       ['55', 'FF'],
       ['1C', '55', '55'],
     ]);
-    expect(s4.length).toBe(14);
 
     // Duplicated daemon with no overlap.
     const s5 = makeSequences(
@@ -209,12 +207,12 @@ describe('sequences', () => {
       7
     );
 
-    expectSequencesToContainDaemons(s5, [[0, 1, 2], [0, 1, 2], [0, 1], [2]]);
+    expectSequencesToContainDaemons(s5, [[0, 1, 2], [0, 1, 2], [2], [0, 1]]);
     expectSequencesToEqual(s5, [
       ['1C', '1C', 'BD', '1C', '55'],
       ['BD', '1C', '55', '1C', '1C'],
-      ['1C', '1C'],
       ['BD', '1C', '55'],
+      ['1C', '1C'],
     ]);
 
     // Multiple overlaps and duplicates.

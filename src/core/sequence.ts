@@ -89,7 +89,7 @@ export class Sequence {
 
   /** Strength is calculated by index of daemon. */
   readonly strength = this.parts
-    .map((d) => d.index + 1)
+    .map((d) => 2 * d.index + 1)
     .reduce((a, b) => a + b, 0);
 
   constructor(public value: HexNumber[], public readonly parts: Daemon[]) {}
