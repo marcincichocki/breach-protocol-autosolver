@@ -43,7 +43,13 @@ export async function solveBreachProtocol(
     return;
   }
 
-  await resolveBreachProtocol(result.path, ocr.squarePositionMap);
+  const didBreachProtocolExit = result.path.length === data.bufferSize;
+
+  await resolveBreachProtocol(
+    result.path,
+    ocr.squarePositionMap,
+    didBreachProtocolExit
+  );
 
   log.succeed(t`SOLVER_DONE`);
 }

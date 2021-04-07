@@ -2,11 +2,13 @@ import { Point, t } from '@/common';
 import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
+import { options } from './cli';
 import { getScreenShotPath, removeOldestScreenShot } from './debug';
 
 export async function resolveBreachProtocol(
   path: string[],
-  squareMap: Map<string, Point>
+  squareMap: Map<string, Point>,
+  didBreachProtocolExit: boolean
 ) {
   const to = await mouseMove();
 
@@ -15,7 +17,11 @@ export async function resolveBreachProtocol(
 
     await to(x, y);
     await click();
-    await sleep(75);
+    await sleep();
+  }
+
+  if (!didBreachProtocolExit && options.autoExit) {
+    await exit();
   }
 }
 
@@ -77,6 +83,10 @@ async function mouseMove(restart = true) {
   };
 }
 
-function sleep(delay: number) {
+function sleep(delay: number = options.delay) {
   return new Promise((r) => setTimeout(r, delay));
+}
+
+function exit() {
+  return nircmd('senkeypress esc');
 }
