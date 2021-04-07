@@ -20,7 +20,7 @@ export async function resolveBreachProtocol(
     await sleep();
   }
 
-  if (!didBreachProtocolExit && options.autoExit) {
+  if (!didBreachProtocolExit && !options.disableAutoExit) {
     await exit();
   }
 }

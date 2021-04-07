@@ -1,6 +1,9 @@
-export { AutoExitOption, autoExitOption } from './auto-exit';
 export { DebugLimitOption, debugLimitOption } from './debug-limit';
 export { DelayOption, delayOption } from './delay';
+export {
+  DisableAutoExitOption,
+  disableAutoExitOption,
+} from './disable-auto-exit';
 export { DisableSoundOption, disableSoundOption } from './disable-sound';
 export { KeyBindOption, keyBindOption } from './key-bind';
 export { LangOption, langOption } from './lang';
