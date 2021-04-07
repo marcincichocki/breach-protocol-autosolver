@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.5.0...v1.5.1) (2021-04-07)
+
+
+### Bug Fixes
+
+* prevent child daemon to be marked as parent ([76ac227](https://github.com/marcincichocki/breach-protocol-autosolver/commit/76ac227d4594692a26f32d991491fb262b19234d))
+
 ## [1.5.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.4.1...v1.5.0) (2021-04-05)
 
 
