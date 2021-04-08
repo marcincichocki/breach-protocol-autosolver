@@ -11,12 +11,10 @@ export async function resolveBreachProtocol(
   squareMap: Map<string, Point>,
   { shouldForceClose, willExit }: BreachProtocolExitStrategy
 ) {
-  const to = await mouseMove();
-
   for (const square of path) {
     const { x, y } = squareMap.get(square);
 
-    await to(x, y);
+    await setcursor(x, y);
     await click();
     await sleep();
   }
@@ -43,7 +41,7 @@ export async function resolveBreachProtocol(
 
 export async function captureScreen(screen: string) {
   // Move pointer away to not mess with ocr.
-  await movePointerAway();
+  await setcursor(0, 0);
   await removeOldestScreenShot();
 
   const filename = getScreenShotPath();
@@ -69,34 +67,12 @@ async function nircmd(command: string, options = {}) {
   });
 }
 
-function movePointerAway() {
-  return move(-9999, -9999);
-}
-
-function move(...args: number[]) {
-  return nircmd(`sendmouse move ${args.join(' ')}`);
+function setcursor(x: number, y: number) {
+  return nircmd(`setcursor ${x} ${y}`);
 }
 
 function click() {
   return nircmd('sendmouse left click');
-}
-
-async function mouseMove(restart = true) {
-  if (restart) {
-    await movePointerAway();
-  }
-
-  let oldX = 0;
-  let oldY = 0;
-
-  return async (x: number, y: number) => {
-    const r = await move(x - oldX, y - oldY);
-
-    oldX = x;
-    oldY = y;
-
-    return r;
-  };
 }
 
 function sleep(delay: number = options.delay) {
