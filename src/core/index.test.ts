@@ -9,9 +9,8 @@ import {
   transformRawData,
   validateRawData,
 } from './common';
-import { BreachProtocol } from './game';
-import { Daemon, makeSequences } from './sequence';
-import { Sequence, findOverlap } from './sequence';
+import { BreachProtocol, BreachProtocolResult } from './game';
+import { Daemon, makeSequences, Sequence } from './sequence';
 import data from './test-data.json';
 
 const registryBreachProtocols = [
@@ -149,9 +148,7 @@ describe('Breach protocol solve', () => {
 
     results.forEach((result) => {
       expect(result.path.length).toBeLessThanOrEqual(bufferSize);
-      expect(result.getResolvedSequence().tValue).toContain(
-        result.sequence.tValue
-      );
+      expectResolvedSequenceToContainDaemons(result);
     });
   });
 
@@ -162,9 +159,71 @@ describe('Breach protocol solve', () => {
       const result = game.solve(sequences);
 
       expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
-      expect(result.getResolvedSequence().tValue).toContain(
-        result.sequence.tValue
-      );
+      expectResolvedSequenceToContainDaemons(result);
     });
   });
+
+  it('should slice path if it contains accidental daemons', () => {
+    // prettier-ignore
+    const grid1: HexNumber[] = [
+      'BD', '1C', 'E9', '1C', '55',
+      '1C', '1C', '55', '55', 'BD',
+      '1C', '1C', '1C', '55', 'BD',
+      '1C', 'E9', '55', '55', '55',
+      '1C', '55', '1C', '1C', '1C',
+    ]
+    const daemons1: HexNumber[][] = [
+      ['1C', '55', '55'],
+      ['55', '1C'],
+    ];
+    const bufferSize1: BufferSize = 7;
+
+    const data1 = transformRawData({
+      grid: grid1,
+      daemons: daemons1,
+      bufferSize: bufferSize1,
+    });
+    const g1 = new BreachProtocol(data1.tGrid, bufferSize1);
+    const sequences1 = makeSequences(daemons1, bufferSize1);
+    const result1 = g1.solve(sequences1);
+
+    expect(result1.path.length).toBeLessThan(result1.rawPath.length);
+    expect(result1.path.join()).not.toBe(result1.rawPath.join());
+    expectResolvedSequenceToContainDaemons(result1);
+
+    // prettier-ignore
+    const grid2: HexNumber[] = [
+      'E9', '1C', 'E9', '1C', 'BD',
+      'BD', 'BD', 'BD', '55', '1C',
+      '55', '1C', '1C', '55', '1C',
+      '1C', 'E9', '1C', 'BD', 'BD',
+      'E9', '1C', '55', 'BD', '55',
+    ]
+    const daemons2: HexNumber[][] = [
+      ['55', 'E9', 'BD'],
+      ['1C', '1C'],
+    ];
+    const bufferSize2: BufferSize = 7;
+
+    const data2 = transformRawData({
+      grid: grid2,
+      daemons: daemons2,
+      bufferSize: bufferSize2,
+    });
+    const g2 = new BreachProtocol(data2.tGrid, bufferSize2);
+    const sequences2 = makeSequences(daemons2, bufferSize2);
+    const result2 = g2.solve(sequences2);
+
+    expect(result2.path.length).toBeLessThan(result2.rawPath.length);
+    expect(result2.path.join()).not.toBe(result2.rawPath.join());
+    expectResolvedSequenceToContainDaemons(result2);
+  });
 });
+
+function expectResolvedSequenceToContainDaemons(result: BreachProtocolResult) {
+  const resolved = result.getResolvedSequence();
+
+  result.sequence.parts.forEach((d) => {
+    expect(resolved.tValue).toContain(d.tValue);
+  });
+}
