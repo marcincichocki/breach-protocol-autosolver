@@ -2,6 +2,10 @@ import { Command } from 'commander';
 import {
   debugLimitOption,
   DebugLimitOption,
+  delayOption,
+  DelayOption,
+  disableAutoExitOption,
+  DisableAutoExitOption,
   disableSoundOption,
   DisableSoundOption,
   keyBindOption,
@@ -28,7 +32,9 @@ type Options = KeyBindOption &
   DisableSoundOption &
   ThresholdDaemons &
   ThresholdGrid &
-  ThresholdBufferSize;
+  ThresholdBufferSize &
+  DelayOption &
+  DisableAutoExitOption;
 
 const { version, name } = require('../../../package.json');
 
@@ -43,6 +49,8 @@ export const program = new Command(name)
   .addOption(thresholdDaemonsOption)
   .addOption(thresholdGridOption)
   .addOption(thresholdBufferSizeOption)
+  .addOption(delayOption)
+  .addOption(disableAutoExitOption)
   .exitOverride();
 
 export const options = program.opts() as Options;

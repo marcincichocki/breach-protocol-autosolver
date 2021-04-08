@@ -10,19 +10,32 @@ import {
 import { Sequence } from './sequence';
 
 export class BreachProtocolResult {
+  public readonly path = this.rawPath.slice(0, this.findEndIndex());
+
   constructor(
     public readonly sequence: Sequence,
-    public readonly path: string[],
+    public readonly rawPath: string[],
     public readonly breachProtocol: BreachProtocol
   ) {}
+
+  private resolvePath(path: string[]) {
+    return path.map((s) => this.breachProtocol.gridMap.get(s));
+  }
+
+  private findEndIndex() {
+    const resolved = this.resolvePath(this.rawPath).join('');
+    const indexes = this.sequence.parts.map(
+      (d) => resolved.indexOf(d.tValue) + d.length
+    );
+
+    return Math.max(...indexes);
+  }
 
   /**
    * Produces sequence from resolved path.
    */
   getResolvedSequence() {
-    const value = this.path
-      .map((s) => this.breachProtocol.gridMap.get(s))
-      .map(toHex);
+    const value = this.resolvePath(this.path).map(toHex);
 
     return new Sequence(value, this.sequence.parts);
   }
