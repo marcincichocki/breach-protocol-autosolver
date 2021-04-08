@@ -188,7 +188,7 @@ describe('Breach protocol solve', () => {
     const result1 = g1.solve(sequences1);
 
     expect(result1.path.length).toBeLessThan(result1.rawPath.length);
-    expect(result1.path.join()).not.toBe(result1.rawPath.join());
+    expect(result1.path).not.toEqual(result1.rawPath);
     expectResolvedSequenceToContainDaemons(result1);
 
     // prettier-ignore
@@ -215,7 +215,7 @@ describe('Breach protocol solve', () => {
     const result2 = g2.solve(sequences2);
 
     expect(result2.path.length).toBeLessThan(result2.rawPath.length);
-    expect(result2.path.join()).not.toBe(result2.rawPath.join());
+    expect(result2.path).not.toEqual(result2.rawPath);
     expectResolvedSequenceToContainDaemons(result2);
   });
 });
