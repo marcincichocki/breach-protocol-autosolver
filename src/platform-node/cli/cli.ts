@@ -22,6 +22,8 @@ import {
   thresholdDaemonsOption,
   ThresholdGrid,
   thresholdGridOption,
+  UseScalingOption,
+  useScalingOption,
 } from './options';
 
 type Options = KeyBindOption &
@@ -34,7 +36,8 @@ type Options = KeyBindOption &
   ThresholdGrid &
   ThresholdBufferSize &
   DelayOption &
-  DisableAutoExitOption;
+  DisableAutoExitOption &
+  UseScalingOption;
 
 const { version, name } = require('../../../package.json');
 
@@ -51,6 +54,7 @@ export const program = new Command(name)
   .addOption(thresholdBufferSizeOption)
   .addOption(delayOption)
   .addOption(disableAutoExitOption)
+  .addOption(useScalingOption)
   .exitOverride();
 
 export const options = program.opts() as Options;
