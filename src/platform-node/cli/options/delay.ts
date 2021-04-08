@@ -1,7 +1,7 @@
 import { Option } from 'commander';
 import { rangeParser } from './common';
 
-const defaultValue = 20;
+const defaultValue = 75;
 
 export function parser(value: string) {
   const min = defaultValue;
