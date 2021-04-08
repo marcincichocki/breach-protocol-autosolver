@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.6.0...v1.6.1) (2021-04-08)
+
+
+### Bug Fixes
+
+* set correct min value for --delay flag ([ba9c446](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ba9c446a4f5c6ae68af09d79d72a8e4e9409fbb2))
+
 ## [1.6.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.5.1...v1.6.0) (2021-04-08)
 
 
