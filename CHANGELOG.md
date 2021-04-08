@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.5.1...v1.6.0) (2021-04-08)
+
+
+### Features
+
+* add --delay and --disable-auto-exit flags ([62b9c61](https://github.com/marcincichocki/breach-protocol-autosolver/commit/62b9c61aadefe1530773098eb9e4532f260b6887)), closes [#39](https://github.com/marcincichocki/breach-protocol-autosolver/issues/39) [#41](https://github.com/marcincichocki/breach-protocol-autosolver/issues/41)
+* add display scaling support ([5b8f328](https://github.com/marcincichocki/breach-protocol-autosolver/commit/5b8f328a8606f52ca5cbab78bd6262381a94f6c0))
+
 ### [1.5.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.5.0...v1.5.1) (2021-04-07)
 
 
