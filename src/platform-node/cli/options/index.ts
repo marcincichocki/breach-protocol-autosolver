@@ -18,3 +18,4 @@ export {
 } from './threshold-buffer-size';
 export { ThresholdDaemons, thresholdDaemonsOption } from './threshold-daemons';
 export { ThresholdGrid, thresholdGridOption } from './threshold-grid';
+export { UseScalingOption, useScalingOption } from './use-scaling';

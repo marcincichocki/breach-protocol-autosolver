@@ -1,4 +1,4 @@
-import { Point, t } from '@/common';
+import { Point, t, getScaling } from '@/common';
 import { BreachProtocolExitStrategy } from '@/core';
 import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
@@ -88,9 +88,12 @@ async function mouseMove(restart = true) {
 
   let oldX = 0;
   let oldY = 0;
+  const scaling = options.useScaling ? getScaling() : 1;
 
   return async (x: number, y: number) => {
-    const r = await move(x - oldX, y - oldY);
+    const sX = (x - oldX) / scaling;
+    const sY = (y - oldY) / scaling;
+    const r = await move(sX, sY);
 
     oldX = x;
     oldY = y;

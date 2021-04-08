@@ -1,4 +1,4 @@
-import { pressAnyKey, t, setLang } from '@/common';
+import { pressAnyKey, t, setLang, setScaling } from '@/common';
 import { BreachProtocolFragmentConfig, loadWorkers } from '@/core';
 import { prompt } from 'inquirer';
 import ora from 'ora';
@@ -27,6 +27,9 @@ export async function bootstrap() {
 
   const displays = await screenshot.listDisplays();
   const screenId = await getScreenId(displays);
+  const { dpiScale } = displays.find((d) => d.id === screenId);
+
+  setScaling(dpiScale);
 
   return {
     screenId,
