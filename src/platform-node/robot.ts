@@ -81,8 +81,6 @@ function click() {
   return nircmd('sendmouse left click');
 }
 
-const scaling = options.useScaling ? getScaling() : 1;
-
 async function mouseMove(restart = true) {
   if (restart) {
     await movePointerAway();
@@ -90,6 +88,7 @@ async function mouseMove(restart = true) {
 
   let oldX = 0;
   let oldY = 0;
+  const scaling = options.useScaling ? getScaling() : 1;
 
   return async (x: number, y: number) => {
     const sX = (x - oldX) / scaling;
