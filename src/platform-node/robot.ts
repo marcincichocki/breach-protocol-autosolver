@@ -1,4 +1,5 @@
 import { Point, t } from '@/common';
+import { BreachProtocolExitStrategy } from '@/core';
 import { execFile } from 'child_process';
 import isWsl from 'is-wsl';
 import screenshot from 'screenshot-desktop';
@@ -8,8 +9,7 @@ import { getScreenShotPath, removeOldestScreenShot } from './debug';
 export async function resolveBreachProtocol(
   path: string[],
   squareMap: Map<string, Point>,
-  willBreachProtocolExit: boolean,
-  shouldForceClose: boolean
+  { shouldForceClose, willExit }: BreachProtocolExitStrategy
 ) {
   const to = await mouseMove();
 
@@ -21,15 +21,21 @@ export async function resolveBreachProtocol(
     await sleep();
   }
 
-  if (!willBreachProtocolExit && !options.disableAutoExit) {
+  // Breach protocol exits on its own when sequence fill
+  // buffer completly.
+  if (!willExit && !options.disableAutoExit) {
+    // If buffer is not yet filled, but sequence is finished
+    // breach protocol will hang on exit screen. Pressing esc
+    // exits it.
     await exit();
 
     // Sometimes sequence does not use every daemon, and there might be
-    // a case in which sequence ended, but there is still anough space
-    // in a buffer to fit last sequence. However since it is impossible
-    // to find correct squares, autosolver stopped.
+    // a rare case in which sequence ended, but there is still enough space
+    // in a buffer to fit leftover daemons. However, since it is impossible
+    // to find correct squares, autosolver will stop.
+    // To hanlde such case we have to press esc twice: once to stop it, and
+    // second time to exit it.
     if (shouldForceClose) {
-      console.log('FORCE CLOSING!');
       await exit();
     }
   }

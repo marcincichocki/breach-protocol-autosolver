@@ -1,4 +1,5 @@
 import { t, unique, uniqueBy } from '@/common';
+import { BreachProtocolResult } from './game';
 import { Daemon, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
@@ -156,4 +157,29 @@ export function validateRawData({
       bufferSize,
     });
   }
+}
+
+export interface BreachProtocolExitStrategy {
+  willExit: boolean;
+  shouldForceClose: boolean;
+}
+
+// TODO: allow raw data to be accessed from result
+export function resolveExitStrategy(
+  result: BreachProtocolResult,
+  data: BreachProtocolRawData
+): BreachProtocolExitStrategy {
+  const willExit = result.path.length === data.bufferSize;
+  const size = data.daemons
+    .filter((d, i) => !result.sequence.indexes.includes(i))
+    .map((d) => d.length)
+    .reduce((a, b) => a + b, 0);
+  const shouldForceClose = size
+    ? result.path.length + size <= data.bufferSize
+    : false;
+
+  return {
+    willExit,
+    shouldForceClose,
+  };
 }

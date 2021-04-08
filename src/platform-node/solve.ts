@@ -5,6 +5,7 @@ import {
   BreachProtocolValidationError,
   FragmentId,
   makeSequences,
+  resolveExitStrategy,
   transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
@@ -43,23 +44,9 @@ export async function solveBreachProtocol(
     return;
   }
 
-  const willBreachProtocolExit = result.path.length === data.bufferSize;
-  const notUsedDaemons = data.daemons.filter(
-    (d, i) => !result.sequence.indexes.includes(i)
-  );
-  const notUsedDaemonsSize = notUsedDaemons
-    .map((d) => d.length)
-    .reduce((a, b) => a + b, 0);
-  const shouldForceClose = notUsedDaemonsSize
-    ? result.path.length + notUsedDaemonsSize <= data.bufferSize
-    : false;
+  const exitStrategy = resolveExitStrategy(result, ocr.rawData);
 
-  await resolveBreachProtocol(
-    result.path,
-    ocr.squarePositionMap,
-    willBreachProtocolExit,
-    shouldForceClose
-  );
+  await resolveBreachProtocol(result.path, ocr.squarePositionMap, exitStrategy);
 
   log.succeed(t`SOLVER_DONE`);
 }
