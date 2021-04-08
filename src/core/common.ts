@@ -5,12 +5,12 @@ import { Daemon, Sequence } from './sequence';
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
 export const BUFFER_SIZE_MIN = 4;
-export const BUFFER_SIZE_MAX = 8;
+export const BUFFER_SIZE_MAX = 9;
 
 const values = HEX_NUMBERS.map((x, i) => String.fromCharCode(i + 97));
 const HEX_MAP = new Map(HEX_NUMBERS.map((k, i) => [k, values[i]]));
 
-export type BufferSize = 4 | 5 | 6 | 7 | 8;
+export type BufferSize = 4 | 5 | 6 | 7 | 8 | 9;
 
 export function toHex(value: string) {
   for (let [k, v] of HEX_MAP.entries()) {
