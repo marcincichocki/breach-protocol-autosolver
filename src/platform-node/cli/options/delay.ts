@@ -4,7 +4,7 @@ import { rangeParser } from './common';
 const defaultValue = 75;
 
 export function parser(value: string) {
-  const min = defaultValue;
+  const min = 0;
   const max = 1000;
 
   return rangeParser(value, min, max);
