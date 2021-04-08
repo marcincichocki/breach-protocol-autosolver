@@ -121,7 +121,7 @@ describe('OCR data validation', () => {
 
   it('should throw an error if buffer size is invalid', () => {
     const base = { grid, daemons };
-    const invalidBufferSizes = [NaN, 3, 9, 2 * Math.PI] as BufferSize[];
+    const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
 
     invalidBufferSizes.forEach((bufferSize) => {
       expect(() => validateRawData({ ...base, bufferSize })).toThrow();
