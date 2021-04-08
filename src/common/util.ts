@@ -92,3 +92,15 @@ export function chunk(str: string, size: number) {
 
   return chunks;
 }
+
+let SCALING = 1;
+
+export function setScaling(n: number) {
+  console.log('setting scaling to %s', n);
+
+  SCALING = n;
+}
+
+export function getScaling() {
+  return SCALING;
+}
