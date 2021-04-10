@@ -21,7 +21,7 @@ declare module 'screenshot-desktop' {
       format?: string;
       linuxLibrary?: 'scrot' | 'imagemagick';
       screen?: string;
-      windowId: string;
+      windowId?: string;
     }
 
     interface ScreenshotDisplayOutput {
