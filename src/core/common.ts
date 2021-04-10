@@ -192,9 +192,14 @@ export function resolveExitStrategy(
 export const BREACH_PROTOCOL_ASPECT_RATIO = 16 / 9;
 
 export function isCorrectAspectRatio(x: number, y: number) {
-  // edge cases
-  if (x === 1366 && y === 768) return true;
-  if (x === 1360 && y === 768) return true;
+  // WXGA, very close to 16:9
+  // TODO: test if this resolution correctly ocr buffer size.
+  // https://en.wikipedia.org/wiki/Graphics_display_resolution#WXGA
+  if (y === 768) {
+    if (x === 1366 || x === 1360) {
+      return true;
+    }
+  }
 
   const d = gcd(x, y);
   const dx = x / d;

@@ -6,6 +6,7 @@ import {
   generateSquareMap,
   getUnits,
   HexNumber,
+  isCorrectAspectRatio,
   transformRawData,
   validateRawData,
 } from './common';
@@ -68,6 +69,56 @@ describe('utilities', () => {
     expect(result.get('b1')).toBe(2);
     expect(result.get('b2')).toBe(42);
     expect(result.size).toBe(squares.length);
+  });
+
+  describe('aspect ratios', () => {
+    const valid = [
+      [1280, 720],
+      [1360, 768],
+      [1366, 768],
+      [1600, 900],
+      [1920, 1080],
+      [2048, 1152],
+      [2560, 1440],
+      [2880, 1620],
+      [3200, 1800],
+      [3840, 2160],
+      [4096, 2304],
+      [5120, 2880],
+      [7680, 4320],
+    ];
+
+    const invalid = [
+      // 21:9
+      [2560, 1080],
+      [3440, 1440],
+
+      // 32:9
+      [3840, 1080],
+
+      // 4:3
+      [1024, 768],
+
+      // 5:4
+      [1280, 1024],
+
+      // 9:16
+      [1080, 1920],
+
+      // 16:10
+      [2560, 1600],
+
+      // 1:1
+      [1024, 1024],
+    ];
+
+    it.each(valid)('should be valid(%ix%i)', (x, y) => {
+      expect(isCorrectAspectRatio(x, y)).toBeTruthy();
+    });
+
+    it.each(invalid)('should be invalid(%ix%i)', (x, y) => {
+      expect(isCorrectAspectRatio(x, y)).toBeFalsy();
+    });
   });
 });
 
