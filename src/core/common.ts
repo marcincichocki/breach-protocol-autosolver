@@ -1,6 +1,11 @@
-import { t, unique, uniqueBy } from '@/common';
+import { gcd, t, unique, uniqueBy } from '@/common';
 import { BreachProtocolResult } from './game';
 import { Daemon, Sequence } from './sequence';
+
+export const WINDOW_TITLES: ReadonlyArray<string> = [
+  'Cyberpunk 2077 (C) 2020 by CD Projekt RED',
+  'Cyberpunk 2077® on GeForce NOW',
+];
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
@@ -182,4 +187,19 @@ export function resolveExitStrategy(
     willExit,
     shouldForceClose,
   };
+}
+
+export const BREACH_PROTOCOL_ASPECT_RATIO = 16 / 9;
+
+export function isCorrectAspectRatio(x: number, y: number) {
+  // edge cases
+  if (x === 1366 && y === 768) return true;
+  if (x === 1360 && y === 768) return true;
+
+  const d = gcd(x, y);
+  const dx = x / d;
+  const dy = y / d;
+  const aspectRatio = dx / dy;
+
+  return aspectRatio === BREACH_PROTOCOL_ASPECT_RATIO;
 }
