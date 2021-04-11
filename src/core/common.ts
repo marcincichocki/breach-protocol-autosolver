@@ -3,11 +3,6 @@ import sharp from 'sharp';
 import { BreachProtocolResult } from './game';
 import { Daemon, Sequence } from './sequence';
 
-export const WINDOW_TITLES: ReadonlyArray<string> = [
-  'Cyberpunk 2077 (C) 2020 by CD Projekt RED',
-  'Cyberpunk 2077® on GeForce NOW',
-];
-
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
 export const BUFFER_SIZE_MIN = 4;
