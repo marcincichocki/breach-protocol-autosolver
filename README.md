@@ -31,21 +31,21 @@ And pass `--key-bind` option to main binary.
 
 It is advised to create shortcut with preferred combination.
 
-## Supported resolutions
+## Resolution
 
-OCR was tested on following resolutions:
+Any resolution is supported, _but_ it must match monitor resolution(for example 1080p on 1440p monitor will not work).
 
-- 1080p(1920x1080)
-- 1440p(2560x1440)
-- 2160p(3840x2160)
+Please note that FidelityFX resolution scaling does not seem to impact resolution of breach protocol, therefore it's better to use it instead of lowering resolution to increase framerate.
 
-Resolutions lower than native monitor resolution are likely to case OCR errors.
+## Display mode
 
-Please note that FidelityFX resolution scaling does not seem to impact resolution of breach protocol, therefore it's better to use it instead of lowering resolution to increase framerate. On lower resolutions and/or aspect ratios OCR might be inacurate.
+Fullscreen and Windowed Borderless are supported.
 
 ## Gamma
 
 Cyberpunk 2077 gamma setting can completly block OCR. Supported values range from `0.95` to `1.75`.
+
+---
 
 ### Development
 
