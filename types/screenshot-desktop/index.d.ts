@@ -9,19 +9,11 @@ declare module 'screenshot-desktop' {
 
     function all(): Promise<Buffer[]> | Promise<string[]>;
 
-    function listWindows(): Promise<ScreenshotWindowOptions[]>;
-
-    interface ScreenshotWindowOptions {
-      id: string;
-      title: string;
-    }
-
     interface ScreenshotOptions {
       filename?: string;
       format?: string;
       linuxLibrary?: 'scrot' | 'imagemagick';
       screen?: string;
-      windowId?: string;
     }
 
     interface ScreenshotDisplayOutput {
