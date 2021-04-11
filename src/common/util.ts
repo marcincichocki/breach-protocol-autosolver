@@ -92,8 +92,3 @@ export function chunk(str: string, size: number) {
 
   return chunks;
 }
-
-/** Finds greatest common divisor for 2 numbers.*/
-export function gcd(a: number, b: number): number {
-  return b === 0 ? a : gcd(b, a % b);
-}

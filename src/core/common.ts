@@ -1,5 +1,7 @@
-import { gcd, t, unique, uniqueBy } from '@/common';
+import { unique, uniqueBy } from '@/common';
+import sharp from 'sharp';
 import { BreachProtocolResult } from './game';
+import { BreachProtocolFragmentOCRResult } from './ocr';
 import { Daemon, Sequence } from './sequence';
 
 export const WINDOW_TITLES: ReadonlyArray<string> = [
@@ -121,7 +123,7 @@ export class BreachProtocolValidationError extends Error {
 
   constructor(
     public message: string,
-    public readonly data: BreachProtocolRawData
+    public readonly data: BreachProtocolFragmentOCRResult[]
   ) {
     super(message);
   }
@@ -146,7 +148,7 @@ function isSquare(n: number) {
   return n > 0 && Math.sqrt(n) % 1 === 0;
 }
 
-export function validateRawData({
+export function isRawDataValid({
   grid,
   daemons,
   bufferSize,
@@ -155,13 +157,7 @@ export function validateRawData({
   const areDaemonsValid = validateSymbols(daemons.flat());
   const isBufferValid = validateBufferSize(bufferSize);
 
-  if (!isGridValid || !areDaemonsValid || !isBufferValid) {
-    throw new BreachProtocolValidationError(t`OCR_DATA_INVALID`, {
-      grid,
-      daemons,
-      bufferSize,
-    });
-  }
+  return isGridValid && areDaemonsValid && isBufferValid;
 }
 
 export interface BreachProtocolExitStrategy {
@@ -191,20 +187,33 @@ export function resolveExitStrategy(
 
 export const BREACH_PROTOCOL_ASPECT_RATIO = 16 / 9;
 
-export function isCorrectAspectRatio(x: number, y: number) {
+/** Return aspect ratio for given resolution and handle edge cases. */
+export function getAspectRatio(x: number, y: number) {
   // WXGA, very close to 16:9
   // TODO: test if this resolution correctly ocr buffer size.
   // https://en.wikipedia.org/wiki/Graphics_display_resolution#WXGA
-  if (y === 768) {
-    if (x === 1366 || x === 1360) {
-      return true;
-    }
+  if (y === 768 && (x === 1366 || x === 1360)) {
+    return BREACH_PROTOCOL_ASPECT_RATIO;
   }
 
-  const d = gcd(x, y);
-  const dx = x / d;
-  const dy = y / d;
-  const aspectRatio = dx / dy;
+  return x / y;
+}
 
-  return aspectRatio === BREACH_PROTOCOL_ASPECT_RATIO;
+export function getCroppedBoundingBox(x: number, y: number): sharp.Region {
+  // Resolution with ratio less than one have horizontal black
+  // bars, and ratio greater than one have vertical.
+  // Resolutions with ratio equal to 1 are in 16:9 aspect ratio
+  // and do not require cropping.
+  const ratio = getAspectRatio(x, y) / BREACH_PROTOCOL_ASPECT_RATIO;
+  const width = ratio > 1 ? y / BREACH_PROTOCOL_ASPECT_RATIO : x;
+  const height = ratio < 1 ? x / BREACH_PROTOCOL_ASPECT_RATIO : y;
+  const left = (x - width) / 2;
+  const top = (y - height) / 2;
+
+  return {
+    width,
+    height,
+    left,
+    top,
+  };
 }
