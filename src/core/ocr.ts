@@ -3,12 +3,14 @@ import sharp from 'sharp';
 import { createWorker } from 'tesseract.js';
 import {
   BreachProtocolRawData,
+  BreachProtocolValidationError,
   COLS,
   cross,
   generateSquareMap,
+  getCroppedBoundingBox,
   HexNumber,
+  isRawDataValid,
   ROWS,
-  validateRawData,
 } from './common';
 import configs from './configs.json';
 
@@ -175,16 +177,22 @@ class BreachProtocolFragmentOCRResult {
 class BreachProtocolFragment {
   private isBufferSizeFragment = this.config.id === 'bufferSize';
 
+  private readonly defaultThresholds: Record<FragmentId, number> = {
+    bufferSize: 230,
+    daemons: 45,
+    grid: 120,
+  };
+
   constructor(
     private readonly config: BreachProtocolFragmentConfig,
     private image: sharp.Sharp,
-    public worker: Tesseract.Worker
+    public worker: Tesseract.Worker,
+    public crop: sharp.Region
   ) {}
 
   async ocr() {
-    const { width, height } = await this.image.metadata();
-    const threshold = this.getThreshold(width, height);
-    const boundingBox = this.getBoundingBox(width, height);
+    const threshold = this.getThreshold();
+    const boundingBox = this.getFragmentBoundingBox();
     const fragment = await this.processImage(boundingBox, threshold);
     const buffer = await fragment.clone().toBuffer();
     const { data } = await this.worker.recognize(buffer);
@@ -200,13 +208,11 @@ class BreachProtocolFragment {
     );
   }
 
-  private getThreshold(width: number, height: number) {
-    const resolution = `${width}x${height}` as Resolution;
-    const threshold = this.config.threshold[resolution];
-
-    if (threshold == null) {
-      throw new Error(t`UNSUPORTED_RESOLUTION_ERROR ${resolution}`);
-    }
+  private getThreshold() {
+    const resolution = `${this.crop.width}x${this.crop.height}` as Resolution;
+    const threshold =
+      this.config.threshold[resolution] ??
+      this.defaultThresholds[this.config.id];
 
     return this.config.threshold['any'] ?? threshold;
   }
@@ -214,16 +220,17 @@ class BreachProtocolFragment {
   /**
    * Return bounding box of image fragment in pixels.
    */
-  private getBoundingBox(width: number, height: number) {
+  private getFragmentBoundingBox() {
     const { p1, p2 } = this.config;
+    const { width, height, left, top } = this.crop;
 
     return {
-      left: Math.round(p1.x * width),
-      top: Math.round(p1.y * height),
+      left: left + Math.round(p1.x * width),
+      top: top + Math.round(p1.y * height),
       width: Math.round((p2.x - p1.x) * width),
       height: Math.round((p2.y - p1.y) * height),
-      outerWidth: width,
-      outerHeight: height,
+      outerWidth: width + 2 * left,
+      outerHeight: height + 2 * top,
     } as BreachProtocolFragmentBoundingBox;
   }
 
@@ -290,20 +297,29 @@ export async function breachProtocolOCR(
   thresholds?: Partial<Record<FragmentId, number>>
 ) {
   const image = sharp(input);
+  const { width, height } = await image.metadata();
+  const crop = getCroppedBoundingBox(width, height);
+
   const results = await Promise.all(
     (configs as BreachProtocolFragmentConfig[])
       .map((c) => {
         c.threshold['any'] = thresholds?.[c.id];
 
-        return c;
+        return new BreachProtocolFragment(
+          c,
+          image.clone(),
+          workers[c.id],
+          crop
+        );
       })
-      .map((c) => new BreachProtocolFragment(c, image.clone(), workers[c.id]))
       .map((f) => f.ocr())
   );
 
   const rawData = BreachProtocolFragmentOCRResult.toRawData(results);
 
-  validateRawData(rawData);
+  if (!isRawDataValid(rawData)) {
+    throw new BreachProtocolValidationError(t`OCR_DATA_INVALID`, rawData);
+  }
 
   const gridResult = results.find((r) => r.id === 'grid');
   const squarePositionMap = getPositionSquareMap(gridResult);
