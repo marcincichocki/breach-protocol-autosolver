@@ -1,6 +1,7 @@
 import registry from '../bp-registry/registry.json';
 import {
   BreachProtocolRawData,
+  BREACH_PROTOCOL_ASPECT_RATIO,
   BufferSize,
   cross,
   generateSquareMap,
@@ -9,6 +10,7 @@ import {
   HexNumber,
   isRawDataValid,
   transformRawData,
+  getAspectRatio,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, makeSequences, Sequence } from './sequence';
@@ -106,6 +108,7 @@ describe('utilities', () => {
     it.each(horizontal)('should crop horizontal black bars(%ix%i)', (x, y) => {
       const { width, height, left, top } = getCroppedBoundingBox(x, y);
 
+      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
       expect(width).toBe(x);
       expect(height).toBe(y - 2 * top);
       expect(left).toBe(0);
@@ -115,6 +118,7 @@ describe('utilities', () => {
     it.each(vertical)('should crop vertical back bars(%ix%i)', (x, y) => {
       const { width, height, left, top } = getCroppedBoundingBox(x, y);
 
+      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
       expect(width).toBe(x - 2 * left);
       expect(height).toBe(y);
       expect(left).toBe((x - width) / 2);
@@ -124,6 +128,7 @@ describe('utilities', () => {
     it.each(regular)('should not crop 16:9 resolutions(%ix%i)', (x, y) => {
       const { width, height, left, top } = getCroppedBoundingBox(x, y);
 
+      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
       expect(width).toBe(x);
       expect(height).toBe(y);
       expect(left).toBe(0);
