@@ -1,7 +1,6 @@
 import { unique, uniqueBy } from '@/common';
 import sharp from 'sharp';
 import { BreachProtocolResult } from './game';
-import { BreachProtocolFragmentOCRResult } from './ocr';
 import { Daemon, Sequence } from './sequence';
 
 export const WINDOW_TITLES: ReadonlyArray<string> = [
@@ -123,7 +122,7 @@ export class BreachProtocolValidationError extends Error {
 
   constructor(
     public message: string,
-    public readonly data: BreachProtocolFragmentOCRResult[]
+    public readonly data: BreachProtocolRawData
   ) {
     super(message);
   }
