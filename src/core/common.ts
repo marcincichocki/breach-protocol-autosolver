@@ -205,7 +205,7 @@ export function getCroppedBoundingBox(x: number, y: number): sharp.Region {
   // Resolutions with ratio equal to 1 are in 16:9 aspect ratio
   // and do not require cropping.
   const ratio = getAspectRatio(x, y) / BREACH_PROTOCOL_ASPECT_RATIO;
-  const width = ratio > 1 ? y / BREACH_PROTOCOL_ASPECT_RATIO : x;
+  const width = ratio > 1 ? y * BREACH_PROTOCOL_ASPECT_RATIO : x;
   const height = ratio < 1 ? x / BREACH_PROTOCOL_ASPECT_RATIO : y;
   const left = (x - width) / 2;
   const top = (y - height) / 2;
