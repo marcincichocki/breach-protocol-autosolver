@@ -5,11 +5,15 @@ export abstract class ImageContainer<T> {
 
   readonly dimensions: { width: number; height: number };
 
+  /** Prepare source image to further dfasdflasl */
   abstract process(threshold: number, fragmentBoundingBox: any): T;
 
+  /** Transform  */
   abstract toBuffer(instance: T): Promise<Buffer>;
 
   abstract toRawBuffer(instance: T): Promise<Buffer>;
+
+  abstract toFile(instance: T, fileName: string): Promise<unknown>;
 
   readonly BREACH_PROTOCOL_ASPECT_RATIO = 16 / 9;
 
@@ -79,5 +83,9 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
 
   toRawBuffer(instance: sharp.Sharp) {
     return instance.raw().toBuffer();
+  }
+
+  toFile(instance: sharp.Sharp, fileName: string) {
+    return instance.toFile(fileName);
   }
 }

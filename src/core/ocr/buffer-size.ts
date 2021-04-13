@@ -1,15 +1,18 @@
 import { Point } from '@/common';
+import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
 import {
   BreachProtocolFragment2,
   BreachProtocolFragmentBoundingBox,
   BreachProtocolFragmentResult,
 } from './base';
-import { BufferSize, validateBufferSize } from '../common';
-import sharp from 'sharp';
+
+export type BreachProtocolBufferSizeFragmentResult<
+  C
+> = BreachProtocolFragmentResult<BufferSize, Buffer, C>;
 
 export class BreachProtocolBufferSizeFragment<
-  I
-> extends BreachProtocolFragment2<BufferSize, Buffer, I> {
+  C
+> extends BreachProtocolFragment2<BufferSize, Buffer, C> {
   readonly id = 'bufferSize';
 
   readonly p1 = new Point(0.42, 0.167);
@@ -37,18 +40,13 @@ export class BreachProtocolBufferSizeFragment<
 
   private attempt = 0;
 
-  fragment: sharp.Sharp;
-
-  isValid() {
-    // TODO: add
-    return true;
+  isValid(n: number) {
+    return Number.isInteger(n) && n >= BUFFER_SIZE_MIN && n <= BUFFER_SIZE_MAX;
   }
 
   async recognize(
     threshold = this.thresholdBase
-  ): Promise<BreachProtocolFragmentResult<BufferSize, Buffer>> {
-    // console.log(`Attempt no: ${this.attempt} ${threshold}`);
-
+  ): Promise<BreachProtocolFragmentResult<BufferSize, Buffer, C>> {
     const boundingBox = this.getFragmentBoundingBox();
     const fragment = await this.container.process(
       this.attempt === 0
@@ -57,12 +55,10 @@ export class BreachProtocolBufferSizeFragment<
       boundingBox
     );
 
-    // const buffer = await fragment.clone().toBuffer();
-    // const rawBuffer = await fragment.clone().raw().toBuffer();
     const rawBuffer = await this.container.toRawBuffer(fragment);
     const bufferSize = this.getBufferSizeFromPixels(rawBuffer, boundingBox);
 
-    if (!validateBufferSize(bufferSize)) {
+    if (!this.isValid(bufferSize)) {
       if ((threshold += 5) <= 256) {
         // recursively try again
         this.attempt += 1;
@@ -72,12 +68,14 @@ export class BreachProtocolBufferSizeFragment<
       throw new Error('shit is wrong');
     }
 
-    // console.log('saving threshold %s', threshold);
-
-    // this.fragment = fragment;
     BreachProtocolBufferSizeFragment.threshold = threshold;
 
-    return new BreachProtocolFragmentResult(rawBuffer, boundingBox, bufferSize);
+    return new BreachProtocolFragmentResult(
+      rawBuffer,
+      boundingBox,
+      bufferSize,
+      fragment
+    ) as BreachProtocolBufferSizeFragmentResult<C>;
   }
 
   private getSizeOfBufferBox(
