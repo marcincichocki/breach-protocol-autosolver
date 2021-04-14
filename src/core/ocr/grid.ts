@@ -49,6 +49,7 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     }
 
     return new BreachProtocolFragmentResult(
+      this.id,
       data,
       boundingBox,
       rawData,

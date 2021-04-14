@@ -9,10 +9,10 @@ export type BreachProtocolDaemonsFragmentResult<
   C
 > = BreachProtocolFragmentResult<HexNumber[][], Tesseract.Page, C>;
 
-export class BreachProtocolDaemonsFragment<I> extends BreachProtocolOCRFragment<
+export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
   HexNumber[][],
   Tesseract.Page,
-  I
+  C
 > {
   static worker: Tesseract.Worker;
 
@@ -23,7 +23,7 @@ export class BreachProtocolDaemonsFragment<I> extends BreachProtocolOCRFragment<
   readonly p2 = new Point(0.59, 0.76);
 
   // TODO: check if this is correct on all resolutions.
-  readonly threshold = 30;
+  readonly threshold = 45;
 
   protected getRawDaemons(lines: string[]) {
     return lines.map((l) => this.parseLine(l));
@@ -35,21 +35,28 @@ export class BreachProtocolDaemonsFragment<I> extends BreachProtocolOCRFragment<
     return this.validateSymbols(rawData.flat()) && isCorrectSize;
   }
 
-  async recognize() {
-    const { data, boundingBox, fragment } = await this.ocr();
+  async recognize(
+    threshold = this.threshold
+  ): Promise<BreachProtocolFragmentResult<HexNumber[][], Tesseract.Page, C>> {
+    const { data, boundingBox, fragment } = await this.ocr(threshold);
     const lines = this.getLines(data.text);
     const rawData = this.getRawDaemons(lines);
 
     if (!this.isValid(rawData)) {
+      if ((threshold -= 10) > 0) {
+        return await this.recognize(threshold);
+      }
+
       // TODO: throw validation error
       throw new Error('daemons are not valid');
     }
 
     return new BreachProtocolFragmentResult(
+      this.id,
       data,
       boundingBox,
       rawData,
       fragment
-    ) as BreachProtocolDaemonsFragmentResult<I>;
+    ) as BreachProtocolDaemonsFragmentResult<C>;
   }
 }

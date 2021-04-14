@@ -1,14 +1,17 @@
 import sharp from 'sharp';
+import { BreachProtocolFragmentBoundingBox } from './base';
 
 export abstract class ImageContainer<T> {
   readonly instance: T;
 
   readonly dimensions: { width: number; height: number };
 
-  /** Prepare source image to further dfasdflasl */
-  abstract process(threshold: number, fragmentBoundingBox: any): T;
+  /** Turn wrapped image into 8 bit black and white fragmnent. */
+  abstract process(
+    threshold: number,
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
 
-  /** Transform  */
   abstract toBuffer(instance: T): Promise<Buffer>;
 
   abstract toRawBuffer(instance: T): Promise<Buffer>;
@@ -68,24 +71,25 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     return new SharpImageContainer(instance, { width, height }, SHARP_TOKEN);
   }
 
-  process(threshold: number, fragmentBoundingBox: any) {
+  process(threshold: number, boundingBox: BreachProtocolFragmentBoundingBox) {
     return this.instance
       .clone()
       .removeAlpha()
-      .extract(fragmentBoundingBox)
+      .extract(boundingBox)
       .threshold(threshold)
-      .negate();
+      .negate()
+      .toColorspace('b-w');
   }
 
   toBuffer(instance: sharp.Sharp) {
-    return instance.toBuffer();
+    return instance.clone().toBuffer();
   }
 
   toRawBuffer(instance: sharp.Sharp) {
-    return instance.raw().toBuffer();
+    return instance.clone().raw().toBuffer();
   }
 
   toFile(instance: sharp.Sharp, fileName: string) {
-    return instance.toFile(fileName);
+    return instance.clone().toFile(fileName);
   }
 }

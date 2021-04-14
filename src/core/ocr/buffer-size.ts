@@ -6,6 +6,31 @@ import {
   BreachProtocolFragmentResult,
 } from './base';
 
+class BufferSizeControlGroup {
+  /** Thickness of control group in pixels. */
+  private readonly size = 10;
+
+  constructor(
+    private start: number,
+    private end: number,
+    private value: number
+  ) {}
+
+  private getLineIndexes(length: number) {
+    return [...Array(this.size)].map((x, i) => i * length);
+  }
+
+  /** Check if every pixel in control group has given value. */
+  verify(pixels: Buffer, rowLength: number) {
+    const startIndex = Math.round(this.start * rowLength);
+    const endIndex = Math.round(this.end * rowLength);
+
+    return this.getLineIndexes(rowLength)
+      .map((n) => pixels.subarray(startIndex + n, endIndex + n))
+      .every((line) => line.every((p) => p === this.value));
+  }
+}
+
 export type BreachProtocolBufferSizeFragmentResult<
   C
 > = BreachProtocolFragmentResult<BufferSize, Buffer, C>;
@@ -13,11 +38,18 @@ export type BreachProtocolBufferSizeFragmentResult<
 export class BreachProtocolBufferSizeFragment<
   C
 > extends BreachProtocolFragment2<BufferSize, Buffer, C> {
+  private readonly controlGroups = [
+    // End of fragment.
+    new BufferSizeControlGroup(0.7, 1, 0),
+    // Buffer boxes.
+    new BufferSizeControlGroup(0.12, 0.22, 255),
+  ];
+
   readonly id = 'bufferSize';
 
   readonly p1 = new Point(0.42, 0.167);
 
-  readonly p2 = new Point(0.7, 0.225);
+  readonly p2 = new Point(0.8, 0.225);
   // readonly p2 = new Point(0.669, 0.225);
 
   // THIS THING SHOULD BE MUTABLE BECAUSE IF WE FIND SHIT ONCE
@@ -25,9 +57,10 @@ export class BreachProtocolBufferSizeFragment<
   // WILL RUN REPEAT AGAIN.
   readonly threshold = 230;
 
-  static threshold = 230;
+  // current threshold that works
+  private static threshold = 255;
 
-  readonly thresholdBase = 150;
+  readonly thresholdBase = 255;
 
   /** Percentage that padding in buffer box takes. */
   private readonly padding = 0.00937;
@@ -45,23 +78,19 @@ export class BreachProtocolBufferSizeFragment<
   }
 
   async recognize(
-    threshold = this.thresholdBase
+    threshold = BreachProtocolBufferSizeFragment.threshold
   ): Promise<BreachProtocolFragmentResult<BufferSize, Buffer, C>> {
     const boundingBox = this.getFragmentBoundingBox();
-    const fragment = await this.container.process(
-      this.attempt === 0
-        ? BreachProtocolBufferSizeFragment.threshold
-        : threshold,
-      boundingBox
-    );
-
+    const fragment = this.container.process(threshold, boundingBox);
     const rawBuffer = await this.container.toRawBuffer(fragment);
     const bufferSize = this.getBufferSizeFromPixels(rawBuffer, boundingBox);
 
     if (!this.isValid(bufferSize)) {
-      if ((threshold += 5) <= 256) {
-        // recursively try again
-        this.attempt += 1;
+      if (this.attempt++ === 0) {
+        threshold = this.thresholdBase;
+      }
+
+      if ((threshold -= 1) > 160) {
         return await this.recognize(threshold);
       }
 
@@ -71,6 +100,7 @@ export class BreachProtocolBufferSizeFragment<
     BreachProtocolBufferSizeFragment.threshold = threshold;
 
     return new BreachProtocolFragmentResult(
+      this.id,
       rawBuffer,
       boundingBox,
       bufferSize,
@@ -78,28 +108,20 @@ export class BreachProtocolBufferSizeFragment<
     ) as BreachProtocolBufferSizeFragmentResult<C>;
   }
 
-  private getSizeOfBufferBox(
-    pixels: Buffer,
-    boundingBox: BreachProtocolFragmentBoundingBox
-  ) {
-    const step = 3; // rgb
-    const rowLength = boundingBox.width * step;
-    const row = pixels.subarray(0, rowLength);
-    // TODO: check if buffer size 9 will work with this control group.
-    const controlGroup = row.subarray(rowLength - 100 * step, rowLength);
+  private verifyControlGroups(row: Buffer, length: number) {
+    return this.controlGroups.every((cg) => cg.verify(row, length));
+  }
+
+  private getSizeOfBufferBox(pixels: Buffer, width: number) {
+    const row = pixels.subarray(0, width);
     let size = 0;
 
-    // Check if every pixel in control group is black.
-    // If it is not, fragment is considered invalid, because
-    // it could return incorrect buffer size.
-    if (!controlGroup.every((p) => p === 0)) {
+    if (!this.verifyControlGroups(pixels, width)) {
       return 0;
     }
 
-    for (let i = step - 1; i < row.length; i += step) {
-      const isWhite = row.slice(i - 2, i).every((x) => x === 255);
-
-      if (isWhite) {
+    for (let i = 0; i < row.length; i++) {
+      if (row[i] === 255) {
         size += 1;
       }
     }
@@ -109,10 +131,9 @@ export class BreachProtocolBufferSizeFragment<
 
   private getBufferSizeFromPixels(
     pixels: Buffer,
-    boundingBox: BreachProtocolFragmentBoundingBox
+    { width, outerWidth }: BreachProtocolFragmentBoundingBox
   ) {
-    let size =
-      this.getSizeOfBufferBox(pixels, boundingBox) / boundingBox.outerWidth;
+    let size = this.getSizeOfBufferBox(pixels, width) / outerWidth;
     let bufferSize = 0;
 
     size -= 2 * this.padding;

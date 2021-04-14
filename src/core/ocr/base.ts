@@ -26,6 +26,7 @@ export interface BreachProtocolFragmentBoundingBox {
 
 export class BreachProtocolFragmentResult<D, S, C> {
   constructor(
+    public readonly id: FragmentId,
     public readonly source: S,
     public readonly boundingBox: BreachProtocolFragmentBoundingBox,
     public readonly rawData: D,
@@ -46,7 +47,7 @@ export abstract class BreachProtocolFragment2<D, S, C> {
   /** 0-255 value of threshold. */
   abstract readonly threshold: number;
 
-  constructor(public container: ImageContainer<C>) {}
+  constructor(public readonly container: ImageContainer<C>) {}
 
   /** Recognize data from fragment image. */
   abstract recognize(): Promise<BreachProtocolFragmentResult<D, S, C>>;
@@ -103,9 +104,9 @@ export abstract class BreachProtocolOCRFragment<
     ) as Promise<Tesseract.RecognizeResult>;
   }
 
-  async ocr() {
+  async ocr(threshold = this.threshold) {
     const boundingBox = this.getFragmentBoundingBox();
-    const fragment = await this.container.process(this.threshold, boundingBox);
+    const fragment = await this.container.process(threshold, boundingBox);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
 
@@ -195,15 +196,15 @@ export abstract class BreachProtocolOCRFragment<
   static scheduler: Tesseract.Scheduler;
 }
 
-export class BreachProtocolRecognitionResult<I> {
+export class BreachProtocolRecognitionResult<C> {
   readonly positionSquareMap = this.getPositionSquareMap();
 
   readonly rawData = this.toRawData();
 
   constructor(
-    public readonly grid: BreachProtocolGridFragmentResult<I>,
-    public readonly daemons: BreachProtocolDaemonsFragmentResult<I>,
-    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult<I>
+    public readonly grid: BreachProtocolGridFragmentResult<C>,
+    public readonly daemons: BreachProtocolDaemonsFragmentResult<C>,
+    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult<C>
   ) {}
 
   toRawData(): BreachProtocolRawData {
