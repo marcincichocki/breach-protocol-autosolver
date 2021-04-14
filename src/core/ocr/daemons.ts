@@ -35,7 +35,7 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
 
   async recognize(
     threshold = this.threshold
-  ): Promise<BreachProtocolFragmentResult<HexNumber[][], Tesseract.Page, C>> {
+  ): Promise<BreachProtocolDaemonsFragmentResult<C>> {
     const { data, boundingBox, fragment } = await this.ocr(threshold);
     const lines = this.getLines(data.text);
     const rawData = this.getRawDaemons(lines);

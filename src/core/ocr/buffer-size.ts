@@ -79,7 +79,7 @@ export class BreachProtocolBufferSizeFragment<
 
   async recognize(
     threshold = BreachProtocolBufferSizeFragment.threshold
-  ): Promise<BreachProtocolFragmentResult<BufferSize, Buffer, C>> {
+  ): Promise<BreachProtocolBufferSizeFragmentResult<C>> {
     const boundingBox = this.getFragmentBoundingBox();
     const fragment = this.container.process(threshold, boundingBox);
     const rawBuffer = await this.container.toRawBuffer(fragment);
