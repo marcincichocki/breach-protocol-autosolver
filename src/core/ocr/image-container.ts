@@ -6,7 +6,7 @@ export abstract class ImageContainer<T> {
 
   readonly dimensions: { width: number; height: number };
 
-  /** Turn wrapped image into 8 bit black and white fragmnent. */
+  /** Turn wrapped image into 8 bit black and white fragment. */
   abstract process(
     threshold: number,
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
