@@ -113,20 +113,13 @@ export abstract class BreachProtocolOCRFragment<
     return { data, boundingBox, buffer, fragment };
   }
 
-  /**
-   * In some localizations font and font spacing is different. Sometimes
-   * symbols are recognized without whitespaces which cause errors.
-   *
-   * It's better to remove every whitespace character and then to chunk it.
-   */
   protected chunkLine(line: string) {
+    // In some localizations font and font spacing is different. Sometimes
+    // symbols are recognized without whitespaces which cause errors.
+    // It's better to remove every whitespace character and then to chunk it.
     return chunk(line.replace(/\s/g, ''), 2);
   }
 
-  /**
-   * Try to ammend any OCR errors that are caused by custom
-   * font used by some localizations.
-   */
   protected amendSymbol(symbol: string) {
     if (this.correctionMap.has(symbol)) {
       return this.correctionMap.get(symbol);
@@ -135,7 +128,6 @@ export abstract class BreachProtocolOCRFragment<
     return symbol as HexNumber;
   }
 
-  /** Try to parse OCR line to remove any errors. */
   protected parseLine(line: string) {
     return this.chunkLine(line).map((s) => this.amendSymbol(s));
   }
