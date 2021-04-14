@@ -14,8 +14,6 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
   Tesseract.Page,
   C
 > {
-  static worker: Tesseract.Worker;
-
   readonly id = 'daemons';
 
   readonly p1 = new Point(0.42, 0.312);

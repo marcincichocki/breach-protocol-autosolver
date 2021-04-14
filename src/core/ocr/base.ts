@@ -30,7 +30,7 @@ export class BreachProtocolFragmentResult<D, S, C> {
     public readonly source: S,
     public readonly boundingBox: BreachProtocolFragmentBoundingBox,
     public readonly rawData: D,
-    public readonly fragment: C
+    public readonly container: C
   ) {}
 }
 

@@ -16,8 +16,6 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
   Tesseract.Page,
   C
 > {
-  static worker: Tesseract.Worker;
-
   readonly id = 'grid';
 
   readonly p1 = new Point(0.137, 0.312);
