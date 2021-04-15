@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { HexNumber } from '../common';
+import { BreachProtocolValidationError, HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
@@ -42,18 +42,18 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
     );
     const lines = this.getLines(data.text);
     const rawData = this.getRawDaemons(lines);
-
-    if (!this.isValid(rawData)) {
-      // TODO: throw validation error
-      throw new Error('daemons are not valid');
-    }
-
-    return new BreachProtocolFragmentResult(
+    const result = new BreachProtocolFragmentResult(
       this.id,
       data,
       boundingBox,
       rawData,
       fragment
     ) as BreachProtocolDaemonsFragmentResult<C>;
+
+    if (!this.isValid(rawData)) {
+      throw new BreachProtocolValidationError('daemons are not valid', result);
+    }
+
+    return result;
   }
 }

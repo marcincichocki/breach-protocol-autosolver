@@ -3,25 +3,23 @@ import {
   BreachProtocol,
   breachProtocolOCR,
   BreachProtocolValidationError,
-  FragmentId,
   makeSequences,
   resolveExitStrategy,
+  SharpImageContainer,
   transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
 import ora from 'ora';
+import sharp from 'sharp';
 import { play } from 'sound-play';
 import { options } from './cli';
 import { appendToDebugJson, BreachProtocolDebug } from './debug';
 import { captureScreen, resolveBreachProtocol } from './robot';
 
-export async function solveBreachProtocol(
-  workers: Record<FragmentId, Tesseract.Worker>,
-  screenId: string
-) {
+export async function solveBreachProtocol(screenId: string) {
   const log = ora(t`CAPTURE_SCREEN ${screenId}`).start();
   const fileName = (await captureScreen(screenId)) as string;
-  const ocr = await tryToOCRBreachProtocol(fileName, workers, log);
+  const ocr = await tryToOCRBreachProtocol(fileName, log);
 
   // exit early because data is invalid.
   if (!ocr) return;
@@ -46,20 +44,18 @@ export async function solveBreachProtocol(
 
   const exitStrategy = resolveExitStrategy(result, ocr.rawData);
 
-  await resolveBreachProtocol(result.path, ocr.squarePositionMap, exitStrategy);
+  await resolveBreachProtocol(result.path, ocr.positionSquareMap, exitStrategy);
 
   log.succeed(t`SOLVER_DONE`);
 }
 
-async function tryToOCRBreachProtocol(
-  fileName: string,
-  workers: Record<FragmentId, Tesseract.Worker>,
-  log: ora.Ora
-) {
+async function tryToOCRBreachProtocol(fileName: string, log: ora.Ora) {
+  const image = sharp(fileName);
+  const container = await SharpImageContainer.create(image);
   log.text = t`OCR_START`;
 
   try {
-    return await breachProtocolOCR(fileName, workers, {
+    return await breachProtocolOCR(container, {
       bufferSize: options.thresholdBufferSize,
       daemons: options.thresholdDaemons,
       grid: options.thresholdGrid,
@@ -71,7 +67,7 @@ async function tryToOCRBreachProtocol(
       }
 
       log.text = t`DEBUG`;
-      const debugData = new BreachProtocolDebug(fileName, e.data);
+      const debugData = new BreachProtocolDebug(fileName, e.result);
       appendToDebugJson(debugData);
 
       log.fail(e.message);

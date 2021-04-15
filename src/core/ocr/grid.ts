@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { HexNumber } from '../common';
+import { BreachProtocolValidationError, HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
@@ -46,18 +46,18 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     );
     const lines = this.getLines(data.text);
     const rawData = this.getRawGrid(lines);
-
-    if (!this.isValid(rawData)) {
-      // TODO: throw validation error with data or smth
-      throw new Error('grid is not valid');
-    }
-
-    return new BreachProtocolFragmentResult(
+    const result = new BreachProtocolFragmentResult(
       this.id,
       data,
       boundingBox,
       rawData,
       fragment
     ) as BreachProtocolGridFragmentResult<C>;
+
+    if (!this.isValid(rawData)) {
+      throw new BreachProtocolValidationError('grid is not valid', result);
+    }
+
+    return result;
   }
 }

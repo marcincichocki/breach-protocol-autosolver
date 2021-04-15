@@ -6,7 +6,7 @@ import {
   generateSquareMap,
   ROWS,
 } from '../common';
-import { FragmentId } from '../ocr';
+import { FragmentId } from './base';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolBufferSizeFragmentResult,
@@ -60,7 +60,7 @@ export class BreachProtocolRecognitionResult<C> {
   }
 }
 
-export async function breachProtocolOCR2<C>(
+export async function breachProtocolOCR<C>(
   container: ImageContainer<C>,
   thresholds?: Partial<Record<FragmentId, number>>
 ) {

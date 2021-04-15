@@ -1,10 +1,9 @@
-import { pressAnyKey, t, setLang, setScaling } from '@/common';
-import { BreachProtocolFragmentConfig, loadWorkers } from '@/core';
+import { pressAnyKey, setLang, setScaling, t } from '@/common';
+import { BreachProtocolOCRFragment } from '@/core';
 import { prompt } from 'inquirer';
 import ora from 'ora';
 import screenshot from 'screenshot-desktop';
-import configs from '@/core/configs.json';
-import { program, options } from './cli';
+import { options, program } from './cli';
 import { checkForUpdates } from './updates';
 
 export async function bootstrap() {
@@ -22,7 +21,7 @@ export async function bootstrap() {
   await checkForUpdates();
 
   const l1 = ora(t`LOADING_WORKERS_START`).start();
-  const workers = await loadWorkers(configs as BreachProtocolFragmentConfig[]);
+  await BreachProtocolOCRFragment.initScheduler();
   l1.succeed();
 
   const displays = await screenshot.listDisplays();
@@ -31,10 +30,7 @@ export async function bootstrap() {
 
   setScaling(dpiScale);
 
-  return {
-    screenId,
-    workers,
-  };
+  return screenId;
 }
 
 async function getScreenId(displays: screenshot.ScreenshotDisplayOutput[]) {

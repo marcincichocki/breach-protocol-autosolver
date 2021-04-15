@@ -1,7 +1,12 @@
 import { Point } from '@/common';
-import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
 import {
-  BreachProtocolFragment2,
+  BreachProtocolValidationError,
+  BufferSize,
+  BUFFER_SIZE_MAX,
+  BUFFER_SIZE_MIN,
+} from '../common';
+import {
+  BreachProtocolFragment,
   BreachProtocolFragmentBoundingBox,
   BreachProtocolFragmentResult,
 } from './base';
@@ -37,9 +42,11 @@ export type BreachProtocolBufferSizeFragmentResult<
   C
 > = BreachProtocolFragmentResult<BufferSize, Buffer, C>;
 
-export class BreachProtocolBufferSizeFragment<
+export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
+  BufferSize,
+  Buffer,
   C
-> extends BreachProtocolFragment2<BufferSize, Buffer, C> {
+> {
   private readonly controlGroups = [
     // End of fragment.
     new BufferSizeControlGroup(0.7, 1, 0),
@@ -90,7 +97,16 @@ export class BreachProtocolBufferSizeFragment<
         return await this.recognize(threshold);
       }
 
-      throw new Error('shit is wrong');
+      throw new BreachProtocolValidationError(
+        'buffer size is not valid',
+        new BreachProtocolFragmentResult(
+          this.id,
+          rawBuffer,
+          boundingBox,
+          bufferSize,
+          fragment
+        )
+      );
     }
 
     BreachProtocolBufferSizeFragment.threshold = threshold;

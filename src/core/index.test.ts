@@ -1,16 +1,12 @@
 import registry from '../bp-registry/registry.json';
 import {
   BreachProtocolRawData,
-  BREACH_PROTOCOL_ASPECT_RATIO,
   BufferSize,
   cross,
   generateSquareMap,
-  getCroppedBoundingBox,
   getUnits,
   HexNumber,
-  isRawDataValid,
   transformRawData,
-  getAspectRatio,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, makeSequences, Sequence } from './sequence';
@@ -71,127 +67,6 @@ describe('utilities', () => {
     expect(result.get('b1')).toBe(2);
     expect(result.get('b2')).toBe(42);
     expect(result.size).toBe(squares.length);
-  });
-
-  describe('cropping', () => {
-    const horizontal = [
-      [1024, 768],
-      [1024, 1280],
-      [1152, 864],
-      [1280, 768],
-      [1280, 800],
-      [1280, 960],
-      [1280, 1024],
-      [1600, 1024],
-      [1600, 1200],
-      [1680, 1050],
-      [1920, 1200],
-      [1920, 1440],
-    ];
-
-    const vertical = [
-      [2560, 1080],
-      [3440, 1440],
-      [3840, 1080],
-    ];
-
-    const regular = [
-      [1280, 720],
-      [1360, 768],
-      [1366, 768],
-      [1600, 900],
-      [1920, 1080],
-      [2560, 1440],
-      [3840, 2160],
-    ];
-
-    it.each(horizontal)('should crop horizontal black bars(%ix%i)', (x, y) => {
-      const { width, height, left, top } = getCroppedBoundingBox(x, y);
-
-      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
-      expect(width).toBe(x);
-      expect(height).toBe(y - 2 * top);
-      expect(left).toBe(0);
-      expect(top).toBe((y - height) / 2);
-    });
-
-    it.each(vertical)('should crop vertical back bars(%ix%i)', (x, y) => {
-      const { width, height, left, top } = getCroppedBoundingBox(x, y);
-
-      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
-      expect(width).toBe(x - 2 * left);
-      expect(height).toBe(y);
-      expect(left).toBe((x - width) / 2);
-      expect(top).toBe(0);
-    });
-
-    it.each(regular)('should not crop 16:9 resolutions(%ix%i)', (x, y) => {
-      const { width, height, left, top } = getCroppedBoundingBox(x, y);
-
-      expect(getAspectRatio(width, height)).toBe(BREACH_PROTOCOL_ASPECT_RATIO);
-      expect(width).toBe(x);
-      expect(height).toBe(y);
-      expect(left).toBe(0);
-      expect(top).toBe(0);
-    });
-  });
-});
-
-describe('OCR data validation', () => {
-  // prettier-ignore
-  const grid: HexNumber[] = [
-    'BD', 'E9', '1C', '7A',
-    'FF', '55', '55', '1C',
-    '7A', '7A', 'BD', 'BD',
-    '1C', '55', 'E9', 'E9'
-  ];
-  const daemons: HexNumber[][] = [
-    ['BD', 'E9'],
-    ['1C', '7A'],
-    ['FF', '55'],
-  ];
-  const bufferSize: BufferSize = 6;
-
-  it('should pass it if data is valid', () => {
-    expect(isRawDataValid({ grid, daemons, bufferSize })).toBeTruthy();
-  });
-
-  it('should throw an error if grid is invalid', () => {
-    const base = { daemons, bufferSize };
-    const invalidGrids = [
-      grid.map((s, i) => (i === 5 ? '57' : s)),
-      grid.map((s, i) => (i === 9 ? 'asd' : s)),
-      grid.map(() => ' '),
-      grid.slice(1),
-      [],
-    ] as HexNumber[][];
-
-    invalidGrids.forEach((grid) => {
-      expect(isRawDataValid({ ...base, grid })).toBeFalsy();
-    });
-  });
-
-  it('should throw an error if daemons are invalid', () => {
-    const base = { grid, bufferSize };
-    const invalidDaemons = [
-      daemons.map(() => ['B7']),
-      daemons.map(() => ['asd']),
-      daemons.map(() => [' ']),
-      daemons.map(() => [] as string[]),
-    ] as HexNumber[][][];
-
-    invalidDaemons.forEach((daemons) => {
-      expect(isRawDataValid({ ...base, daemons })).toBeFalsy();
-    });
-  });
-
-  it('should throw an error if buffer size is invalid', () => {
-    const base = { grid, daemons };
-    const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
-
-    invalidBufferSizes.forEach((bufferSize) => {
-      expect(isRawDataValid({ ...base, bufferSize })).toBeFalsy();
-    });
   });
 });
 

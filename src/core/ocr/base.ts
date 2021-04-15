@@ -1,8 +1,9 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
-import { HexNumber, HEX_NUMBERS } from '../common';
-import { FragmentId } from '../ocr';
+import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
 import { ImageContainer } from './image-container';
+
+export type FragmentId = keyof BreachProtocolRawData;
 
 export interface BreachProtocolFragmentBoundingBox {
   width: number;
@@ -23,7 +24,7 @@ export class BreachProtocolFragmentResult<D, S, C> {
   ) {}
 }
 
-export abstract class BreachProtocolFragment2<D, S, C> {
+export abstract class BreachProtocolFragment<D, S, C> {
   /** Id of fragment. */
   abstract readonly id: FragmentId;
 
@@ -61,7 +62,7 @@ export abstract class BreachProtocolOCRFragment<
   D,
   S,
   C
-> extends BreachProtocolFragment2<D, S, C> {
+> extends BreachProtocolFragment<D, S, C> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
   protected readonly correctionMap = new Map<string, HexNumber>([
