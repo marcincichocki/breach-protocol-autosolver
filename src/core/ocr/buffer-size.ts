@@ -1,4 +1,4 @@
-import { Point } from '@/common';
+import { Point, t } from '@/common';
 import {
   BreachProtocolValidationError,
   BufferSize,
@@ -98,7 +98,7 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
       }
 
       throw new BreachProtocolValidationError(
-        'buffer size is not valid',
+        t`BUFFER_SIZE_INVALID`,
         new BreachProtocolFragmentResult(
           this.id,
           rawBuffer,

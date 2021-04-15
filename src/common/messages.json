@@ -5,7 +5,6 @@
     "LOADING_WORKERS_START": "Loading tesseract..",
     "CHOOSE_MONITOR": "On which monitor Cyberpunk 2077 is running?",
     "READY": "Listening for key bind..",
-    "OCR_DATA_INVALID": "OCR data is not valid. Skipping.",
     "CAPTURE_SCREEN": "Capturing screen \"{0}\"..",
     "OCR_START": "Starting OCR..",
     "SOLVER_START": "Solving..",
@@ -13,10 +12,12 @@
     "SOLVER_DONE": "Success.",
     "UNKNOWN_KEY_ERROR": "Unknown key: \"{0}\".",
     "NEW_VERSION_AVAILABLE": "There is new version({0}) available. Download and exit?",
-    "UNSUPORTED_RESOLUTION_ERROR": "Unsuported resolution: \"{0}\".",
     "UNSUPORTED_OS": "Only Windows is supported.",
     "INVALID_LANG_ERROR": "Invalid language code. Expected one of {0} but got \"{1}\".",
-    "NO_SOLUTION": "Could not find any solution. Skipping."
+    "NO_SOLUTION": "Could not find any solution. Skipping.",
+    "GRID_INVALID": "Could not recognize grid fragment. Skipping.",
+    "DAEMONS_INVALID": "Could not recognize daemons fragment. Skipping.",
+    "BUFFER_SIZE_INVALID": "Could not recognize buffer size fragment. Skipping."
   },
   "pl": {
     "CHECK_FOR_UPDATES": "Sprawdzam dostępność aktualizacji..",
@@ -24,7 +25,6 @@
     "LOADING_WORKERS_START": "Ładowanie tesseracta..",
     "CHOOSE_MONITOR": "Na którym monitorze jest uruchomiony Cyberpunk 2077?",
     "READY": "Czekam na skrót..",
-    "OCR_DATA_INVALID": "Dane z OCRa są niepoprawne. Pomijam.",
     "CAPTURE_SCREEN": "Robię zrzut ekranu \"{0}\"..",
     "OCR_START": "Rozpoczynam OCR..",
     "SOLVER_START": "Rozwiązuję..",
@@ -32,9 +32,11 @@
     "SOLVER_DONE": "Sukces.",
     "UNKNOWN_KEY_ERROR": "Nienzany klucz: \"{0}\".",
     "NEW_VERSION_AVAILABLE": "Jest dostępna nowa wersja({0}). Pobrać i wyjść?",
-    "UNSUPORTED_RESOLUTION_ERROR": "Nieobsługiwana rozdzielczość: \"{0}\".",
     "UNSUPORTED_OS": "Tylko system Windows jest obsługiwany.",
     "INVALID_LANG_ERROR": "Niepoprawny kod jezyka. Oczekiwano jednego z listy {0} ale otrzymano \"{1}\".",
-    "NO_SOLUTION": "Nie znaleziono żadnego rozwiązania. Pomijam."
+    "NO_SOLUTION": "Nie znaleziono żadnego rozwiązania. Pomijam.",
+    "GRID_INVALID": "Nie udało się rozpoznać fragmentu \"grid\". Pomijam.",
+    "DAEMONS_INVALID": "Nie udało się rozpoznać fragmentu \"daemons\". Pomijam.",
+    "BUFFER_SIZE_INVALID": "Nie udało się rozpoznać fragmentu \"bufferSize\". Pomijam."
   }
 }

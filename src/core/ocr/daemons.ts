@@ -1,4 +1,4 @@
-import { Point } from '@/common';
+import { Point, t } from '@/common';
 import { BreachProtocolValidationError, HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
@@ -51,7 +51,7 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
     ) as BreachProtocolDaemonsFragmentResult<C>;
 
     if (!this.isValid(rawData)) {
-      throw new BreachProtocolValidationError('daemons are not valid', result);
+      throw new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
     }
 
     return result;

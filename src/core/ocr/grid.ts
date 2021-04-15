@@ -1,4 +1,4 @@
-import { Point } from '@/common';
+import { Point, t } from '@/common';
 import { BreachProtocolValidationError, HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
@@ -55,7 +55,7 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     ) as BreachProtocolGridFragmentResult<C>;
 
     if (!this.isValid(rawData)) {
-      throw new BreachProtocolValidationError('grid is not valid', result);
+      throw new BreachProtocolValidationError(t`GRID_INVALID`, result);
     }
 
     return result;
