@@ -1,4 +1,4 @@
-import { chunk, Point, unique } from '@/common';
+import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
 import { HexNumber, HEX_NUMBERS } from '../common';
 import { FragmentId } from '../ocr';
@@ -19,7 +19,7 @@ export class BreachProtocolFragmentResult<D, S, C> {
     public readonly source: S,
     public readonly boundingBox: BreachProtocolFragmentBoundingBox,
     public readonly rawData: D,
-    public readonly container: C
+    public readonly fragment: C
   ) {}
 }
 
@@ -33,9 +33,6 @@ export abstract class BreachProtocolFragment2<D, S, C> {
   /** Botton right corner of fragment. */
   abstract readonly p2: Point;
 
-  /** 0-255 value of threshold. */
-  abstract readonly threshold: number;
-
   constructor(public readonly container: ImageContainer<C>) {}
 
   /** Recognize data from fragment image. */
@@ -48,6 +45,7 @@ export abstract class BreachProtocolFragment2<D, S, C> {
     const { p1, p2 } = this;
     const { width, height, left, top } = this.container.getCroppedBoundingBox();
 
+    // NOTE: this does not return cropped with and height!
     return {
       left: left + Math.round(p1.x * width),
       top: top + Math.round(p1.y * height),
@@ -70,7 +68,11 @@ export abstract class BreachProtocolOCRFragment<
     ['1E', '1C'],
     ['EB', 'E9'],
     ['F9', 'E9'],
+    ['ED', 'BD'],
   ]);
+
+  /** Map containing cropped heights and threshold values. */
+  abstract readonly thresholds: Map<number, number>;
 
   constructor(public container: ImageContainer<C>) {
     super(container);
@@ -93,13 +95,13 @@ export abstract class BreachProtocolOCRFragment<
     ) as Promise<Tesseract.RecognizeResult>;
   }
 
-  async ocr(threshold = this.threshold) {
+  async ocr(threshold: number) {
     const boundingBox = this.getFragmentBoundingBox();
     const fragment = await this.container.process(threshold, boundingBox);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
 
-    return { data, boundingBox, buffer, fragment };
+    return { data, boundingBox, fragment };
   }
 
   protected chunkLine(line: string) {
@@ -134,6 +136,15 @@ export abstract class BreachProtocolOCRFragment<
     return symbols
       .filter(unique)
       .every((s) => HEX_NUMBERS.includes(s as HexNumber));
+  }
+
+  /** Get closest treshold value for given resolution. */
+  protected getThreshold() {
+    const { height } = this.container.getCroppedBoundingBox();
+    const list = [...this.thresholds.keys()];
+    const value = getClosest(height, list);
+
+    return this.thresholds.get(value);
   }
 
   private static async initWorker() {

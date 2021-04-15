@@ -6,6 +6,7 @@ import {
   generateSquareMap,
   ROWS,
 } from '../common';
+import { FragmentId } from '../ocr';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolBufferSizeFragmentResult,
@@ -59,14 +60,17 @@ export class BreachProtocolRecognitionResult<C> {
   }
 }
 
-export async function breachProtocolOCR2<C>(container: ImageContainer<C>) {
+export async function breachProtocolOCR2<C>(
+  container: ImageContainer<C>,
+  thresholds?: Partial<Record<FragmentId, number>>
+) {
   const gridFragment = new BreachProtocolGridFragment(container);
   const daemonsFragment = new BreachProtocolDaemonsFragment(container);
   const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container);
   const [g, d, b] = await Promise.all([
-    gridFragment.recognize(),
-    daemonsFragment.recognize(),
-    bufferSizeFragment.recognize(),
+    gridFragment.recognize(thresholds?.grid),
+    daemonsFragment.recognize(thresholds?.daemons),
+    bufferSizeFragment.recognize(thresholds?.bufferSize),
   ]);
 
   return new BreachProtocolRecognitionResult<C>(g, d, b);

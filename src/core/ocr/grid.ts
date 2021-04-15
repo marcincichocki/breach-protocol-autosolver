@@ -16,13 +16,17 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
   Tesseract.Page,
   C
 > {
+  readonly thresholds = new Map([
+    [1080, 120],
+    [1440, 120],
+    [2160, 120],
+  ]);
+
   readonly id = 'grid';
 
   readonly p1 = new Point(0.137, 0.312);
 
   readonly p2 = new Point(0.383, 0.76);
-
-  readonly threshold = 120;
 
   private getRawGrid(lines: string[]) {
     return lines.flatMap((l) => this.parseLine(l));
@@ -36,8 +40,10 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     return this.validateSymbols(rawData) && this.isSquare(rawData.length);
   }
 
-  async recognize() {
-    const { data, boundingBox, fragment } = await this.ocr();
+  async recognize(threshold?: number) {
+    const { data, boundingBox, fragment } = await this.ocr(
+      threshold ?? this.getThreshold()
+    );
     const lines = this.getLines(data.text);
     const rawData = this.getRawGrid(lines);
 
