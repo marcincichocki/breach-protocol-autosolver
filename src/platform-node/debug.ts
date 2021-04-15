@@ -1,4 +1,4 @@
-import { BreachProtocolRawData } from '@/core';
+import { BreachProtocolFragmentResult } from '@/core';
 import {
   ensureDirSync,
   ensureFileSync,
@@ -45,15 +45,22 @@ export function getScreenShotPath() {
 }
 
 export class BreachProtocolDebug {
-  constructor(public fileName: string, public rawData: BreachProtocolRawData) {}
+  constructor(
+    public fileName: string,
+    public result: BreachProtocolFragmentResult<any, any, any>
+  ) {}
 
   toJSON() {
     const { fileName } = this;
+    const { id, rawData } = this.result;
 
     return {
       version,
       fileName,
-      ...this.rawData,
+      rawData: {
+        id,
+        rawData,
+      },
     };
   }
 }
