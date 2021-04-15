@@ -63,7 +63,7 @@ describe('image container', () => {
     expect(top).toBe((y - height) / 2);
   });
 
-  it.each(vertical)('should crop vertical back bars(%ix%i)', (x, y) => {
+  it.each(vertical)('should crop vertical black bars(%ix%i)', (x, y) => {
     const container = new TestImageContainer({ x, y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
