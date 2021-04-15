@@ -92,3 +92,11 @@ export function chunk(str: string, size: number) {
 
   return chunks;
 }
+
+export function getClosest(n: number, list: number[]) {
+  const distances = list.map((x) => Math.abs(n - x));
+  const min = Math.min(...distances);
+  const index = distances.indexOf(min);
+
+  return list[index];
+}

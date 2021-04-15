@@ -1,4 +1,11 @@
-import { chunk, memoize, unique, uniqueBy, uniqueWith } from './util';
+import {
+  chunk,
+  getClosest,
+  memoize,
+  unique,
+  uniqueBy,
+  uniqueWith,
+} from './util';
 
 describe('utils', () => {
   it('should create chunks', () => {
@@ -44,5 +51,10 @@ describe('utils', () => {
       [0, 1],
       [2, 3],
     ]);
+  });
+
+  it('should find closest number', () => {
+    expect(getClosest(4, [1, 5])).toBe(5);
+    expect(getClosest(900, [720, 1080, 1440])).toBe(720);
   });
 });
