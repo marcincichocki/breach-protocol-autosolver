@@ -13,7 +13,6 @@ export type BreachProtocolGridFragmentResult<C> = BreachProtocolFragmentResult<
 
 export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
   HexNumber[],
-  Tesseract.Page,
   C
 > {
   readonly thresholds = new Map([
@@ -28,8 +27,12 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
 
   readonly p2 = new Point(0.383, 0.76);
 
-  private getRawGrid(lines: string[]) {
+  protected getRawData(lines: string[]) {
     return lines.flatMap((l) => this.parseLine(l));
+  }
+
+  protected getValidationError(result: BreachProtocolGridFragmentResult<C>) {
+    return new BreachProtocolValidationError(t`GRID_INVALID`, result);
   }
 
   private isSquare(n: number) {
@@ -38,26 +41,5 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
 
   isValid(rawData: HexNumber[]) {
     return this.validateSymbols(rawData) && this.isSquare(rawData.length);
-  }
-
-  async recognize(threshold?: number) {
-    const { data, boundingBox, fragment } = await this.ocr(
-      threshold ?? this.getThreshold()
-    );
-    const lines = this.getLines(data.text);
-    const rawData = this.getRawGrid(lines);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      data,
-      boundingBox,
-      rawData,
-      fragment
-    ) as BreachProtocolGridFragmentResult<C>;
-
-    if (!this.isValid(rawData)) {
-      throw new BreachProtocolValidationError(t`GRID_INVALID`, result);
-    }
-
-    return result;
   }
 }

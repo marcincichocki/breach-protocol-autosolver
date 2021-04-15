@@ -11,7 +11,6 @@ export type BreachProtocolDaemonsFragmentResult<
 
 export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
   HexNumber[][],
-  Tesseract.Page,
   C
 > {
   readonly thresholds = new Map([
@@ -26,34 +25,17 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
 
   readonly p2 = new Point(0.59, 0.76);
 
-  protected getRawDaemons(lines: string[]) {
+  protected getRawData(lines: string[]) {
     return lines.map((l) => this.parseLine(l));
+  }
+
+  protected getValidationError(result: BreachProtocolDaemonsFragmentResult<C>) {
+    return new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
   }
 
   isValid(rawData: HexNumber[][]) {
     const isCorrectSize = rawData.every((d) => d.length <= 5);
 
     return this.validateSymbols(rawData.flat()) && isCorrectSize;
-  }
-
-  async recognize(threshold?: number) {
-    const { data, boundingBox, fragment } = await this.ocr(
-      threshold ?? this.getThreshold()
-    );
-    const lines = this.getLines(data.text);
-    const rawData = this.getRawDaemons(lines);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      data,
-      boundingBox,
-      rawData,
-      fragment
-    ) as BreachProtocolDaemonsFragmentResult<C>;
-
-    if (!this.isValid(rawData)) {
-      throw new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
-    }
-
-    return result;
   }
 }

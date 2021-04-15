@@ -1,6 +1,11 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
-import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
+import {
+  BreachProtocolRawData,
+  BreachProtocolValidationError,
+  HexNumber,
+  HEX_NUMBERS,
+} from '../common';
 import { ImageContainer } from './image-container';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -37,7 +42,9 @@ export abstract class BreachProtocolFragment<D, S, C> {
   constructor(public readonly container: ImageContainer<C>) {}
 
   /** Recognize data from fragment image. */
-  abstract recognize(): Promise<BreachProtocolFragmentResult<D, S, C>>;
+  abstract recognize(
+    threshold?: number
+  ): Promise<BreachProtocolFragmentResult<D, S, C>>;
 
   /** Check if recognized data is valid. */
   abstract isValid(data: D): boolean;
@@ -60,9 +67,8 @@ export abstract class BreachProtocolFragment<D, S, C> {
 
 export abstract class BreachProtocolOCRFragment<
   D,
-  S,
   C
-> extends BreachProtocolFragment<D, S, C> {
+> extends BreachProtocolFragment<D, Tesseract.Page, C> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
   protected readonly correctionMap = new Map<string, HexNumber>([
@@ -89,11 +95,38 @@ export abstract class BreachProtocolOCRFragment<
     }
   }
 
+  protected abstract getRawData(lines: string[]): D;
+
+  protected abstract getValidationError(
+    result: BreachProtocolFragmentResult<D, Tesseract.Page, C>
+  ): BreachProtocolValidationError;
+
   private recognizeFragment(buffer: Buffer) {
     return BreachProtocolOCRFragment.scheduler.addJob(
       'recognize',
       buffer
     ) as Promise<Tesseract.RecognizeResult>;
+  }
+
+  async recognize(threshold?: number) {
+    const { data, boundingBox, fragment } = await this.ocr(
+      threshold ?? this.getThreshold()
+    );
+    const lines = this.getLines(data.text);
+    const rawData = this.getRawData(lines);
+    const result = new BreachProtocolFragmentResult(
+      this.id,
+      data,
+      boundingBox,
+      rawData,
+      fragment
+    );
+
+    if (!this.isValid(rawData)) {
+      throw this.getValidationError(result);
+    }
+
+    return result;
   }
 
   async ocr(threshold: number) {
