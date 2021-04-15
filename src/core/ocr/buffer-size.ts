@@ -52,12 +52,6 @@ export class BreachProtocolBufferSizeFragment<
   readonly p1 = new Point(0.42, 0.167);
 
   readonly p2 = new Point(0.8, 0.225);
-  // readonly p2 = new Point(0.669, 0.225);
-
-  // THIS THING SHOULD BE MUTABLE BECAUSE IF WE FIND SHIT ONCE
-  // THEN ITS GOOD LATER, UNLESS USER CHANGES GAMMA WHICH
-  // WILL RUN REPEAT AGAIN.
-  readonly threshold = 230;
 
   // current threshold that works
   private static threshold = 255;
