@@ -8,7 +8,9 @@ import {
 
 class BufferSizeControlGroup {
   /** Thickness of control group in pixels. */
-  private readonly size = 10;
+  // 7 pixels is max on lowest resolution, anything more will
+  // interfere with boxes, and control group will always fail.
+  private readonly size = 7;
 
   constructor(
     private start: number,
