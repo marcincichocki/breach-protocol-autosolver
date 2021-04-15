@@ -131,7 +131,7 @@ export abstract class BreachProtocolOCRFragment<
 
   async ocr(threshold: number) {
     const boundingBox = this.getFragmentBoundingBox();
-    const fragment = await this.container.process(threshold, boundingBox);
+    const fragment = this.container.process(threshold, boundingBox);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
 
