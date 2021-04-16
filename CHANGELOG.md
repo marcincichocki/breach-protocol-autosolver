@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.6.1...v1.7.0) (2021-04-16)
+
+
+### Features
+
+* add automatic buffer size threshold detection ([4912ce9](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4912ce933e2e1666d647472ce2a3eb0053e2be3e))
+* add support for any allowed resolution ([4f7832d](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4f7832d9373c24a8377c5ecaf0703442f7750ff8))
+
+
+### Bug Fixes
+
+* update allowed buffer size values ([056a3c7](https://github.com/marcincichocki/breach-protocol-autosolver/commit/056a3c7d38b548314f932344b386f5b575756ad5))
+
 ### [1.6.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.6.0...v1.6.1) (2021-04-08)
 
 
