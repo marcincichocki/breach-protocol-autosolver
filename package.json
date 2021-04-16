@@ -2,7 +2,7 @@
   "name": "breach-protocol-autosolver",
   "version": "1.7.0",
   "description": "Automatically solve breach protocol minigame in Cyberpunk 2077",
-  "main": "src/index.ts",
+  "main": "main.js",
   "private": true,
   "jest": {
     "preset": "ts-jest",
@@ -54,6 +54,7 @@
   "dependencies": {
     "@octokit/rest": "^18.4.0",
     "commander": "^7.2.0",
+    "electron": "^12.0.4",
     "inquirer": "^8.0.0",
     "iohook": "^0.6.6",
     "is-wsl": "^2.2.0",
