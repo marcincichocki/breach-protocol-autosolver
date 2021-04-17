@@ -1,3 +1,32 @@
+diff --git a/node_modules/tesseract.js/src/utils/getEnvironment.js b/node_modules/tesseract.js/src/utils/getEnvironment.js
+index 03f5663..da7d3ea 100644
+--- a/node_modules/tesseract.js/src/utils/getEnvironment.js
++++ b/node_modules/tesseract.js/src/utils/getEnvironment.js
+@@ -5,10 +5,10 @@ module.exports = (key) => {
+ 
+   if (typeof WorkerGlobalScope !== 'undefined') {
+     env.type = 'webworker';
+-  } else if (typeof window === 'object') {
+-    env.type = 'browser';
+   } else if (isElectron()) {
+     env.type = 'electron';
++  } else if (typeof window === 'object') {
++    env.type = 'browser';
+   } else if (typeof process === 'object' && typeof require === 'function') {
+     env.type = 'node';
+   }
+diff --git a/node_modules/tesseract.js/src/utils/resolvePaths.js b/node_modules/tesseract.js/src/utils/resolvePaths.js
+index 5aa2b74..c7b379e 100644
+--- a/node_modules/tesseract.js/src/utils/resolvePaths.js
++++ b/node_modules/tesseract.js/src/utils/resolvePaths.js
+@@ -3,6 +3,7 @@ const resolveURL = isBrowser ? require('resolve-url') : s => s; // eslint-disabl
+ 
+ module.exports = (options) => {
+   const opts = { ...options };
++  
+   ['corePath', 'workerPath', 'langPath'].forEach((key) => {
+     if (typeof options[key] !== 'undefined') {
+       opts[key] = resolveURL(opts[key]);
 diff --git a/node_modules/tesseract.js/src/worker/node/spawnWorker.js b/node_modules/tesseract.js/src/worker/node/spawnWorker.js
 index 2901948..a2147c4 100644
 --- a/node_modules/tesseract.js/src/worker/node/spawnWorker.js
