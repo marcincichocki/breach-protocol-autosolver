@@ -53,12 +53,16 @@ app.whenReady().then(async () => {
   });
 });
 
+ipcMain.on('scheduler-ready', () => {
+  console.log('scheduler is ready!');
+});
+
 ipcMain.on('autosolver-finished', () => {
   // oh we are done!
   console.log('autosolver just finished! Imma click');
 });
 
-ipcMain.on('message', (message: any) => console.log(message));
+ipcMain.on('log', (event, message) => console.log(message));
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
