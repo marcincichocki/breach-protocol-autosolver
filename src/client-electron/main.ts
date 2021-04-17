@@ -1,4 +1,3 @@
-import { setLang } from '@/common';
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { join } from 'path';
 
@@ -18,7 +17,7 @@ function createWindow() {
 
 function createWorkerWindow() {
   const window = new BrowserWindow({
-    show: true,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -39,8 +38,6 @@ app.whenReady().then(async () => {
   rendererWindow.on('closed', () => app.quit());
 
   const worker = createWorkerWindow();
-
-  setLang('en');
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

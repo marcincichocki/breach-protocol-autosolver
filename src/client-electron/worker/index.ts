@@ -1,5 +1,7 @@
+import { setLang } from '@/common';
 import { BreachProtocolOCRFragment } from '@/core';
 import { captureScreen } from '@/platform-node/robot';
+import { solveBreachProtocol } from '@/platform-node/solve';
 import { ipcRenderer } from 'electron';
 import { listDisplays } from 'screenshot-desktop';
 
@@ -11,7 +13,7 @@ let screen: string;
 
 async function init() {
   log('STARTING INIT');
-
+  setLang('en');
   await BreachProtocolOCRFragment.initScheduler();
   const displays = await listDisplays();
   screen = displays[0].id;
@@ -26,7 +28,7 @@ init();
 ipcRenderer.on('start-autosolver', async () => {
   log('starting autosolver!!!!');
 
-  const fileName = await captureScreen(screen);
+  await solveBreachProtocol(screen);
   // do some expensive computations...
 
   ipcRenderer.send('autosolver-finished');
