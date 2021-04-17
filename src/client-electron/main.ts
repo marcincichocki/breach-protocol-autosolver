@@ -2,14 +2,15 @@ import { setLang } from '@/common';
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 
 function createWindow() {
-  const win = new BrowserWindow({
+  const window = new BrowserWindow({
     width: 800,
     height: 600,
   });
 
-  win.loadFile('./renderer/index.html');
+  window.loadFile('./renderer/index.html');
+  window.webContents.openDevTools();
 
-  return win;
+  return window;
 }
 
 function createWorkerWindow() {
@@ -23,7 +24,8 @@ function createWorkerWindow() {
 }
 
 app.whenReady().then(async () => {
-  createWindow();
+  const rendererWindow = createWindow();
+  rendererWindow.on('closed', () => app.quit());
 
   const worker = createWorkerWindow();
 
