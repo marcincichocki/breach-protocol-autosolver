@@ -1,5 +1,6 @@
 import { setLang } from '@/common';
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
+import { join } from 'path';
 
 function createWindow() {
   const window = new BrowserWindow({
@@ -7,7 +8,9 @@ function createWindow() {
     height: 600,
   });
 
-  window.loadFile('./renderer/index.html');
+  window.loadFile(
+    join(process.cwd(), 'src/client-electron/renderer/index.html')
+  );
   window.webContents.openDevTools();
 
   return window;
@@ -15,10 +18,18 @@ function createWindow() {
 
 function createWorkerWindow() {
   const window = new BrowserWindow({
-    show: false,
+    show: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
-  window.loadFile('./worker/index.html');
+  window.webContents.openDevTools();
+
+  window
+    .loadFile(join(process.cwd(), 'src/client-electron/worker/index.html'))
+    .then(() => console.log('worker window loaded'));
 
   return window;
 }
@@ -46,6 +57,8 @@ ipcMain.on('autosolver-finished', () => {
   // oh we are done!
   console.log('autosolver just finished! Imma click');
 });
+
+ipcMain.on('message', (message: any) => console.log(message));
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
