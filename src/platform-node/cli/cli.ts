@@ -28,7 +28,7 @@ import {
   useScalingOption,
 } from './options';
 
-type Options = KeyBindOption &
+export type Options = KeyBindOption &
   DebugLimitOption &
   LangOption &
   SoundPathOption &
@@ -61,4 +61,8 @@ export const program = new Command(name)
   .addOption(experimentalBufferSizeRecognition)
   .exitOverride();
 
-export const options = program.opts() as Options;
+export let options = program.opts() as Options;
+
+export function setOptions(newOptions: Options) {
+  options = newOptions;
+}

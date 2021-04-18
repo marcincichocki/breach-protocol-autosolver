@@ -1,3 +1,4 @@
+import { options, program } from '@/platform-node/cli';
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { join } from 'path';
 
@@ -39,6 +40,14 @@ app.whenReady().then(async () => {
 
   const worker = createWorkerWindow();
 
+  try {
+    program.parse();
+    worker.webContents.send('argv', options);
+  } catch (e) {
+    // TODO: send invalid arg event or smth
+    process.exit(1);
+  }
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -59,7 +68,7 @@ ipcMain.on('autosolver-finished', () => {
   console.log('autosolver just finished! Imma click');
 });
 
-ipcMain.on('log', (event, message) => console.log(message));
+ipcMain.on('log', (event, args) => console.log(...args));
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

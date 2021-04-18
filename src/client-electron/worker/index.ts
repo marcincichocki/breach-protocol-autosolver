@@ -1,12 +1,12 @@
 import { setLang } from '@/common';
 import { BreachProtocolOCRFragment } from '@/core';
-import { captureScreen } from '@/platform-node/robot';
 import { solveBreachProtocol } from '@/platform-node/solve';
+import { Options, setOptions } from '@/platform-node/cli';
 import { ipcRenderer } from 'electron';
 import { listDisplays } from 'screenshot-desktop';
 
-function log(message: any) {
-  ipcRenderer.send('log', message);
+function log(...args: any[]) {
+  ipcRenderer.send('log', args);
 }
 
 let screen: string;
@@ -24,6 +24,11 @@ async function init() {
 }
 
 init();
+
+ipcRenderer.on('argv', (event, options: Options) => {
+  log('got options: %o', options);
+  setOptions(options);
+});
 
 ipcRenderer.on('start-autosolver', async () => {
   log('starting autosolver!!!!');
