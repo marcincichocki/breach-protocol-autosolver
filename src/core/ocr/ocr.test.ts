@@ -53,7 +53,7 @@ describe('image container', () => {
   ];
 
   it.each(horizontal)('should crop horizontal black bars(%ix%i)', (x, y) => {
-    const container = new TestImageContainer({ x, y });
+    const container = new NoopImageContainer({ x, y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -64,7 +64,7 @@ describe('image container', () => {
   });
 
   it.each(vertical)('should crop vertical black bars(%ix%i)', (x, y) => {
-    const container = new TestImageContainer({ x, y });
+    const container = new NoopImageContainer({ x, y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -75,7 +75,7 @@ describe('image container', () => {
   });
 
   it.each(regular)('should not crop 16:9 resolutions(%ix%i)', (x, y) => {
-    const container = new TestImageContainer({ x, y });
+    const container = new NoopImageContainer({ x, y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -87,10 +87,10 @@ describe('image container', () => {
 });
 
 describe('raw data validation', () => {
-  let testContainer: TestImageContainer;
+  let testContainer: NoopImageContainer;
 
   beforeAll(() => {
-    testContainer = new TestImageContainer({ x: 1920, y: 1080 });
+    testContainer = new NoopImageContainer({ x: 1920, y: 1080 });
     // @ts-ignore
     BreachProtocolOCRFragment.scheduler = true;
   });
@@ -221,8 +221,11 @@ async function recognizeRegistryEntry(
 
 // @ts-ignore
 // Only test protected methods
-class TestImageContainer extends ImageContainer<any> {
+class NoopImageContainer extends ImageContainer<any> {
   constructor(public readonly dimensions: { x: number; y: number }) {
     super();
   }
+
+  // This method will be called in fragment's contructor
+  preprocess() {}
 }
