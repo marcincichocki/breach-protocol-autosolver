@@ -4,6 +4,7 @@ import registry from '../../bp-registry/registry.json';
 import { BufferSize, HexNumber } from '../common';
 import { BreachProtocolOCRFragment, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
+import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer, SharpImageContainer } from './image-container';
@@ -200,11 +201,12 @@ function getRegistryFor(resolution: Resolution) {
 }
 
 async function compareOcrToJson(entry: RegistryEntry, resolution: Resolution) {
-  const { rawData } = await recognizeRegistryEntry(entry, resolution);
+  const [ocr, trim] = await recognizeRegistryEntry(entry, resolution);
 
-  expect(rawData.grid).toEqual(entry.grid);
-  expect(rawData.daemons).toEqual(entry.daemons);
-  expect(rawData.bufferSize).toBe(entry.bufferSize);
+  expect(ocr.rawData.grid).toEqual(entry.grid);
+  expect(ocr.rawData.daemons).toEqual(entry.daemons);
+  expect(ocr.rawData.bufferSize).toBe(entry.bufferSize);
+  expect(trim.rawData).toBe(entry.bufferSize);
 }
 
 async function recognizeRegistryEntry(
@@ -215,8 +217,12 @@ async function recognizeRegistryEntry(
   const file = path.join('./src/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
   const container = await SharpImageContainer.create(image);
+  const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
 
-  return await breachProtocolOCR(container, thresholds);
+  return Promise.all([
+    breachProtocolOCR(container, thresholds),
+    trimStrategy.recognize(),
+  ]);
 }
 
 // @ts-ignore

@@ -11,6 +11,12 @@ export abstract class ImageContainer<T> {
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
 
+  abstract preprocessBufferSize(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
+
+  abstract trim(instance: T): Promise<{ data: T; width: number }>;
+
   /** Apply threshold to given fragment. */
   abstract threshold(instance: T, threshold: number): T;
 
@@ -86,6 +92,22 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .extract(fragmentBoundingBox)
       .negate()
       .toColorspace('b-w');
+  }
+
+  preprocessBufferSize(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+    return this.preprocess(fragmentBoundingBox).flop();
+  }
+
+  async trim(instance: sharp.Sharp) {
+    const buffer = await instance.toBuffer();
+    const { data, info } = await sharp(buffer)
+      .trim()
+      .toBuffer({ resolveWithObject: true });
+
+    return {
+      data: sharp(data),
+      width: info.width,
+    };
   }
 
   threshold(instance: sharp.Sharp, threshold: number) {

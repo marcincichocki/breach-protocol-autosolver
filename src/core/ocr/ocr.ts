@@ -11,6 +11,7 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolBufferSizeFragmentResult,
 } from './buffer-size';
+import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import {
   BreachProtocolDaemonsFragment,
   BreachProtocolDaemonsFragmentResult,
@@ -62,11 +63,15 @@ export class BreachProtocolRecognitionResult<C> {
 
 export async function breachProtocolOCR<C>(
   container: ImageContainer<C>,
-  thresholds?: Partial<Record<FragmentId, number>>
+  thresholds?: Partial<Record<FragmentId, number>>,
+  experimentalBufferSizeRecognition?: boolean
 ) {
   const gridFragment = new BreachProtocolGridFragment(container);
   const daemonsFragment = new BreachProtocolDaemonsFragment(container);
-  const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container);
+  const bufferSizeFragment = experimentalBufferSizeRecognition
+    ? new BreachProtocolBufferSizeTrimFragment(container)
+    : new BreachProtocolBufferSizeFragment(container);
+
   const [g, d, b] = await Promise.all([
     gridFragment.recognize(thresholds?.grid),
     daemonsFragment.recognize(thresholds?.daemons),
