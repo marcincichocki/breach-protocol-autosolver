@@ -48,10 +48,10 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
   C
 > {
   private readonly controlGroups = [
-    // End of fragment.
-    new BufferSizeControlGroup(0.7, 1, 0),
     // Buffer boxes.
     new BufferSizeControlGroup(0.12, 0.22, 255),
+    // End of fragment.
+    new BufferSizeControlGroup(0.7, 1, 0),
   ];
 
   readonly id = 'bufferSize';
@@ -60,10 +60,9 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
 
   readonly p2 = new Point(0.8, 0.225);
 
-  // current threshold that works
-  private static threshold = 255;
+  readonly boundingBox = this.getFragmentBoundingBox();
 
-  readonly thresholdBase = 255;
+  readonly fragment = this.container.preprocess(this.boundingBox);
 
   /** Percentage that padding in buffer box takes. */
   private readonly padding = 0.00937;
@@ -74,50 +73,85 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
   /** Percentage that gap between buffer squares takes. */
   private readonly gap = 0.00546;
 
-  private attempt = 0;
+  private static cachedThreshold: number = null;
 
   isValid(n: number) {
     return Number.isInteger(n) && n >= BUFFER_SIZE_MIN && n <= BUFFER_SIZE_MAX;
   }
 
-  async recognize(
-    threshold = BreachProtocolBufferSizeFragment.threshold
-  ): Promise<BreachProtocolBufferSizeFragmentResult<C>> {
-    const boundingBox = this.getFragmentBoundingBox();
-    const fragment = this.container.process(threshold, boundingBox);
+  private async checkControlGroupsForThreshold(threshold: number) {
+    const fragment = this.container.threshold(this.fragment, threshold);
     const rawBuffer = await this.container.toRawBuffer(fragment);
-    const bufferSize = this.getBufferSizeFromPixels(rawBuffer, boundingBox);
 
-    if (!this.isValid(bufferSize)) {
-      if (this.attempt++ === 0) {
-        threshold = this.thresholdBase;
+    return this.controlGroups.map((cg) =>
+      cg.verify(rawBuffer, this.boundingBox.width)
+    ) as [boolean, boolean];
+  }
+
+  // Run binary search and check control groups to narrow
+  // correct result. Since thresholds only depend on gamma,
+  // values below 128 are exluded to speed up search(lowest
+  // gamma 0.5 require ~160 threshold).
+  private async findThreshold() {
+    const base = 128;
+    let start = 0;
+    let end = base - 1;
+    let i = 0;
+
+    do {
+      let m = Math.ceil((start + end) / 2);
+      const threshold = m + base;
+      const [cg1, cg2] = await this.checkControlGroupsForThreshold(threshold);
+
+      if (cg1 && cg2) {
+        return threshold;
       }
 
-      if ((threshold -= 1) > 160) {
-        return await this.recognize(threshold);
+      if (!cg1) {
+        // First control group has some black pixels, threshold is too high.
+        end = m - 1;
+      } else if (!cg2) {
+        // Second control group has some white pixels, threshold is too low.
+        start = m + 1;
       }
+    } while (i++ < Math.log2(base) + 1);
 
-      throw new BreachProtocolValidationError(
-        t`BUFFER_SIZE_INVALID`,
-        new BreachProtocolFragmentResult(
-          this.id,
-          rawBuffer,
-          boundingBox,
-          bufferSize,
-          fragment
-        )
-      );
-    }
+    return null;
+  }
 
-    BreachProtocolBufferSizeFragment.threshold = threshold;
-
-    return new BreachProtocolFragmentResult(
+  async recognize(
+    threshold = BreachProtocolBufferSizeFragment.cachedThreshold
+  ): Promise<BreachProtocolBufferSizeFragmentResult<C>> {
+    const newThreshold = threshold ?? (await this.findThreshold());
+    const fragment = this.container.threshold(this.fragment, newThreshold);
+    const rawBuffer = await this.container.toRawBuffer(fragment);
+    const bufferSize = this.getBufferSizeFromPixels(rawBuffer);
+    const result = new BreachProtocolFragmentResult(
       this.id,
       rawBuffer,
-      boundingBox,
+      this.boundingBox,
       bufferSize,
       fragment
     ) as BreachProtocolBufferSizeFragmentResult<C>;
+
+    if (!this.isValid(bufferSize)) {
+      // In rare cases where given value is wrong, repeat with
+      // binary search. For example when user changes gamma mid
+      // game, saved value will be wrong. This allows to recalibrate
+      // threshold on the fly.
+      // One side effect of this behaviour is that --threshold-buffer-size
+      // flag is quite useless, because even it fails, fallback will be used.
+      if (threshold !== null) {
+        return this.recognize(null);
+      }
+
+      throw new BreachProtocolValidationError(t`BUFFER_SIZE_INVALID`, result);
+    }
+
+    // Cache valid threshold to limit ammount of computation required on following BPs.
+    BreachProtocolBufferSizeFragment.cachedThreshold = newThreshold;
+
+    return result;
   }
 
   private verifyControlGroups(row: Buffer, length: number) {
@@ -141,10 +175,8 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
     return size;
   }
 
-  private getBufferSizeFromPixels(
-    pixels: Buffer,
-    { width, outerWidth }: BreachProtocolFragmentBoundingBox
-  ) {
+  private getBufferSizeFromPixels(pixels: Buffer) {
+    const { width, outerWidth } = this.boundingBox;
     let size = this.getSizeOfBufferBox(pixels, width) / outerWidth;
     let bufferSize = 0;
 

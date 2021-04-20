@@ -25,6 +25,10 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
 
   readonly p2 = new Point(0.59, 0.76);
 
+  readonly boundingBox = this.getFragmentBoundingBox();
+
+  protected readonly fragment = this.container.preprocess(this.boundingBox);
+
   protected getRawData(lines: string[]) {
     return lines.map((l) => this.parseLine(l));
   }

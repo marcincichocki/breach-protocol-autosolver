@@ -39,6 +39,11 @@ export abstract class BreachProtocolFragment<D, S, C> {
   /** Botton right corner of fragment. */
   abstract readonly p2: Point;
 
+  abstract readonly boundingBox: BreachProtocolFragmentBoundingBox;
+
+  /** Preprocessed image fragment. */
+  protected abstract readonly fragment: C;
+
   constructor(public readonly container: ImageContainer<C>) {}
 
   /** Recognize data from fragment image. */
@@ -109,15 +114,13 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   async recognize(threshold?: number) {
-    const { data, boundingBox, fragment } = await this.ocr(
-      threshold ?? this.getThreshold()
-    );
+    const { data, fragment } = await this.ocr(threshold ?? this.getThreshold());
     const lines = this.getLines(data.text);
     const rawData = this.getRawData(lines);
     const result = new BreachProtocolFragmentResult(
       this.id,
       data,
-      boundingBox,
+      this.boundingBox,
       rawData,
       fragment
     );
@@ -130,12 +133,11 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   async ocr(threshold: number) {
-    const boundingBox = this.getFragmentBoundingBox();
-    const fragment = this.container.process(threshold, boundingBox);
+    const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
 
-    return { data, boundingBox, fragment };
+    return { data, fragment };
   }
 
   protected chunkLine(line: string) {

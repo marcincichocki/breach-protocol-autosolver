@@ -6,11 +6,13 @@ export abstract class ImageContainer<T> {
 
   readonly dimensions: { x: number; y: number };
 
-  /** Turn wrapped image into 8 bit black and white fragment. */
-  abstract process(
-    threshold: number,
+  /** Crop image and turn it into 8bit. */
+  abstract preprocess(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
+
+  /** Apply threshold to given fragment. */
+  abstract threshold(instance: T, threshold: number): T;
 
   abstract toBuffer(instance: T): Promise<Buffer>;
 
@@ -77,14 +79,17 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     );
   }
 
-  process(threshold: number, boundingBox: BreachProtocolFragmentBoundingBox) {
+  preprocess(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
     return this.instance
       .clone()
       .removeAlpha()
-      .extract(boundingBox)
-      .threshold(threshold)
+      .extract(fragmentBoundingBox)
       .negate()
       .toColorspace('b-w');
+  }
+
+  threshold(instance: sharp.Sharp, threshold: number) {
+    return instance.clone().threshold(threshold);
   }
 
   toBuffer(instance: sharp.Sharp) {
