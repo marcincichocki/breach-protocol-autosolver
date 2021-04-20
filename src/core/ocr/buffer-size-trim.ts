@@ -19,7 +19,9 @@ export class BreachProtocolBufferSizeTrimFragment<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  readonly fragment = this.container.preprocessBufferSize(this.boundingBox);
+  readonly fragment = this.container.processBufferSizeFragment(
+    this.boundingBox
+  );
 
   /** Percentage that padding in buffer box takes. */
   private readonly padding = 0.00937;
@@ -36,15 +38,16 @@ export class BreachProtocolBufferSizeTrimFragment<
 
   // Ensure compatibility with current api.
   async recognize(threshold?: number) {
-    const { data, width } = await this.container.trim(this.fragment);
+    const { fragment, buffer, width } = await this.container.trim(
+      this.fragment
+    );
     const bufferSize = await this.getBufferSizeFromPixels(width);
     const result = new BreachProtocolFragmentResult(
       this.id,
-      // no source
-      null,
+      buffer,
       this.boundingBox,
       bufferSize,
-      data
+      fragment
     ) as BreachProtocolBufferSizeFragmentResult<C>;
 
     if (!this.isValid(bufferSize)) {

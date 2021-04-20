@@ -221,6 +221,7 @@ async function recognizeRegistryEntry(
 
   return Promise.all([
     breachProtocolOCR(container, thresholds),
+    // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
 }
@@ -232,6 +233,9 @@ class NoopImageContainer extends ImageContainer<any> {
     super();
   }
 
-  // This method will be called in fragment's contructor
-  preprocess() {}
+  // These methods will be called in fragment's contructor
+  process() {}
+  processGridFragment() {}
+  processDaemonsFragment() {}
+  processBufferSizeFragment() {}
 }
