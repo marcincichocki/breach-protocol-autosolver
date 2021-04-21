@@ -1,7 +1,7 @@
 import { uniqueBy } from '@/common';
 import { BreachProtocolResult } from './game';
 import { BreachProtocolFragmentResult } from './ocr/base';
-import { Daemon, Sequence } from './sequence';
+import { Daemon, memoizedFindOverlap, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
@@ -133,14 +133,29 @@ export function resolveExitStrategy(
   result: BreachProtocolResult,
   data: BreachProtocolRawData
 ): BreachProtocolExitStrategy {
-  const willExit = result.path.length === data.bufferSize;
-  const size = data.daemons
-    .filter((d, i) => !result.sequence.indexes.includes(i))
-    .map((d) => d.length)
-    .reduce((a, b) => a + b, 0);
-  const shouldForceClose = size
-    ? result.path.length + size <= data.bufferSize
-    : false;
+  const { path, sequence } = result;
+  // Destructuring method would break context.
+  const { tValue: base } = result.getResolvedSequence();
+
+  // BP will exit automatically when all of the buffer has been used.
+  const willExit = path.length === data.bufferSize;
+
+  // Get daemons that were not used in resolved sequence.
+  // There is no point of finding shorthest daemon,
+  // since in very rare cases longer daemon could create
+  // better sequence than its shorther peers(bigger overlap).
+  const shouldForceClose = data.daemons
+    .filter((d, i) => !sequence.indexes.includes(i))
+    .some((d) => {
+      const daemon = d.map(fromHex).join('');
+      const r = memoizedFindOverlap(base, daemon);
+
+      // If potential result(which will never happen) will
+      // "fit" in a buffer, then exit again(once to stop,
+      // second time to exit).
+      // Otherwise user will have to exit manually.
+      return r.length <= data.bufferSize;
+    });
 
   return {
     willExit,

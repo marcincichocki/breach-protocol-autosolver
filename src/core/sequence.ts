@@ -65,7 +65,7 @@ export function findOverlap(s1: string, s2: string) {
   return s1 + s2;
 }
 
-const memoizedFindOverlap = memoize(findOverlap);
+export const memoizedFindOverlap = memoize(findOverlap);
 
 export function getSequenceFromPermutation(permutation: Daemon[]) {
   let { tValue } = permutation[0];
