@@ -5,6 +5,10 @@ export {
   disableAutoExitOption,
 } from './disable-auto-exit';
 export { DisableSoundOption, disableSoundOption } from './disable-sound';
+export {
+  experimentalBufferSizeRecognition,
+  ExperimentalBufferSizeRecognitionOption,
+} from './experimental-buffer-size-recognition';
 export { KeyBindOption, keyBindOption } from './key-bind';
 export { LangOption, langOption } from './lang';
 export {

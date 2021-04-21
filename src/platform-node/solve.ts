@@ -55,11 +55,15 @@ async function tryToOCRBreachProtocol(fileName: string, log: ora.Ora) {
   log.text = t`OCR_START`;
 
   try {
-    return await breachProtocolOCR(container, {
-      bufferSize: options.thresholdBufferSize,
-      daemons: options.thresholdDaemons,
-      grid: options.thresholdGrid,
-    });
+    return await breachProtocolOCR(
+      container,
+      {
+        bufferSize: options.thresholdBufferSize,
+        daemons: options.thresholdDaemons,
+        grid: options.thresholdGrid,
+      },
+      options.experimentalBufferSizeRecognition
+    );
   } catch (e) {
     if (e instanceof BreachProtocolValidationError) {
       if (!options.disableSound) {

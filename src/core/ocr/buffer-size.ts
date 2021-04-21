@@ -5,11 +5,7 @@ import {
   BUFFER_SIZE_MAX,
   BUFFER_SIZE_MIN,
 } from '../common';
-import {
-  BreachProtocolFragment,
-  BreachProtocolFragmentBoundingBox,
-  BreachProtocolFragmentResult,
-} from './base';
+import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
 
 class BufferSizeControlGroup {
   /** Thickness of control group in pixels. */
@@ -62,7 +58,7 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  readonly fragment = this.container.preprocess(this.boundingBox);
+  readonly fragment = this.container.process(this.boundingBox);
 
   /** Percentage that padding in buffer box takes. */
   private readonly padding = 0.00937;

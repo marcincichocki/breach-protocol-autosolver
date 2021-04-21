@@ -8,6 +8,8 @@ import {
   DisableAutoExitOption,
   disableSoundOption,
   DisableSoundOption,
+  experimentalBufferSizeRecognition,
+  ExperimentalBufferSizeRecognitionOption,
   keyBindOption,
   KeyBindOption,
   langOption,
@@ -37,7 +39,8 @@ type Options = KeyBindOption &
   ThresholdBufferSize &
   DelayOption &
   DisableAutoExitOption &
-  UseScalingOption;
+  UseScalingOption &
+  ExperimentalBufferSizeRecognitionOption;
 
 const { version, name } = require('../../../package.json');
 
@@ -55,6 +58,7 @@ export const program = new Command(name)
   .addOption(delayOption)
   .addOption(disableAutoExitOption)
   .addOption(useScalingOption)
+  .addOption(experimentalBufferSizeRecognition)
   .exitOverride();
 
 export const options = program.opts() as Options;

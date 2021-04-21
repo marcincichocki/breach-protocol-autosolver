@@ -7,9 +7,28 @@ export abstract class ImageContainer<T> {
   readonly dimensions: { x: number; y: number };
 
   /** Crop image and turn it into 8bit. */
-  abstract preprocess(
+  abstract process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox): T;
+
+  abstract processGridFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
+
+  abstract processDaemonsFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
+
+  abstract processBufferSizeFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
+
+  abstract trim(
+    instance: T
+  ): Promise<{
+    buffer: Buffer;
+    fragment: T;
+    width: number;
+    height: number;
+  }>;
 
   /** Apply threshold to given fragment. */
   abstract threshold(instance: T, threshold: number): T;
@@ -79,13 +98,43 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     );
   }
 
-  preprocess(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+  process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
     return this.instance
       .clone()
       .removeAlpha()
       .extract(fragmentBoundingBox)
       .negate()
       .toColorspace('b-w');
+  }
+
+  processGridFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+    return this.process(fragmentBoundingBox);
+  }
+
+  processDaemonsFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ) {
+    return this.process(fragmentBoundingBox);
+  }
+
+  processBufferSizeFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ) {
+    return this.process(fragmentBoundingBox).flop();
+  }
+
+  async trim(instance: sharp.Sharp) {
+    const buffer = await instance.toBuffer();
+    const { data, info } = await sharp(buffer)
+      .trim()
+      .toBuffer({ resolveWithObject: true });
+
+    return {
+      buffer: data,
+      fragment: sharp(data),
+      width: info.width,
+      height: info.height,
+    };
   }
 
   threshold(instance: sharp.Sharp, threshold: number) {
