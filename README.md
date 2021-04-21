@@ -26,6 +26,8 @@ Please note that FidelityFX resolution scaling does not seem to impact resolutio
 
 Values higher than 1.50 are will negatively impact ocr.
 
+`--experimental-buffer-size-recognition` flag can be used to improve buffer size recognition on very high gamma levels.
+
 3. language
 
 Languages that use custom font(ar, ja, ko, **th**, zh-CN, zh-TW) might cause issues, especially when in combination with above factors.
