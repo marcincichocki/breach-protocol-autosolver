@@ -58,9 +58,9 @@ export class BreachProtocolBufferSizeTrimFragment<
   }
 
   private async getBufferSizeFromPixels(width: number) {
-    const { outerWidth } = this.boundingBox;
+    const { innerWidth } = this.boundingBox;
 
-    let size = width / outerWidth;
+    let size = width / innerWidth;
     let bufferSize = 0;
 
     size -= 2 * this.padding;

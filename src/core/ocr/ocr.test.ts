@@ -188,7 +188,7 @@ describe('ocr', () => {
     }
   );
 
-  fit.each(getRegistryFor('3440x1440'))(
+  it.each(getRegistryFor('3440x1440'))(
     'should correctly ocr 3440x1440/%s',
     async (f: string, entry: RegistryEntry) => {
       await compareOcrToJson(entry, '3440x1440');

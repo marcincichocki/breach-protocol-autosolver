@@ -172,8 +172,8 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
   }
 
   private getBufferSizeFromPixels(pixels: Buffer) {
-    const { width, outerWidth } = this.boundingBox;
-    let size = this.getSizeOfBufferBox(pixels, width) / outerWidth;
+    const { width, innerWidth } = this.boundingBox;
+    let size = this.getSizeOfBufferBox(pixels, width) / innerWidth;
     let bufferSize = 0;
 
     size -= 2 * this.padding;
