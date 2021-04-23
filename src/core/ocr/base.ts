@@ -17,6 +17,8 @@ export interface BreachProtocolFragmentBoundingBox {
   top: number;
   outerWidth: number;
   outerHeight: number;
+  innerWidth: number;
+  innerHeight: number;
 }
 
 export class BreachProtocolFragmentResult<D, S, C> {
@@ -58,7 +60,6 @@ export abstract class BreachProtocolFragment<D, S, C> {
     const { p1, p2 } = this;
     const { width, height, left, top } = this.container.getCroppedBoundingBox();
 
-    // NOTE: this does not return cropped with and height!
     return {
       left: left + Math.round(p1.x * width),
       top: top + Math.round(p1.y * height),
@@ -66,6 +67,8 @@ export abstract class BreachProtocolFragment<D, S, C> {
       height: Math.round((p2.y - p1.y) * height),
       outerWidth: width + 2 * left,
       outerHeight: height + 2 * top,
+      innerWidth: width,
+      innerHeight: height,
     } as BreachProtocolFragmentBoundingBox;
   }
 }
@@ -176,9 +179,9 @@ export abstract class BreachProtocolOCRFragment<
 
   /** Get closest treshold value for given resolution. */
   protected getThreshold() {
-    const { height } = this.container.getCroppedBoundingBox();
+    const { innerHeight } = this.boundingBox;
     const list = [...this.thresholds.keys()];
-    const value = getClosest(height, list);
+    const value = getClosest(innerHeight, list);
 
     return this.thresholds.get(value);
   }

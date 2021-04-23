@@ -17,7 +17,7 @@ interface RegistryEntry {
   bufferSize: BufferSize;
 }
 
-type Resolution = '1920x1080' | '2560x1440' | '3840x2160';
+type Resolution = '1920x1080' | '2560x1440' | '3440x1440' | '3840x2160';
 type Registry = Record<Resolution, RegistryEntry[]>;
 
 describe('image container', () => {
@@ -185,6 +185,13 @@ describe('ocr', () => {
     'should correctly ocr 2560x1440/%s',
     async (f: string, entry: RegistryEntry) => {
       await compareOcrToJson(entry, '2560x1440');
+    }
+  );
+
+  it.each(getRegistryFor('3440x1440'))(
+    'should correctly ocr 3440x1440/%s',
+    async (f: string, entry: RegistryEntry) => {
+      await compareOcrToJson(entry, '3440x1440');
     }
   );
 
