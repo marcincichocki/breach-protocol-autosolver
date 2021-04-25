@@ -37,11 +37,11 @@ export async function removeOldestScreenShot() {
   return remove(join(debug, file));
 }
 
-export function getScreenShotPath() {
+export function getScreenShotPath(ext: string) {
   const now = new Date().toString();
   const name = sanitize(now, { replacement: ' ' });
 
-  return join(debug, `${name}.png`);
+  return join(debug, `${name}.${ext}`);
 }
 
 export class BreachProtocolDebug {
