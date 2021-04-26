@@ -7,7 +7,8 @@ function createRendererWindow() {
     minHeight: 720,
   });
 
-  window.loadURL(join(__dirname, './index.html'));
+  window.webContents.openDevTools();
+  window.loadFile(join(__dirname, './index.html'));
 
   return window;
 }
