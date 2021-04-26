@@ -20,6 +20,9 @@
     },
     "win": {
       "target": "nsis"
+    },
+    "extraMetadata": {
+      "main": "main.js"
     }
   },
   "scripts": {
