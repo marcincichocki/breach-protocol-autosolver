@@ -34,7 +34,10 @@
     "release": "standard-version -s",
     "tsc": "tsc -p scripts/build && tsc-alias",
     "build": "npm run tsc && ts-node scripts/build/index.ts",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "electron:watch": "webpack --config configs/webpack.config.ts --watch",
+    "electron:build": "webpack --config configs/webpack.config.ts --mode production",
+    "electron:run": "electron dist/main.js"
   },
   "author": "Marcin Cichocki <marcincichocki1993@gmail.com>",
   "homepage": "https://github.com/marcincichocki/breach-protocol-autosolver#readme",
