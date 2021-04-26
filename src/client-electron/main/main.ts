@@ -1,10 +1,14 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain as ipc } from 'electron';
 import { join } from 'path';
 
 function createRendererWindow() {
   const window = new BrowserWindow({
     minWidth: 1280,
     minHeight: 720,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
   window.webContents.openDevTools();
@@ -35,10 +39,16 @@ async function main() {
   const worker = createWorkerWindow();
 
   window.on('closed', () => app.exit());
+
+  ipc.once('worker:ready', () => {
+    globalShortcut.register('CommandOrControl+numdec', () => {
+      worker.webContents.send('worker:solve');
+    });
+  });
 }
 
 main();
 
-ipcMain.on('worker:ready', () => {
-  console.log('worker is ready');
+ipc.on('before-exit', () => {
+  globalShortcut.unregisterAll();
 });
