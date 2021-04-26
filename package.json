@@ -14,15 +14,21 @@
   "build": {
     "appId": "com.marcincichocki.breach-protocol-autosolver",
     "productName": "Breach Protocol Autosolver",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraFiles": [
+      "BreachProtocol.traineddata"
+    ],
     "directories": {
-      "app": "./dist/",
       "output": "./out/"
     },
     "win": {
       "target": "nsis"
     },
     "extraMetadata": {
-      "main": "main.js"
+      "main": "dist/main.js"
     }
   },
   "scripts": {
