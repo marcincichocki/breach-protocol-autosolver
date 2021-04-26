@@ -1,5 +1,6 @@
 import { join } from 'path';
 import webpack from 'webpack';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -18,4 +19,22 @@ export const config: webpack.Configuration = {
       },
     ],
   },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'package.json',
+          to: 'package.json',
+          transform(content) {
+            const json = JSON.parse(content.toString());
+
+            delete json.devDependencies;
+            delete json.build;
+
+            return JSON.stringify(json);
+          },
+        },
+      ],
+    }),
+  ],
 };
