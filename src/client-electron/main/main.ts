@@ -37,3 +37,7 @@ async function main() {
 }
 
 main();
+
+ipcMain.on('worker:ready', () => {
+  console.log('worker is ready');
+});
