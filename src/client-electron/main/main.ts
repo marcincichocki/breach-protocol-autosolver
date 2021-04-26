@@ -41,6 +41,8 @@ async function main() {
   window.on('closed', () => app.exit());
 
   ipc.once('worker:ready', () => {
+    window.webContents.send('worker:ready');
+
     globalShortcut.register('CommandOrControl+numdec', () => {
       worker.webContents.send('worker:solve');
     });
