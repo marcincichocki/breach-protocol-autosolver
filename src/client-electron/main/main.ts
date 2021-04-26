@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 
 function createRendererWindow() {
@@ -8,7 +8,21 @@ function createRendererWindow() {
   });
 
   window.webContents.openDevTools();
-  window.loadFile(join(__dirname, './index.html'));
+  window.loadFile(join(__dirname, './renderer.html'));
+
+  return window;
+}
+
+function createWorkerWindow() {
+  const window = new BrowserWindow({
+    show: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  window.loadFile(join(__dirname, './worker.html'));
 
   return window;
 }
@@ -17,6 +31,8 @@ async function main() {
   await app.whenReady();
 
   const window = createRendererWindow();
+  const worker = createWorkerWindow();
+
   window.on('closed', () => app.exit());
 }
 

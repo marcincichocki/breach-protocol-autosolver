@@ -4,11 +4,11 @@ import webpack from 'webpack';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/client-electron/renderer/renderer.tsx'),
+  entry: join(__dirname, '../src/client-electron/worker/index.ts'),
   target: 'electron-renderer',
   output: {
     path: join(__dirname, '../dist'),
-    filename: 'renderer.js',
+    filename: 'worker.js',
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -24,8 +24,8 @@ export const config: webpack.Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: join(__dirname, '../public/renderer.html'),
-      filename: 'renderer.html',
+      template: join(__dirname, '../public/worker.html'),
+      filename: 'worker.html',
     }),
   ],
 };
