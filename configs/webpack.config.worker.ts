@@ -26,6 +26,8 @@ export const config: webpack.Configuration = {
   },
   externals: {
     sharp: 'commonjs sharp',
+    'tesseract.js': 'commonjs tesseract.js',
+    'screenshot-desktop': 'commonjs screenshot-desktop',
   },
   plugins: [
     new HtmlWebpackPlugin({
