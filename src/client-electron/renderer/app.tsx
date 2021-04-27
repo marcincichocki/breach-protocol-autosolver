@@ -1,4 +1,4 @@
-import { ipcRenderer as ipc } from 'electron/renderer';
+import { ipcRenderer as ipc } from 'electron';
 
 ipc.once('worker:ready', () => console.log('worker ready'));
 
