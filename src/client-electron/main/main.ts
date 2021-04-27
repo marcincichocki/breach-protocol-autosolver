@@ -19,7 +19,7 @@ function createRendererWindow() {
 
 function createWorkerWindow() {
   const window = new BrowserWindow({
-    show: true,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
