@@ -2,13 +2,34 @@
   "name": "breach-protocol-autosolver",
   "version": "1.7.0",
   "description": "Automatically solve breach protocol minigame in Cyberpunk 2077",
-  "main": "src/index.ts",
+  "main": "dist/main.js",
   "private": true,
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
     "moduleNameMapper": {
       "@/(.*)": "<rootDir>/src/$1"
+    }
+  },
+  "build": {
+    "appId": "com.marcincichocki.breach-protocol-autosolver",
+    "productName": "Breach Protocol Autosolver",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraFiles": [
+      "vendor/**/*",
+      "BreachProtocol.traineddata"
+    ],
+    "directories": {
+      "output": "./out/"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "extraMetadata": {
+      "main": "dist/main.js"
     }
   },
   "scripts": {
@@ -20,7 +41,11 @@
     "release": "standard-version -s",
     "tsc": "tsc -p scripts/build && tsc-alias",
     "build": "npm run tsc && ts-node scripts/build/index.ts",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "webpack:watch": "webpack --config configs/webpack.config.ts --watch",
+    "webpack:build": "webpack --config configs/webpack.config.ts --mode production",
+    "electron:run": "electron dist/main.js",
+    "electron:build": "npm run webpack:build && electron-builder build --win"
   },
   "author": "Marcin Cichocki <marcincichocki1993@gmail.com>",
   "homepage": "https://github.com/marcincichocki/breach-protocol-autosolver#readme",
@@ -31,24 +56,41 @@
   "bugs": "https://github.com/marcincichocki/breach-protocol-autosolver/issues",
   "license": "MIT",
   "devDependencies": {
+    "@types/copy-webpack-plugin": "^8.0.0",
     "@types/fs-extra": "^9.0.8",
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.20",
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.3",
     "@types/sharp": "^0.27.1",
+    "@types/webpack": "^5.28.0",
     "concurrently": "^5.3.0",
+    "copy-webpack-plugin": "^8.1.1",
+    "css-loader": "^5.2.4",
+    "electron": "^12.0.5",
+    "electron-builder": "^22.10.5",
+    "file-loader": "^6.2.0",
     "fs-extra": "^9.1.0",
+    "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
     "nexe": "^4.0.0-beta.18",
     "nodemon": "^2.0.7",
     "patch-package": "^6.4.7",
+    "sass": "^1.32.11",
+    "sass-loader": "^11.0.1",
     "standard-version": "^9.1.0",
+    "style-loader": "^2.0.0",
     "ts-jest": "^26.4.4",
+    "ts-loader": "^9.1.1",
     "ts-node": "^9.1.1",
     "tsc-alias": "^1.2.9",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
     "tslib": "^2.1.0",
     "typescript": "^4.1.3",
     "upx": "^1.0.6",
+    "webpack": "^5.35.1",
+    "webpack-cli": "^4.6.0",
     "zip-a-folder": "^0.1.0"
   },
   "dependencies": {
@@ -59,6 +101,8 @@
     "is-wsl": "^2.2.0",
     "open": "^8.0.4",
     "ora": "^5.4.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.3",
     "sharp": "^0.28.1",

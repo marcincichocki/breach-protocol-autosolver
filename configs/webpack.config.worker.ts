@@ -1,0 +1,38 @@
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
+import { join } from 'path';
+import webpack from 'webpack';
+
+export const config: webpack.Configuration = {
+  mode: 'development',
+  entry: join(__dirname, '../src/client-electron/worker/worker.ts'),
+  target: 'electron-renderer',
+  output: {
+    path: join(__dirname, '../dist'),
+    filename: 'worker.js',
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+    plugins: [new TsconfigPathsPlugin()],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        loader: 'ts-loader',
+      },
+    ],
+  },
+  externals: {
+    sharp: 'commonjs sharp',
+    'tesseract.js': 'commonjs tesseract.js',
+    'screenshot-desktop': 'commonjs screenshot-desktop',
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: join(__dirname, '../public/worker.html'),
+      filename: 'worker.html',
+    }),
+  ],
+};
