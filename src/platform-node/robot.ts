@@ -42,13 +42,14 @@ export async function resolveBreachProtocol(
 }
 
 export async function captureScreen(screen: string) {
+  const { format } = options;
   // Move pointer away to not mess with ocr.
   await movePointerAway();
   await removeOldestScreenShot();
 
-  const filename = getScreenShotPath();
+  const filename = getScreenShotPath(format);
 
-  return screenshot({ format: 'png', screen, filename });
+  return screenshot({ format, screen, filename });
 }
 
 async function nircmd(command: string, options = {}) {

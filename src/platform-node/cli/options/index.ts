@@ -9,6 +9,7 @@ export {
   experimentalBufferSizeRecognition,
   ExperimentalBufferSizeRecognitionOption,
 } from './experimental-buffer-size-recognition';
+export { FormatOption, formatOption } from './format';
 export { KeyBindOption, keyBindOption } from './key-bind';
 export { LangOption, langOption } from './lang';
 export {
