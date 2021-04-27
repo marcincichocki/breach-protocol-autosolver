@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.7.0...v1.8.0) (2021-04-27)
+
+
+### Features
+
+* add basic electron client ([a50dcce](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a50dcce52da77f88fc81f18608afce1924ea35b2)), closes [#55](https://github.com/marcincichocki/breach-protocol-autosolver/issues/55)
+* add format flag ([14f52e2](https://github.com/marcincichocki/breach-protocol-autosolver/commit/14f52e2168025f76cb38635ec8454185faeda768))
+* add trim buffer size recognition strategy ([3871deb](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3871deb87ad777ecf310b20ea600e068f1715078))
+* move cursor to the middle of squares ([e2f06b3](https://github.com/marcincichocki/breach-protocol-autosolver/commit/e2f06b32d480b0d4adfb6338fe12bac09632ac8b))
+
+
+### Bug Fixes
+
+* force exit if overlap fit in a buffer ([ee9b04e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ee9b04ea4d40e8480f3a478d6244982e5c858e2d)), closes [#61](https://github.com/marcincichocki/breach-protocol-autosolver/issues/61)
+* use cropped width in buffer size fragment ([1688437](https://github.com/marcincichocki/breach-protocol-autosolver/commit/16884374789674262859803de28f6da1819e019a))
+
 ## [1.7.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.6.1...v1.7.0) (2021-04-16)
 
 
