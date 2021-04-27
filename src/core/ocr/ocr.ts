@@ -41,21 +41,24 @@ export class BreachProtocolRecognitionResult<C> {
     };
   }
 
+  private getSquares(length: number) {
+    const size = Math.sqrt(length);
+    const rows = ROWS.slice(0, size);
+    const cols = COLS.slice(0, size);
+
+    return cross(rows, cols);
+  }
+
   private getPositionSquareMap() {
     const { top, left } = this.grid.boundingBox;
-    const lines = this.grid.source.hocr
-      .split('\n')
-      .filter((l) => l.includes('ocrx_word'));
-    const size = Math.sqrt(lines.length);
-    const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
-    const bounds = lines
-      .map((l) => l.match(/(?<=bbox )(\d|\s)*/g)[0])
-      .map((l) => l.split(/\s/).map(Number));
+    const boxes = this.grid.source.words.map((w) => w.bbox);
+    const squares = this.getSquares(boxes.length);
 
     return generateSquareMap(squares, (s, i) => {
-      const [x, y] = bounds[i];
+      const { x0, y0, x1, y1 } = boxes[i];
+      const x = Math.round((x0 + x1) / 2);
+      const y = Math.round((y0 + y1) / 2);
 
-      // this is top left corner of each square
       return new Point(x + left, y + top);
     });
   }
