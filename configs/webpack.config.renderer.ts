@@ -20,6 +20,18 @@ export const config: webpack.Configuration = {
         exclude: /node_modules/,
         loader: 'ts-loader',
       },
+      {
+        test: /\.s[ac]ss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.ttf$/,
+        loader: 'file-loader',
+      },
+      {
+        test: /\.svg$/,
+        loader: 'file-loader',
+      },
     ],
   },
   plugins: [
