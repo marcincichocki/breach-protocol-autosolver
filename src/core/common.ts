@@ -162,3 +162,9 @@ export function resolveExitStrategy(
     shouldForceClose,
   };
 }
+
+export enum WorkerStatus {
+  BOOTSTRAP,
+  READY,
+  WORKING,
+}
