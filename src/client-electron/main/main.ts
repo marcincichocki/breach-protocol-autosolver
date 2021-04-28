@@ -47,6 +47,11 @@ async function main() {
       worker.webContents.send('worker:solve');
     });
   });
+
+  // Brodcast worker:status to renderer.
+  ipc.on('worker:status', (event, data) => {
+    window.webContents.send('worker:status', data);
+  });
 }
 
 main();
