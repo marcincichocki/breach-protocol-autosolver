@@ -1,5 +1,6 @@
-import { ipcRenderer as ipc } from 'electron';
-import { useState } from 'react';
+import { WorkerStatus } from '@/core';
+import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StatusBar } from './components/StatusBar';
 
@@ -9,10 +10,26 @@ const Main = styled.main`
   flex-grow: 1;
 `;
 
-export const App = () => {
-  const [status, setStatus] = useState(null);
+function useIpcEvent<T>(channel: string) {
+  const [value, setValue] = useState<T>(null);
 
-  ipc.on('worker:status', (event, value) => setStatus(value));
+  useEffect(() => {
+    function handleEvent(event: IpcRendererEvent, value: T) {
+      setValue(value);
+    }
+
+    ipc.on(channel, handleEvent);
+
+    return () => {
+      ipc.removeListener(channel, handleEvent);
+    };
+  }, []);
+
+  return value;
+}
+
+export const App = () => {
+  const status = useIpcEvent<WorkerStatus>('worker:status');
 
   return (
     <>
