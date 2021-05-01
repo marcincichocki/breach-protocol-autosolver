@@ -6,7 +6,10 @@ export const GlobalStyles = createGlobalStyle`
 
   :root {
     --primary: #ff5851;
-    --background: #121018;
+    --primary-dark: #701d1f;
+    --primary-darker: #6f2223;
+    /* --background: #121018; */
+    --background: #161220;
     --accent: #5FF6FF;
   }
 
