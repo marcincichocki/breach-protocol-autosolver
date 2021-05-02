@@ -27,9 +27,7 @@ interface FormControl<N extends string> {
   checked: boolean;
 }
 
-export function useForm<T extends Record<string, string | number | boolean>>(
-  initialValues: T
-) {
+export function useForm<T extends {}>(initialValues: T) {
   const form = {} as { [K in keyof T]: FormControl<string> };
   const values = {} as { [K in keyof T]: T[K] };
 
