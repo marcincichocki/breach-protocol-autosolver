@@ -1,6 +1,7 @@
-import { WorkerStatus } from '@/core/common';
+import { WorkerStatus } from '@/client-electron/common';
 import { FC } from 'react';
 import { MdDone } from 'react-icons/md';
+import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
 
 const Spacer = styled.div`
@@ -52,15 +53,16 @@ function renderStatusBarContent(status: WorkerStatus) {
 // TODO: add missing props and replace placeholders.
 interface StatusBarProps {
   status: WorkerStatus;
+  display: ScreenshotDisplayOutput;
 }
 
-export const StatusBar: FC<StatusBarProps> = ({ status }) => {
+export const StatusBar: FC<StatusBarProps> = ({ status, display }) => {
   return (
     <StatusBarStyled>
       <StatusBarItem>
         <MdDone style={{ marginRight: '4px' }} /> placeholder
       </StatusBarItem>
-      <InteractiveStatusBarItem>placeholder</InteractiveStatusBarItem>
+      <InteractiveStatusBarItem>{display?.id}</InteractiveStatusBarItem>
       {renderStatusBarContent(status)}
       <Spacer />
       <StatusBarItem>placeholder</StatusBarItem>
