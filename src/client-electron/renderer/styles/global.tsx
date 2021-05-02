@@ -16,6 +16,7 @@ export const GlobalStyles = createGlobalStyle`
   html,
   body {
     height: 100%;
+    max-height: 100%;
     font-family: Rajdhani;
   }
 
@@ -28,5 +29,17 @@ export const GlobalStyles = createGlobalStyle`
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--primary-darker)
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
   }
 `;
