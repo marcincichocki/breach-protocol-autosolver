@@ -69,6 +69,7 @@ export const RangeSlider: FC<RangeSliderProps> = ({
         max={max}
         defaultValue={value}
         onMouseUp={onChange}
+        onKeyUp={onChange}
         onChange={(e) => setCurrentValue(+e.target.value)}
         step={1}
       />
