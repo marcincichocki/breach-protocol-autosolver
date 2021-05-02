@@ -49,7 +49,7 @@ const RangeValue = styled.output`
 
 interface RangeSliderProps extends HTMLProps<HTMLInputElement> {}
 
-const RawRangeSlider: FC<RangeSliderProps> = ({
+export const RangeSlider: FC<RangeSliderProps> = ({
   name,
   min,
   max,
@@ -76,5 +76,3 @@ const RawRangeSlider: FC<RangeSliderProps> = ({
     </RangeWrapper>
   );
 };
-
-export const RangeSlider = RawRangeSlider;
