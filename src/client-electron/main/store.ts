@@ -27,8 +27,6 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
 }
 
 export class Store {
-  private state = this.getInitialState();
-
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
     defaults: {},
@@ -37,6 +35,8 @@ export class Store {
     name: 'history',
     defaults: { data: [] },
   });
+
+  private state = this.getInitialState();
 
   constructor(private worker: WebContents, private renderer: WebContents) {
     this.registerStoreListeners();
