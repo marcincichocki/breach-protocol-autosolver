@@ -55,14 +55,19 @@ const SelectViewerOption = styled.div<{ active: boolean }>`
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;
 
-interface SelectViewerProps<T> {
-  options: T[];
+interface SelectOption {
+  value: string;
+  name: string;
+}
+
+interface SelectViewerProps {
+  options: SelectOption[];
   index: number;
 }
 
-const SelectViewer: FC<SelectViewerProps<any>> = ({ options, index }) => (
+const SelectViewer: FC<SelectViewerProps> = ({ options, index }) => (
   <SelectViewerWrapper>
-    <SelectViewerValue>{options[index]}</SelectViewerValue>
+    <SelectViewerValue>{options[index].name}</SelectViewerValue>
     <SelectViewerOptions>
       {options.map((option, i) => (
         <SelectViewerOption key={i} active={index === i}></SelectViewerOption>
@@ -71,18 +76,14 @@ const SelectViewer: FC<SelectViewerProps<any>> = ({ options, index }) => (
   </SelectViewerWrapper>
 );
 
-interface SelectProps<T> extends HTMLProps<HTMLSelectElement> {
-  options: T[];
+interface SelectProps extends HTMLProps<HTMLSelectElement> {
+  options: SelectOption[];
 }
 
-export const Select: FC<SelectProps<string>> = ({
-  options,
-  value,
-  ...props
-}) => {
+export const Select: FC<SelectProps> = ({ options, value, ...props }) => {
   const ref = useRef<HTMLSelectElement>();
   const [index, setIndex] = useState<number>(
-    value ? options.indexOf(value.toString()) : 0
+    value ? options.findIndex((o) => o.value === value.toString()) : 0
   );
 
   const dispatchChangeEvent = () => {
@@ -112,9 +113,9 @@ export const Select: FC<SelectProps<string>> = ({
   return (
     <SelectWrapper>
       <select ref={ref} defaultValue={value} {...props} hidden>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+        {options.map(({ name, value }) => (
+          <option key={value} value={value}>
+            {name}
           </option>
         ))}
       </select>
