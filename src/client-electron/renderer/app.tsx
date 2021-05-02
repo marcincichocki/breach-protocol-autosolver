@@ -1,20 +1,18 @@
-import { WorkerStatus } from '@/core';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { State } from '../common';
 import { StatusBar } from './components/StatusBar';
-
-ipc.once('worker:ready', () => console.log('worker ready'));
 
 const Main = styled.main`
   flex-grow: 1;
 `;
 
-function useIpcEvent<T>(channel: string) {
-  const [value, setValue] = useState<T>(null);
+function useIpcEvent<T>(channel: string, initialValue?: T) {
+  const [value, setValue] = useState<T>(initialValue);
 
   useEffect(() => {
-    function handleEvent(event: IpcRendererEvent, value: T) {
+    function handleEvent(e: IpcRendererEvent, value: T) {
       setValue(value);
     }
 
@@ -28,13 +26,20 @@ function useIpcEvent<T>(channel: string) {
   return value;
 }
 
+function useStore() {
+  const initialState = ipc.sendSync('get-state');
+  const state = useIpcEvent<State>('state', initialState);
+
+  return state;
+}
+
 export const App = () => {
-  const status = useIpcEvent<WorkerStatus>('worker:status');
+  const state = useStore();
 
   return (
     <>
       <Main />
-      <StatusBar status={status} />
+      <StatusBar display={state?.activeDisplay} status={state?.status} />
     </>
   );
 };
