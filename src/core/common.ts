@@ -117,7 +117,7 @@ export class BreachProtocolValidationError extends Error {
 
   constructor(
     public message: string,
-    public readonly result: BreachProtocolFragmentResult<any, any, any>
+    public readonly result: BreachProtocolFragmentResult<any, any>
   ) {
     super(message);
   }
