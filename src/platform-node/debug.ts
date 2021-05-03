@@ -47,7 +47,7 @@ export function getScreenShotPath(ext: string) {
 export class BreachProtocolDebug {
   constructor(
     public fileName: string,
-    public result: BreachProtocolFragmentResult<any, any, any>
+    public result: BreachProtocolFragmentResult<any, any>
   ) {}
 
   toJSON() {
