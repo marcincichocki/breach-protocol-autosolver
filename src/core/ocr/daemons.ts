@@ -5,14 +5,14 @@ import {
   BreachProtocolOCRFragment,
 } from './base';
 
-export type BreachProtocolDaemonsFragmentResult<
-  C
-> = BreachProtocolFragmentResult<HexNumber[][], Tesseract.Page, C>;
-
-export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
+export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
   HexNumber[][],
-  C
-> {
+  Tesseract.Page
+>;
+
+export class BreachProtocolDaemonsFragment<
+  TImage
+> extends BreachProtocolOCRFragment<HexNumber[][], TImage> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],
@@ -35,7 +35,7 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  protected getValidationError(result: BreachProtocolDaemonsFragmentResult<C>) {
+  protected getValidationError(result: BreachProtocolDaemonsFragmentResult) {
     return new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
   }
 

@@ -34,15 +34,14 @@ class BufferSizeControlGroup {
   }
 }
 
-export type BreachProtocolBufferSizeFragmentResult<
-  C
-> = BreachProtocolFragmentResult<BufferSize, Buffer, C>;
-
-export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
+export type BreachProtocolBufferSizeFragmentResult = BreachProtocolFragmentResult<
   BufferSize,
-  Buffer,
-  C
-> {
+  Buffer
+>;
+
+export class BreachProtocolBufferSizeFragment<
+  TImage
+> extends BreachProtocolFragment<BufferSize, Buffer, TImage> {
   private readonly controlGroups = [
     // Buffer boxes.
     new BufferSizeControlGroup(0.12, 0.22, 255),
@@ -116,19 +115,13 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
   }
 
   async recognize(
-    threshold = BreachProtocolBufferSizeFragment.cachedThreshold
-  ): Promise<BreachProtocolBufferSizeFragmentResult<C>> {
-    const newThreshold = threshold ?? (await this.findThreshold());
-    const fragment = this.container.threshold(this.fragment, newThreshold);
+    fixedThreshold = BreachProtocolBufferSizeFragment.cachedThreshold
+  ): Promise<BreachProtocolBufferSizeFragmentResult> {
+    const threshold = fixedThreshold ?? (await this.findThreshold());
+    const fragment = this.container.threshold(this.fragment, threshold);
+    const buffer = await this.container.toBuffer(fragment);
     const rawBuffer = await this.container.toRawBuffer(fragment);
     const bufferSize = this.getBufferSizeFromPixels(rawBuffer);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      rawBuffer,
-      this.boundingBox,
-      bufferSize,
-      fragment
-    ) as BreachProtocolBufferSizeFragmentResult<C>;
 
     if (!this.isValid(bufferSize)) {
       // In rare cases where given value is wrong, repeat with
@@ -137,17 +130,21 @@ export class BreachProtocolBufferSizeFragment<C> extends BreachProtocolFragment<
       // threshold on the fly.
       // One side effect of this behaviour is that --threshold-buffer-size
       // flag is quite useless, because even it fails, fallback will be used.
-      if (threshold !== null) {
+      if (fixedThreshold !== null) {
         return this.recognize(null);
       }
-
-      throw new BreachProtocolValidationError(t`BUFFER_SIZE_INVALID`, result);
     }
 
     // Cache valid threshold to limit ammount of computation required on following BPs.
-    BreachProtocolBufferSizeFragment.cachedThreshold = newThreshold;
+    BreachProtocolBufferSizeFragment.cachedThreshold = threshold;
 
-    return result;
+    return {
+      ...this.getBaseResultData(bufferSize),
+      source: rawBuffer,
+      rawData: bufferSize,
+      fragment: buffer,
+      threshold,
+    };
   }
 
   private verifyControlGroups(row: Buffer, length: number) {

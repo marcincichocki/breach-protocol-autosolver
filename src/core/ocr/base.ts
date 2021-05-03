@@ -21,17 +21,28 @@ export interface BreachProtocolFragmentBoundingBox {
   innerHeight: number;
 }
 
-export class BreachProtocolFragmentResult<D, S, C> {
-  constructor(
-    public readonly id: FragmentId,
-    public readonly source: S,
-    public readonly boundingBox: BreachProtocolFragmentBoundingBox,
-    public readonly rawData: D,
-    public readonly fragment: C
-  ) {}
+interface BreachProtocolFragmentResultBase {
+  readonly boundingBox: BreachProtocolFragmentBoundingBox;
+  readonly isValid: boolean;
+  readonly id: FragmentId;
 }
 
-export abstract class BreachProtocolFragment<D, S, C> {
+export interface BreachProtocolFragmentResult<TData, TSource>
+  extends BreachProtocolFragmentResultBase {
+  /** Threshold that was used to generate this result. */
+  readonly threshold: number;
+
+  /** Source of data. */
+  readonly source: TSource;
+
+  /** Extracted data from source. */
+  readonly rawData: TData;
+
+  /** Image that was used to get source from. */
+  readonly fragment: Buffer;
+}
+
+export abstract class BreachProtocolFragment<TData, TSource, TImage> {
   /** Id of fragment. */
   abstract readonly id: FragmentId;
 
@@ -44,17 +55,30 @@ export abstract class BreachProtocolFragment<D, S, C> {
   abstract readonly boundingBox: BreachProtocolFragmentBoundingBox;
 
   /** Preprocessed image fragment. */
-  protected abstract readonly fragment: C;
+  protected abstract readonly fragment: TImage;
 
-  constructor(public readonly container: ImageContainer<C>) {}
+  constructor(public readonly container: ImageContainer<TImage>) {}
 
   /** Recognize data from fragment image. */
   abstract recognize(
     threshold?: number
-  ): Promise<BreachProtocolFragmentResult<D, S, C>>;
+  ): Promise<BreachProtocolFragmentResult<TData, TSource>>;
 
   /** Check if recognized data is valid. */
-  abstract isValid(data: D): boolean;
+  abstract isValid(data: TData): boolean;
+
+  protected getBaseResultData(
+    rawData: TData
+  ): BreachProtocolFragmentResultBase {
+    const { id, boundingBox } = this;
+    const isValid = this.isValid(rawData);
+
+    return {
+      id,
+      boundingBox,
+      isValid,
+    };
+  }
 
   protected getFragmentBoundingBox() {
     const { p1, p2 } = this;
@@ -74,9 +98,9 @@ export abstract class BreachProtocolFragment<D, S, C> {
 }
 
 export abstract class BreachProtocolOCRFragment<
-  D,
-  C
-> extends BreachProtocolFragment<D, Tesseract.Page, C> {
+  TData,
+  TImage
+> extends BreachProtocolFragment<TData, Tesseract.Page, TImage> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
   protected readonly correctionMap = new Map<string, HexNumber>([
@@ -89,7 +113,7 @@ export abstract class BreachProtocolOCRFragment<
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
-  constructor(public container: ImageContainer<C>) {
+  constructor(public container: ImageContainer<TImage>) {
     super(container);
 
     // Initializing workers takes a lot of time. Loading them every time
@@ -103,10 +127,10 @@ export abstract class BreachProtocolOCRFragment<
     }
   }
 
-  protected abstract getRawData(lines: string[]): D;
+  protected abstract getRawData(lines: string[]): TData;
 
   protected abstract getValidationError(
-    result: BreachProtocolFragmentResult<D, Tesseract.Page, C>
+    result: BreachProtocolFragmentResult<TData, Tesseract.Page>
   ): BreachProtocolValidationError;
 
   private recognizeFragment(buffer: Buffer) {
@@ -116,23 +140,21 @@ export abstract class BreachProtocolOCRFragment<
     ) as Promise<Tesseract.RecognizeResult>;
   }
 
-  async recognize(threshold?: number) {
-    const { data, fragment } = await this.ocr(threshold ?? this.getThreshold());
+  async recognize(
+    fixedThreshold?: number
+  ): Promise<BreachProtocolFragmentResult<TData, Tesseract.Page>> {
+    const threshold = fixedThreshold ?? this.getThreshold();
+    const { data, buffer } = await this.ocr(threshold);
     const lines = this.getLines(data.text);
     const rawData = this.getRawData(lines);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      data,
-      this.boundingBox,
+
+    return {
+      ...this.getBaseResultData(rawData),
+      source: data,
       rawData,
-      fragment
-    );
-
-    if (!this.isValid(rawData)) {
-      throw this.getValidationError(result);
-    }
-
-    return result;
+      fragment: buffer,
+      threshold,
+    };
   }
 
   async ocr(threshold: number) {
@@ -140,7 +162,7 @@ export abstract class BreachProtocolOCRFragment<
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
 
-    return { data, fragment };
+    return { data, buffer };
   }
 
   protected chunkLine(line: string) {

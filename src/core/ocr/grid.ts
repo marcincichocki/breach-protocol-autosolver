@@ -5,16 +5,14 @@ import {
   BreachProtocolOCRFragment,
 } from './base';
 
-export type BreachProtocolGridFragmentResult<C> = BreachProtocolFragmentResult<
+export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
   HexNumber[],
-  Tesseract.Page,
-  C
+  Tesseract.Page
 >;
 
-export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
-  HexNumber[],
-  C
-> {
+export class BreachProtocolGridFragment<
+  TImage
+> extends BreachProtocolOCRFragment<HexNumber[], TImage> {
   readonly thresholds = new Map([
     [1080, 120],
     [1440, 120],
@@ -37,7 +35,7 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     return lines.flatMap((l) => this.parseLine(l));
   }
 
-  protected getValidationError(result: BreachProtocolGridFragmentResult<C>) {
+  protected getValidationError(result: BreachProtocolGridFragmentResult) {
     return new BreachProtocolValidationError(t`GRID_INVALID`, result);
   }
 

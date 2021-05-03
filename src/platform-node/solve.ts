@@ -22,7 +22,7 @@ export async function solveBreachProtocol(screenId: string) {
   const ocr = await tryToOCRBreachProtocol(fileName, log);
 
   // exit early because data is invalid.
-  if (!ocr) return;
+  if (!ocr.valid) return;
 
   await remove(fileName);
   log.text = t`SOLVER_START`;
@@ -47,6 +47,8 @@ export async function solveBreachProtocol(screenId: string) {
   await resolveBreachProtocol(result.path, ocr.positionSquareMap, exitStrategy);
 
   log.succeed(t`SOLVER_DONE`);
+
+  ocr.saveFragments();
 }
 
 async function tryToOCRBreachProtocol(fileName: string, log: ora.Ora) {
@@ -65,6 +67,7 @@ async function tryToOCRBreachProtocol(fileName: string, log: ora.Ora) {
       options.experimentalBufferSizeRecognition
     );
   } catch (e) {
+    // TODO: this will never run with latest changes.
     if (e instanceof BreachProtocolValidationError) {
       if (!options.disableSound) {
         play(options.soundPath);

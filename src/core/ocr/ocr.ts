@@ -1,4 +1,5 @@
 import { Point } from '@/common';
+import { writeFileSync } from 'fs-extra';
 import {
   BreachProtocolRawData,
   COLS,
@@ -22,16 +23,24 @@ import {
 } from './grid';
 import { ImageContainer } from './image-container';
 
-export class BreachProtocolRecognitionResult<C> {
+export class BreachProtocolRecognitionResult {
   readonly positionSquareMap = this.getPositionSquareMap();
 
   readonly rawData = this.toRawData();
 
+  readonly valid = this.isValid();
+
   constructor(
-    public readonly grid: BreachProtocolGridFragmentResult<C>,
-    public readonly daemons: BreachProtocolDaemonsFragmentResult<C>,
-    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult<C>
+    public readonly grid: BreachProtocolGridFragmentResult,
+    public readonly daemons: BreachProtocolDaemonsFragmentResult,
+    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult
   ) {}
+
+  saveFragments() {
+    writeFileSync('./bufferSize.png', this.bufferSize.fragment);
+    writeFileSync('./grid.png', this.grid.fragment);
+    writeFileSync('./daemons.png', this.daemons.fragment);
+  }
 
   toRawData(): BreachProtocolRawData {
     return {
@@ -62,10 +71,14 @@ export class BreachProtocolRecognitionResult<C> {
       return new Point(x + left, y + top);
     });
   }
+
+  private isValid() {
+    return this.bufferSize.isValid && this.grid.isValid && this.daemons.isValid;
+  }
 }
 
-export async function breachProtocolOCR<C>(
-  container: ImageContainer<C>,
+export async function breachProtocolOCR<TImage>(
+  container: ImageContainer<TImage>,
   thresholds?: Partial<Record<FragmentId, number>>,
   experimentalBufferSizeRecognition?: boolean
 ) {
@@ -81,5 +94,5 @@ export async function breachProtocolOCR<C>(
     bufferSizeFragment.recognize(thresholds?.bufferSize),
   ]);
 
-  return new BreachProtocolRecognitionResult<C>(g, d, b);
+  return new BreachProtocolRecognitionResult(g, d, b);
 }
