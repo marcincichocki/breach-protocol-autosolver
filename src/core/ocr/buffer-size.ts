@@ -1,10 +1,5 @@
 import { Point, t } from '@/common';
-import {
-  BreachProtocolValidationError,
-  BufferSize,
-  BUFFER_SIZE_MAX,
-  BUFFER_SIZE_MIN,
-} from '../common';
+import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
 import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
 
 class BufferSizeControlGroup {

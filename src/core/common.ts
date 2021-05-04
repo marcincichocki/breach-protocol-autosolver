@@ -1,6 +1,5 @@
 import { uniqueBy } from '@/common';
 import { BreachProtocolResult } from './game';
-import { BreachProtocolFragmentResult } from './ocr/base';
 import { Daemon, memoizedFindOverlap, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
@@ -110,17 +109,6 @@ export function transformRawData({
     daemons,
     bufferSize,
   };
-}
-
-export class BreachProtocolValidationError extends Error {
-  readonly name = this.constructor.name;
-
-  constructor(
-    public message: string,
-    public readonly result: BreachProtocolFragmentResult<any, any>
-  ) {
-    super(message);
-  }
 }
 
 export interface BreachProtocolExitStrategy {

@@ -1,5 +1,5 @@
 import { Point, t } from '@/common';
-import { BreachProtocolValidationError, HexNumber } from '../common';
+import { HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
@@ -33,10 +33,6 @@ export class BreachProtocolDaemonsFragment<
 
   protected getRawData(lines: string[]) {
     return lines.map((l) => this.parseLine(l));
-  }
-
-  protected getValidationError(result: BreachProtocolDaemonsFragmentResult) {
-    return new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
   }
 
   isValid(rawData: HexNumber[][]) {

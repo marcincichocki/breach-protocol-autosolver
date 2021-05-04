@@ -1,11 +1,6 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
-import {
-  BreachProtocolRawData,
-  BreachProtocolValidationError,
-  HexNumber,
-  HEX_NUMBERS,
-} from '../common';
+import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
 import { ImageContainer } from './image-container';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -128,10 +123,6 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   protected abstract getRawData(lines: string[]): TData;
-
-  protected abstract getValidationError(
-    result: BreachProtocolFragmentResult<TData, Tesseract.Page>
-  ): BreachProtocolValidationError;
 
   private recognizeFragment(buffer: Buffer) {
     return BreachProtocolOCRFragment.scheduler.addJob(

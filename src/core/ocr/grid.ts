@@ -1,5 +1,5 @@
 import { Point, t } from '@/common';
-import { BreachProtocolValidationError, HexNumber } from '../common';
+import { HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
@@ -33,10 +33,6 @@ export class BreachProtocolGridFragment<
 
   protected getRawData(lines: string[]) {
     return lines.flatMap((l) => this.parseLine(l));
-  }
-
-  protected getValidationError(result: BreachProtocolGridFragmentResult) {
-    return new BreachProtocolValidationError(t`GRID_INVALID`, result);
   }
 
   private isSquare(n: number) {
