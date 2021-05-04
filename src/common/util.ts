@@ -100,3 +100,11 @@ export function getClosest(n: number, list: number[]) {
 
   return list[index];
 }
+
+export function mergeBy<T extends Record<string, any>, R>(
+  list: T[],
+  prop: keyof T,
+  fn: (element: T) => R
+) {
+  return list.reduce((acc, el) => ({ ...acc, [el[prop]]: fn(el) }), {});
+}
