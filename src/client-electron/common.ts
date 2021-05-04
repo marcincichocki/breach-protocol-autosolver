@@ -8,7 +8,15 @@ export enum WorkerStatus {
   WORKING,
 }
 
-export interface HistoryEntry {}
+export enum BreachProtocolStatus {
+  PENDING,
+  SUCCEEDED,
+  FAILED,
+}
+
+export interface HistoryEntry {
+  status: BreachProtocolStatus;
+}
 
 export interface AppSettings {}
 

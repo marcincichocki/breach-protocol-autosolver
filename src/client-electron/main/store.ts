@@ -23,6 +23,8 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
       };
     case 'SET_STATUS':
       return { ...state, status: payload };
+    case 'ADD_HISTORY_ENTRY':
+      return { ...state, history: [payload, ...state.history] };
   }
 }
 

@@ -21,6 +21,7 @@ import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Action,
+  BreachProtocolStatus,
   HistoryEntry,
   Request,
   workerListener,
@@ -67,17 +68,13 @@ async function bootstrap() {
 
 bootstrap();
 
-ipc.on('worker:solve', async (event) => {
+ipc.on('worker:solve', async () => {
   updateStatus(WorkerStatus.WORKING);
-  // await solveBreachProtocol(screenId);
 
   const bpa = new BreachProtocolAutosolver(screenId);
-
   await bpa.start();
 
-  console.log(JSON.stringify(bpa));
-
-  event.sender.send('worker:solved');
+  dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
   updateStatus(WorkerStatus.READY);
 });
 
@@ -104,7 +101,7 @@ class BreachProtocolAutosolver {
 
   recognitionResult: BreachProtocolRecognitionResult;
 
-  private status: 'success' | 'fail';
+  private status: BreachProtocolStatus = BreachProtocolStatus.PENDING;
 
   constructor(private readonly screenId: string) {}
 
@@ -128,7 +125,7 @@ class BreachProtocolAutosolver {
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.valid) {
-      this.status = 'fail';
+      this.status = BreachProtocolStatus.FAILED;
       this.timeEnd = Date.now();
 
       // TODO: notify user about error
@@ -142,7 +139,7 @@ class BreachProtocolAutosolver {
 
     // TODO: handle no solutions
     if (!this.result) {
-      this.status = 'fail';
+      this.status = BreachProtocolStatus.FAILED;
       this.timeEnd = Date.now();
     }
 
@@ -154,7 +151,7 @@ class BreachProtocolAutosolver {
       this.exitStrategy
     );
 
-    this.status = 'success';
+    this.status = BreachProtocolStatus.SUCCEEDED;
     this.timeEnd = Date.now();
   }
 
