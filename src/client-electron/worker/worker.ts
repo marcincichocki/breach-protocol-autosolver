@@ -1,9 +1,31 @@
 import { setLang } from '@/common';
-import { BreachProtocolOCRFragment } from '@/core';
-import { solveBreachProtocol } from '@/platform-node/solve';
+import {
+  BreachProtocol,
+  BreachProtocolData,
+  BreachProtocolExitStrategy,
+  breachProtocolOCR,
+  BreachProtocolOCRFragment,
+  BreachProtocolRecognitionResult,
+  BreachProtocolResult,
+  makeSequences,
+  resolveExitStrategy,
+  Sequence,
+  SharpImageContainer,
+  transformRawData,
+} from '@/core';
+import { options } from '@/platform-node/cli';
+import { captureScreen, resolveBreachProtocol } from '@/platform-node/robot';
 import { ipcRenderer as ipc } from 'electron';
 import { listDisplays } from 'screenshot-desktop';
-import { Action, Request, workerListener, WorkerStatus } from '../common';
+import sharp from 'sharp';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  Action,
+  HistoryEntry,
+  Request,
+  workerListener,
+  WorkerStatus,
+} from '../common';
 
 function updateStatus(payload: WorkerStatus) {
   dispatch({ type: 'SET_STATUS', payload });
@@ -47,8 +69,107 @@ bootstrap();
 
 ipc.on('worker:solve', async (event) => {
   updateStatus(WorkerStatus.WORKING);
-  await solveBreachProtocol(screenId);
+  // await solveBreachProtocol(screenId);
+
+  const bpa = new BreachProtocolAutosolver(screenId);
+
+  await bpa.start();
+
+  console.log(JSON.stringify(bpa));
 
   event.sender.send('worker:solved');
   updateStatus(WorkerStatus.READY);
 });
+
+//  ---------------------------------------------
+
+class BreachProtocolAutosolver {
+  private uuid = uuidv4();
+
+  private source: string;
+
+  private timeStart = Date.now();
+
+  private timeEnd: number;
+
+  private data: BreachProtocolData;
+
+  private sequences: Sequence[];
+
+  private game: BreachProtocol;
+
+  private result: BreachProtocolResult;
+
+  private exitStrategy: BreachProtocolExitStrategy;
+
+  recognitionResult: BreachProtocolRecognitionResult;
+
+  private status: 'success' | 'fail';
+
+  constructor(private readonly screenId: string) {}
+
+  toJSON() {
+    console.log('TOJSON');
+
+    const { uuid, timeStart, timeEnd, status, recognitionResult } = this;
+
+    return {
+      uuid,
+      timeStart,
+      timeEnd,
+      recognitionResult,
+      status,
+    } as HistoryEntry;
+  }
+
+  async start() {
+    // TODO: keep or delete source
+    this.source = (await captureScreen(this.screenId)) as string;
+    this.recognitionResult = await this.recognize();
+
+    if (!this.recognitionResult.valid) {
+      this.status = 'fail';
+      this.timeEnd = Date.now();
+
+      // TODO: notify user about error
+      return;
+    }
+
+    this.data = transformRawData(this.recognitionResult.rawData);
+    this.sequences = makeSequences(this.data.daemons, this.data.bufferSize);
+    this.game = new BreachProtocol(this.data.tGrid, this.data.bufferSize);
+    this.result = this.game.solve(this.sequences);
+
+    // TODO: handle no solutions
+    if (!this.result) {
+      this.status = 'fail';
+      this.timeEnd = Date.now();
+    }
+
+    this.exitStrategy = resolveExitStrategy(this.result, this.data);
+
+    await resolveBreachProtocol(
+      this.result.path,
+      this.recognitionResult.positionSquareMap,
+      this.exitStrategy
+    );
+
+    this.status = 'success';
+    this.timeEnd = Date.now();
+  }
+
+  async recognize() {
+    const image = sharp(this.source);
+    const container = await SharpImageContainer.create(image);
+
+    return breachProtocolOCR(
+      container,
+      {
+        bufferSize: options.thresholdBufferSize,
+        daemons: options.thresholdDaemons,
+        grid: options.thresholdGrid,
+      },
+      options.experimentalBufferSizeRecognition
+    );
+  }
+}
