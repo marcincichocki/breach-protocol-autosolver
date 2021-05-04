@@ -1,5 +1,4 @@
-import { Point } from '@/common';
-import { writeFileSync } from 'fs-extra';
+import { mergeBy, Point } from '@/common';
 import {
   BreachProtocolRawData,
   COLS,
@@ -26,28 +25,37 @@ import { ImageContainer } from './image-container';
 export class BreachProtocolRecognitionResult {
   readonly positionSquareMap = this.getPositionSquareMap();
 
-  readonly rawData = this.toRawData();
+  readonly rawData = this.reduceToRawData();
 
-  readonly valid = this.isValid();
+  readonly valid = this.results.every((r) => r.isValid);
 
   constructor(
-    public readonly grid: BreachProtocolGridFragmentResult,
-    public readonly daemons: BreachProtocolDaemonsFragmentResult,
-    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult
+    public readonly results: [
+      BreachProtocolGridFragmentResult,
+      BreachProtocolDaemonsFragmentResult,
+      BreachProtocolBufferSizeFragmentResult
+    ]
   ) {}
 
-  saveFragments() {
-    writeFileSync('./bufferSize.png', this.bufferSize.fragment);
-    writeFileSync('./grid.png', this.grid.fragment);
-    writeFileSync('./daemons.png', this.daemons.fragment);
+  toJSON() {
+    return mergeBy(this.results, 'id', (result) => ({
+      ...result,
+      fragment: result.fragment.toString('base64'),
+    }));
   }
 
-  toRawData(): BreachProtocolRawData {
-    return {
-      bufferSize: this.bufferSize.rawData,
-      daemons: this.daemons.rawData,
-      grid: this.grid.rawData,
-    };
+  getInvalidFragmentIds() {
+    return this.results.filter((r) => !r.isValid).map((r) => r.id);
+  }
+
+  private reduceToRawData(): BreachProtocolRawData {
+    return this.results.reduce(
+      (result, { id, rawData }) => ({
+        ...result,
+        [id]: rawData,
+      }),
+      {} as BreachProtocolRawData
+    );
   }
 
   private getSquares(length: number) {
@@ -59,8 +67,11 @@ export class BreachProtocolRecognitionResult {
   }
 
   private getPositionSquareMap() {
-    const { top, left } = this.grid.boundingBox;
-    const boxes = this.grid.source.words.map((w) => w.bbox);
+    const grid = this.results.find(
+      (r) => r.id === 'grid'
+    ) as BreachProtocolGridFragmentResult;
+    const { top, left } = grid.boundingBox;
+    const boxes = grid.source.words.map((w) => w.bbox);
     const squares = this.getSquares(boxes.length);
 
     return generateSquareMap(squares, (s, i) => {
@@ -70,10 +81,6 @@ export class BreachProtocolRecognitionResult {
 
       return new Point(x + left, y + top);
     });
-  }
-
-  private isValid() {
-    return this.bufferSize.isValid && this.grid.isValid && this.daemons.isValid;
   }
 }
 
@@ -88,11 +95,11 @@ export async function breachProtocolOCR<TImage>(
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);
 
-  const [g, d, b] = await Promise.all([
+  const results = await Promise.all([
     gridFragment.recognize(thresholds?.grid),
     daemonsFragment.recognize(thresholds?.daemons),
     bufferSizeFragment.recognize(thresholds?.bufferSize),
   ]);
 
-  return new BreachProtocolRecognitionResult(g, d, b);
+  return new BreachProtocolRecognitionResult(results);
 }
