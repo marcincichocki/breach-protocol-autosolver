@@ -38,9 +38,10 @@ export class BreachProtocolRecognitionResult {
   ) {}
 
   toJSON() {
-    return mergeBy(this.results, 'id', (result) => ({
-      ...result,
-      fragment: result.fragment.toString('base64'),
+    return this.results.map((r) => ({
+      ...r,
+      source: null, // tessdata can be enormous(~20MB for grid).
+      fragment: r.fragment.toString('base64'),
     }));
   }
 
