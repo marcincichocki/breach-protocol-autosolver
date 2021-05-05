@@ -1,4 +1,11 @@
-import { IpcRendererEvent, ipcRenderer as ipc } from 'electron';
+import {
+  BreachProtocolExitStrategy,
+  BreachProtocolFragmentResult,
+  BreachProtocolResult,
+  Sequence,
+} from '@/core';
+import { Options } from '@/platform-node/cli';
+import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +22,16 @@ export enum BreachProtocolStatus {
 }
 
 export interface HistoryEntry {
+  uuid: string;
+  startedAt: number;
+  finishedAt: number;
   status: BreachProtocolStatus;
+  fileName: string;
+  options: Options;
+  recognitionResult: BreachProtocolFragmentResult<any>[];
+  sequences: Sequence[];
+  result: Pick<BreachProtocolResult, 'path' | 'rawPath' | 'sequence'>;
+  exitStrategy: BreachProtocolExitStrategy;
 }
 
 export interface AppSettings {}
