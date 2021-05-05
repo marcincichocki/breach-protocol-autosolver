@@ -72,7 +72,7 @@ ipc.on('worker:solve', async () => {
   updateStatus(WorkerStatus.WORKING);
 
   const bpa = new BreachProtocolAutosolver(screenId);
-  await bpa.start();
+  await bpa.solve();
 
   dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
   updateStatus(WorkerStatus.READY);
@@ -83,11 +83,11 @@ ipc.on('worker:solve', async () => {
 class BreachProtocolAutosolver {
   private uuid = uuidv4();
 
-  private source: string;
+  private fileName: string;
 
-  private timeStart = Date.now();
+  private startedAt = Date.now();
 
-  private timeEnd: number;
+  private finishedAt: number;
 
   private data: BreachProtocolData;
 
@@ -106,30 +106,43 @@ class BreachProtocolAutosolver {
   constructor(private readonly screenId: string) {}
 
   toJSON() {
-    console.log('TOJSON');
-
-    const { uuid, timeStart, timeEnd, status, recognitionResult } = this;
+    const {
+      uuid,
+      startedAt,
+      finishedAt,
+      status,
+      recognitionResult,
+      fileName,
+      sequences,
+      result,
+      exitStrategy,
+    } = this;
 
     return {
       uuid,
-      timeStart,
-      timeEnd,
-      recognitionResult,
+      startedAt,
+      finishedAt,
+      recognitionResult: recognitionResult.toJSON(),
       status,
+      options,
+      fileName,
+      sequences,
+      result: result.toJSON(),
+      exitStrategy,
     } as HistoryEntry;
   }
 
-  async start() {
+  async solve() {
     // TODO: keep or delete source
-    this.source = (await captureScreen(this.screenId)) as string;
+    this.fileName = (await captureScreen(this.screenId)) as string;
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.valid) {
       this.status = BreachProtocolStatus.FAILED;
-      this.timeEnd = Date.now();
+      this.finishedAt = Date.now();
 
       // TODO: notify user about error
-      return;
+      return this.status;
     }
 
     this.data = transformRawData(this.recognitionResult.rawData);
@@ -140,7 +153,9 @@ class BreachProtocolAutosolver {
     // TODO: handle no solutions
     if (!this.result) {
       this.status = BreachProtocolStatus.FAILED;
-      this.timeEnd = Date.now();
+      this.finishedAt = Date.now();
+
+      return this.status;
     }
 
     this.exitStrategy = resolveExitStrategy(this.result, this.data);
@@ -152,11 +167,13 @@ class BreachProtocolAutosolver {
     );
 
     this.status = BreachProtocolStatus.SUCCEEDED;
-    this.timeEnd = Date.now();
+    this.finishedAt = Date.now();
+
+    return this.status;
   }
 
   async recognize() {
-    const image = sharp(this.source);
+    const image = sharp(this.fileName);
     const container = await SharpImageContainer.create(image);
 
     return breachProtocolOCR(
