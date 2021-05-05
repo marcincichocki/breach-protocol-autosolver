@@ -1,4 +1,4 @@
-import { setLang } from '@/common';
+import { BitMask, setLang } from '@/common';
 import {
   BreachProtocol,
   BreachProtocolData,
@@ -21,6 +21,7 @@ import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Action,
+  BreachProtocolSolveProgress,
   BreachProtocolStatus,
   HistoryEntry,
   Request,
@@ -103,9 +104,26 @@ class BreachProtocolAutosolver {
 
   private status: BreachProtocolStatus = BreachProtocolStatus.PENDING;
 
+  private progress = new BitMask(BreachProtocolSolveProgress.Pending);
+
   constructor(private readonly screenId: string) {}
 
-  toJSON() {
+  private getFragmentsValidState() {
+    if (this.progress.has(BreachProtocolSolveProgress.FragmentsValid)) {
+      return { sequences: this.sequences.map((s) => s.toJSON()) };
+    }
+  }
+
+  private getSolutionFoundState() {
+    if (this.progress.has(BreachProtocolSolveProgress.SolutionFound)) {
+      return {
+        result: this.result.toJSON(),
+        exitStrategy: this.exitStrategy,
+      };
+    }
+  }
+
+  private getBaseState() {
     const {
       uuid,
       startedAt,
@@ -113,23 +131,25 @@ class BreachProtocolAutosolver {
       status,
       recognitionResult,
       fileName,
-      sequences,
-      result,
-      exitStrategy,
     } = this;
 
     return {
       uuid,
       startedAt,
       finishedAt,
-      recognitionResult: recognitionResult.toJSON(),
+      recognitionResult: recognitionResult.results,
       status,
       options,
       fileName,
-      sequences,
-      result: result.toJSON(),
-      exitStrategy,
-    } as HistoryEntry;
+    };
+  }
+
+  toJSON(): HistoryEntry {
+    return {
+      ...this.getBaseState(),
+      ...this.getFragmentsValidState(),
+      ...this.getSolutionFoundState(),
+    };
   }
 
   async solve() {
@@ -145,6 +165,7 @@ class BreachProtocolAutosolver {
       return this.status;
     }
 
+    this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
     this.data = transformRawData(this.recognitionResult.rawData);
     this.sequences = makeSequences(this.data.daemons, this.data.bufferSize);
     this.game = new BreachProtocol(this.data.tGrid, this.data.bufferSize);
@@ -158,6 +179,7 @@ class BreachProtocolAutosolver {
       return this.status;
     }
 
+    this.progress.add(BreachProtocolSolveProgress.SolutionFound);
     this.exitStrategy = resolveExitStrategy(this.result, this.data);
 
     await resolveBreachProtocol(
