@@ -77,5 +77,11 @@ describe('utils', () => {
     // M 010
     // F 000
     expect(mask.has(0)).toBe(false);
+
+    const m2 = new BitMask(0);
+
+    // M 000
+    // F 001
+    expect(m2.has(1)).toBe(false);
   });
 });

@@ -128,7 +128,7 @@ export class BitMask {
   constructor(public mask: number) {}
 
   has(flag: number) {
-    return (this.mask & flag) === this.mask;
+    return (this.mask & flag) !== 0;
   }
 
   add(flag: number) {
