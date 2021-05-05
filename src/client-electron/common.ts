@@ -22,9 +22,9 @@ export enum BreachProtocolStatus {
 }
 
 export enum BreachProtocolSolveProgress {
-  Pending,
-  FragmentsValid = 1 << 0,
-  SolutionFound = 1 << 1,
+  Pending = 1 << 0,
+  FragmentsValid = 1 << 1,
+  SolutionFound = 1 << 2,
 }
 
 export interface HistoryEntry {
