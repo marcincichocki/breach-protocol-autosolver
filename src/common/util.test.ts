@@ -5,6 +5,7 @@ import {
   unique,
   uniqueBy,
   uniqueWith,
+  BitMask,
 } from './util';
 
 describe('utils', () => {
@@ -56,5 +57,25 @@ describe('utils', () => {
   it('should find closest number', () => {
     expect(getClosest(4, [1, 5])).toBe(5);
     expect(getClosest(900, [720, 1080, 1440])).toBe(720);
+  });
+
+  fit('should correctly maks', () => {
+    const mask = new BitMask(4); // 100
+
+    // M 100
+    // F 000
+    expect(mask.has(0)).toBe(false);
+
+    mask.add(1);
+
+    // M 101
+    // F 111
+    expect(mask.has(7)).toBe(true);
+
+    mask.delete(3);
+
+    // M 010
+    // F 000
+    expect(mask.has(0)).toBe(false);
   });
 });
