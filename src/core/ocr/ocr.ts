@@ -37,10 +37,6 @@ export class BreachProtocolRecognitionResult {
     ]
   ) {}
 
-  toJSON() {
-    return this.results;
-  }
-
   getInvalidFragmentIds() {
     return this.results.filter((r) => !r.isValid).map((r) => r.id);
   }

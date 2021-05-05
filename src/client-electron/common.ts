@@ -1,8 +1,8 @@
 import {
   BreachProtocolExitStrategy,
   BreachProtocolFragmentResult,
-  BreachProtocolResult,
-  Sequence,
+  BreachProtocolResultJSON,
+  SequenceJSON,
 } from '@/core';
 import { Options } from '@/platform-node/cli';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
@@ -21,6 +21,12 @@ export enum BreachProtocolStatus {
   FAILED,
 }
 
+export enum BreachProtocolSolveProgress {
+  Pending,
+  FragmentsValid = 1 << 0,
+  SolutionFound = 1 << 1,
+}
+
 export interface HistoryEntry {
   uuid: string;
   startedAt: number;
@@ -29,8 +35,8 @@ export interface HistoryEntry {
   fileName: string;
   options: Options;
   recognitionResult: BreachProtocolFragmentResult<any>[];
-  sequences: Sequence[];
-  result: Pick<BreachProtocolResult, 'path' | 'rawPath' | 'sequence'>;
+  sequences: SequenceJSON[];
+  result: BreachProtocolResultJSON;
   exitStrategy: BreachProtocolExitStrategy;
 }
 
