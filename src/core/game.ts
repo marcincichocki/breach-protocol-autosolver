@@ -18,6 +18,16 @@ export class BreachProtocolResult {
     public readonly breachProtocol: BreachProtocol
   ) {}
 
+  toJSON() {
+    const { rawPath, sequence, path } = this;
+
+    return {
+      path,
+      rawPath,
+      sequence,
+    };
+  }
+
   private resolvePath(path: string[]) {
     return path.map((s) => this.breachProtocol.gridMap.get(s));
   }
