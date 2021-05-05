@@ -5,7 +5,7 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 
 export class BreachProtocolBufferSizeTrimFragment<
   TImage
-> extends BreachProtocolFragment<BufferSize, Buffer, TImage> {
+> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
   readonly id = 'bufferSize';
 
   readonly p1 = new Point(0.42, 0.167);
@@ -39,10 +39,10 @@ export class BreachProtocolBufferSizeTrimFragment<
     const bufferSize = await this.getBufferSizeFromPixels(width);
 
     return {
-      ...this.getBaseResultData(bufferSize),
-      source: buffer,
+      ...(this.getBaseResultData(bufferSize) as any),
+      source: null,
       rawData: bufferSize,
-      fragment: buffer,
+      image: buffer.toString('base64'),
       threshold: null,
     };
   }

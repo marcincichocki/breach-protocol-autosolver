@@ -1,18 +1,20 @@
-import { Point, t } from '@/common';
+import { Point } from '@/common';
 import { HexNumber } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
 } from './base';
 
+type DaemonsData = HexNumber[][];
+
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
-  HexNumber[][],
-  Tesseract.Page
+  DaemonsData,
+  'daemons'
 >;
 
 export class BreachProtocolDaemonsFragment<
   TImage
-> extends BreachProtocolOCRFragment<HexNumber[][], TImage> {
+> extends BreachProtocolOCRFragment<DaemonsData, TImage, 'daemons'> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],
@@ -35,7 +37,7 @@ export class BreachProtocolDaemonsFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  isValid(rawData: HexNumber[][]) {
+  isValid(rawData: DaemonsData) {
     const isCorrectSize = rawData.every((d) => d.length <= 5);
 
     return this.validateSymbols(rawData.flat()) && isCorrectSize;

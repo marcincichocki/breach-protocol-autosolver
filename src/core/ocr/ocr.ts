@@ -1,4 +1,4 @@
-import { mergeBy, Point } from '@/common';
+import { Point } from '@/common';
 import {
   BreachProtocolRawData,
   COLS,
@@ -38,11 +38,7 @@ export class BreachProtocolRecognitionResult {
   ) {}
 
   toJSON() {
-    return this.results.map((r) => ({
-      ...r,
-      source: null, // tessdata can be enormous(~20MB for grid).
-      fragment: r.fragment.toString('base64'),
-    }));
+    return this.results;
   }
 
   getInvalidFragmentIds() {
@@ -72,11 +68,11 @@ export class BreachProtocolRecognitionResult {
       (r) => r.id === 'grid'
     ) as BreachProtocolGridFragmentResult;
     const { top, left } = grid.boundingBox;
-    const boxes = grid.source.words.map((w) => w.bbox);
-    const squares = this.getSquares(boxes.length);
+    const { bboxes } = grid.source;
+    const squares = this.getSquares(bboxes.length);
 
     return generateSquareMap(squares, (s, i) => {
-      const { x0, y0, x1, y1 } = boxes[i];
+      const { x0, y0, x1, y1 } = bboxes[i];
       const x = Math.round((x0 + x1) / 2);
       const y = Math.round((y0 + y1) / 2);
 

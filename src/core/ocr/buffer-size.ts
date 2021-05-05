@@ -1,4 +1,4 @@
-import { Point, t } from '@/common';
+import { Point } from '@/common';
 import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
 import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
 
@@ -31,12 +31,12 @@ class BufferSizeControlGroup {
 
 export type BreachProtocolBufferSizeFragmentResult = BreachProtocolFragmentResult<
   BufferSize,
-  Buffer
+  'bufferSize'
 >;
 
 export class BreachProtocolBufferSizeFragment<
   TImage
-> extends BreachProtocolFragment<BufferSize, Buffer, TImage> {
+> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
   private readonly controlGroups = [
     // Buffer boxes.
     new BufferSizeControlGroup(0.12, 0.22, 255),
@@ -134,10 +134,10 @@ export class BreachProtocolBufferSizeFragment<
     BreachProtocolBufferSizeFragment.cachedThreshold = threshold;
 
     return {
-      ...this.getBaseResultData(bufferSize),
-      source: rawBuffer,
+      ...(this.getBaseResultData(bufferSize) as any),
+      source: null,
       rawData: bufferSize,
-      fragment: buffer,
+      image: buffer.toString('base64'),
       threshold,
     };
   }
