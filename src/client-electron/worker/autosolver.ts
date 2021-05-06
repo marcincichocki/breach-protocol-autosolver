@@ -45,25 +45,48 @@ export class BreachProtocolAutosolver {
 
   private recognitionResult: BreachProtocolRecognitionResult;
 
-  private status: BreachProtocolStatus = BreachProtocolStatus.PENDING;
+  private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
 
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
   constructor(private readonly screenId: string) {}
 
-  private getFragmentsValidState() {
-    if (this.progress.has(BreachProtocolSolveProgress.FragmentsValid)) {
-      return { sequences: this.sequences.map((s) => s.toJSON()) };
+  async solve() {
+    this.fileName = (await captureScreen(this.screenId)) as string;
+    this.recognitionResult = await this.recognize();
+
+    if (!this.recognitionResult.valid) {
+      return this.reject();
     }
+
+    this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
+    this.data = transformRawData(this.recognitionResult.rawData);
+    this.sequences = makeSequences(this.data.daemons, this.data.bufferSize);
+    this.game = new BreachProtocol(this.data.tGrid, this.data.bufferSize);
+    this.result = this.game.solve(this.sequences);
+
+    if (!this.result) {
+      return this.reject();
+    }
+
+    this.progress.add(BreachProtocolSolveProgress.SolutionFound);
+    this.exitStrategy = resolveExitStrategy(this.result, this.data);
+
+    await resolveBreachProtocol(
+      this.result.path,
+      this.recognitionResult.positionSquareMap,
+      this.exitStrategy
+    );
+
+    return this.resolve();
   }
 
-  private getSolutionFoundState() {
-    if (this.progress.has(BreachProtocolSolveProgress.SolutionFound)) {
-      return {
-        result: this.result.toJSON(),
-        exitStrategy: this.exitStrategy,
-      };
-    }
+  toJSON(): HistoryEntry {
+    return {
+      ...this.getBaseState(),
+      ...this.getFragmentsValidState(),
+      ...this.getSolutionFoundState(),
+    };
   }
 
   private getBaseState() {
@@ -78,24 +101,33 @@ export class BreachProtocolAutosolver {
     };
   }
 
-  toJSON(): HistoryEntry {
+  private getFragmentsValidState() {
+    const bool = this.progress.has(BreachProtocolSolveProgress.FragmentsValid);
+
     return {
-      ...this.getBaseState(),
-      ...this.getFragmentsValidState(),
-      ...this.getSolutionFoundState(),
+      sequences: bool ? this.sequences.map((s) => s.toJSON()) : null,
     };
   }
 
-  private fail() {
-    this.notifyUser();
+  private getSolutionFoundState() {
+    const bool = this.progress.has(BreachProtocolSolveProgress.SolutionFound);
 
-    return this.finishWithStatus(BreachProtocolStatus.FAILED);
+    return {
+      result: bool ? this.result.toJSON() : null,
+      exitStrategy: bool ? this.exitStrategy : null,
+    };
   }
 
-  private success() {
+  private reject() {
+    this.notifyUser();
+
+    return this.finishWithStatus(BreachProtocolStatus.Rejected);
+  }
+
+  private resolve() {
     this.removeSourceImage();
 
-    return this.finishWithStatus(BreachProtocolStatus.SUCCEEDED);
+    return this.finishWithStatus(BreachProtocolStatus.Resolved);
   }
 
   private finishWithStatus(status: BreachProtocolStatus) {
@@ -114,36 +146,6 @@ export class BreachProtocolAutosolver {
   private removeSourceImage() {
     remove(this.fileName);
     this.fileName = null;
-  }
-
-  async solve() {
-    this.fileName = (await captureScreen(this.screenId)) as string;
-    this.recognitionResult = await this.recognize();
-
-    if (!this.recognitionResult.valid) {
-      return this.fail();
-    }
-
-    this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
-    this.data = transformRawData(this.recognitionResult.rawData);
-    this.sequences = makeSequences(this.data.daemons, this.data.bufferSize);
-    this.game = new BreachProtocol(this.data.tGrid, this.data.bufferSize);
-    this.result = this.game.solve(this.sequences);
-
-    if (!this.result) {
-      return this.fail();
-    }
-
-    this.progress.add(BreachProtocolSolveProgress.SolutionFound);
-    this.exitStrategy = resolveExitStrategy(this.result, this.data);
-
-    await resolveBreachProtocol(
-      this.result.path,
-      this.recognitionResult.positionSquareMap,
-      this.exitStrategy
-    );
-
-    return this.success();
   }
 
   async recognize() {

@@ -28,7 +28,7 @@ async function handleAsyncRequest(req: Request) {
 let screenId: string = null;
 
 async function bootstrap() {
-  updateStatus(WorkerStatus.BOOTSTRAP);
+  updateStatus(WorkerStatus.Bootstrap);
 
   setLang('en');
   const displays = await listDisplays();
@@ -40,17 +40,17 @@ async function bootstrap() {
   await BreachProtocolOCRFragment.initScheduler();
 
   ipc.send('worker:ready');
-  updateStatus(WorkerStatus.READY);
+  updateStatus(WorkerStatus.Ready);
 }
 
 bootstrap();
 
 ipc.on('worker:solve', async () => {
-  updateStatus(WorkerStatus.WORKING);
+  updateStatus(WorkerStatus.Working);
 
   const bpa = new BreachProtocolAutosolver(screenId);
   await bpa.solve();
 
   dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
-  updateStatus(WorkerStatus.READY);
+  updateStatus(WorkerStatus.Ready);
 });
