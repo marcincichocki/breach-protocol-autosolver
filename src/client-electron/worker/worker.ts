@@ -1,9 +1,9 @@
 import { setLang } from '@/common';
 import { BreachProtocolOCRFragment } from '@/core';
-import { solveBreachProtocol } from '@/platform-node/solve';
 import { ipcRenderer as ipc } from 'electron';
 import { listDisplays } from 'screenshot-desktop';
 import { Action, Request, workerListener, WorkerStatus } from '../common';
+import { BreachProtocolAutosolver } from './autosolver';
 
 function updateStatus(payload: WorkerStatus) {
   dispatch({ type: 'SET_STATUS', payload });
@@ -28,7 +28,7 @@ async function handleAsyncRequest(req: Request) {
 let screenId: string = null;
 
 async function bootstrap() {
-  updateStatus(WorkerStatus.BOOTSTRAP);
+  updateStatus(WorkerStatus.Bootstrap);
 
   setLang('en');
   const displays = await listDisplays();
@@ -40,15 +40,17 @@ async function bootstrap() {
   await BreachProtocolOCRFragment.initScheduler();
 
   ipc.send('worker:ready');
-  updateStatus(WorkerStatus.READY);
+  updateStatus(WorkerStatus.Ready);
 }
 
 bootstrap();
 
-ipc.on('worker:solve', async (event) => {
-  updateStatus(WorkerStatus.WORKING);
-  await solveBreachProtocol(screenId);
+ipc.on('worker:solve', async () => {
+  updateStatus(WorkerStatus.Working);
 
-  event.sender.send('worker:solved');
-  updateStatus(WorkerStatus.READY);
+  const bpa = new BreachProtocolAutosolver(screenId);
+  await bpa.solve();
+
+  dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
+  updateStatus(WorkerStatus.Ready);
 });

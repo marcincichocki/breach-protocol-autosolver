@@ -100,3 +100,38 @@ export function getClosest(n: number, list: number[]) {
 
   return list[index];
 }
+
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+
+export interface Serializable {
+  toJSON:
+    | (() => JSONValue)
+    | ((key?: string) => JSONValue)
+    | ((index?: number) => JSONValue);
+}
+
+export class BitMask {
+  constructor(public mask: number) {}
+
+  has(flag: number) {
+    return (this.mask & flag) !== 0;
+  }
+
+  add(flag: number) {
+    this.mask = this.mask | flag;
+
+    return this;
+  }
+
+  delete(flag: number) {
+    this.mask = this.mask & ~flag;
+
+    return this;
+  }
+}

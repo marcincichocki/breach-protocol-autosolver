@@ -1,6 +1,5 @@
 import { uniqueBy } from '@/common';
 import { BreachProtocolResult } from './game';
-import { BreachProtocolFragmentResult } from './ocr/base';
 import { Daemon, memoizedFindOverlap, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
@@ -12,6 +11,9 @@ const values = HEX_NUMBERS.map((x, i) => String.fromCharCode(i + 97));
 const HEX_MAP = new Map(HEX_NUMBERS.map((k, i) => [k, values[i]]));
 
 export type BufferSize = 4 | 5 | 6 | 7 | 8 | 9;
+export type GridRawData = HexNumber[];
+export type DaemonRawData = HexNumber[];
+export type DaemonsRawData = DaemonRawData[];
 
 export function toHex(value: string) {
   for (let [k, v] of HEX_MAP.entries()) {
@@ -85,8 +87,8 @@ export function byUniqueValue() {
 }
 
 export interface BreachProtocolRawData {
-  grid: HexNumber[];
-  daemons: HexNumber[][];
+  grid: GridRawData;
+  daemons: DaemonsRawData;
   bufferSize: BufferSize;
 }
 
@@ -110,17 +112,6 @@ export function transformRawData({
     daemons,
     bufferSize,
   };
-}
-
-export class BreachProtocolValidationError extends Error {
-  readonly name = this.constructor.name;
-
-  constructor(
-    public message: string,
-    public readonly result: BreachProtocolFragmentResult<any, any, any>
-  ) {
-    super(message);
-  }
 }
 
 export interface BreachProtocolExitStrategy {

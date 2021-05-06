@@ -15,9 +15,7 @@
     "UNSUPORTED_OS": "Only Windows is supported.",
     "INVALID_LANG_ERROR": "Invalid language code. Expected one of {0} but got \"{1}\".",
     "NO_SOLUTION": "Could not find any solution. Skipping.",
-    "GRID_INVALID": "Could not recognize grid fragment. Skipping.",
-    "DAEMONS_INVALID": "Could not recognize daemons fragment. Skipping.",
-    "BUFFER_SIZE_INVALID": "Could not recognize buffer size fragment. Skipping."
+    "OCR_DATA_INVALID": "Could not recognize fragments: {0}. Skipping."
   },
   "pl": {
     "CHECK_FOR_UPDATES": "Sprawdzam dostępność aktualizacji..",
@@ -35,8 +33,6 @@
     "UNSUPORTED_OS": "Tylko system Windows jest obsługiwany.",
     "INVALID_LANG_ERROR": "Niepoprawny kod jezyka. Oczekiwano jednego z listy {0} ale otrzymano \"{1}\".",
     "NO_SOLUTION": "Nie znaleziono żadnego rozwiązania. Pomijam.",
-    "GRID_INVALID": "Nie udało się rozpoznać fragmentu \"grid\". Pomijam.",
-    "DAEMONS_INVALID": "Nie udało się rozpoznać fragmentu \"daemons\". Pomijam.",
-    "BUFFER_SIZE_INVALID": "Nie udało się rozpoznać fragmentu \"bufferSize\". Pomijam."
+    "OCR_DATA_INVALID": "Nie udało się rozpoznać fragmentów: {0}. Pomijam."
   }
 }

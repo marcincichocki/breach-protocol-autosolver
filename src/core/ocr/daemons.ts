@@ -1,18 +1,18 @@
-import { Point, t } from '@/common';
-import { BreachProtocolValidationError, HexNumber } from '../common';
+import { Point } from '@/common';
+import { DaemonsRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
 } from './base';
 
-export type BreachProtocolDaemonsFragmentResult<
-  C
-> = BreachProtocolFragmentResult<HexNumber[][], Tesseract.Page, C>;
+export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
+  DaemonsRawData,
+  'daemons'
+>;
 
-export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
-  HexNumber[][],
-  C
-> {
+export class BreachProtocolDaemonsFragment<
+  TImage
+> extends BreachProtocolOCRFragment<DaemonsRawData, TImage, 'daemons'> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],
@@ -35,11 +35,7 @@ export class BreachProtocolDaemonsFragment<C> extends BreachProtocolOCRFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  protected getValidationError(result: BreachProtocolDaemonsFragmentResult<C>) {
-    return new BreachProtocolValidationError(t`DAEMONS_INVALID`, result);
-  }
-
-  isValid(rawData: HexNumber[][]) {
+  isValid(rawData: DaemonsRawData) {
     const isCorrectSize = rawData.every((d) => d.length <= 5);
 
     return this.validateSymbols(rawData.flat()) && isCorrectSize;

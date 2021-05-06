@@ -39,11 +39,11 @@ const StatusBarStyled = styled.footer`
 
 function renderStatusBarContent(status: WorkerStatus) {
   switch (status) {
-    case WorkerStatus.BOOTSTRAP:
+    case WorkerStatus.Bootstrap:
       return <StatusBarItem>Loading...</StatusBarItem>;
-    case WorkerStatus.READY:
+    case WorkerStatus.Ready:
       return <StatusBarItem>Ready</StatusBarItem>;
-    case WorkerStatus.WORKING:
+    case WorkerStatus.Working:
       return <StatusBarItem>Working...</StatusBarItem>;
     default:
       return <StatusBarItem>Initializing..</StatusBarItem>;

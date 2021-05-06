@@ -1,8 +1,10 @@
-import { memoize, permute, uniqueWith } from '@/common';
+import { memoize, permute, Serializable, uniqueWith } from '@/common';
 import {
   BufferSize,
   byBufferSize,
   byUniqueValue,
+  DaemonRawData,
+  DaemonsRawData,
   fromHex,
   HexNumber,
   toHex,
@@ -31,7 +33,7 @@ export class Daemon {
   private children: Daemon[] = [];
 
   constructor(
-    public readonly value: HexNumber[],
+    public readonly value: DaemonRawData,
     public readonly index: number,
     id?: string
   ) {}
@@ -80,7 +82,13 @@ export function getSequenceFromPermutation(permutation: Daemon[]) {
   return new Sequence(value, parts);
 }
 
-export class Sequence {
+// interface will lose its index signature.
+export type SequenceJSON = {
+  value: HexNumber[];
+  parts: number[];
+};
+
+export class Sequence implements Serializable {
   readonly tValue = this.value.map(fromHex).join('');
 
   readonly length = this.value.length;
@@ -93,6 +101,13 @@ export class Sequence {
     .reduce((a, b) => a + b, 0);
 
   constructor(public value: HexNumber[], public readonly parts: Daemon[]) {}
+
+  toJSON(): SequenceJSON {
+    return {
+      value: this.value,
+      parts: this.parts.map((p) => p.index),
+    };
+  }
 }
 
 function getPermutationId(p: Daemon[]) {
@@ -100,7 +115,7 @@ function getPermutationId(p: Daemon[]) {
 }
 
 export function parseDaemons(
-  daemons: HexNumber[][]
+  daemons: DaemonsRawData
 ): [regular: Daemon[], children: Daemon[]] {
   const baseDaemons = daemons.map((d, i) => new Daemon(d, i));
 
@@ -129,7 +144,7 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
-export function makeSequences(daemons: HexNumber[][], bufferSize: BufferSize) {
+export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(byUniqueValue())

@@ -1,11 +1,9 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
-import {
-  BreachProtocolRawData,
-  BreachProtocolValidationError,
-  HexNumber,
-  HEX_NUMBERS,
-} from '../common';
+import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
+import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
+import { BreachProtocolDaemonsFragmentResult } from './daemons';
+import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -21,19 +19,47 @@ export interface BreachProtocolFragmentBoundingBox {
   innerHeight: number;
 }
 
-export class BreachProtocolFragmentResult<D, S, C> {
-  constructor(
-    public readonly id: FragmentId,
-    public readonly source: S,
-    public readonly boundingBox: BreachProtocolFragmentBoundingBox,
-    public readonly rawData: D,
-    public readonly fragment: C
-  ) {}
+export interface BreachProtocolSource {
+  text: string;
+  boxes: Tesseract.Bbox[];
 }
 
-export abstract class BreachProtocolFragment<D, S, C> {
+interface BreachProtocolFragmentResultBase<TId extends FragmentId> {
+  readonly boundingBox: BreachProtocolFragmentBoundingBox;
+  readonly isValid: boolean;
+  readonly id: TId;
+}
+
+export interface BreachProtocolFragmentResult<
+  TData,
+  TId extends FragmentId = FragmentId
+> extends BreachProtocolFragmentResultBase<TId> {
+  /** Used threshold to generate transformed image. */
+  readonly threshold: number;
+
+  /** Transformed image in base64 encoding. */
+  readonly image: string;
+
+  /** Extracted data from image. */
+  readonly source: BreachProtocolSource;
+
+  /** Extracted data from source. */
+  readonly rawData: TData;
+}
+
+export type BreachProtocolFragmentResults = [
+  BreachProtocolGridFragmentResult,
+  BreachProtocolDaemonsFragmentResult,
+  BreachProtocolBufferSizeFragmentResult
+];
+
+export abstract class BreachProtocolFragment<
+  TData,
+  TImage,
+  TId extends FragmentId
+> {
   /** Id of fragment. */
-  abstract readonly id: FragmentId;
+  abstract readonly id: TId;
 
   /** Top left corner of fragment. */
   abstract readonly p1: Point;
@@ -44,17 +70,43 @@ export abstract class BreachProtocolFragment<D, S, C> {
   abstract readonly boundingBox: BreachProtocolFragmentBoundingBox;
 
   /** Preprocessed image fragment. */
-  protected abstract readonly fragment: C;
+  protected abstract readonly fragment: TImage;
 
-  constructor(public readonly container: ImageContainer<C>) {}
+  constructor(public readonly container: ImageContainer<TImage>) {}
 
   /** Recognize data from fragment image. */
   abstract recognize(
     threshold?: number
-  ): Promise<BreachProtocolFragmentResult<D, S, C>>;
+  ): Promise<BreachProtocolFragmentResult<TData, TId>>;
 
   /** Check if recognized data is valid. */
-  abstract isValid(data: D): boolean;
+  abstract isValid(data: TData): boolean;
+
+  private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
+    const { id, boundingBox } = this;
+    const isValid = this.isValid(rawData);
+
+    return {
+      id,
+      boundingBox,
+      isValid,
+    };
+  }
+
+  protected getFragmentResult(
+    source: BreachProtocolSource,
+    rawData: TData,
+    buffer: Buffer,
+    threshold: number
+  ): BreachProtocolFragmentResult<TData, TId> {
+    return {
+      ...this.getBaseResult(rawData),
+      source,
+      rawData,
+      image: buffer.toString('base64'),
+      threshold,
+    };
+  }
 
   protected getFragmentBoundingBox() {
     const { p1, p2 } = this;
@@ -74,9 +126,10 @@ export abstract class BreachProtocolFragment<D, S, C> {
 }
 
 export abstract class BreachProtocolOCRFragment<
-  D,
-  C
-> extends BreachProtocolFragment<D, Tesseract.Page, C> {
+  TData,
+  TImage,
+  TId extends FragmentId
+> extends BreachProtocolFragment<TData, TImage, TId> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
   protected readonly correctionMap = new Map<string, HexNumber>([
@@ -89,7 +142,7 @@ export abstract class BreachProtocolOCRFragment<
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
-  constructor(public container: ImageContainer<C>) {
+  constructor(public container: ImageContainer<TImage>) {
     super(container);
 
     // Initializing workers takes a lot of time. Loading them every time
@@ -103,11 +156,7 @@ export abstract class BreachProtocolOCRFragment<
     }
   }
 
-  protected abstract getRawData(lines: string[]): D;
-
-  protected abstract getValidationError(
-    result: BreachProtocolFragmentResult<D, Tesseract.Page, C>
-  ): BreachProtocolValidationError;
+  protected abstract getRawData(lines: string[]): TData;
 
   private recognizeFragment(buffer: Buffer) {
     return BreachProtocolOCRFragment.scheduler.addJob(
@@ -116,31 +165,25 @@ export abstract class BreachProtocolOCRFragment<
     ) as Promise<Tesseract.RecognizeResult>;
   }
 
-  async recognize(threshold?: number) {
-    const { data, fragment } = await this.ocr(threshold ?? this.getThreshold());
-    const lines = this.getLines(data.text);
+  async recognize(
+    fixedThreshold?: number
+  ): Promise<BreachProtocolFragmentResult<TData, TId>> {
+    const threshold = fixedThreshold ?? this.getThreshold();
+    const { source, buffer } = await this.ocr(threshold);
+    const lines = this.getLines(source.text);
     const rawData = this.getRawData(lines);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      data,
-      this.boundingBox,
-      rawData,
-      fragment
-    );
 
-    if (!this.isValid(rawData)) {
-      throw this.getValidationError(result);
-    }
-
-    return result;
+    return this.getFragmentResult(source, rawData, buffer, threshold);
   }
 
   async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
+    const boxes = data.words.map((w) => w.bbox);
+    const source = { boxes, text: data.text };
 
-    return { data, fragment };
+    return { buffer, source };
   }
 
   protected chunkLine(line: string) {

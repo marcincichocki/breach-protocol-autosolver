@@ -8,18 +8,17 @@ async function main() {
   const { worker, renderer } = createBrowserWindows();
   const store = new Store(worker.webContents, renderer.webContents);
 
-  renderer.on('closed', () => app.exit());
+  renderer.on('closed', () => {
+    store.dispose();
+    globalShortcut.unregisterAll();
+
+    app.quit();
+  });
 
   ipc.once('worker:ready', () => {
     globalShortcut.register('CommandOrControl+numdec', () => {
       worker.webContents.send('worker:solve');
     });
-  });
-
-  ipc.on('before-exit', () => {
-    store.dispose();
-
-    globalShortcut.unregisterAll();
   });
 }
 

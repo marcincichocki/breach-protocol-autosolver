@@ -1,3 +1,4 @@
+import { Serializable } from '@/common';
 import {
   BufferSize,
   COLS,
@@ -7,9 +8,15 @@ import {
   ROWS,
   toHex,
 } from './common';
-import { Sequence } from './sequence';
+import { Sequence, SequenceJSON } from './sequence';
 
-export class BreachProtocolResult {
+export type BreachProtocolResultJSON = {
+  path: string[];
+  rawPath: string[];
+  sequence: SequenceJSON;
+};
+
+export class BreachProtocolResult implements Serializable {
   public readonly path = this.rawPath.slice(0, this.findEndIndex());
 
   constructor(
@@ -17,6 +24,12 @@ export class BreachProtocolResult {
     public readonly rawPath: string[],
     public readonly breachProtocol: BreachProtocol
   ) {}
+
+  toJSON(): BreachProtocolResultJSON {
+    const { path, rawPath, sequence } = this;
+
+    return { path, rawPath, sequence: sequence.toJSON() };
+  }
 
   private resolvePath(path: string[]) {
     return path.map((s) => this.breachProtocol.gridMap.get(s));

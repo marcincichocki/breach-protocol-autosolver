@@ -1,7 +1,7 @@
 import path from 'path';
 import sharp from 'sharp';
 import registry from '../../bp-registry/registry.json';
-import { BufferSize, HexNumber } from '../common';
+import { BufferSize, DaemonsRawData, GridRawData } from '../common';
 import { BreachProtocolOCRFragment, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
@@ -101,13 +101,13 @@ describe('raw data validation', () => {
   });
 
   // prettier-ignore
-  const grid: HexNumber[] = [
+  const grid: GridRawData = [
     'BD', 'E9', '1C', '7A',
     'FF', '55', '55', '1C',
     '7A', '7A', 'BD', 'BD',
     '1C', '55', 'E9', 'E9'
   ];
-  const daemons: HexNumber[][] = [
+  const daemons: DaemonsRawData = [
     ['BD', 'E9'],
     ['1C', '7A'],
     ['FF', '55'],
@@ -134,7 +134,7 @@ describe('raw data validation', () => {
       grid.map(() => ' '),
       grid.slice(1),
       [],
-    ] as HexNumber[][];
+    ] as GridRawData[];
 
     invalidGrids.forEach((grid) => {
       expect(fragment.isValid(grid)).toBeFalsy();
@@ -148,7 +148,7 @@ describe('raw data validation', () => {
       daemons.map(() => ['asd']),
       daemons.map(() => [' ']),
       daemons.map(() => [] as string[]),
-    ] as HexNumber[][][];
+    ] as DaemonsRawData[];
 
     invalidDaemons.forEach((daemons) => {
       expect(fragment.isValid(daemons)).toBeFalsy();

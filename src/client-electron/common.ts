@@ -1,14 +1,44 @@
-import { IpcRendererEvent, ipcRenderer as ipc } from 'electron';
+import {
+  BreachProtocolExitStrategy,
+  BreachProtocolFragmentResults,
+  BreachProtocolResultJSON,
+  SequenceJSON,
+} from '@/core';
+import { Options } from '@/platform-node/cli';
+import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
 export enum WorkerStatus {
-  BOOTSTRAP,
-  READY,
-  WORKING,
+  Bootstrap,
+  Ready,
+  Working,
 }
 
-export interface HistoryEntry {}
+export enum BreachProtocolStatus {
+  Pending,
+  Resolved,
+  Rejected,
+}
+
+export enum BreachProtocolSolveProgress {
+  Pending = 1 << 0,
+  FragmentsValid = 1 << 1,
+  SolutionFound = 1 << 2,
+}
+
+export interface HistoryEntry {
+  uuid: string;
+  startedAt: number;
+  finishedAt: number;
+  status: BreachProtocolStatus;
+  fileName: string;
+  options: Options;
+  fragments: BreachProtocolFragmentResults;
+  sequences: SequenceJSON[];
+  result: BreachProtocolResultJSON;
+  exitStrategy: BreachProtocolExitStrategy;
+}
 
 export interface AppSettings {}
 

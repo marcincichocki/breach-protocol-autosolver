@@ -1,20 +1,18 @@
-import { Point, t } from '@/common';
-import { BreachProtocolValidationError, HexNumber } from '../common';
+import { Point } from '@/common';
+import { GridRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
 } from './base';
 
-export type BreachProtocolGridFragmentResult<C> = BreachProtocolFragmentResult<
-  HexNumber[],
-  Tesseract.Page,
-  C
+export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
+  GridRawData,
+  'grid'
 >;
 
-export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
-  HexNumber[],
-  C
-> {
+export class BreachProtocolGridFragment<
+  TImage
+> extends BreachProtocolOCRFragment<GridRawData, TImage, 'grid'> {
   readonly thresholds = new Map([
     [1080, 120],
     [1440, 120],
@@ -37,15 +35,11 @@ export class BreachProtocolGridFragment<C> extends BreachProtocolOCRFragment<
     return lines.flatMap((l) => this.parseLine(l));
   }
 
-  protected getValidationError(result: BreachProtocolGridFragmentResult<C>) {
-    return new BreachProtocolValidationError(t`GRID_INVALID`, result);
-  }
-
   private isSquare(n: number) {
     return n > 0 && Math.sqrt(n) % 1 === 0;
   }
 
-  isValid(rawData: HexNumber[]) {
+  isValid(rawData: GridRawData) {
     return this.validateSymbols(rawData) && this.isSquare(rawData.length);
   }
 }

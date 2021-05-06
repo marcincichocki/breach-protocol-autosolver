@@ -6,39 +6,41 @@ import {
   generateSquareMap,
   ROWS,
 } from '../common';
-import { FragmentId } from './base';
 import {
-  BreachProtocolBufferSizeFragment,
-  BreachProtocolBufferSizeFragmentResult,
-} from './buffer-size';
+  BreachProtocolFragmentResult,
+  BreachProtocolFragmentResults,
+  FragmentId,
+} from './base';
+import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
-import {
-  BreachProtocolDaemonsFragment,
-  BreachProtocolDaemonsFragmentResult,
-} from './daemons';
+import { BreachProtocolDaemonsFragment } from './daemons';
 import {
   BreachProtocolGridFragment,
   BreachProtocolGridFragmentResult,
 } from './grid';
 import { ImageContainer } from './image-container';
 
-export class BreachProtocolRecognitionResult<C> {
+export class BreachProtocolRecognitionResult {
   readonly positionSquareMap = this.getPositionSquareMap();
 
-  readonly rawData = this.toRawData();
+  readonly rawData = this.reduceToRawData();
 
-  constructor(
-    public readonly grid: BreachProtocolGridFragmentResult<C>,
-    public readonly daemons: BreachProtocolDaemonsFragmentResult<C>,
-    public readonly bufferSize: BreachProtocolBufferSizeFragmentResult<C>
-  ) {}
+  readonly isValid = this.results.every((r) => r.isValid);
 
-  toRawData(): BreachProtocolRawData {
-    return {
-      bufferSize: this.bufferSize.rawData,
-      daemons: this.daemons.rawData,
-      grid: this.grid.rawData,
-    };
+  constructor(public readonly results: BreachProtocolFragmentResults) {}
+
+  getInvalidFragmentIds() {
+    return this.results.filter((r) => !r.isValid).map((r) => r.id);
+  }
+
+  private reduceToRawData(): BreachProtocolRawData {
+    return this.results.reduce(
+      (result, { id, rawData }) => ({
+        ...result,
+        [id]: rawData,
+      }),
+      {} as BreachProtocolRawData
+    );
   }
 
   private getSquares(length: number) {
@@ -49,9 +51,16 @@ export class BreachProtocolRecognitionResult<C> {
     return cross(rows, cols);
   }
 
+  private isGridFragment(
+    fragment: BreachProtocolFragmentResult<any>
+  ): fragment is BreachProtocolGridFragmentResult {
+    return fragment.id === 'grid';
+  }
+
   private getPositionSquareMap() {
-    const { top, left } = this.grid.boundingBox;
-    const boxes = this.grid.source.words.map((w) => w.bbox);
+    const grid = this.results.find(this.isGridFragment);
+    const { top, left } = grid.boundingBox;
+    const { boxes } = grid.source;
     const squares = this.getSquares(boxes.length);
 
     return generateSquareMap(squares, (s, i) => {
@@ -64,8 +73,8 @@ export class BreachProtocolRecognitionResult<C> {
   }
 }
 
-export async function breachProtocolOCR<C>(
-  container: ImageContainer<C>,
+export async function breachProtocolOCR<TImage>(
+  container: ImageContainer<TImage>,
   thresholds?: Partial<Record<FragmentId, number>>,
   experimentalBufferSizeRecognition?: boolean
 ) {
@@ -75,11 +84,11 @@ export async function breachProtocolOCR<C>(
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);
 
-  const [g, d, b] = await Promise.all([
+  const results = await Promise.all([
     gridFragment.recognize(thresholds?.grid),
     daemonsFragment.recognize(thresholds?.daemons),
     bufferSizeFragment.recognize(thresholds?.bufferSize),
   ]);
 
-  return new BreachProtocolRecognitionResult<C>(g, d, b);
+  return new BreachProtocolRecognitionResult(results);
 }

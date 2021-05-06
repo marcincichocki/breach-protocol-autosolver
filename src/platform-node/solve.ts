@@ -2,7 +2,7 @@ import { t } from '@/common';
 import {
   BreachProtocol,
   breachProtocolOCR,
-  BreachProtocolValidationError,
+  BreachProtocolRecognitionResult,
   makeSequences,
   resolveExitStrategy,
   SharpImageContainer,
@@ -19,10 +19,20 @@ import { captureScreen, resolveBreachProtocol } from './robot';
 export async function solveBreachProtocol(screenId: string) {
   const log = ora(t`CAPTURE_SCREEN ${screenId}`).start();
   const fileName = (await captureScreen(screenId)) as string;
-  const ocr = await tryToOCRBreachProtocol(fileName, log);
 
-  // exit early because data is invalid.
-  if (!ocr) return;
+  log.text = t`OCR_START`;
+  const ocr = await recognizeImage(fileName);
+
+  if (!ocr.isValid) {
+    log.text = t`DEBUG`;
+    handleInvalidBreachProtocol(fileName, ocr);
+
+    const ids = ocr.getInvalidFragmentIds();
+    log.fail(t`OCR_DATA_INVALID ${ids.join(', ')}`);
+
+    // exit early because data is invalid.
+    return;
+  }
 
   await remove(fileName);
   log.text = t`SOLVER_START`;
@@ -49,35 +59,29 @@ export async function solveBreachProtocol(screenId: string) {
   log.succeed(t`SOLVER_DONE`);
 }
 
-async function tryToOCRBreachProtocol(fileName: string, log: ora.Ora) {
+async function recognizeImage(fileName: string) {
   const image = sharp(fileName);
   const container = await SharpImageContainer.create(image);
-  log.text = t`OCR_START`;
 
-  try {
-    return await breachProtocolOCR(
-      container,
-      {
-        bufferSize: options.thresholdBufferSize,
-        daemons: options.thresholdDaemons,
-        grid: options.thresholdGrid,
-      },
-      options.experimentalBufferSizeRecognition
-    );
-  } catch (e) {
-    if (e instanceof BreachProtocolValidationError) {
-      if (!options.disableSound) {
-        play(options.soundPath);
-      }
+  return breachProtocolOCR(
+    container,
+    {
+      bufferSize: options.thresholdBufferSize,
+      daemons: options.thresholdDaemons,
+      grid: options.thresholdGrid,
+    },
+    options.experimentalBufferSizeRecognition
+  );
+}
 
-      log.text = t`DEBUG`;
-      const debugData = new BreachProtocolDebug(fileName, e.result);
-      appendToDebugJson(debugData);
-
-      log.fail(e.message);
-      return;
-    }
-
-    throw e;
+function handleInvalidBreachProtocol(
+  fileName: string,
+  result: BreachProtocolRecognitionResult
+) {
+  if (!options.disableSound) {
+    play(options.soundPath);
   }
+
+  const debugData = new BreachProtocolDebug(fileName, result);
+  appendToDebugJson(debugData);
 }

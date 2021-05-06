@@ -1,16 +1,11 @@
-import { Point, t } from '@/common';
-import {
-  BreachProtocolValidationError,
-  BufferSize,
-  BUFFER_SIZE_MAX,
-  BUFFER_SIZE_MIN,
-} from '../common';
-import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
+import { Point } from '@/common';
+import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
+import { BreachProtocolFragment } from './base';
 import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 
 export class BreachProtocolBufferSizeTrimFragment<
-  C
-> extends BreachProtocolFragment<BufferSize, Buffer, C> {
+  TImage
+> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
   readonly id = 'bufferSize';
 
   readonly p1 = new Point(0.42, 0.167);
@@ -37,24 +32,13 @@ export class BreachProtocolBufferSizeTrimFragment<
   }
 
   // Ensure compatibility with current api.
-  async recognize(threshold?: number) {
-    const { fragment, buffer, width } = await this.container.trim(
-      this.fragment
-    );
+  async recognize(
+    threshold?: number
+  ): Promise<BreachProtocolBufferSizeFragmentResult> {
+    const { buffer, width } = await this.container.trim(this.fragment);
     const bufferSize = await this.getBufferSizeFromPixels(width);
-    const result = new BreachProtocolFragmentResult(
-      this.id,
-      buffer,
-      this.boundingBox,
-      bufferSize,
-      fragment
-    ) as BreachProtocolBufferSizeFragmentResult<C>;
 
-    if (!this.isValid(bufferSize)) {
-      throw new BreachProtocolValidationError(t`BUFFER_SIZE_INVALID`, result);
-    }
-
-    return result;
+    return this.getFragmentResult(null, bufferSize, buffer, null);
   }
 
   private async getBufferSizeFromPixels(width: number) {
