@@ -1,6 +1,9 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
 import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
+import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
+import { BreachProtocolDaemonsFragmentResult } from './daemons';
+import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -18,7 +21,7 @@ export interface BreachProtocolFragmentBoundingBox {
 
 export interface BreachProtocolSource {
   text: string;
-  bboxes: Tesseract.Bbox[];
+  boxes: Tesseract.Bbox[];
 }
 
 interface BreachProtocolFragmentResultBase<TId extends FragmentId> {
@@ -31,18 +34,24 @@ export interface BreachProtocolFragmentResult<
   TData,
   TId extends FragmentId = FragmentId
 > extends BreachProtocolFragmentResultBase<TId> {
-  /** Threshold that was used to generate this result. */
+  /** Used threshold to generate transformed image. */
   readonly threshold: number;
 
-  /** Source of data. */
+  /** Transformed image in base64 encoding. */
+  readonly image: string;
+
+  /** Extracted data from image. */
   readonly source: BreachProtocolSource;
 
   /** Extracted data from source. */
   readonly rawData: TData;
-
-  /** Image that was used to get source from. */
-  readonly image: string;
 }
+
+export type BreachProtocolFragmentResults = [
+  BreachProtocolGridFragmentResult,
+  BreachProtocolDaemonsFragmentResult,
+  BreachProtocolBufferSizeFragmentResult
+];
 
 export abstract class BreachProtocolFragment<
   TData,
@@ -164,9 +173,9 @@ export abstract class BreachProtocolOCRFragment<
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
-    const bboxes = data.words.map((w) => w.bbox);
+    const boxes = data.words.map((w) => w.bbox);
 
-    return { buffer, source: { bboxes, text: data.text } };
+    return { buffer, source: { boxes, text: data.text } };
   }
 
   protected chunkLine(line: string) {

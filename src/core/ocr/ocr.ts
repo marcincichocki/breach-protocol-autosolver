@@ -6,16 +6,14 @@ import {
   generateSquareMap,
   ROWS,
 } from '../common';
-import { FragmentId } from './base';
 import {
-  BreachProtocolBufferSizeFragment,
-  BreachProtocolBufferSizeFragmentResult,
-} from './buffer-size';
+  BreachProtocolFragmentResult,
+  BreachProtocolFragmentResults,
+  FragmentId,
+} from './base';
+import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
-import {
-  BreachProtocolDaemonsFragment,
-  BreachProtocolDaemonsFragmentResult,
-} from './daemons';
+import { BreachProtocolDaemonsFragment } from './daemons';
 import {
   BreachProtocolGridFragment,
   BreachProtocolGridFragmentResult,
@@ -29,13 +27,7 @@ export class BreachProtocolRecognitionResult {
 
   readonly valid = this.results.every((r) => r.isValid);
 
-  constructor(
-    public readonly results: [
-      BreachProtocolGridFragmentResult,
-      BreachProtocolDaemonsFragmentResult,
-      BreachProtocolBufferSizeFragmentResult
-    ]
-  ) {}
+  constructor(public readonly results: BreachProtocolFragmentResults) {}
 
   getInvalidFragmentIds() {
     return this.results.filter((r) => !r.isValid).map((r) => r.id);
@@ -59,16 +51,20 @@ export class BreachProtocolRecognitionResult {
     return cross(rows, cols);
   }
 
+  private isGridFragment(
+    fragment: BreachProtocolFragmentResult<any>
+  ): fragment is BreachProtocolGridFragmentResult {
+    return fragment.id === 'grid';
+  }
+
   private getPositionSquareMap() {
-    const grid = this.results.find(
-      (r) => r.id === 'grid'
-    ) as BreachProtocolGridFragmentResult;
+    const grid = this.results.find(this.isGridFragment);
     const { top, left } = grid.boundingBox;
-    const { bboxes } = grid.source;
-    const squares = this.getSquares(bboxes.length);
+    const { boxes } = grid.source;
+    const squares = this.getSquares(boxes.length);
 
     return generateSquareMap(squares, (s, i) => {
-      const { x0, y0, x1, y1 } = bboxes[i];
+      const { x0, y0, x1, y1 } = boxes[i];
       const x = Math.round((x0 + x1) / 2);
       const y = Math.round((y0 + y1) / 2);
 

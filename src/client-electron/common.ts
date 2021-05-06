@@ -1,6 +1,6 @@
 import {
   BreachProtocolExitStrategy,
-  BreachProtocolFragmentResult,
+  BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
   SequenceJSON,
 } from '@/core';
@@ -34,7 +34,7 @@ export interface HistoryEntry {
   status: BreachProtocolStatus;
   fileName: string;
   options: Options;
-  recognitionResult: BreachProtocolFragmentResult<any>[];
+  fragments: BreachProtocolFragmentResults;
   sequences: SequenceJSON[];
   result: BreachProtocolResultJSON;
   exitStrategy: BreachProtocolExitStrategy;
