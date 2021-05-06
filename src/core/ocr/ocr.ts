@@ -25,7 +25,7 @@ export class BreachProtocolRecognitionResult {
 
   readonly rawData = this.reduceToRawData();
 
-  readonly valid = this.results.every((r) => r.isValid);
+  readonly isValid = this.results.every((r) => r.isValid);
 
   constructor(public readonly results: BreachProtocolFragmentResults) {}
 

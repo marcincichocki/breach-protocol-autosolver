@@ -1,20 +1,18 @@
 import { Point } from '@/common';
-import { HexNumber } from '../common';
+import { GridRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
 } from './base';
 
-type GridData = HexNumber[];
-
 export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
-  GridData,
+  GridRawData,
   'grid'
 >;
 
 export class BreachProtocolGridFragment<
   TImage
-> extends BreachProtocolOCRFragment<GridData, TImage, 'grid'> {
+> extends BreachProtocolOCRFragment<GridRawData, TImage, 'grid'> {
   readonly thresholds = new Map([
     [1080, 120],
     [1440, 120],
@@ -41,7 +39,7 @@ export class BreachProtocolGridFragment<
     return n > 0 && Math.sqrt(n) % 1 === 0;
   }
 
-  isValid(rawData: GridData) {
+  isValid(rawData: GridRawData) {
     return this.validateSymbols(rawData) && this.isSquare(rawData.length);
   }
 }

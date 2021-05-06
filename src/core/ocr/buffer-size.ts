@@ -133,13 +133,7 @@ export class BreachProtocolBufferSizeFragment<
     // Cache valid threshold to limit ammount of computation required on following BPs.
     BreachProtocolBufferSizeFragment.cachedThreshold = threshold;
 
-    return {
-      ...(this.getBaseResultData(bufferSize) as any),
-      source: null,
-      rawData: bufferSize,
-      image: buffer.toString('base64'),
-      threshold,
-    };
+    return this.getFragmentResult(null, bufferSize, buffer, threshold);
   }
 
   private verifyControlGroups(row: Buffer, length: number) {

@@ -1,4 +1,4 @@
-import { HexNumber } from './common';
+import { DaemonsRawData } from './common';
 import {
   findOverlap,
   getSequenceFromPermutation,
@@ -256,7 +256,7 @@ describe('sequences', () => {
   });
 });
 
-function expectSequencesToEqual(sequences: Sequence[], values: HexNumber[][]) {
+function expectSequencesToEqual(sequences: Sequence[], values: DaemonsRawData) {
   sequences.forEach((s, i) => expect(s.value).toEqual(values[i]));
 }
 

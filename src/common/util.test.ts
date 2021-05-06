@@ -59,7 +59,7 @@ describe('utils', () => {
     expect(getClosest(900, [720, 1080, 1440])).toBe(720);
   });
 
-  it('should correctly maks', () => {
+  it('should correctly recognize flags in bit mask', () => {
     const mask = new BitMask(4); // 100
 
     // M 100

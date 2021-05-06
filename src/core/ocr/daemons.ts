@@ -1,20 +1,18 @@
 import { Point } from '@/common';
-import { HexNumber } from '../common';
+import { DaemonsRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
 } from './base';
 
-type DaemonsData = HexNumber[][];
-
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
-  DaemonsData,
+  DaemonsRawData,
   'daemons'
 >;
 
 export class BreachProtocolDaemonsFragment<
   TImage
-> extends BreachProtocolOCRFragment<DaemonsData, TImage, 'daemons'> {
+> extends BreachProtocolOCRFragment<DaemonsRawData, TImage, 'daemons'> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],
@@ -37,7 +35,7 @@ export class BreachProtocolDaemonsFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  isValid(rawData: DaemonsData) {
+  isValid(rawData: DaemonsRawData) {
     const isCorrectSize = rawData.every((d) => d.length <= 5);
 
     return this.validateSymbols(rawData.flat()) && isCorrectSize;

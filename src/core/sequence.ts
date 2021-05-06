@@ -3,6 +3,8 @@ import {
   BufferSize,
   byBufferSize,
   byUniqueValue,
+  DaemonRawData,
+  DaemonsRawData,
   fromHex,
   HexNumber,
   toHex,
@@ -31,7 +33,7 @@ export class Daemon {
   private children: Daemon[] = [];
 
   constructor(
-    public readonly value: HexNumber[],
+    public readonly value: DaemonRawData,
     public readonly index: number,
     id?: string
   ) {}
@@ -113,7 +115,7 @@ function getPermutationId(p: Daemon[]) {
 }
 
 export function parseDaemons(
-  daemons: HexNumber[][]
+  daemons: DaemonsRawData
 ): [regular: Daemon[], children: Daemon[]] {
   const baseDaemons = daemons.map((d, i) => new Daemon(d, i));
 
@@ -142,7 +144,7 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
-export function makeSequences(daemons: HexNumber[][], bufferSize: BufferSize) {
+export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(byUniqueValue())

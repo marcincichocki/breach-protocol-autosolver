@@ -38,13 +38,7 @@ export class BreachProtocolBufferSizeTrimFragment<
     const { buffer, width } = await this.container.trim(this.fragment);
     const bufferSize = await this.getBufferSizeFromPixels(width);
 
-    return {
-      ...(this.getBaseResultData(bufferSize) as any),
-      source: null,
-      rawData: bufferSize,
-      image: buffer.toString('base64'),
-      threshold: null,
-    };
+    return this.getFragmentResult(null, bufferSize, buffer, null);
   }
 
   private async getBufferSizeFromPixels(width: number) {

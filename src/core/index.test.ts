@@ -3,10 +3,12 @@ import {
   BreachProtocolRawData,
   BufferSize,
   cross,
+  DaemonRawData,
+  DaemonsRawData,
   fromHex,
   generateSquareMap,
   getUnits,
-  HexNumber,
+  GridRawData,
   resolveExitStrategy,
   transformRawData,
 } from './common';
@@ -93,7 +95,9 @@ describe('Breach protocol solve', () => {
       // will start from the start every time that happens until we run
       // out of buffer.
       ['E9', '55', '55'],
-    ].map((s: HexNumber[]) => g1.solve([new Sequence(s, [new Daemon(s, 0)])]));
+    ].map((s: DaemonRawData) =>
+      g1.solve([new Sequence(s, [new Daemon(s, 0)])])
+    );
 
     results.forEach((result) => {
       expect(result.path.length).toBeLessThanOrEqual(bufferSize);
@@ -114,14 +118,14 @@ describe('Breach protocol solve', () => {
 
   it('should slice path if it contains accidental daemons', () => {
     // prettier-ignore
-    const grid1: HexNumber[] = [
+    const grid1: GridRawData = [
       'BD', '1C', 'E9', '1C', '55',
       '1C', '1C', '55', '55', 'BD',
       '1C', '1C', '1C', '55', 'BD',
       '1C', 'E9', '55', '55', '55',
       '1C', '55', '1C', '1C', '1C',
     ]
-    const daemons1: HexNumber[][] = [
+    const daemons1: DaemonsRawData = [
       ['1C', '55', '55'],
       ['55', '1C'],
     ];
@@ -141,14 +145,14 @@ describe('Breach protocol solve', () => {
     expectResolvedSequenceToContainDaemons(result1);
 
     // prettier-ignore
-    const grid2: HexNumber[] = [
+    const grid2: GridRawData = [
       'E9', '1C', 'E9', '1C', 'BD',
       'BD', 'BD', 'BD', '55', '1C',
       '55', '1C', '1C', '55', '1C',
       '1C', 'E9', '1C', 'BD', 'BD',
       'E9', '1C', '55', 'BD', '55',
     ]
-    const daemons2: HexNumber[][] = [
+    const daemons2: DaemonsRawData = [
       ['55', 'E9', 'BD'],
       ['1C', '1C'],
     ];
@@ -170,7 +174,7 @@ describe('Breach protocol solve', () => {
 
   describe('forceful exit', () => {
     // prettier-ignore
-    const grid: HexNumber[] = [
+    const grid: GridRawData = [
       '55', '1C', '1C', 'E9', '55',
       'BD', 'BD', 'BD', '1C', '55',
       '55', '1C', '55', '55', '1C',
@@ -181,7 +185,7 @@ describe('Breach protocol solve', () => {
 
     it('should not use force exit when BP exits automatically', () => {
       const bufferSize = 4;
-      const daemons: HexNumber[][] = [['55', 'BD', 'BD'], ['1C']];
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
       const s1 = getSequenceFromPermutation(p1);
       const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
@@ -198,7 +202,7 @@ describe('Breach protocol solve', () => {
 
     it('should exit when BP is completed', () => {
       const bufferSize = 5;
-      const daemons: HexNumber[][] = [['55', 'BD', 'BD'], ['1C']];
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
       const s1 = getSequenceFromPermutation(p1);
       const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
@@ -215,7 +219,7 @@ describe('Breach protocol solve', () => {
 
     it('should force exit if leftover damon fit buffer', () => {
       const bufferSize = 5;
-      const daemons: HexNumber[][] = [['55', 'BD', 'BD'], ['1C'], ['7A']];
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C'], ['7A']];
       const [p1] = parseDaemons(daemons);
       const s1 = getSequenceFromPermutation(p1.slice(0, 2));
       const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
@@ -232,7 +236,7 @@ describe('Breach protocol solve', () => {
 
     it('should force exit if leftover daemon overlap with sequence and fit buffer', () => {
       const bufferSize = 5;
-      const daemons: HexNumber[][] = [
+      const daemons: DaemonsRawData = [
         ['55', 'BD', 'BD', '1C'],
         ['1C', '7A'],
       ];

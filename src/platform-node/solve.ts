@@ -23,7 +23,7 @@ export async function solveBreachProtocol(screenId: string) {
   log.text = t`OCR_START`;
   const ocr = await recognizeImage(fileName);
 
-  if (!ocr.valid) {
+  if (!ocr.isValid) {
     log.text = t`DEBUG`;
     handleInvalidBreachProtocol(fileName, ocr);
 

@@ -82,9 +82,7 @@ export abstract class BreachProtocolFragment<
   /** Check if recognized data is valid. */
   abstract isValid(data: TData): boolean;
 
-  protected getBaseResultData(
-    rawData: TData
-  ): BreachProtocolFragmentResultBase<TId> {
+  private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
     const { id, boundingBox } = this;
     const isValid = this.isValid(rawData);
 
@@ -92,6 +90,21 @@ export abstract class BreachProtocolFragment<
       id,
       boundingBox,
       isValid,
+    };
+  }
+
+  protected getFragmentResult(
+    source: BreachProtocolSource,
+    rawData: TData,
+    buffer: Buffer,
+    threshold: number
+  ): BreachProtocolFragmentResult<TData, TId> {
+    return {
+      ...this.getBaseResult(rawData),
+      source,
+      rawData,
+      image: buffer.toString('base64'),
+      threshold,
     };
   }
 
@@ -160,13 +173,7 @@ export abstract class BreachProtocolOCRFragment<
     const lines = this.getLines(source.text);
     const rawData = this.getRawData(lines);
 
-    return {
-      ...this.getBaseResultData(rawData),
-      source,
-      rawData,
-      image: buffer.toString('base64'),
-      threshold,
-    };
+    return this.getFragmentResult(source, rawData, buffer, threshold);
   }
 
   async ocr(threshold: number) {
@@ -174,8 +181,9 @@ export abstract class BreachProtocolOCRFragment<
     const buffer = await this.container.toBuffer(fragment);
     const { data } = await this.recognizeFragment(buffer);
     const boxes = data.words.map((w) => w.bbox);
+    const source = { boxes, text: data.text };
 
-    return { buffer, source: { boxes, text: data.text } };
+    return { buffer, source };
   }
 
   protected chunkLine(line: string) {

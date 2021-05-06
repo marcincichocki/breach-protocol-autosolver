@@ -55,7 +55,7 @@ export class BreachProtocolAutosolver {
     this.fileName = (await captureScreen(this.screenId)) as string;
     this.recognitionResult = await this.recognize();
 
-    if (!this.recognitionResult.valid) {
+    if (!this.recognitionResult.isValid) {
       return this.reject();
     }
 
