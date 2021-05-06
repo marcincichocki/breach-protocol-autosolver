@@ -1,3 +1,4 @@
+import { options } from '@/platform-node/cli';
 import { ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
 import {
@@ -24,7 +25,10 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
     case 'SET_STATUS':
       return { ...state, status: payload };
     case 'ADD_HISTORY_ENTRY':
-      return { ...state, history: [payload, ...state.history] };
+      return {
+        ...state,
+        history: [payload, ...state.history].slice(0, options.debugLimit),
+      };
   }
 }
 
