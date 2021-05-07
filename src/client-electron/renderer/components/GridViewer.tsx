@@ -113,30 +113,23 @@ function findOffset(a: string, b: string, list: string) {
   return ia < ib ? ib - ia : ib - ia;
 }
 
-function getLineData(path: string[], index: number): LineProps {
-  const from = path[index];
-  const to = path[index + 1];
+function getLineProps(from: string, to: string): LineProps {
   const [startRow, startCol] = from;
   const [endRow, endCol] = to;
-  const orientation =
-    startRow === endRow
-      ? 'horizontal'
-      : startCol === endCol
-      ? 'vertical'
-      : null;
-  const a = orientation === 'horizontal' ? startCol : startRow;
-  const b = orientation === 'horizontal' ? endCol : endRow;
-  const offset = findOffset(a, b, orientation === 'horizontal' ? COLS : ROWS);
-  const dir =
-    orientation === 'horizontal'
-      ? offset < 0
-        ? 'left'
-        : 'right'
-      : orientation === 'vertical'
-      ? offset < 0
-        ? 'top'
-        : 'bottom'
-      : null;
+  const orientation = startRow === endRow ? 'horizontal' : 'vertical';
+  const isHorizontal = orientation === 'horizontal';
+  const a = isHorizontal ? startCol : startRow;
+  const b = isHorizontal ? endCol : endRow;
+  const offset = findOffset(a, b, isHorizontal ? COLS : ROWS);
+  const dir = isHorizontal
+    ? offset < 0
+      ? 'left'
+      : 'right'
+    : orientation === 'vertical'
+    ? offset < 0
+      ? 'top'
+      : 'bottom'
+    : null;
 
   return { dir, offset, orientation };
 }
@@ -156,19 +149,14 @@ export const GridViewer: FC<GridViewerProps> = ({ rawData, path }) => {
         const value = rawData[i];
         const index = path.indexOf(s);
         const isActive = index !== -1;
-        const activeAndLast = isActive && index === path.length - 1;
-
-        if (!isActive || activeAndLast) {
-          return (
-            <Square key={s} active={isActive}>
-              {value}
-            </Square>
-          );
-        }
+        const notLast = index !== path.length - 1;
+        const shouldRenderLine = isActive && notLast;
 
         return (
           <Square key={s} active={isActive}>
-            <Line {...getLineData(path, index)} />
+            {shouldRenderLine && (
+              <Line {...getLineProps(path[index], path[index + 1])} />
+            )}
             {value}
           </Square>
         );
