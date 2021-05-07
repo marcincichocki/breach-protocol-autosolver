@@ -1,5 +1,6 @@
 import { join } from 'path';
 import webpack from 'webpack';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -7,6 +8,7 @@ export const config: webpack.Configuration = {
   target: 'electron-main',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+    plugins: [new TsconfigPathsPlugin()],
   },
   output: {
     path: join(__dirname, '../dist'),
