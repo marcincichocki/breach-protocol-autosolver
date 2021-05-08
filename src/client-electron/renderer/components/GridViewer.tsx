@@ -14,9 +14,12 @@ const GridWrapper = styled.div<{ size: number }>`
   background: var(--background);
   border: 1px solid var(--primary);
   grid-template-columns: repeat(${(props) => props.size}, max-content);
+  position: relative;
+  z-index: 0;
 `;
 
 const Square = styled.div<{ active: boolean }>`
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,6 +28,8 @@ const Square = styled.div<{ active: boolean }>`
   height: var(--square);
   font-size: 24px;
   position: relative;
+  z-index: ${({ active }) => (active ? 'auto' : '-3')};
+  background: ${({ active }) => (active ? 'var(--background)' : 'transparent')};
   border: var(--border) solid
     ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
 `;
@@ -58,11 +63,10 @@ function getLineSizeFor(o: LineOrientation) {
     const absOffset = Math.abs(offset);
     const squareSize = `var(--square) * ${absOffset - 1}`;
     const gutterSize = `var(--gutter) * ${absOffset}`;
-    const borderSize = `var(--border) * ${(absOffset - 1) * 2} - var(--size)`;
 
     return orientation === o
       ? 'var(--border)'
-      : `calc(${squareSize} + ${gutterSize} + ${borderSize})`;
+      : `calc(${squareSize} + ${gutterSize} - var(--size))`;
   };
 }
 
@@ -73,7 +77,7 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-function getOpposite({ dir }: LineProps) {
+function getLineOrigin({ dir }: LineProps) {
   return {
     top: 'bottom',
     bottom: 'top',
@@ -92,12 +96,14 @@ interface LineProps {
 }
 
 const Line = styled.div<LineProps>`
+  color: var(--accent);
+  pointer-events: none;
   position: absolute;
   background: var(--accent);
-  z-index: 1;
+  z-index: -1;
   width: ${getLineSizeFor('vertical')};
   height: ${getLineSizeFor('horizontal')};
-  ${getOpposite}: calc(var(--square) + var(--border));
+  ${getLineOrigin}: calc(var(--square) - var(--border));
 
   &::after {
     content: '';
