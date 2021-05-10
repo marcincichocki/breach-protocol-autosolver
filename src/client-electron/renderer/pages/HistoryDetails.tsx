@@ -64,9 +64,7 @@ export const HistoryDetails: FC = () => {
     <Col style={{ gap: '1rem' }}>
       <HistoryViewer entry={entry} />
       <Row style={{ justifyContent: 'space-between' }}>
-        <Col>
-          <span style={{ color: '#fff' }}>Done in {duration}</span>
-        </Col>
+        <Col>Done in {duration}</Col>
         <Col>
           <OpenInExplorer fileName={entry.fileName}>Show source</OpenInExplorer>
           <TextLink to={`/calibrate/${entry.uuid}`}>Re-calibrate</TextLink>
