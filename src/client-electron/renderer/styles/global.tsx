@@ -8,6 +8,7 @@ export const GlobalStyles = createGlobalStyle`
     --primary-darker: #6f2223;
     --background: #161220;
     --accent: #5FF6FF;
+    --success: #1bd676;
   }
 
   html,

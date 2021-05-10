@@ -4,14 +4,15 @@ import styled from 'styled-components';
 import { BreachProtocolResultJSON } from '@/core/game';
 import { Highlight } from './HistoryViewer';
 
+// TODO: extract Square and use it here.
 const BufferSizeWrapper = styled.div`
   border: 1px solid var(--primary);
   background: var(--background);
-  padding: 10px;
+  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 10px;
+  gap: 16px;
 `;
 
 const BufferSizeItem = styled.div<{ active: boolean }>`
@@ -24,7 +25,9 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
   align-items: center;
   justify-content: center;
   color: var(--accent);
-  font-size: 1rem;
+  font-size: 24px;
+  font-weight: 500;
+  box-sizing: border-box;
 `;
 
 interface BufferSizeViewerProps {

@@ -35,13 +35,16 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => (props.active ? 'var(--accent)' : '#1a2424')};
+  color: ${({ active, highlight }) =>
+    active ? (highlight ? 'var(--background)' : 'var(--accent)') : '#1a2424'};
   width: var(--square);
   height: var(--square);
   font-size: 24px;
+  font-weight: 500;
   position: relative;
   z-index: ${({ active }) => (active ? 'auto' : '-3')};
-  background: ${({ active }) => (active ? 'var(--background)' : 'transparent')};
+  background: ${({ highlight }) =>
+    highlight ? 'var(--accent)' : 'var(--background)'};
   border: var(--border) solid
     ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
 `;
