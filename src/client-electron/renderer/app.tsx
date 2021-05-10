@@ -1,11 +1,17 @@
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import { State } from '../common';
+import { Navigation } from './components/Navigation';
 import { StatusBar } from './components/StatusBar';
+import { History } from './pages/History';
+import { StateContext } from './state';
 
 const Main = styled.main`
   flex-grow: 1;
+  display: flex;
+  overflow-y: auto;
 `;
 
 function useIpcEvent<T>(channel: string, initialValue?: T) {
@@ -37,9 +43,19 @@ export const App = () => {
   const state = useStore();
 
   return (
-    <>
-      <Main />
-      <StatusBar display={state?.activeDisplay} status={state?.status} />
-    </>
+    <Router>
+      <StateContext.Provider value={state}>
+        <Navigation />
+        <Main>
+          <Switch>
+            <Route path="/history">
+              <History />
+            </Route>
+            <Route path="/calibrate/:entryId"></Route>
+          </Switch>
+        </Main>
+        <StatusBar />
+      </StateContext.Provider>
+    </Router>
   );
 };

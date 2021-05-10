@@ -14,6 +14,7 @@ export type BreachProtocolResultJSON = {
   path: string[];
   rawPath: string[];
   sequence: SequenceJSON;
+  resolvedSequence: SequenceJSON;
 };
 
 export class BreachProtocolResult implements Serializable {
@@ -28,7 +29,12 @@ export class BreachProtocolResult implements Serializable {
   toJSON(): BreachProtocolResultJSON {
     const { path, rawPath, sequence } = this;
 
-    return { path, rawPath, sequence: sequence.toJSON() };
+    return {
+      path,
+      rawPath,
+      sequence: sequence.toJSON(),
+      resolvedSequence: this.getResolvedSequence().toJSON(),
+    };
   }
 
   private resolvePath(path: string[]) {
