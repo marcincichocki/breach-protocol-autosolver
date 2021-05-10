@@ -1,0 +1,38 @@
+/**
+ * Using font-face in {@link createGlobalStyle} cause Chrome to 
+ * refetch fonts on route change. Loading them separatly solves
+ * the issue.
+ */
+@font-face {
+  font-family: Rajdhani;
+  src: url('../assets/fonts/Rajdhani/Rajdhani-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Rajdhani;
+  src: url('../assets/fonts/Rajdhani/Rajdhani-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: Rajdhani;
+  src: url('../assets/fonts/Rajdhani/Rajdhani-Medium.ttf');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Rajdhani;
+  src: url('../assets/fonts/Rajdhani/Rajdhani-SemiBold.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Rajdhani;
+  src: url('../assets/fonts/Rajdhani/Rajdhani-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
