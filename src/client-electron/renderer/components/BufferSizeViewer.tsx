@@ -48,7 +48,9 @@ export const BufferSizeViewer: FC<BufferSizeViewerProps> = ({
             key={i}
             active={isActive}
             onMouseEnter={
-              isActive ? () => onHighlight({ from: 0, to: i }) : undefined
+              isActive && onHighlight
+                ? () => onHighlight({ from: 0, to: i })
+                : undefined
             }
           >
             {result.resolvedSequence.value[i]}

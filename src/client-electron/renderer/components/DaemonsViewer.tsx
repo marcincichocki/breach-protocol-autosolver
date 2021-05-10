@@ -46,8 +46,10 @@ export const DaemonsViewer: FC<DaemonsViewerProps> = ({
           <Daemon
             key={i}
             active={parts.includes(i)}
-            onMouseEnter={() => onHighlight({ from, to })}
-            onMouseLeave={() => onHighlight(null)}
+            onMouseEnter={
+              onHighlight ? () => onHighlight({ from, to }) : undefined
+            }
+            onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
             {d.map((s, j) => (
               <span key={j}>{s}</span>
