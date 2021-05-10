@@ -1,8 +1,8 @@
-import { WorkerStatus } from '@/client-electron/common';
-import { FC } from 'react';
-import { MdDone } from 'react-icons/md';
-import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import { BreachProtocolStatus, WorkerStatus } from '@/client-electron/common';
+import { FC, useContext } from 'react';
+import { MdClose, MdDone } from 'react-icons/md';
 import styled from 'styled-components';
+import { StateContext } from '../state';
 
 const Spacer = styled.div`
   flex-grow: 1;
@@ -25,7 +25,7 @@ const InteractiveStatusBarItem = styled(StatusBarItem)`
   }
 `;
 
-const StatusBarStyled = styled.footer`
+const StatusBarWrapper = styled.footer`
   height: 40px;
   background: var(--background);
   color: #fff;
@@ -37,35 +37,34 @@ const StatusBarStyled = styled.footer`
   display: flex;
 `;
 
-function renderStatusBarContent(status: WorkerStatus) {
+function getWorkerStatusMessage(status: WorkerStatus) {
   switch (status) {
     case WorkerStatus.Bootstrap:
-      return <StatusBarItem>Loading...</StatusBarItem>;
+      return 'Loading...';
     case WorkerStatus.Ready:
-      return <StatusBarItem>Ready</StatusBarItem>;
+      return 'Ready';
     case WorkerStatus.Working:
-      return <StatusBarItem>Working...</StatusBarItem>;
+      return 'Working...';
     default:
-      return <StatusBarItem>Initializing..</StatusBarItem>;
+      return 'Initializing...';
   }
 }
 
-// TODO: add missing props and replace placeholders.
-interface StatusBarProps {
-  status: WorkerStatus;
-  display: ScreenshotDisplayOutput;
-}
+export const StatusBar: FC = () => {
+  const state = useContext(StateContext);
+  const { status } = state.history[0];
 
-export const StatusBar: FC<StatusBarProps> = ({ status, display }) => {
   return (
-    <StatusBarStyled>
+    <StatusBarWrapper>
       <StatusBarItem>
-        <MdDone style={{ marginRight: '4px' }} /> placeholder
+        {status === BreachProtocolStatus.Resolved ? <MdDone /> : <MdClose />}
       </StatusBarItem>
-      <InteractiveStatusBarItem>{display?.id}</InteractiveStatusBarItem>
-      {renderStatusBarContent(status)}
+      <InteractiveStatusBarItem>
+        {state.activeDisplay?.id}
+      </InteractiveStatusBarItem>
+      <StatusBarItem>{getWorkerStatusMessage(state?.status)}</StatusBarItem>
       <Spacer />
       <StatusBarItem>placeholder</StatusBarItem>
-    </StatusBarStyled>
+    </StatusBarWrapper>
   );
 };
