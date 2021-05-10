@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import { useContext } from 'react';
+import { StateContext } from '../state';
 
 const Nav = styled.nav`
   display: flex;
@@ -30,11 +32,19 @@ const Link = styled(NavLink)`
 `;
 
 export const Navigation = () => {
+  const state = useContext(StateContext);
+  const { uuid } = state.history[0];
+
   return (
     <Nav>
       <List>
         <ListItem>
-          <Link to="/history">History</Link>
+          <Link
+            to={`/history/${uuid}`}
+            isActive={(m, location) => location.pathname.includes('/history')}
+          >
+            History
+          </Link>
         </ListItem>
         <ListItem>
           <Link to="/settings">Settings</Link>
