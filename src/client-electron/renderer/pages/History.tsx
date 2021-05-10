@@ -1,11 +1,14 @@
-import { BreachProtocolStatus, HistoryEntry } from '@/client-electron/common';
-import { FC, useState } from 'react';
+import toNow from 'date-fns/formatDistanceToNow';
+import { FC, useContext } from 'react';
+import { NavLink, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
-import { HistoryViewer } from '../components/HistoryViewer';
+import { Col } from '../components/Flex';
+import { StateContext } from '../state';
+import { HistoryDetails } from './HistoryDetails';
 
 const HistoryList = styled.ul`
   overflow-y: auto;
-  width: 400px;
+  width: 300px;
   flex-shrink: 0;
   padding: 0;
   margin: 0;
@@ -22,7 +25,7 @@ const HistoryWrapper = styled.div`
   padding: 0 1rem;
 `;
 
-const HistoryListItem = styled.li`
+const HistoryListItem = styled(NavLink)`
   border: 1px solid var(--primary);
   background: var(--background);
   height: 70px;
@@ -31,35 +34,34 @@ const HistoryListItem = styled.li`
   align-items: center;
   color: var(--accent);
   flex-shrink: 0;
+  text-decoration: none;
+
+  &.active {
+    border-color: var(--accent);
+    background: var(--primary-dark);
+  }
 `;
 
-interface HistoryProps {
-  history: HistoryEntry[];
-}
-
-export const History: FC<HistoryProps> = ({ history }) => {
-  const [entry, setEntry] = useState(history[0]);
+export const History: FC = () => {
+  const { history } = useContext(StateContext);
+  const { path } = useRouteMatch();
 
   return (
     <HistoryWrapper>
       <HistoryList>
         {history.map((e) => (
-          <HistoryListItem onClick={() => setEntry(e)} key={e.uuid}>
-            {e.uuid}
-          </HistoryListItem>
+          <li key={e.uuid}>
+            <HistoryListItem to={`${path}/${e.uuid}`}>
+              {toNow(e.startedAt, { addSuffix: true })}
+            </HistoryListItem>
+          </li>
         ))}
       </HistoryList>
-      <div
-        style={{
-          flexGrow: 1,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '1rem',
-        }}
-      >
-        {entry.status === BreachProtocolStatus.Rejected && <h1>Error</h1>}
-        <HistoryViewer entry={entry} />
-      </div>
+      <Col style={{ flexGrow: 1 }}>
+        <Route path={`${path}/:entryId`}>
+          <HistoryDetails />
+        </Route>
+      </Col>
     </HistoryWrapper>
   );
 };
