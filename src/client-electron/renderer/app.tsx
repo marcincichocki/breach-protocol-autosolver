@@ -6,6 +6,7 @@ import { State } from '../common';
 import { Navigation } from './components/Navigation';
 import { StatusBar } from './components/StatusBar';
 import { History } from './pages/History';
+import { StateContext } from './state';
 
 const Main = styled.main`
   flex-grow: 1;
@@ -43,15 +44,18 @@ export const App = () => {
 
   return (
     <Router>
-      <Navigation />
-      <Main>
-        <Switch>
-          <Route path="/history">
-            <History history={state.history} />
-          </Route>
-        </Switch>
-      </Main>
-      <StatusBar display={state?.activeDisplay} status={state?.status} />
+      <StateContext.Provider value={state}>
+        <Navigation />
+        <Main>
+          <Switch>
+            <Route path="/history">
+              <History />
+            </Route>
+            <Route path="/calibrate/:entryId"></Route>
+          </Switch>
+        </Main>
+        <StatusBar />
+      </StateContext.Provider>
     </Router>
   );
 };
