@@ -1,24 +1,36 @@
 import { COLS, cross, GridRawData, ROWS } from '@/core/common';
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
+import { Highlight } from './HistoryViewer';
 
 const GridWrapper = styled.div<{ size: number }>`
-  --size: 7px;
-  --gutter: 20px;
-  --square: 50px;
+  --size: 5px;
+  --gutter: 16px;
+  --square: 40px;
   --border: 1px;
 
+  width: 376px;
+  height: 376px;
   display: inline-grid;
   grid-gap: var(--gutter);
   padding: var(--gutter);
   background: var(--background);
   border: 1px solid var(--primary);
   grid-template-columns: repeat(${(props) => props.size}, max-content);
+  grid-template-rows: repeat(${(props) => props.size}, max-content);
   position: relative;
   z-index: 0;
 `;
 
-const Square = styled.div<{ active: boolean }>`
+const Square = styled.div<{ active: boolean; highlight: boolean }>`
+  ${({ highlight }) =>
+    highlight
+      ? `
+    --border: 4px;
+    --size: 7px;
+  `
+      : ''}
+
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -77,15 +89,6 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-function getLineOrigin({ dir }: LineProps) {
-  return {
-    top: 'bottom',
-    bottom: 'top',
-    right: 'left',
-    left: 'right',
-  }[dir];
-}
-
 type LineDirection = 'top' | 'right' | 'bottom' | 'left';
 type LineOrientation = 'horizontal' | 'vertical';
 
@@ -103,7 +106,7 @@ const Line = styled.div<LineProps>`
   z-index: -1;
   width: ${getLineSizeFor('vertical')};
   height: ${getLineSizeFor('horizontal')};
-  ${getLineOrigin}: calc(var(--square) - var(--border));
+  ${({ dir }) => dir}: calc(var(--square) + var(--size) - var(--border));
 
   &::after {
     content: '';
@@ -141,27 +144,31 @@ function getLineProps(from: string, to: string): LineProps {
 }
 
 interface GridViewerProps {
-  rawData: GridRawData;
+  grid: GridRawData;
   path: string[];
+  highlight?: Highlight;
 }
 
-export const GridViewer: FC<GridViewerProps> = ({ rawData, path }) => {
-  const size = Math.sqrt(rawData.length);
+export const GridViewer: FC<GridViewerProps> = ({ grid, path, highlight }) => {
+  const size = Math.sqrt(grid.length);
   const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
 
   return (
     <GridWrapper size={size}>
       {squares.map((s, i) => {
-        const value = rawData[i];
+        const value = grid[i];
         const index = path.indexOf(s);
         const isActive = index !== -1;
-        const notLast = index !== path.length - 1;
-        const shouldRenderLine = isActive && notLast;
+        const shouldRenderLine = index > 0;
+        const shouldHighlight =
+          highlight != null
+            ? index >= highlight.from && index <= highlight.to
+            : false;
 
         return (
-          <Square key={s} active={isActive}>
+          <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
-              <Line {...getLineProps(path[index], path[index + 1])} />
+              <Line {...getLineProps(path[index - 1], path[index])} />
             )}
             {value}
           </Square>

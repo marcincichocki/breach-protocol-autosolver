@@ -2,6 +2,7 @@ import { BufferSize } from '@/core/common';
 import { FC } from 'react';
 import styled from 'styled-components';
 import { BreachProtocolResultJSON } from '@/core/game';
+import { Highlight } from './HistoryViewer';
 
 const BufferSizeWrapper = styled.div`
   border: 1px solid var(--primary);
@@ -29,19 +30,31 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
 interface BufferSizeViewerProps {
   bufferSize: BufferSize;
   result: BreachProtocolResultJSON;
+  onHighlight?: (highlight: Highlight) => void;
 }
 
 export const BufferSizeViewer: FC<BufferSizeViewerProps> = ({
   bufferSize,
   result,
+  onHighlight,
 }) => {
   return (
-    <BufferSizeWrapper>
-      {Array.from({ length: bufferSize }, (s, i) => (
-        <BufferSizeItem key={i} active={i < bufferSize}>
-          {result.resolvedSequence.value[i]}
-        </BufferSizeItem>
-      ))}
+    <BufferSizeWrapper onMouseLeave={() => onHighlight(null)}>
+      {Array.from({ length: bufferSize }, (s, i) => {
+        const isActive = i < bufferSize;
+
+        return (
+          <BufferSizeItem
+            key={i}
+            active={isActive}
+            onMouseEnter={
+              isActive ? () => onHighlight({ from: 0, to: i }) : undefined
+            }
+          >
+            {result.resolvedSequence.value[i]}
+          </BufferSizeItem>
+        );
+      })}
     </BufferSizeWrapper>
   );
 };

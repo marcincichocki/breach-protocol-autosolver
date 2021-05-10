@@ -1,4 +1,4 @@
-import { BreachProtocolStatus, HistoryEntry } from '@/client-electron/common';
+import { HistoryEntry } from '@/client-electron/common';
 import {
   BreachProtocolBufferSizeFragmentResult,
   BreachProtocolDaemonsFragmentResult,
@@ -6,9 +6,10 @@ import {
   BreachProtocolGridFragmentResult,
   FragmentId,
 } from '@/core';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
+import { Col, Row } from './Flex';
 import { GridViewer } from './GridViewer';
 
 function getFragment<T extends BreachProtocolFragmentResult<any>>(
@@ -23,36 +24,37 @@ const getBufferSize = getFragment<BreachProtocolBufferSizeFragmentResult>(
 );
 const getDaemons = getFragment<BreachProtocolDaemonsFragmentResult>('daemons');
 
+export interface Highlight {
+  from: number;
+  to: number;
+}
+
 interface HistoryViewerProps {
   entry: HistoryEntry;
 }
 
 export const HistoryViewer: FC<HistoryViewerProps> = ({ entry }) => {
-  if (entry.status === BreachProtocolStatus.Rejected) {
-    return null;
-  }
-
-  const { rawData } = entry.fragments.find(getGrid);
-  const buffer = entry.fragments.find(getBufferSize);
-  const daemonsFragment = entry.fragments.find(getDaemons);
-  const daemons = daemonsFragment.rawData;
-  const activeDaemons = entry.result.resolvedSequence.parts;
+  const [highlight, setHighlight] = useState<Highlight>(null);
+  const { rawData: grid } = entry.fragments.find(getGrid);
+  const { rawData: bufferSize } = entry.fragments.find(getBufferSize);
+  const { rawData: daemons } = entry.fragments.find(getDaemons);
   const { path } = entry.result;
 
   return (
-    <>
-      <GridViewer {...{ rawData, path }} />
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          gap: '1rem',
-        }}
-      >
-        <BufferSizeViewer bufferSize={buffer.rawData} result={entry.result} />
-        <DaemonsViewer daemons={daemons} activeDaemons={activeDaemons} />
-      </div>
-    </>
+    <Row style={{ gap: '1rem' }}>
+      <GridViewer grid={grid} path={path} highlight={highlight} />
+      <Col style={{ flexGrow: 1, gap: '1rem' }}>
+        <BufferSizeViewer
+          bufferSize={bufferSize}
+          result={entry.result}
+          onHighlight={setHighlight}
+        />
+        <DaemonsViewer
+          daemons={daemons}
+          result={entry.result}
+          onHighlight={setHighlight}
+        />
+      </Col>
+    </Row>
   );
 };
