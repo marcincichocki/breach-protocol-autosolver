@@ -48,7 +48,7 @@ export const StrokedButton = styled(Base)`
 
 export const FlatButton = styled(Base)<ButtonProps>`
   background: ${({ color }) => `var(--${color})`};
-  color: var(--backgorund);
+  color: var(--background);
 
   &[disabled] {
     color: var(--disabled);
