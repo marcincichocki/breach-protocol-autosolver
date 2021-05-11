@@ -6,6 +6,7 @@ import { State } from '../common';
 import { Navigation } from './components/Navigation';
 import { StatusBar } from './components/StatusBar';
 import { History } from './pages/History';
+import { Calibrate } from './pages/Calibrate';
 import { StateContext } from './state';
 
 const Main = styled.main`
@@ -51,7 +52,9 @@ export const App = () => {
             <Route path="/history">
               <History />
             </Route>
-            <Route path="/calibrate/:entryId"></Route>
+            <Route path="/calibrate/:entryId">
+              <Calibrate />
+            </Route>
           </Switch>
         </Main>
         <StatusBar />
