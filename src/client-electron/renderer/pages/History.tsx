@@ -24,7 +24,6 @@ const HistoryWrapper = styled.div`
   display: flex;
   flex-grow: 1;
   gap: 1rem;
-  padding: 0 1rem;
 `;
 
 const HistoryListItem = styled(NavLink)`

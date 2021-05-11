@@ -13,6 +13,7 @@ const Main = styled.main`
   flex-grow: 1;
   display: flex;
   overflow-y: auto;
+  padding: 0 1rem;
 `;
 
 function useIpcEvent<T>(channel: string, initialValue?: T) {
