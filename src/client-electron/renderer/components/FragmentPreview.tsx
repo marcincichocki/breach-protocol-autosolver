@@ -18,7 +18,8 @@ function renderFragmentToCanvas(
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
   fragment: string,
-  source: BreachProtocolSource
+  boxes: Tesseract.Bbox[],
+  showBoxes: boolean
 ) {
   const image = new Image();
   // TODO: use format flag?
@@ -27,14 +28,15 @@ function renderFragmentToCanvas(
   image.onload = () => {
     const base = 500;
     const scale = base / image.width;
-    const lineWidth = 5;
+    const lineWidth = 2;
     canvas.width = base;
     canvas.height = image.height * scale;
+    context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-    if (!source) return;
+    if (!boxes || !showBoxes) return;
 
-    for (const box of source.boxes) {
+    for (const box of boxes) {
       context.strokeStyle = 'red';
       context.lineWidth = lineWidth;
 
@@ -47,12 +49,14 @@ function renderFragmentToCanvas(
 
 interface FragmentPreviewProps {
   image: string;
-  source: BreachProtocolSource;
+  boxes: Tesseract.Bbox[];
+  showBoxes: boolean;
 }
 
 export const FragmentPreview: FC<FragmentPreviewProps> = ({
   image,
-  source,
+  boxes,
+  showBoxes,
 }) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
@@ -60,8 +64,8 @@ export const FragmentPreview: FC<FragmentPreviewProps> = ({
     const canvas = ref.current;
     const context = canvas.getContext('2d');
 
-    renderFragmentToCanvas(canvas, context, image, source);
-  }, [image]);
+    renderFragmentToCanvas(canvas, context, image, boxes, showBoxes);
+  }, [image, showBoxes]);
 
   return <canvas ref={ref} style={{ alignSelf: 'flex-start' }} />;
 };
