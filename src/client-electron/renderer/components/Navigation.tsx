@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import { NavLink as RouterNavLink } from 'react-router-dom';
 import { useContext } from 'react';
 import { StateContext } from '../state';
 
@@ -13,14 +13,14 @@ const List = styled.ul`
   display: flex;
   list-style: none;
   gap: 2rem;
-  font-size: 2rem;
   padding: 0;
   margin: 0;
 `;
 
 const ListItem = styled.li``;
 
-const Link = styled(NavLink)`
+export const NavLink = styled(RouterNavLink)`
+  font-size: 2rem;
   text-decoration: none;
   text-transform: uppercase;
   font-weight: 500;
@@ -39,15 +39,15 @@ export const Navigation = () => {
     <Nav>
       <List>
         <ListItem>
-          <Link
+          <NavLink
             to={`/history/${uuid}`}
             isActive={(m, location) => location.pathname.includes('/history')}
           >
             History
-          </Link>
+          </NavLink>
         </ListItem>
         <ListItem>
-          <Link to="/settings">Settings</Link>
+          <NavLink to="/settings">Settings</NavLink>
         </ListItem>
       </List>
     </Nav>
