@@ -29,10 +29,8 @@ class BufferSizeControlGroup {
   }
 }
 
-export type BreachProtocolBufferSizeFragmentResult = BreachProtocolFragmentResult<
-  BufferSize,
-  'bufferSize'
->;
+export type BreachProtocolBufferSizeFragmentResult =
+  BreachProtocolFragmentResult<BufferSize, 'bufferSize'>;
 
 export class BreachProtocolBufferSizeFragment<
   TImage
@@ -106,11 +104,13 @@ export class BreachProtocolBufferSizeFragment<
       }
     } while (i++ < Math.log2(base) + 1);
 
-    return null;
+    // No threshold found.
+    return base;
   }
 
   async recognize(
-    fixedThreshold = BreachProtocolBufferSizeFragment.cachedThreshold
+    fixedThreshold = BreachProtocolBufferSizeFragment.cachedThreshold,
+    useFallback = true
   ): Promise<BreachProtocolBufferSizeFragmentResult> {
     const threshold = fixedThreshold ?? (await this.findThreshold());
     const fragment = this.container.threshold(this.fragment, threshold);
@@ -125,7 +125,7 @@ export class BreachProtocolBufferSizeFragment<
       // threshold on the fly.
       // One side effect of this behaviour is that --threshold-buffer-size
       // flag is quite useless, because even it fails, fallback will be used.
-      if (fixedThreshold !== null) {
+      if (useFallback && fixedThreshold !== null) {
         return this.recognize(null);
       }
     }

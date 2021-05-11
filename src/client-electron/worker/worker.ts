@@ -1,8 +1,22 @@
 import { setLang } from '@/common';
-import { BreachProtocolOCRFragment } from '@/core';
+import {
+  BreachProtocolBufferSizeFragment,
+  BreachProtocolDaemonsFragment,
+  BreachProtocolGridFragment,
+  BreachProtocolOCRFragment,
+  FragmentId,
+  SharpImageContainer,
+} from '@/core';
 import { ipcRenderer as ipc } from 'electron';
 import { listDisplays } from 'screenshot-desktop';
-import { Action, Request, workerListener, WorkerStatus } from '../common';
+import sharp from 'sharp';
+import {
+  Action,
+  Request,
+  TestThresholdData,
+  workerListener,
+  WorkerStatus,
+} from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
 
 function updateStatus(payload: WorkerStatus) {
@@ -21,8 +35,29 @@ const disposeAsyncRequestListener = workerListener(handleAsyncRequest);
 
 async function handleAsyncRequest(req: Request) {
   switch (req.type) {
+    case 'TEST_THRESHOLD':
+      return testThreshold(req);
     default:
   }
+}
+
+function getFragment(id: FragmentId, container: SharpImageContainer) {
+  switch (id) {
+    case 'grid':
+      return new BreachProtocolGridFragment(container);
+    case 'daemons':
+      return new BreachProtocolDaemonsFragment(container);
+    case 'bufferSize':
+      return new BreachProtocolBufferSizeFragment(container);
+  }
+}
+
+async function testThreshold(req: Request<TestThresholdData>) {
+  const instance = sharp(req.data.fileName);
+  const container = await SharpImageContainer.create(instance);
+  const fragment = getFragment(req.data.fragmentId, container);
+
+  return fragment.recognize(req.data.threshold, false);
 }
 
 let screenId: string = null;

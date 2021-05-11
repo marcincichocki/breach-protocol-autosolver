@@ -2,6 +2,7 @@ import {
   BreachProtocolExitStrategy,
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
+  FragmentId,
   SequenceJSON,
 } from '@/core';
 import { Options } from '@/platform-node/cli';
@@ -108,3 +109,9 @@ export function createListener(origin: Origin) {
 }
 
 export const workerListener = createListener('worker');
+
+export interface TestThresholdData {
+  fileName: string;
+  threshold: number;
+  fragmentId: FragmentId;
+}
