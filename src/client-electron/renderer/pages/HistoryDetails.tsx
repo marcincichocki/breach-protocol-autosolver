@@ -59,10 +59,16 @@ export const HistoryDetails: FC = () => {
       <HistoryViewer entry={entry} />
       <Row style={{ justifyContent: 'space-between' }}>
         <Col>Done in {duration}</Col>
-        <Col>
-          <OpenInExplorer fileName={entry.fileName}>Show source</OpenInExplorer>
-          <TextLink to={`/calibrate/${entry.uuid}/grid`}>Re-calibrate</TextLink>
-        </Col>
+        {entry.fileName && (
+          <Col>
+            <OpenInExplorer fileName={entry.fileName}>
+              Show source
+            </OpenInExplorer>
+            <TextLink to={`/calibrate/${entry.uuid}/grid`}>
+              Re-calibrate
+            </TextLink>
+          </Col>
+        )}
       </Row>
     </Col>
   );
