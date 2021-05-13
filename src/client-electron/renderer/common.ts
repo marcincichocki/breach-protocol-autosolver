@@ -14,3 +14,9 @@ export function useHistoryEntry(entryId: string) {
 
   return history.find((e) => e.uuid === entryId);
 }
+
+const r = /([a-z])([A-Z])/g;
+
+export function fromCamelCase(s: string) {
+  return s.replace(r, '$1 $2');
+}

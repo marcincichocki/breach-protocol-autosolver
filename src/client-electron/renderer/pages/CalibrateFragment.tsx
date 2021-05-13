@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { rendererDispatcher } from '../../common';
+import { fromCamelCase } from '../common';
 import { FlatButton } from '../components/Buttons';
 import { Col, Row } from '../components/Flex';
 import { FragmentPreview } from '../components/FragmentPreview';
@@ -85,7 +86,11 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
             min={0}
             max={255}
             onValueChange={onTestThreshold}
-            disabled={loading}
+            disabled={
+              loading ||
+              (entry.options.experimentalBufferSizeRecognition &&
+                fragmentId === 'bufferSize')
+            }
           />
         </FormField>
         <FlatButton
@@ -94,7 +99,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           style={{ alignSelf: 'flex-end' }}
           onClick={onTestThreshold}
         >
-          Update {fragmentId} threshold
+          Update {fromCamelCase(fragmentId)} threshold
         </FlatButton>
       </Col>
       <Col
