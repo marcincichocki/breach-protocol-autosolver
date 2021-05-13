@@ -37,11 +37,7 @@ export const Calibrate: FC = () => {
       </Row>
       <Row style={{ gap: '2rem' }}>
         {entry.fragments.map((f) => (
-          <NavLink
-            key={f.id}
-            to={f.id}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
+          <NavLink key={f.id} to={f.id}>
             {fromCamelCase(f.id)}
           </NavLink>
         ))}

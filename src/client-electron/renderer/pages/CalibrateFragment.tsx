@@ -97,7 +97,6 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           disabled={!testResult.isValid}
           color="accent"
           style={{ alignSelf: 'flex-end' }}
-          onClick={onTestThreshold}
         >
           Update {fromCamelCase(fragmentId)} threshold
         </FlatButton>
