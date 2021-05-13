@@ -26,7 +26,7 @@ function renderFragmentToCanvas(
   image.src = `data:image/png;base64,${fragment}`;
 
   image.onload = () => {
-    const base = 500;
+    const base = 600;
     const scale = base / image.width;
     const lineWidth = 2;
     canvas.width = base;
