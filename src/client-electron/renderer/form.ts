@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function useFormControl<N extends string, T>(
+export function useFormControl<N extends string, T>(
   name: N,
   initialValue: T
 ): FormControl<N> {
@@ -15,6 +15,7 @@ function useFormControl<N extends string, T>(
   return {
     name,
     onChange,
+    setValue,
     value: value.toString(),
     checked: !!value,
   };
@@ -23,6 +24,7 @@ function useFormControl<N extends string, T>(
 interface FormControl<N extends string> {
   name: N;
   onChange: (event: any) => void;
+  setValue: (value: any) => void;
   value: string;
   checked: boolean;
 }
