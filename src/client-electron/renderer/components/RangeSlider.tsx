@@ -1,9 +1,19 @@
-import { FC, HTMLProps, useRef, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-const Range = styled.input`
+interface RangeSliderProps {
+  value?: string | number;
+  name?: string;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onValueChange?: (value: number) => void;
+}
+
+const Range = styled.input.attrs<RangeSliderProps>({ type: 'range' })`
   appearance: none;
-  background: var(--background);
+  background: ${({ disabled }) => (disabled ? 'gray' : 'var(--background)')};
   border: 1px solid var(--primary-dark);
   width: 100%;
   height: 40px;
@@ -11,12 +21,9 @@ const Range = styled.input`
   box-sizing: border-box;
   margin: 0;
 
-  &:hover {
+  &:hover:not([disabled]) {
     background: var(--primary-darker);
     border: 1px solid var(--accent);
-  }
-
-  &::-webkit-slider-runnable-track {
   }
 
   &::-webkit-slider-thumb {
@@ -47,33 +54,16 @@ const RangeValue = styled.output`
   pointer-events: none;
 `;
 
-interface RangeSliderProps extends HTMLProps<HTMLInputElement> {}
-
-export const RangeSlider: FC<RangeSliderProps> = ({
-  name,
-  min,
-  max,
-  value,
-  onChange,
-}) => {
-  const ref = useRef<HTMLInputElement>(null);
-  const [currentValue, setCurrentValue] = useState(value);
-
+export function RangeSlider({ onValueChange, ...props }: RangeSliderProps) {
   return (
     <RangeWrapper>
       <Range
-        ref={ref}
-        type="range"
-        name={name}
-        min={min}
-        max={max}
-        defaultValue={value}
-        onMouseUp={onChange}
-        onKeyUp={onChange}
-        onChange={(e) => setCurrentValue(+e.target.value)}
+        {...props}
+        onMouseUp={() => onValueChange(+props.value)}
+        onKeyUp={() => onValueChange(+props.value)}
         step={1}
       />
-      <RangeValue>{currentValue}</RangeValue>
+      <RangeValue>{props.value}</RangeValue>
     </RangeWrapper>
   );
-};
+}
