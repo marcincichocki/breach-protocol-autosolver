@@ -1,4 +1,5 @@
-import { FC } from 'react';
+import { rendererAsyncRequestDispatcher as dispatch } from '@/client-electron/common';
+import { FC, useEffect } from 'react';
 import { MdKeyboardBackspace } from 'react-icons/md';
 import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
@@ -18,11 +19,22 @@ const Heading = styled.h1<{ active: boolean }>`
   margin: 0;
 `;
 
+function useContainerInit(fileName: string) {
+  useEffect(() => {
+    dispatch({ type: 'TEST_THRESHOLD_INIT', data: fileName });
+
+    return () => {
+      dispatch({ type: 'TEST_THRESHOLD_DISPOSE' });
+    };
+  }, []);
+}
+
 export const Calibrate: FC = () => {
   const entry = useHistoryEntryFromParam();
 
   if (!entry) return null;
 
+  useContainerInit(entry.fileName);
   const { path, params } = useRouteMatch<{ entryId: string }>();
   const { time, distance } = transformTimestamp(entry.startedAt);
 
