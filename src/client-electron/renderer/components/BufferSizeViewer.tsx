@@ -44,15 +44,15 @@ export const BufferSizeViewer: FC<BufferSizeViewerProps> = ({
   return (
     <BufferSizeWrapper onMouseLeave={() => onHighlight(null)}>
       {Array.from({ length: bufferSize }, (s, i) => {
-        const isActive = i < bufferSize;
+        const isActive = i < result.path.length;
 
         return (
           <BufferSizeItem
             key={i}
             active={isActive}
             onMouseEnter={
-              isActive && onHighlight
-                ? () => onHighlight({ from: 0, to: i })
+              onHighlight
+                ? () => onHighlight(isActive ? { from: 0, to: i } : null)
                 : undefined
             }
           >

@@ -1,10 +1,16 @@
 import { BreachProtocolStatus } from '@/client-electron/common';
-import toNow from 'date-fns/formatDistanceToNow';
 import { FC, useContext } from 'react';
 import { MdClose, MdDone } from 'react-icons/md';
-import { NavLink, Route, useRouteMatch } from 'react-router-dom';
+import {
+  NavLink,
+  Redirect,
+  Route,
+  Switch,
+  useRouteMatch,
+} from 'react-router-dom';
 import styled from 'styled-components';
-import { Col } from '../components/Flex';
+import { getDistance } from '../common';
+import { Col } from '../components';
 import { StateContext } from '../state';
 import { HistoryDetails } from './HistoryDetails';
 
@@ -58,8 +64,26 @@ const HistoryListItemIcon: FC<{
   return <MdClose size={size} color="var(--primary)" />;
 };
 
+const Heading = styled.h2`
+  color: var(--primary);
+  font-size: 3rem;
+  text-transform: uppercase;
+  font-weight: 500;
+`;
+
+const NoHistory = () => {
+  return (
+    <Col style={{ margin: 'auto', gap: '1rem' }}>
+      <Heading>No breach protocols solved</Heading>
+    </Col>
+  );
+};
+
 export const History: FC = () => {
   const { history } = useContext(StateContext);
+
+  if (!history.length) return <NoHistory />;
+
   const { path } = useRouteMatch();
 
   return (
@@ -69,15 +93,16 @@ export const History: FC = () => {
           <li key={e.uuid}>
             <HistoryListItem to={`${path}/${e.uuid}`}>
               <HistoryListItemIcon size="2rem" status={e.status} />
-              {toNow(e.startedAt, { addSuffix: true })}
+              {getDistance(e.startedAt)}
             </HistoryListItem>
           </li>
         ))}
       </HistoryList>
       <Col style={{ flexGrow: 1 }}>
-        <Route path={`${path}/:entryId`}>
-          <HistoryDetails />
-        </Route>
+        <Switch>
+          <Route path={`${path}/:entryId`} component={HistoryDetails} />
+          <Redirect to={`/history/${history[0].uuid}`} />
+        </Switch>
       </Col>
     </HistoryWrapper>
   );
