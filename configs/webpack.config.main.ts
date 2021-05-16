@@ -4,7 +4,7 @@ import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/client-electron/main/main.ts'),
+  entry: join(__dirname, '../src/client-electron/main/index.ts'),
   target: 'electron-main',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],

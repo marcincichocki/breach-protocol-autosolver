@@ -18,7 +18,7 @@ import {
 } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
 
-class BreachProtocolWorker {
+export class BreachProtocolWorker {
   private activeDisplayId: string = null;
 
   private disposeAsyncRequestListener: () => void = null;
@@ -123,12 +123,3 @@ class BreachProtocolWorker {
     ipc.send('state', { ...action, origin: 'worker' });
   }
 }
-
-const worker = new BreachProtocolWorker();
-
-// TODO: error handling in worker.
-worker.bootstrap();
-
-window.addEventListener('unload', () => {
-  worker.dispose();
-});

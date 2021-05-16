@@ -5,7 +5,7 @@ import webpack from 'webpack';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/client-electron/worker/worker.ts'),
+  entry: join(__dirname, '../src/client-electron/worker/index.ts'),
   target: 'electron-renderer',
   output: {
     path: join(__dirname, '../dist'),
