@@ -39,12 +39,7 @@ export const Navigation = () => {
     <Nav>
       <List>
         <ListItem>
-          <NavLink
-            to={`/history/${uuid}`}
-            isActive={(m, location) => location.pathname.includes('/history')}
-          >
-            History
-          </NavLink>
+          <NavLink to="/history">History</NavLink>
         </ListItem>
         <ListItem>
           <NavLink to="/settings">Settings</NavLink>

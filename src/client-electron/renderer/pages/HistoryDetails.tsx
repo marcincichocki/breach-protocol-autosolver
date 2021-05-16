@@ -5,9 +5,7 @@ import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
-import { FlatButton, LinkButton } from '../components/Buttons';
-import { Col, Row } from '../components/Flex';
-import { HistoryViewer } from '../components/HistoryViewer';
+import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
 
 const Heading2 = styled.h2`
   color: var(--primary);
@@ -46,6 +44,8 @@ const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
 
 export const HistoryDetails: FC = () => {
   const entry = useHistoryEntryFromParam();
+
+  if (!entry) return null;
 
   if (entry.status === BreachProtocolStatus.Rejected) {
     return <HistoryDetailsError entry={entry} />;
