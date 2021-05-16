@@ -41,13 +41,16 @@ export const DaemonsViewer: FC<DaemonsViewerProps> = ({
         const ds = d.join('');
         const from = s.indexOf(ds) / 2;
         const to = from + d.length - 1;
+        const active = parts.includes(i);
 
         return (
           <Daemon
             key={i}
-            active={parts.includes(i)}
+            active={active}
             onMouseEnter={
-              onHighlight ? () => onHighlight({ from, to }) : undefined
+              active && onHighlight
+                ? () => onHighlight({ from, to })
+                : undefined
             }
             onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
