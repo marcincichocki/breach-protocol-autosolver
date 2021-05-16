@@ -19,9 +19,8 @@ function getFragment<T extends BreachProtocolFragmentResult<any>>(
 }
 
 const getGrid = getFragment<BreachProtocolGridFragmentResult>('grid');
-const getBufferSize = getFragment<BreachProtocolBufferSizeFragmentResult>(
-  'bufferSize'
-);
+const getBufferSize =
+  getFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
 const getDaemons = getFragment<BreachProtocolDaemonsFragmentResult>('daemons');
 
 export interface Highlight {

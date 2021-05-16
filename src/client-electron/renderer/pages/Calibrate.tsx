@@ -1,11 +1,13 @@
-import { format, formatDistanceToNowStrict } from 'date-fns';
 import { FC } from 'react';
 import { MdKeyboardBackspace } from 'react-icons/md';
 import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
-import { fromCamelCase, useHistoryEntryFromParam } from '../common';
-import { Col, Row } from '../components/Flex';
-import { NavLink } from '../components/Navigation';
+import {
+  fromCamelCase,
+  transformTimestamp,
+  useHistoryEntryFromParam,
+} from '../common';
+import { Col, NavLink, Row } from '../components';
 import { CalibrateFragment } from './CalibrateFragment';
 
 const Heading = styled.h1<{ active: boolean }>`
@@ -18,9 +20,11 @@ const Heading = styled.h1<{ active: boolean }>`
 
 export const Calibrate: FC = () => {
   const entry = useHistoryEntryFromParam();
+
+  if (!entry) return null;
+
   const { path, params } = useRouteMatch<{ entryId: string }>();
-  const time = format(entry.startedAt, 'HH:mm:ss');
-  const date = formatDistanceToNowStrict(entry.startedAt, { addSuffix: true });
+  const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
     <Col style={{ flexGrow: 1 }}>
@@ -32,7 +36,7 @@ export const Calibrate: FC = () => {
           <MdKeyboardBackspace size="32px" />
         </Link>
         <Heading active>
-          {time} - {date}
+          {time} - {distance}
         </Heading>
       </Row>
       <Row style={{ gap: '2rem' }}>

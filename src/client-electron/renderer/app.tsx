@@ -1,12 +1,9 @@
-import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import React, { useEffect, useState } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import React from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { State } from '../common';
-import { Navigation } from './components/Navigation';
-import { StatusBar } from './components/StatusBar';
-import { History } from './pages/History';
-import { Calibrate } from './pages/Calibrate';
+import { useIpcEvent, useIpcState } from './common';
+import { Navigation, StatusBar } from './components';
+import { Calibrate, History } from './pages';
 import { StateContext } from './state';
 
 const Main = styled.main`
@@ -16,50 +13,24 @@ const Main = styled.main`
   padding: 0 1rem;
 `;
 
-function useIpcEvent<T>(channel: string, initialValue?: T) {
-  const [value, setValue] = useState<T>(initialValue);
-
-  useEffect(() => {
-    function handleEvent(e: IpcRendererEvent, value: T) {
-      setValue(value);
-    }
-
-    ipc.on(channel, handleEvent);
-
-    return () => {
-      ipc.removeListener(channel, handleEvent);
-    };
-  }, []);
-
-  return value;
-}
-
-function useStore() {
-  const initialState = ipc.sendSync('get-state');
-  const state = useIpcEvent<State>('state', initialState);
-
-  return state;
-}
-
 export const App = () => {
-  const state = useStore();
+  const state = useIpcState();
+  const history = useHistory();
+
+  // Change route when new history entry has been added.
+  // TODO: investigate re-renders
+  useIpcEvent('ADD_HISTORY_ENTRY', () => history.replace('/history'));
 
   return (
-    <Router>
-      <StateContext.Provider value={state}>
-        <Navigation />
-        <Main>
-          <Switch>
-            <Route path="/history">
-              <History />
-            </Route>
-            <Route path="/calibrate/:entryId">
-              <Calibrate />
-            </Route>
-          </Switch>
-        </Main>
-        <StatusBar />
-      </StateContext.Provider>
-    </Router>
+    <StateContext.Provider value={state}>
+      <Navigation />
+      <Main>
+        <Switch>
+          <Route path="/history" component={History} />
+          <Route path="/calibrate/:entryId" component={Calibrate} />
+        </Switch>
+      </Main>
+      <StatusBar />
+    </StateContext.Provider>
   );
 };
