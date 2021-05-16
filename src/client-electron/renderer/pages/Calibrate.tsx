@@ -21,6 +21,7 @@ const Heading = styled.h1<{ active: boolean }>`
 
 function useContainerInit(fileName: string) {
   useEffect(() => {
+    // FIXME: tiny race condition. Disable button until fragments are ready.
     dispatch({ type: 'TEST_THRESHOLD_INIT', data: fileName });
 
     return () => {
