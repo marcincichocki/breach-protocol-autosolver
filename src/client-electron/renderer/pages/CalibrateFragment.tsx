@@ -5,13 +5,16 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { rendererDispatcher } from '../../common';
 import { fromCamelCase } from '../common';
-import { FlatButton } from '../components/Buttons';
-import { Col, Row } from '../components/Flex';
-import { FragmentPreview } from '../components/FragmentPreview';
-import { RangeSlider } from '../components/RangeSlider';
-import { RawDataPreview } from '../components/RawDataPreview';
-import { Spinner } from '../components/Spinner';
-import { Switch } from '../components/Switch';
+import {
+  Col,
+  FlatButton,
+  FragmentPreview,
+  RangeSlider,
+  RawDataPreview,
+  Row,
+  Spinner,
+  Switch,
+} from '../components';
 import { useFormControl } from '../form';
 
 const Label = styled.label`
