@@ -1,9 +1,9 @@
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import { App } from './app';
 import { GlobalStyles } from './styles/global';
 import { HashRouter as Router } from 'react-router-dom';
 
-ReactDOM.render(
+render(
   <>
     <GlobalStyles />
     <Router>

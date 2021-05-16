@@ -72,7 +72,7 @@ export interface Response<T = any> {
   origin: Origin;
 }
 
-export function createDispatcher(origin: Origin) {
+export function createAsyncRequestDispatcher(origin: Origin) {
   return <TRes, TReq = any>(action: Omit<Request<TReq>, 'origin' | 'uuid'>) =>
     new Promise<TRes>((resolve) => {
       const uuid = uuidv4();
@@ -91,9 +91,10 @@ export function createDispatcher(origin: Origin) {
     });
 }
 
-export const rendererDispatcher = createDispatcher('renderer');
+export const rendererAsyncRequestDispatcher =
+  createAsyncRequestDispatcher('renderer');
 
-export function createListener(origin: Origin) {
+export function createAsyncRequestListener(origin: Origin) {
   return (handler: (req: Request) => Promise<any>) => {
     ipc.on('async-request', async (event, req: Request) => {
       const data = await handler(req);
@@ -108,7 +109,7 @@ export function createListener(origin: Origin) {
   };
 }
 
-export const workerListener = createListener('worker');
+export const workerAsyncRequestListener = createAsyncRequestListener('worker');
 
 export interface TestThresholdData {
   fileName: string;
