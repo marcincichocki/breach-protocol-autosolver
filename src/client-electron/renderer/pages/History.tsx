@@ -9,7 +9,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import styled from 'styled-components';
-import { getDistance } from '../common';
+import { transformTimestamp } from '../common';
 import { Col } from '../components';
 import { StateContext } from '../state';
 import { HistoryDetails } from './HistoryDetails';
@@ -37,7 +37,6 @@ const HistoryListItem = styled(NavLink)`
   background: var(--background);
   height: 70px;
   display: flex;
-  justify-content: center;
   align-items: center;
   color: var(--accent);
   flex-shrink: 0;
@@ -46,6 +45,7 @@ const HistoryListItem = styled(NavLink)`
   text-transform: uppercase;
   font-size: 1.2rem;
   font-weight: 500;
+  padding: 0 1rem;
 
   &.active {
     border-color: var(--accent);
@@ -79,6 +79,18 @@ const NoHistory = () => {
   );
 };
 
+const H1 = styled.h1`
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+`;
+
+const H2 = styled.h2`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+`;
+
 export const History: FC = () => {
   const { history } = useContext(StateContext);
 
@@ -89,14 +101,21 @@ export const History: FC = () => {
   return (
     <HistoryWrapper>
       <HistoryList>
-        {history.map((e) => (
-          <li key={e.uuid}>
-            <HistoryListItem to={`${path}/${e.uuid}`}>
-              <HistoryListItemIcon size="2rem" status={e.status} />
-              {getDistance(e.startedAt)}
-            </HistoryListItem>
-          </li>
-        ))}
+        {history.map((e) => {
+          const { time, distance } = transformTimestamp(e.startedAt);
+
+          return (
+            <li key={e.uuid}>
+              <HistoryListItem to={`${path}/${e.uuid}`}>
+                <HistoryListItemIcon size="2rem" status={e.status} />
+                <Col>
+                  <H1>{distance}</H1>
+                  <H2>{time}</H2>
+                </Col>
+              </HistoryListItem>
+            </li>
+          );
+        })}
       </HistoryList>
       <Col style={{ flexGrow: 1 }}>
         <Switch>

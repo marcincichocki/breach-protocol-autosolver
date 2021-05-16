@@ -24,11 +24,17 @@ export function fromCamelCase(s: string) {
   return s.replace(r, '$1 $2');
 }
 
-export function getDistance(timestamp: number) {
-  const time = format(timestamp, 'HH:mm:ss');
-  const distance = formatDistanceToNow(timestamp, { addSuffix: true });
+// TODO(i18n): add locale
+export function transformTimestamp(timestamp: number) {
+  const time = format(timestamp, 'pp');
+  const distance = formatDistanceToNow(timestamp, {
+    addSuffix: true,
+  });
 
-  return `${time} - ${distance}`;
+  return {
+    time,
+    distance,
+  };
 }
 
 export function useIpcEvent<T>(

@@ -4,7 +4,7 @@ import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   fromCamelCase,
-  getDistance,
+  transformTimestamp,
   useHistoryEntryFromParam,
 } from '../common';
 import { Col, NavLink, Row } from '../components';
@@ -24,6 +24,7 @@ export const Calibrate: FC = () => {
   if (!entry) return null;
 
   const { path, params } = useRouteMatch<{ entryId: string }>();
+  const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
     <Col style={{ flexGrow: 1 }}>
@@ -34,7 +35,9 @@ export const Calibrate: FC = () => {
         >
           <MdKeyboardBackspace size="32px" />
         </Link>
-        <Heading active>{getDistance(entry.startedAt)}</Heading>
+        <Heading active>
+          {time} - {distance}
+        </Heading>
       </Row>
       <Row style={{ gap: '2rem' }}>
         {entry.fragments.map((f) => (
