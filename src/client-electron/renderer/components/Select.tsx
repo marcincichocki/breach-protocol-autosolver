@@ -1,6 +1,11 @@
 import { FC, HTMLProps, useRef, useState } from 'react';
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import styled from 'styled-components';
+import {
+  ArrowLeft,
+  ArrowLeftOutline,
+  ArrowRight,
+  ArrowRightOutline,
+} from './Arrows';
 
 const SelectWrapper = styled.div`
   display: flex;
@@ -28,6 +33,20 @@ const SelectButton = styled.button`
   align-items: center;
   outline: none;
   cursor: pointer;
+
+  > .arrow {
+    display: none;
+  }
+
+  &:hover {
+    > .arrow {
+      display: block;
+    }
+
+    > .arrow-outline {
+      display: none;
+    }
+  }
 `;
 
 const SelectViewerWrapper = styled.div`
@@ -120,11 +139,13 @@ export const Select: FC<SelectProps> = ({ options, value, ...props }) => {
         ))}
       </select>
       <SelectButton onClick={prev}>
-        <MdKeyboardArrowLeft />
+        <ArrowLeftOutline />
+        <ArrowLeft />
       </SelectButton>
       <SelectViewer options={options} index={index} />
       <SelectButton onClick={next}>
-        <MdKeyboardArrowRight />
+        <ArrowRightOutline />
+        <ArrowRight />
       </SelectButton>
     </SelectWrapper>
   );
