@@ -6,7 +6,7 @@ import {
   SequenceJSON,
 } from '@/core';
 import { Options } from '@/platform-node/cli';
-import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -41,13 +41,30 @@ export interface HistoryEntry {
   exitStrategy: BreachProtocolExitStrategy;
 }
 
-export interface AppSettings {}
+export interface AppSettings {
+  keyBind: Accelerator;
+  historySize: number;
+  preserveSourceOnSuccess: boolean;
+  disableSound: boolean;
+  soundPath: string;
+  skipUpdateCheck: boolean;
+  autoUpdate: boolean;
+  thresholdGrid: number;
+  thresholdDaemons: number;
+  thresholdBufferSize: number;
+  delay: number;
+  disableAutoExit: boolean;
+  useScaling: boolean;
+  experimentalBufferSizeRecognition: boolean;
+  format: 'png' | 'jpg';
+  activeDisplayId: string;
+}
 
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
   activeDisplay: ScreenshotDisplayOutput;
-  settings: {};
+  settings: AppSettings;
   status: WorkerStatus;
 }
 

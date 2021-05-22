@@ -35,7 +35,24 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
 export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
-    defaults: {},
+    defaults: {
+      activeDisplayId: undefined,
+      autoUpdate: true,
+      delay: 75,
+      disableAutoExit: false,
+      disableSound: false,
+      experimentalBufferSizeRecognition: false,
+      format: 'png',
+      historySize: 10,
+      keyBind: 'CommandOrControl+num0',
+      preserveSourceOnSuccess: false,
+      skipUpdateCheck: false,
+      soundPath: 'C:/Windows/Media/Windows Foreground.wav',
+      thresholdBufferSize: undefined,
+      thresholdDaemons: undefined,
+      thresholdGrid: undefined,
+      useScaling: false,
+    },
   });
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',
@@ -53,7 +70,7 @@ export class Store {
       history: this.history.get('data'),
       displays: [],
       activeDisplay: null,
-      settings: {},
+      settings: this.settings.store,
       status: null,
     };
   }
