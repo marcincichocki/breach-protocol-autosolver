@@ -3,7 +3,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useIpcEvent, useIpcState } from './common';
 import { Navigation, StatusBar } from './components';
-import { Calibrate, History } from './pages';
+import { Calibrate, History, Settings } from './pages';
 import { StateContext } from './state';
 
 const Main = styled.main`
@@ -28,6 +28,7 @@ export const App = () => {
         <Switch>
           <Route path="/history" component={History} />
           <Route path="/calibrate/:entryId" component={Calibrate} />
+          <Route path="/settings" component={Settings} />
         </Switch>
       </Main>
       <StatusBar />
