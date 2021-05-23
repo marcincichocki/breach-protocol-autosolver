@@ -1,8 +1,7 @@
 import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import { rendererAsyncRequestDispatcher as dispatch } from '../../common';
 import { fromCamelCase } from '../common';
 import {
@@ -15,24 +14,25 @@ import {
   Spinner,
   Switch,
 } from '../components';
-import { useFormControl } from '../form';
-
-const Label = styled.label`
-  font-size: 24px;
-  color: var(--primary);
-  flex-grow: 1;
-  font-weight: 500;
-`;
-
-const FormField = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-`;
+import { Field, FieldContext, Form, Label } from '../components/Form';
 
 interface CalibrateFragmentProps {
   entry: HistoryEntry;
 }
+
+const ThresholdUpdater = ({
+  threshold,
+}: {
+  threshold: number;
+}): JSX.Element => {
+  const { setValue } = useContext(FieldContext);
+
+  useEffect(() => {
+    setValue(threshold, { emit: false });
+  }, [threshold]);
+
+  return null;
+};
 
 export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
@@ -40,19 +40,19 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const result = entry.fragments.find((f) => f.id === fragmentId);
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
-  const showBoxes = useFormControl('showBoxes', false);
-  const testThreshold = useFormControl('testThreshold', result.threshold);
+  const disableRangeSlider =
+    entry.options.experimentalBufferSizeRecognition &&
+    fragmentId === 'bufferSize';
   const [loading, setLoading] = useState<boolean>(false);
+  const [showBoxes, setShowBoxes] = useState(false);
+  const [testThreshold, setTestThreshold] = useState<number>(result.threshold);
 
   useEffect(() => {
-    if (result.threshold != null) {
-      testThreshold.setValue(result.threshold.toString());
-    }
-
     setTestResult(result);
+    setTestThreshold(result.threshold);
   }, [fragmentId]);
 
-  async function onTestThreshold(value: any) {
+  async function onTestThreshold(threshold: number) {
     setLoading(true);
 
     const result = await dispatch<
@@ -60,7 +60,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
       TestThresholdData
     >({
       type: 'TEST_THRESHOLD',
-      data: { fileName, threshold: value, fragmentId },
+      data: { fileName, threshold, fragmentId },
     });
 
     setTestResult(result);
@@ -77,25 +77,21 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
     >
       <Col style={{ gap: '1rem', flexGrow: 1 }}>
         <RawDataPreview rawData={testResult.rawData} />
-
-        <FormField>
-          <Label>Show boxes</Label>
-          <Switch {...showBoxes} />
-        </FormField>
-        <FormField>
-          <Label>Threshold</Label>
-          <RangeSlider
-            {...testThreshold}
-            min={0}
-            max={255}
-            onValueChange={onTestThreshold}
-            disabled={
-              loading ||
-              (entry.options.experimentalBufferSizeRecognition &&
-                fragmentId === 'bufferSize')
-            }
-          />
-        </FormField>
+        <Form initialValues={{ showBoxes, testThreshold }}>
+          <Field name="showBoxes" onValueChange={setShowBoxes}>
+            <Label>Show boxes</Label>
+            <Switch />
+          </Field>
+          <Field name="testThreshold" onValueChange={onTestThreshold}>
+            <Label>Test threshold</Label>
+            <RangeSlider
+              min={0}
+              max={255}
+              disabled={loading || disableRangeSlider}
+            />
+            <ThresholdUpdater threshold={testThreshold} />
+          </Field>
+        </Form>
         <FlatButton
           disabled={!testResult.isValid}
           color="accent"
@@ -119,7 +115,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           <FragmentPreview
             image={testResult.image}
             boxes={testResult.source?.boxes}
-            showBoxes={showBoxes.checked}
+            showBoxes={showBoxes}
           />
         )}
       </Col>
