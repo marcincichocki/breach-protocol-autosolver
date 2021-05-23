@@ -42,11 +42,18 @@ export const FormContext = createContext(undefined);
 
 interface FormProps {
   initialValues: Record<string, string | number | boolean>;
+  onValuesChange?: (
+    values: Record<string, string | number | boolean>,
+    name: string
+  ) => void;
+  onHover?: (name: string) => void;
 }
 
 export const Form = ({
   initialValues,
   children,
+  onHover,
+  onValuesChange,
 }: PropsWithChildren<FormProps>) => {
   const [values, setValues] = useState(initialValues);
 
@@ -56,6 +63,8 @@ export const Form = ({
         value={{
           values,
           setValues,
+          onHover,
+          onValuesChange,
         }}
       >
         {children}
@@ -76,19 +85,21 @@ export const Field = ({
   children,
   onValueChange,
 }: PropsWithChildren<FieldProps>) => {
-  const { values, setValues } = useContext(FormContext);
+  const { values, setValues, onHover, onValuesChange } =
+    useContext(FormContext);
   const value = values[name];
 
   function setValue(
     value: string | number | boolean,
     options = { emit: true }
   ) {
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    const newValues = { ...values, [name]: value };
+    setValues(newValues);
 
-    if (onValueChange && options.emit) onValueChange(value);
+    if (options.emit) {
+      if (onValueChange) onValueChange(value);
+      if (onValuesChange) onValuesChange(newValues, name);
+    }
   }
 
   function onChange(event: ChangeEvent<any>) {
@@ -98,7 +109,10 @@ export const Field = ({
   }
 
   return (
-    <StyledField>
+    <StyledField
+      onMouseEnter={onHover ? () => onHover(name) : undefined}
+      onMouseLeave={onHover ? () => onHover(null) : undefined}
+    >
       <FieldContext.Provider
         value={{
           name,
