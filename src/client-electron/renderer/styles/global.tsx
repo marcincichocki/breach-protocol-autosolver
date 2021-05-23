@@ -7,9 +7,10 @@ export const GlobalStyles = createGlobalStyle`
     --primary-dark: #701d1f;
     --primary-darker: #6f2223;
     --background: #161220;
+    --background-disabled: #0c0c14;
     --accent: #5FF6FF;
     --success: #1bd676;
-    --disabled: #bb9a95
+    --disabled: #bb9a95;
   }
 
   html,

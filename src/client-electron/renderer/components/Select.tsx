@@ -18,6 +18,11 @@ const SelectWrapper = styled.div<{ disabled: boolean }>`
   box-sizing: border-box;
   color: var(--${(p) => (p.disabled ? 'disabled' : 'accent')});
 
+  &[disabled] {
+    cursor: not-allowed;
+    background: var(--background-disabled);
+  }
+
   &:hover:not([disabled]) {
     background: var(--primary-darker);
     border-color: var(--accent);

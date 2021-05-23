@@ -18,6 +18,11 @@ const Range = styled.input.attrs<RangeSliderProps>({ type: 'range' })`
   box-sizing: border-box;
   margin: 0;
 
+  &[disabled] {
+    cursor: not-allowed;
+    background: var(--background-disabled);
+  }
+
   &:hover:not([disabled]) {
     background: var(--primary-darker);
     border: 1px solid var(--accent);
