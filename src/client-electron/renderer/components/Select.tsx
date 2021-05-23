@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import {
   ArrowLeft,
   ArrowLeftOutline,
@@ -10,17 +10,17 @@ import { FieldContext } from './Form';
 
 const SelectWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${(p) => (p.disabled ? 'center' : 'space-between')};
   width: 510px;
   height: 50px;
-  background: ${({ disabled }) => (disabled ? 'gray' : 'var(--background)')};
-  border: 1px solid var(--primary-dark);
+  background: var(--background);
+  border: 1px solid ${(p) => (p.disabled ? '#bb9a95' : 'var(--primary-dark)')};
   box-sizing: border-box;
-  color: ${({ disabled }) => (disabled ? 'darkgray' : 'var(--accent)')};
+  color: ${(p) => (p.disabled ? '#bb9a95' : 'var(--accent)')};
 
   &:hover:not([disabled]) {
     background: var(--primary-darker);
-    border: 1px solid var(--accent);
+    border-color: var(--accent);
   }
 `;
 
@@ -32,7 +32,7 @@ const SelectButton = styled.button.attrs({
   color: inherit;
   font-size: 2.5em;
   padding: 0 2rem;
-  display: flex;
+  display: ${(p) => (p.disabled ? 'none' : 'flex')};
   align-items: center;
   outline: none;
   cursor: pointer;
@@ -72,7 +72,7 @@ const SelectViewerOptions = styled.div`
 `;
 
 const SelectViewerOption = styled.div<{ active: boolean }>`
-  width: 40px;
+  width: 25px;
   height: 4px;
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;

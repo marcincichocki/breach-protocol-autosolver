@@ -17,6 +17,7 @@ export const GlobalStyles = createGlobalStyle`
     max-height: 100%;
     font-family: Rajdhani;
     color: #fff;
+    letter-spacing: 0.5px;
   }
 
   body {
