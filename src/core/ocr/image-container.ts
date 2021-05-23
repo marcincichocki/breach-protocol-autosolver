@@ -21,11 +21,8 @@ export abstract class ImageContainer<T> {
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
 
-  abstract trim(
-    instance: T
-  ): Promise<{
+  abstract trim(instance: T): Promise<{
     buffer: Buffer;
-    fragment: T;
     width: number;
     height: number;
   }>;
@@ -131,7 +128,6 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
 
     return {
       buffer: data,
-      fragment: sharp(data),
       width: info.width,
       height: info.height,
     };
