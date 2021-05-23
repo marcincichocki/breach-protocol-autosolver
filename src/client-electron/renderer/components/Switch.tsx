@@ -1,7 +1,10 @@
-import { FC, HTMLProps, useRef, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
+import { FieldContext } from './Form';
 
-interface SwitchProps extends HTMLProps<HTMLInputElement> {}
+interface SwitchProps {
+  disabled?: boolean;
+}
 
 const SwitchWrapper = styled.div`
   display: flex;
@@ -9,12 +12,14 @@ const SwitchWrapper = styled.div`
   width: 510px;
 `;
 
-const SwitchButton = styled.button<{ active: boolean }>`
+const SwitchButton = styled.button.attrs({
+  type: 'button',
+})<{ active: boolean; disabled: boolean }>`
   flex-grow: 1;
-  height: 40px;
+  height: 50px;
   border: 1px solid;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,53 +27,52 @@ const SwitchButton = styled.button<{ active: boolean }>`
   outline: none;
   font-family: Rajdhani;
   cursor: pointer;
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
 `;
 
 const Off = styled(SwitchButton)`
-  background: ${(p) => (p.active ? '#190a10' : 'var(--primary)')};
-  border-color: ${({ active }) => (active ? '#3a1216' : 'var(--primary)')};
-  color: ${({ active }) => (active ? '#3a1216' : '#ff7166')};
+  background: ${(p) => (p.active ? '#190a10' : '#932c2a')};
+  border-color: ${(p) => (p.active ? '#3a1216' : 'var(--primary)')};
+  color: ${(p) => (p.active ? '#3a1216' : '#ff7265')};
+
+  &[disabled] {
+    background: ${(p) => (p.active ? '#06080f' : 'var(--background-disabled)')};
+    border-color: ${(p) => (p.active ? '#1a1719' : 'var(--disabled)')};
+    color: ${(p) => (p.active ? '#1a1719' : 'var(--disabled)')};
+  }
 `;
 
 const On = styled(SwitchButton)`
-  background: ${({ active }) => (active ? 'var(--accent)' : '#0a1d1f')};
-  border-color: ${({ active }) => (active ? 'var(--accent)' : '#113032')};
-  color: ${({ active }) => (active ? '#000' : '#113032')};
+  background: ${(p) => (p.active ? 'var(--accent)' : '#0a1d1f')};
+  border-color: ${(p) => (p.active ? 'var(--accent)' : '#113032')};
+  color: ${(p) => (p.active ? '#000' : '#113032')};
+
+  &[disabled] {
+    background: ${(p) => (p.active ? 'var(--background-disabled)' : '#06080f')};
+    border-color: ${(p) => (p.active ? 'var(--disabled)' : '#1a1719')};
+    color: ${(p) => (p.active ? 'var(--disabled)' : '#1a1719')};
+  }
 `;
 
-export const Switch: FC<SwitchProps> = ({ name, onChange, checked }) => {
-  const ref = useRef<HTMLInputElement>(null);
-  const [currentValue, setCurrentValue] = useState(checked);
-
-  const dispatchChangeEvent = () => {
-    const event = new Event('click', { bubbles: true });
-
-    ref.current.dispatchEvent(event);
-  };
-
-  const change = (value: boolean) => {
-    if (ref.current.checked === value) return;
-
-    ref.current.checked = !!value;
-    setCurrentValue(ref.current.checked);
-
-    dispatchChangeEvent();
-  };
+export const Switch = ({ disabled }: SwitchProps) => {
+  const { name, value, setValue, onChange } = useContext(FieldContext);
 
   return (
     <SwitchWrapper>
       <input
-        ref={ref}
         type="checkbox"
-        name={name}
-        defaultChecked={checked}
-        onClick={onChange}
+        checked={value}
+        onChange={onChange}
+        disabled={disabled}
         hidden
       />
-      <Off active={currentValue} onClick={() => change(false)}>
+      <Off disabled={disabled} active={value} onClick={() => setValue(false)}>
         Off
       </Off>
-      <On active={currentValue} onClick={() => change(true)}>
+      <On disabled={disabled} active={value} onClick={() => setValue(true)}>
         On
       </On>
     </SwitchWrapper>

@@ -7,8 +7,10 @@ export const GlobalStyles = createGlobalStyle`
     --primary-dark: #701d1f;
     --primary-darker: #6f2223;
     --background: #161220;
+    --background-disabled: #0c0c14;
     --accent: #5FF6FF;
     --success: #1bd676;
+    --disabled: #bb9a95;
   }
 
   html,
@@ -17,6 +19,7 @@ export const GlobalStyles = createGlobalStyle`
     max-height: 100%;
     font-family: Rajdhani;
     color: #fff;
+    letter-spacing: 0.5px;
   }
 
   body {
