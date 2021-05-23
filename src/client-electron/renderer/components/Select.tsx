@@ -14,9 +14,9 @@ const SelectWrapper = styled.div<{ disabled: boolean }>`
   width: 510px;
   height: 50px;
   background: var(--background);
-  border: 1px solid ${(p) => (p.disabled ? '#bb9a95' : 'var(--primary-dark)')};
+  border: 1px solid var(--${(p) => (p.disabled ? 'disabled' : 'primary-dark')});
   box-sizing: border-box;
-  color: ${(p) => (p.disabled ? '#bb9a95' : 'var(--accent)')};
+  color: var(--${(p) => (p.disabled ? 'disabled' : 'accent')});
 
   &:hover:not([disabled]) {
     background: var(--primary-darker);
