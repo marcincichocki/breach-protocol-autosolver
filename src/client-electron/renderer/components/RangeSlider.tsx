@@ -1,14 +1,11 @@
-import { ChangeEvent } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { FieldContext } from './Form';
 
 interface RangeSliderProps {
-  value?: string | number;
-  name?: string;
   disabled?: boolean;
   min?: number;
   max?: number;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  onValueChange?: (value: number) => void;
 }
 
 const Range = styled.input.attrs<RangeSliderProps>({ type: 'range' })`
@@ -54,16 +51,28 @@ const RangeValue = styled.output`
   pointer-events: none;
 `;
 
-export function RangeSlider({ onValueChange, ...props }: RangeSliderProps) {
+export function RangeSlider(props: RangeSliderProps) {
+  const { value, setValue } = useContext(FieldContext);
+  const [displayValue, setDisplayValue] = useState(value);
+
+  function setCoercedValue(e: any) {
+    return setValue(parseInt(e.target.value, 10));
+  }
+
+  useEffect(() => {
+    setDisplayValue(value);
+  }, [value]);
+
   return (
     <RangeWrapper>
       <Range
         {...props}
-        onMouseUp={() => onValueChange(+props.value)}
-        onKeyUp={() => onValueChange(+props.value)}
-        step={1}
+        value={displayValue}
+        onChange={(e) => setDisplayValue(e.target.value)}
+        onMouseUp={setCoercedValue}
+        onKeyUp={setCoercedValue}
       />
-      <RangeValue>{props.value}</RangeValue>
+      <RangeValue>{displayValue}</RangeValue>
     </RangeWrapper>
   );
 }

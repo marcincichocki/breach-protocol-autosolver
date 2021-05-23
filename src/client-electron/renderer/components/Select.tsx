@@ -1,4 +1,4 @@
-import { FC, HTMLProps, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import {
   ArrowLeft,
@@ -6,33 +6,37 @@ import {
   ArrowRight,
   ArrowRightOutline,
 } from './Arrows';
+import { FieldContext } from './Form';
 
-const SelectWrapper = styled.div`
+const SelectWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 510px;
-  height: 40px;
-  background: var(--background);
+  height: 50px;
+  background: ${({ disabled }) => (disabled ? 'gray' : 'var(--background)')};
   border: 1px solid var(--primary-dark);
   box-sizing: border-box;
-  padding: 0 2rem;
+  color: ${({ disabled }) => (disabled ? 'darkgray' : 'var(--accent)')};
 
-  &:hover {
+  &:hover:not([disabled]) {
     background: var(--primary-darker);
     border: 1px solid var(--accent);
   }
 `;
 
-const SelectButton = styled.button`
+const SelectButton = styled.button.attrs({
+  type: 'button',
+})<{ disabled: boolean }>`
   border: none;
   background: none;
-  color: var(--accent);
+  color: inherit;
   font-size: 2.5em;
-  padding: 0;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   outline: none;
   cursor: pointer;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   > .arrow {
     display: none;
@@ -53,11 +57,10 @@ const SelectViewerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
 `;
 
 const SelectViewerValue = styled.span`
-  color: var(--accent);
   font-weight: 500;
   font-size: 24px;
   line-height: 1.1;
@@ -84,7 +87,7 @@ interface SelectViewerProps {
   index: number;
 }
 
-const SelectViewer: FC<SelectViewerProps> = ({ options, index }) => (
+const SelectViewer = ({ options, index }: SelectViewerProps) => (
   <SelectViewerWrapper>
     <SelectViewerValue>{options[index].name}</SelectViewerValue>
     <SelectViewerOptions>
@@ -95,55 +98,46 @@ const SelectViewer: FC<SelectViewerProps> = ({ options, index }) => (
   </SelectViewerWrapper>
 );
 
-interface SelectProps extends HTMLProps<HTMLSelectElement> {
+interface SelectProps {
   options: SelectOption[];
+  disabled?: boolean;
 }
 
-export const Select: FC<SelectProps> = ({ options, value, ...props }) => {
-  const ref = useRef<HTMLSelectElement>();
+export const Select = ({ options, disabled }: SelectProps) => {
+  const { value, setValue, onChange } = useContext(FieldContext);
+
+  // NOTE: this might cause error.
   const [index, setIndex] = useState<number>(
-    value ? options.findIndex((o) => o.value === value.toString()) : 0
+    value ? options.findIndex((o) => o.value === value) : 0
   );
 
-  const dispatchChangeEvent = () => {
-    const event = new Event('change', { bubbles: true });
-    ref.current.dispatchEvent(event);
-  };
-
-  const selectOption = (index: number) => {
-    ref.current.selectedIndex = index;
-    setIndex(ref.current.selectedIndex);
-  };
-
   const prev = () => {
-    if (!ref.current.selectedIndex) return;
+    if (!index) return;
 
-    selectOption(ref.current.selectedIndex - 1);
-    dispatchChangeEvent();
+    setIndex(index - 1);
+    setValue(options[index - 1].value);
   };
 
   const next = () => {
-    if (ref.current.selectedIndex === options.length - 1) return;
+    if (index === options.length - 1) return;
 
-    selectOption(ref.current.selectedIndex + 1);
-    dispatchChangeEvent();
+    setIndex(index + 1);
+    setValue(options[index + 1].value);
   };
 
   return (
-    <SelectWrapper>
-      <select ref={ref} defaultValue={value} {...props} hidden>
-        {options.map(({ name, value }) => (
-          <option key={value} value={value}>
-            {name}
-          </option>
+    <SelectWrapper disabled={disabled}>
+      <select hidden value={value} onChange={onChange}>
+        {options.map(({ value }) => (
+          <option key={value} value={value}></option>
         ))}
       </select>
-      <SelectButton onClick={prev}>
+      <SelectButton onClick={prev} disabled={disabled}>
         <ArrowLeftOutline />
         <ArrowLeft />
       </SelectButton>
       <SelectViewer options={options} index={index} />
-      <SelectButton onClick={next}>
+      <SelectButton onClick={next} disabled={disabled}>
         <ArrowRightOutline />
         <ArrowRight />
       </SelectButton>

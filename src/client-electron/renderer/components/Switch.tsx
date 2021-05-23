@@ -1,7 +1,10 @@
-import { FC, HTMLProps, useRef, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
+import { FieldContext } from './Form';
 
-interface SwitchProps extends HTMLProps<HTMLInputElement> {}
+interface SwitchProps {
+  disabled?: boolean;
+}
 
 const SwitchWrapper = styled.div`
   display: flex;
@@ -9,7 +12,9 @@ const SwitchWrapper = styled.div`
   width: 510px;
 `;
 
-const SwitchButton = styled.button<{ active: boolean }>`
+const SwitchButton = styled.button.attrs({
+  type: 'button',
+})<{ active: boolean }>`
   flex-grow: 1;
   height: 40px;
   border: 1px solid;
@@ -36,39 +41,16 @@ const On = styled(SwitchButton)`
   color: ${({ active }) => (active ? '#000' : '#113032')};
 `;
 
-export const Switch: FC<SwitchProps> = ({ name, onChange, checked }) => {
-  const ref = useRef<HTMLInputElement>(null);
-  const [currentValue, setCurrentValue] = useState(checked);
-
-  const dispatchChangeEvent = () => {
-    const event = new Event('click', { bubbles: true });
-
-    ref.current.dispatchEvent(event);
-  };
-
-  const change = (value: boolean) => {
-    if (ref.current.checked === value) return;
-
-    ref.current.checked = !!value;
-    setCurrentValue(ref.current.checked);
-
-    dispatchChangeEvent();
-  };
+export const Switch = ({ disabled }: SwitchProps) => {
+  const { name, value, setValue, onChange } = useContext(FieldContext);
 
   return (
     <SwitchWrapper>
-      <input
-        ref={ref}
-        type="checkbox"
-        name={name}
-        defaultChecked={checked}
-        onClick={onChange}
-        hidden
-      />
-      <Off active={currentValue} onClick={() => change(false)}>
+      <input type="checkbox" checked={value} onChange={onChange} hidden />
+      <Off active={value} onClick={() => setValue(false)}>
         Off
       </Off>
-      <On active={currentValue} onClick={() => change(true)}>
+      <On active={value} onClick={() => setValue(true)}>
         On
       </On>
     </SwitchWrapper>
