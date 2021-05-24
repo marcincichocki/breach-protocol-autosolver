@@ -1,6 +1,6 @@
 import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { rendererAsyncRequestDispatcher as dispatch } from '../../common';
 import { fromCamelCase } from '../common';
@@ -14,7 +14,7 @@ import {
   Spinner,
   Switch,
 } from '../components';
-import { Field, FieldContext, Form, Label } from '../components/Form';
+import { Field, Form, Label, useField } from '../components/Form';
 
 interface CalibrateFragmentProps {
   entry: HistoryEntry;
@@ -25,7 +25,7 @@ const ThresholdUpdater = ({
 }: {
   threshold: number;
 }): JSX.Element => {
-  const { setValue } = useContext(FieldContext);
+  const { setValue } = useField<number>();
 
   useEffect(() => {
     setValue(threshold, { emit: false });

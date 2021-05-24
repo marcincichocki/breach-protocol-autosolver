@@ -1,6 +1,5 @@
-import { useContext } from 'react';
 import styled from 'styled-components';
-import { FieldContext } from './Form';
+import { useField } from './Form';
 
 interface SwitchProps {
   disabled?: boolean;
@@ -58,7 +57,7 @@ const On = styled(SwitchButton)`
 `;
 
 export const Switch = ({ disabled }: SwitchProps) => {
-  const { name, value, setValue, onChange } = useContext(FieldContext);
+  const { value, setValue, onChange } = useField<boolean>();
 
   return (
     <SwitchWrapper>
