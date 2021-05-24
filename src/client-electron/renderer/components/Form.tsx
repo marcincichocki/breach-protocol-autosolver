@@ -73,12 +73,23 @@ export const Form = ({
   );
 };
 
+interface FieldContext<T> {
+  name: string;
+  value: T;
+  setValue: (value: T, options?: { emit: boolean }) => void;
+  onChange: (event: ChangeEvent<any>) => void;
+}
+
+const FieldContext = createContext<FieldContext<any>>(undefined);
+
+export function useField<T>() {
+  return useContext<FieldContext<T>>(FieldContext);
+}
+
 interface FieldProps {
   name: string;
   onValueChange?: (currentValue: any) => void;
 }
-
-export const FieldContext = createContext(undefined);
 
 export const Field = ({
   name,
