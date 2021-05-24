@@ -2,8 +2,16 @@ import { Action } from '@/client-electron/common';
 import { ipcRenderer as ipc } from 'electron';
 import { FC, useContext, useState } from 'react';
 import styled from 'styled-components';
-import { Col, RangeSlider, Select, Switch } from '../components';
-import { Field, Form, Label } from '../components/Form';
+import {
+  Col,
+  RangeSlider,
+  Select,
+  Switch,
+  File,
+  Field,
+  Form,
+  Label,
+} from '../components';
 import { StateContext } from '../state';
 
 function dispatch(action: Omit<Action, 'origin'>) {
@@ -91,11 +99,10 @@ const SettingsForm = ({ displayOptions }: any) => {
         <Label>Skip update check</Label>
         <Switch />
       </Field>
-      {/* <Field name="soundPath">
+      <Field name="soundPath">
         <Label>Sound path</Label>
-        <span>{form.soundPath.value}</span>
-        <FlatButton color="primary">Change sound path</FlatButton>
-      </Field> */}
+        <File />
+      </Field>
       <Field name="scaling">
         <Label>Scaling</Label>
         <Switch />
