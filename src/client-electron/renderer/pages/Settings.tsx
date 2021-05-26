@@ -1,5 +1,5 @@
 import { Action } from '@/client-electron/common';
-import { ipcRenderer as ipc } from 'electron';
+import { Accelerator, ipcRenderer as ipc } from 'electron';
 import { FC, useContext, useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -12,6 +12,7 @@ import {
   Form,
   Label,
 } from '../components';
+import { KeyBind } from '../components/KeyBind';
 import { StateContext } from '../state';
 
 function dispatch(action: Omit<Action, 'origin'>) {
@@ -54,8 +55,17 @@ const SettingsForm = ({ displayOptions }: any) => {
     { name: 'jpg', value: 'jpg' },
     { name: 'png', value: 'png' },
   ];
+
+  function changeKeyBind(accelerator: Accelerator) {
+    ipc.send('renderer:key-bind-change', accelerator);
+  }
+
   return (
     <>
+      <Field name="keyBind" onValueChange={changeKeyBind}>
+        <Label>Key bind</Label>
+        <KeyBind />
+      </Field>
       <Field name="activeDisplayId">
         <Select
           options={displayOptions}

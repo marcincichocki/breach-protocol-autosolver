@@ -1,6 +1,7 @@
 import { Accelerator } from 'electron';
 import { Fragment, KeyboardEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useField } from './Form';
 
 /**
  * Map between {@link KeyboardEvent.code} and electron.js accelerator code
@@ -232,13 +233,15 @@ function toKeyCodes(accelerator: Accelerator) {
 }
 
 // TODO: refactor this to field context
-export const KeyBind = ({ accelerator }: { accelerator: string }) => {
-  const keys = toKeyCodes(accelerator);
+export const KeyBind = () => {
+  const { value, setValue } = useField();
+
+  const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
-        // TODO: emit accepted value
+        setValue(pressed.map((p) => p.electronCode).join('+'));
         ref.current.blur();
       },
       () => {
