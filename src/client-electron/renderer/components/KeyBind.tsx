@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Accelerator } from 'electron';
+import { Fragment, KeyboardEvent, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 /**
  * Map between {@link KeyboardEvent.code} and electron.js accelerator code
@@ -142,46 +144,150 @@ export const CODES_MAP: Record<string, string> = {
   NumpadSubtract: 'numsub',
   NumpadMultiply: 'nummult',
   NumpadDivide: 'numdiv',
+  NumpadEnter: 'Enter',
 };
+
+class KeyBindEvent {
+  public readonly electronCode = CODES_MAP[this.code];
+
+  constructor(public readonly code: string) {}
+}
 
 export const useKeyPress = (
-  func: (...args: any[]) => void,
-  target = window
+  onEnter: (...args: any[]) => void,
+  onEscape: (...args: any[]) => void,
+  initialValue: KeyBindEvent[]
 ) => {
-  const [pressed, setPressed] = useState<Record<string, string>>({});
+  const [pressed, setPressed] = useState<KeyBindEvent[]>(initialValue);
+  const [count, setCount] = useState(0);
+  const [dirty, setDirty] = useState(false);
 
-  const onKeyDown = useCallback(
-    (event) => {
-      if (pressed[event.code]) return;
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    event.preventDefault();
+    event.stopPropagation();
 
-      const data = { ...pressed, [event.code]: CODES_MAP[event.code] };
-      setPressed(data);
-      func(data);
-    },
-    [func, pressed]
-  );
+    if (count && pressed.find((e) => e.code === event.code)) return;
 
-  const onKeyUp = useCallback(
-    (event) => {
-      const { [event.code]: id, ...rest } = pressed;
-      setPressed(rest);
-    },
-    [pressed]
-  );
+    switch (event.code) {
+      case 'Enter':
+        return onEnter();
+      case 'Escape':
+        return onEscape();
+      default: {
+        setDirty(true);
+        setCount((c) => c + 1);
 
-  useEffect(() => {
-    target.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+        const data = new KeyBindEvent(event.code);
+        setPressed((p) => (!count ? [data] : [...p, data]));
+      }
+    }
+  }
 
-    return () => {
-      target.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
-    };
-  }, [target, onKeyDown, onKeyUp]);
+  function onKeyUp() {
+    setCount((c) => (!c ? 0 : c - 1));
+  }
+
+  return { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty };
 };
 
-export const KeyBind = () => {
-  useKeyPress(console.log);
+const KeyBindWrapper = styled.div`
+  width: 510px;
+  height: 50px;
+  border: 1px solid var(--primary);
+  background: var(--background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 18px;
 
-  return <input type="text" />;
+  &:focus-within {
+    border-color: var(--accent);
+  }
+`;
+
+const VisuallyHiddenInput = styled.input`
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+  outline: 0;
+  appearance: none;
+`;
+
+const KeyCode = styled.kbd`
+  border: 1px solid var(--accent);
+  padding: 4px 10px;
+  font-family: 'Rajdhani';
+`;
+
+function toKeyCodes(accelerator: Accelerator) {
+  const codes = Object.keys(CODES_MAP);
+
+  return accelerator
+    .split('+')
+    .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
+}
+
+// TODO: refactor this to field context
+export const KeyBind = ({ accelerator }: { accelerator: string }) => {
+  const keys = toKeyCodes(accelerator);
+  const ref = useRef<HTMLInputElement>();
+  const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
+    useKeyPress(
+      () => {
+        // TODO: emit accepted value
+        ref.current.blur();
+      },
+      () => {
+        setPressed(keys);
+        ref.current.blur();
+      },
+      keys
+    );
+
+  // TODO: return latest value on blur
+  function onBlur() {
+    // setPressed(keys);
+    setDirty(false);
+    setVisited(false);
+  }
+
+  const [visited, setVisited] = useState(false);
+
+  function onFocus() {
+    setVisited(true);
+  }
+
+  return (
+    <>
+      <KeyBindWrapper onClick={() => ref.current.focus()}>
+        {!dirty && visited ? (
+          <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
+        ) : (
+          pressed.map((k, i) => (
+            <Fragment key={k.code}>
+              {!!i && ' + '}
+              <KeyCode>{k.electronCode}</KeyCode>
+            </Fragment>
+          ))
+        )}
+        <VisuallyHiddenInput
+          type="text"
+          ref={ref}
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+      </KeyBindWrapper>
+    </>
+  );
 };
