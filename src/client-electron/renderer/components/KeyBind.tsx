@@ -36,7 +36,6 @@ export const CODES_MAP: Record<string, string> = {
   Digit9: '9',
 
   // [A-Z]
-  // 1st row
   KeyQ: 'Q',
   KeyW: 'W',
   KeyE: 'E',
@@ -47,8 +46,6 @@ export const CODES_MAP: Record<string, string> = {
   KeyI: 'I',
   KeyO: 'O',
   KeyP: 'P',
-
-  // 2nd row
   KeyA: 'A',
   KeyS: 'S',
   KeyD: 'D',
@@ -58,8 +55,6 @@ export const CODES_MAP: Record<string, string> = {
   KeyJ: 'J',
   KeyK: 'K',
   KeyL: 'L',
-
-  // 3rd row
   KeyZ: 'Z',
   KeyX: 'X',
   KeyC: 'C',
@@ -107,7 +102,7 @@ export const CODES_MAP: Record<string, string> = {
   Delete: 'Delete',
   Insert: 'Insert',
 
-  // MISSING CODES(this codes are forbidden).
+  // MISSING CODES(these codes are forbidden).
   // - Return(Enter)
   // - Escape(Esc)
   ArrowUp: 'Up',
