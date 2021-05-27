@@ -189,7 +189,7 @@ export const useKeyPress = (
 const KeyBindWrapper = styled.div`
   width: 510px;
   height: 50px;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--primary-dark);
   background: var(--background);
   display: flex;
   justify-content: center;
@@ -197,10 +197,17 @@ const KeyBindWrapper = styled.div`
   gap: 7px;
   color: var(--accent);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 24px;
+  cursor: pointer;
+
+  &:hover:not(:focus-within) {
+    background: var(--primary-darker);
+    border-color: var(--accent);
+  }
 
   &:focus-within {
     border-color: var(--accent);
+    background: #367c7f;
   }
 `;
 
@@ -218,10 +225,12 @@ const VisuallyHiddenInput = styled.input`
   appearance: none;
 `;
 
-const KeyCode = styled.kbd`
+export const KeyCode = styled.kbd`
   border: 1px solid var(--accent);
-  padding: 4px 10px;
+  padding: 0 8px;
   font-family: 'Rajdhani';
+  min-width: 32px;
+  box-sizing: border-box;
 `;
 
 function toKeyCodes(accelerator: Accelerator) {
