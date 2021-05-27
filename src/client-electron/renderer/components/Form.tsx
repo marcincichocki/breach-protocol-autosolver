@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   createContext,
+  forwardRef,
   PropsWithChildren,
   useContext,
   useState,
@@ -27,6 +28,10 @@ const StyledField = styled(Row)`
   gap: 1rem;
   align-items: center;
 
+  > div {
+    flex-shrink: 0;
+  }
+
   &:hover > ${StyledLabel} {
     color: var(--accent);
     background: linear-gradient(
@@ -38,7 +43,21 @@ const StyledField = styled(Row)`
   }
 `;
 
-export const FormContext = createContext(undefined);
+interface FormContext {
+  values: Record<string, string | number | boolean>;
+  setValues: (values: Record<string, string | number | boolean>) => void;
+  onValuesChange?: (
+    values: Record<string, string | number | boolean>,
+    name: string
+  ) => void;
+  onHover?: (name: string) => void;
+}
+
+const FormContext = createContext<FormContext>(undefined);
+
+export function useForm() {
+  return useContext(FormContext);
+}
 
 interface FormProps {
   initialValues: Record<string, string | number | boolean>;
@@ -89,57 +108,57 @@ export function useField<T>() {
 interface FieldProps {
   name: string;
   onValueChange?: (currentValue: any) => void;
+  render?: (props: { values: any }) => JSX.Element;
 }
 
-export const Field = ({
-  name,
-  children,
-  onValueChange,
-}: PropsWithChildren<FieldProps>) => {
-  const { values, setValues, onHover, onValuesChange } =
-    useContext(FormContext);
-  const value = values[name];
+export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
+  ({ name, children, onValueChange, render }, ref) => {
+    const { values, setValues, onHover, onValuesChange } =
+      useContext(FormContext);
+    const value = values[name];
 
-  function setValue(
-    value: string | number | boolean,
-    options = { emit: true }
-  ) {
-    const newValues = { ...values, [name]: value };
-    setValues(newValues);
+    function setValue(
+      value: string | number | boolean,
+      options = { emit: true }
+    ) {
+      const newValues = { ...values, [name]: value };
+      setValues(newValues);
 
-    if (options.emit) {
-      if (onValueChange) onValueChange(value);
-      if (onValuesChange) onValuesChange(newValues, name);
+      if (options.emit) {
+        if (onValueChange) onValueChange(value);
+        if (onValuesChange) onValuesChange(newValues, name);
+      }
     }
-  }
 
-  function onChange(event: ChangeEvent<any>) {
-    const { value, checked, type } = event.target;
+    function onChange(event: ChangeEvent<any>) {
+      const { value, checked, type } = event.target;
 
-    setValue(type === 'checkbox' ? checked : value);
-  }
+      setValue(type === 'checkbox' ? checked : value);
+    }
 
-  return (
-    <StyledField
-      onMouseEnter={onHover ? () => onHover(name) : undefined}
-      onMouseLeave={onHover ? () => onHover(null) : undefined}
-    >
-      <FieldContext.Provider
-        value={{
-          name,
-          value,
-          setValue,
-          onChange,
-        }}
+    return (
+      <StyledField
+        ref={ref}
+        onMouseEnter={onHover ? () => onHover(name) : undefined}
+        onMouseLeave={onHover ? () => onHover(null) : undefined}
       >
-        {children}
-      </FieldContext.Provider>
-    </StyledField>
-  );
-};
+        <FieldContext.Provider
+          value={{
+            name,
+            value,
+            setValue,
+            onChange,
+          }}
+        >
+          {render ? render({ values }) : children}
+        </FieldContext.Provider>
+      </StyledField>
+    );
+  }
+);
 
 export const Label = ({ children }: PropsWithChildren<{}>) => {
-  const { name } = useContext(FieldContext);
+  const { name } = useField();
 
   return <StyledLabel htmlFor={name}>{children}</StyledLabel>;
 };
