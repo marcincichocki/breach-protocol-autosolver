@@ -19,7 +19,7 @@ export const App = () => {
 
   // Change route when new history entry has been added.
   // TODO: investigate re-renders
-  useIpcEvent('ADD_HISTORY_ENTRY', () => history.replace('/history'));
+  useIpcEvent(['ADD_HISTORY_ENTRY'], () => history.replace('/history'));
 
   return (
     <StateContext.Provider value={state}>

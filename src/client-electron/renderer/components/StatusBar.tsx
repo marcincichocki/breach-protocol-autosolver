@@ -65,7 +65,11 @@ function useSettingsChangeListener(delay = 2000) {
   const [show, setShow] = useState(false);
   let id: any = null;
 
-  useIpcEvent('SET_SETTINGS', () => {
+  useIpcEvent(['SET_SETTINGS', 'UPDATE_SETTINGS'], (e, { meta }: any) => {
+    if (meta?.notify === false) {
+      return;
+    }
+
     if (id) {
       clearTimeout(id);
     }

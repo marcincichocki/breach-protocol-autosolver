@@ -96,8 +96,10 @@ export class Store {
     this.state = reducer(action, this.state);
 
     dest.send('state', this.state);
-    event.sender.send(action.type, action.payload);
-    dest.send(action.type, action.payload);
+    event.sender.send('state', this.state);
+
+    event.sender.send(action.type, action);
+    dest.send(action.type, action);
   }
 
   private onGetState(event: IpcMainEvent) {

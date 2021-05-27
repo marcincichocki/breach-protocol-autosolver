@@ -3,7 +3,7 @@ import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
-import { State } from '../common';
+import { Action, State } from '../common';
 import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */
@@ -39,14 +39,18 @@ export function transformTimestamp(timestamp: number) {
 }
 
 export function useIpcEvent<T>(
-  channel: string,
+  channels: string[],
   callback: (event: IpcRendererEvent, value: T) => void
 ) {
   useEffect(() => {
-    ipc.on(channel, callback);
+    channels.forEach((c) => {
+      ipc.on(c, callback);
+    });
 
     return () => {
-      ipc.removeListener(channel, callback);
+      channels.forEach((c) => {
+        ipc.removeListener(c, callback);
+      });
     };
   }, []);
 }
@@ -58,11 +62,15 @@ export function useIpcState() {
     setState(newState);
   }
 
-  useIpcEvent('state', handleEvent);
+  useIpcEvent(['state'], handleEvent);
 
   return state;
 }
 
 export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
+}
+
+export function dispatch(action: Omit<Action, 'origin'>) {
+  return ipc.send('state', { ...action, origin: 'renderer' });
 }

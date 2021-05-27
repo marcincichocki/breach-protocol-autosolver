@@ -76,6 +76,7 @@ export interface Action<T = any> {
   type: string;
   payload?: T;
   origin: Origin;
+  meta?: Record<string, any>;
 }
 
 export interface Request<T = any> {

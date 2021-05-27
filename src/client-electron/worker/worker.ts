@@ -42,6 +42,7 @@ export class BreachProtocolWorker {
     this.dispatch({
       type: 'UPDATE_SETTINGS',
       payload: { activeDisplayId: displays[0].id },
+      meta: { notify: false },
     });
   }
 
@@ -88,8 +89,8 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Ready);
   }
 
-  private onSetSettings(e: IpcRendererEvent, settings: AppSettings) {
-    this.settings = settings;
+  private onSetSettings(e: IpcRendererEvent, { payload }: Action<AppSettings>) {
+    this.settings = payload;
   }
 
   private async handleAsyncRequest(req: Request) {

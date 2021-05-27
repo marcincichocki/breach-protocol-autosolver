@@ -1,4 +1,4 @@
-import { Action, AppSettings } from '@/client-electron/common';
+import { AppSettings } from '@/client-electron/common';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
   FC,
@@ -11,7 +11,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { getDisplayName } from '../common';
+import { dispatch, getDisplayName } from '../common';
 import {
   Col,
   Field,
@@ -24,12 +24,8 @@ import {
   ThresholdSlider,
   useForm,
 } from '../components';
-import { KeyBind, KeyCode } from '../components/KeyBind';
+import { KeyBind } from '../components/KeyBind';
 import { StateContext } from '../state';
-
-function dispatch(action: Omit<Action, 'origin'>) {
-  return ipc.send('state', { ...action, origin: 'renderer' });
-}
 
 const Header = styled.h1`
   background: rgba(22, 18, 32, 0.5);

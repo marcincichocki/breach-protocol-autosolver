@@ -2,8 +2,8 @@ import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { rendererAsyncRequestDispatcher as dispatch } from '../../common';
-import { fromCamelCase } from '../common';
+import { rendererAsyncRequestDispatcher as asyncRequest } from '../../common';
+import { fromCamelCase, dispatch } from '../common';
 import {
   Col,
   Field,
@@ -18,6 +18,11 @@ import {
   Switch,
   useField,
 } from '../components';
+
+interface CalibrateFormValues {
+  showBoxes: boolean;
+  testThreshold: number;
+}
 
 interface CalibrateFragmentProps {
   entry: HistoryEntry;
@@ -36,6 +41,10 @@ const ThresholdUpdater = ({
 
   return null;
 };
+
+function capitalize(s: string) {
+  return s[0].toUpperCase() + s.slice(1);
+}
 
 export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
@@ -60,7 +69,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   async function onTestThreshold(threshold: number) {
     setLoading(true);
 
-    const result = await dispatch<
+    const result = await asyncRequest<
       BreachProtocolFragmentResults[number],
       TestThresholdData
     >({
@@ -70,6 +79,16 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
 
     setTestResult(result);
     setLoading(false);
+  }
+
+  function handleSubmit(values: CalibrateFormValues) {
+    const key = `threshold${capitalize(fragmentId)}`;
+    const payload = {
+      [key]: values.testThreshold,
+      [`${key}Auto`]: false,
+    };
+
+    dispatch({ type: 'UPDATE_SETTINGS', payload });
   }
 
   return (
@@ -82,7 +101,10 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
     >
       <Col style={{ gap: '1rem', flexGrow: 1 }}>
         <RawDataPreview rawData={testResult.rawData} />
-        <Form initialValues={{ showBoxes, testThreshold }}>
+        <Form<CalibrateFormValues>
+          initialValues={{ showBoxes, testThreshold }}
+          onSubmit={handleSubmit}
+        >
           <Field name="showBoxes" onValueChange={setShowBoxes}>
             <Label>Show boxes</Label>
             <Switch disabled={isBufferSize} />
@@ -96,14 +118,15 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
             />
             <ThresholdUpdater threshold={testThreshold} />
           </Field>
+          <FlatButton
+            type="submit"
+            disabled={testResult.isValid}
+            color="accent"
+            style={{ alignSelf: 'flex-end' }}
+          >
+            Update {fromCamelCase(fragmentId)} threshold
+          </FlatButton>
         </Form>
-        <FlatButton
-          disabled={!testResult.isValid}
-          color="accent"
-          style={{ alignSelf: 'flex-end' }}
-        >
-          Update {fromCamelCase(fragmentId)} threshold
-        </FlatButton>
       </Col>
       <Col
         style={{
