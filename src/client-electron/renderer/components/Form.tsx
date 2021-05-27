@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   createContext,
+  FormEvent,
   forwardRef,
   PropsWithChildren,
   useContext,
@@ -43,13 +44,12 @@ const StyledField = styled(Row)`
   }
 `;
 
+type FormValues = Record<string, string | number | boolean>;
+
 interface FormContext {
-  values: Record<string, string | number | boolean>;
-  setValues: (values: Record<string, string | number | boolean>) => void;
-  onValuesChange?: (
-    values: Record<string, string | number | boolean>,
-    name: string
-  ) => void;
+  values: FormValues;
+  setValues: (values: FormValues) => void;
+  onValuesChange?: (values: FormValues, name: string) => void;
   onHover?: (name: string) => void;
 }
 
@@ -60,12 +60,10 @@ export function useForm() {
 }
 
 interface FormProps {
-  initialValues: Record<string, string | number | boolean>;
-  onValuesChange?: (
-    values: Record<string, string | number | boolean>,
-    name: string
-  ) => void;
+  initialValues: FormValues;
+  onValuesChange?: (values: FormValues, name: string) => void;
   onHover?: (name: string) => void;
+  onSubmit?: (values: FormValues) => void;
 }
 
 export const Form = ({
@@ -73,11 +71,18 @@ export const Form = ({
   children,
   onHover,
   onValuesChange,
+  onSubmit,
 }: PropsWithChildren<FormProps>) => {
   const [values, setValues] = useState(initialValues);
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    onSubmit(values);
+  }
+
   return (
-    <StyledForm>
+    <StyledForm onSubmit={onSubmit ? handleSubmit : undefined}>
       <FormContext.Provider
         value={{
           values,
