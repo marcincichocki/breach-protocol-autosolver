@@ -52,7 +52,10 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
 
   useEffect(() => {
     setTestResult(result);
-    setTestThreshold(result.threshold);
+
+    if (result.threshold != null) {
+      setTestThreshold(result.threshold);
+    }
   }, [fragmentId]);
 
   async function onTestThreshold(threshold: number) {
