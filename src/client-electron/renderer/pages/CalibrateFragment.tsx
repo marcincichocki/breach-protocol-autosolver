@@ -43,19 +43,18 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const result = entry.fragments.find((f) => f.id === fragmentId);
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
+  const isBufferSize = fragmentId === 'bufferSize';
   const disableRangeSlider =
-    entry.settings.experimentalBufferSizeRecognition &&
-    fragmentId === 'bufferSize';
+    entry.settings.experimentalBufferSizeRecognition && isBufferSize;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
-  const [testThreshold, setTestThreshold] = useState<number>(result.threshold);
+  const [testThreshold, setTestThreshold] = useState<number>(
+    result.threshold ?? 0
+  );
 
   useEffect(() => {
     setTestResult(result);
-
-    if (result.threshold != null) {
-      setTestThreshold(result.threshold);
-    }
+    setTestThreshold(result.threshold ?? 0);
   }, [fragmentId]);
 
   async function onTestThreshold(threshold: number) {
@@ -86,7 +85,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
         <Form initialValues={{ showBoxes, testThreshold }}>
           <Field name="showBoxes" onValueChange={setShowBoxes}>
             <Label>Show boxes</Label>
-            <Switch />
+            <Switch disabled={isBufferSize} />
           </Field>
           <Field name="testThreshold" onValueChange={onTestThreshold}>
             <Label>Test threshold</Label>
