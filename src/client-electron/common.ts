@@ -34,7 +34,9 @@ export interface HistoryEntry {
   finishedAt: number;
   status: BreachProtocolStatus;
   fileName: string;
-  options: Options;
+  // TODO: remove options?
+  options?: Options;
+  settings: AppSettings;
   fragments: BreachProtocolFragmentResults;
   sequences: SequenceJSON[];
   result: BreachProtocolResultJSON;
@@ -45,15 +47,18 @@ export interface AppSettings {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
-  disableSound: boolean;
-  soundPath: string;
-  skipUpdateCheck: boolean;
+  soundEnabled: boolean;
+  errorSoundPath: string;
+  checkForUpdates: boolean;
   autoUpdate: boolean;
   thresholdGrid: number;
+  thresholdGridAuto: boolean;
   thresholdDaemons: number;
+  thresholdDaemonsAuto: boolean;
   thresholdBufferSize: number;
+  thresholdBufferSizeAuto: boolean;
   delay: number;
-  disableAutoExit: boolean;
+  autoExit: boolean;
   useScaling: boolean;
   experimentalBufferSizeRecognition: boolean;
   format: 'png' | 'jpg';
