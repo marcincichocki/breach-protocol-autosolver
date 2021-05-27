@@ -1,6 +1,12 @@
 import { ChangeEvent, useState } from 'react';
+import styled from 'styled-components';
 import { FlatButton } from './Buttons';
 import { useField } from './Form';
+
+const Path = styled.output`
+  font-size: 1.2rem;
+  font-weight: 500;
+`;
 
 export const File = () => {
   const { setValue, value, name } = useField<string>();
@@ -19,7 +25,7 @@ export const File = () => {
 
   return (
     <>
-      <span>{displayName}</span>
+      <Path>{displayName}</Path>
       <FlatButton as="label" htmlFor={name} color="accent">
         Change sound path
       </FlatButton>
