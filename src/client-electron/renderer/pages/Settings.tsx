@@ -11,6 +11,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
+import { getDisplayName } from '../common';
 import {
   Col,
   Field,
@@ -197,7 +198,10 @@ const RecognitionSettings = ({
 }: {
   displays: ScreenshotDisplayOutput[];
 }) => {
-  const displayOptions = displays.map(({ id, name }) => ({ name, value: id }));
+  const displayOptions = displays.map((d) => ({
+    name: getDisplayName(d),
+    value: d.id,
+  }));
   const ref = useDisplayOptionScrollTo();
   const { values } = useForm();
 

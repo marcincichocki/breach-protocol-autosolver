@@ -1,9 +1,8 @@
-import { BreachProtocolStatus, WorkerStatus } from '@/client-electron/common';
+import { WorkerStatus } from '@/client-electron/common';
 import { FC, useContext, useState } from 'react';
-import { MdClose, MdDone } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useIpcEvent } from '../common';
+import { getDisplayName, useIpcEvent } from '../common';
 import { StateContext } from '../state';
 
 const Spacer = styled.div`
@@ -82,8 +81,11 @@ function useSettingsChangeListener(delay = 2000) {
 }
 
 export const StatusBar: FC = () => {
-  const state = useContext(StateContext);
-  const { status } = state.history[0];
+  const {
+    displays,
+    status,
+    settings: { activeDisplayId },
+  } = useContext(StateContext);
   const show = useSettingsChangeListener();
   const history = useHistory();
 
@@ -91,15 +93,15 @@ export const StatusBar: FC = () => {
     history.push('/settings?goToDisplay=true');
   }
 
+  const activeDisplay = displays.find((d) => d.id === activeDisplayId);
+
   return (
     <StatusBarWrapper>
-      <StatusBarItem>
-        {status === BreachProtocolStatus.Resolved ? <MdDone /> : <MdClose />}
-      </StatusBarItem>
+      <StatusBarItem>{process.env.npm_package_version}</StatusBarItem>
       <InteractiveStatusBarItem onClick={goToDisplaySetting}>
-        {state.activeDisplay?.id}
+        {activeDisplayId ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
-      <StatusBarItem>{getWorkerStatusMessage(state?.status)}</StatusBarItem>
+      <StatusBarItem>{getWorkerStatusMessage(status)}</StatusBarItem>
       <Spacer />
       <StatusBarItem className={show ? 'enter' : 'leave'}>Saved</StatusBarItem>
     </StatusBarWrapper>
