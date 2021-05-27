@@ -44,35 +44,33 @@ const StyledField = styled(Row)`
   }
 `;
 
-type FormValues = Record<string, string | number | boolean>;
-
-interface FormContext {
-  values: FormValues;
-  setValues: (values: FormValues) => void;
-  onValuesChange?: (values: FormValues, name: string) => void;
+interface FormContext<T> {
+  values: T;
+  setValues: (values: T) => void;
+  onValuesChange?: (values: T, name: string) => void;
   onHover?: (name: string) => void;
 }
 
-const FormContext = createContext<FormContext>(undefined);
+const FormContext = createContext<FormContext<any>>(undefined);
 
-export function useForm() {
-  return useContext(FormContext);
+export function useForm<T>() {
+  return useContext<FormContext<T>>(FormContext);
 }
 
-interface FormProps {
-  initialValues: FormValues;
-  onValuesChange?: (values: FormValues, name: string) => void;
+interface FormProps<T> {
+  initialValues: T;
+  onValuesChange?: (values: T, name: string) => void;
   onHover?: (name: string) => void;
-  onSubmit?: (values: FormValues) => void;
+  onSubmit?: (values: T) => void;
 }
 
-export const Form = ({
+export const Form = <T,>({
   initialValues,
   children,
   onHover,
   onValuesChange,
   onSubmit,
-}: PropsWithChildren<FormProps>) => {
+}: PropsWithChildren<FormProps<T>>) => {
   const [values, setValues] = useState(initialValues);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {

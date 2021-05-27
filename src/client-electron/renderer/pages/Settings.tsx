@@ -1,4 +1,4 @@
-import { Action } from '@/client-electron/common';
+import { Action, AppSettings } from '@/client-electron/common';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
   FC,
@@ -157,9 +157,9 @@ function useDisplayOptionScrollTo<T extends HTMLDivElement>() {
 }
 
 interface ThresholdFieldProps {
-  name: string;
+  name: keyof AppSettings;
   label: string;
-  switchName: string;
+  switchName: keyof AppSettings;
   switchLabel: string;
   disabled?: boolean;
 }
@@ -175,7 +175,7 @@ const ThresholdField = ({
     return null;
   }
 
-  const { values } = useForm();
+  const { values } = useForm<AppSettings>();
 
   return (
     <>
@@ -203,7 +203,7 @@ const RecognitionSettings = ({
     value: d.id,
   }));
   const ref = useDisplayOptionScrollTo();
-  const { values } = useForm();
+  const { values } = useForm<AppSettings>();
 
   return (
     <>
@@ -236,7 +236,7 @@ const RecognitionSettings = ({
           switchName="thresholdBufferSizeAuto"
           label="Buffer size threshold"
           switchLabel="Automatic buffer size threshold"
-          disabled={values['experimentalBufferSizeRecognition'] as boolean}
+          disabled={values.experimentalBufferSizeRecognition}
         />
       </Section>
     </>
@@ -247,7 +247,7 @@ export const Settings: FC = () => {
   const { settings, displays } = useContext(StateContext);
   const [activeField, setActiveField] = useState<string>();
 
-  function onValuesChange(payload: Record<string, any>) {
+  function onValuesChange(payload: AppSettings) {
     dispatch({ type: 'SET_SETTINGS', payload });
   }
 
@@ -267,8 +267,8 @@ export const Settings: FC = () => {
           padding: '0 1rem',
         }}
       >
-        <Form
-          initialValues={settings as any}
+        <Form<AppSettings>
+          initialValues={settings}
           onHover={setActiveField}
           onValuesChange={onValuesChange}
         >
