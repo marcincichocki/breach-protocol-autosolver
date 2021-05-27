@@ -44,7 +44,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
   const disableRangeSlider =
-    entry.options.experimentalBufferSizeRecognition &&
+    entry.settings.experimentalBufferSizeRecognition &&
     fragmentId === 'bufferSize';
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);

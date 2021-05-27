@@ -12,11 +12,6 @@ import {
 
 function reducer<T>({ type, payload }: Action<T>, state: State) {
   switch (type) {
-    case 'SET_ACTIVE_DISPLAY':
-      return {
-        ...state,
-        activeDisplay: payload,
-      };
     case 'SET_DISPLAYS':
       return {
         ...state,
@@ -33,6 +28,14 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
       return {
         ...state,
         settings: payload,
+      };
+    case 'UPDATE_SETTINGS':
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          ...payload,
+        },
       };
   }
 }
@@ -77,7 +80,6 @@ export class Store {
     return {
       history: this.history.get('data'),
       displays: [],
-      activeDisplay: null,
       settings: this.settings.store,
       status: null,
     };

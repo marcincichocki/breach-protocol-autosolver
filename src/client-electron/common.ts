@@ -34,8 +34,6 @@ export interface HistoryEntry {
   finishedAt: number;
   status: BreachProtocolStatus;
   fileName: string;
-  // TODO: remove options?
-  options?: Options;
   settings: AppSettings;
   fragments: BreachProtocolFragmentResults;
   sequences: SequenceJSON[];
@@ -68,7 +66,6 @@ export interface AppSettings {
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
-  activeDisplay: ScreenshotDisplayOutput;
   settings: AppSettings;
   status: WorkerStatus;
 }

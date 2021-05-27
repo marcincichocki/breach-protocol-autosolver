@@ -6,19 +6,20 @@ import {
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
+  FragmentId,
   makeSequences,
   resolveExitStrategy,
   Sequence,
   SharpImageContainer,
   transformRawData,
 } from '@/core';
-import { options } from '@/platform-node/cli';
 import { captureScreen, resolveBreachProtocol } from '@/platform-node/robot';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { play } from 'sound-play';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  AppSettings,
   BreachProtocolSolveProgress,
   BreachProtocolStatus,
   HistoryEntry,
@@ -49,10 +50,12 @@ export class BreachProtocolAutosolver {
 
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
-  constructor(private readonly screenId: string) {}
+  constructor(private readonly settings: AppSettings) {}
 
   async solve() {
-    this.fileName = (await captureScreen(this.screenId)) as string;
+    this.fileName = (await captureScreen(
+      this.settings.activeDisplayId
+    )) as string;
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.isValid) {
@@ -97,7 +100,7 @@ export class BreachProtocolAutosolver {
       finishedAt: this.finishedAt,
       fileName: this.fileName,
       fragments: this.recognitionResult.results,
-      options,
+      settings: this.settings,
     };
   }
 
@@ -138,8 +141,8 @@ export class BreachProtocolAutosolver {
   }
 
   private notifyUser() {
-    if (!options.disableSound) {
-      play(options.soundPath);
+    if (this.settings.soundEnabled) {
+      play(this.settings.errorSoundPath);
     }
   }
 
@@ -148,18 +151,31 @@ export class BreachProtocolAutosolver {
     this.fileName = null;
   }
 
+  private getFixedThresholds(): Record<FragmentId, number> {
+    const {
+      thresholdGrid,
+      thresholdGridAuto,
+      thresholdDaemons,
+      thresholdDaemonsAuto,
+      thresholdBufferSize,
+      thresholdBufferSizeAuto,
+    } = this.settings;
+
+    return {
+      grid: thresholdGridAuto ? undefined : thresholdGrid,
+      daemons: thresholdDaemonsAuto ? undefined : thresholdDaemons,
+      bufferSize: thresholdBufferSizeAuto ? undefined : thresholdBufferSize,
+    };
+  }
+
   async recognize() {
     const image = sharp(this.fileName);
     const container = await SharpImageContainer.create(image);
 
     return breachProtocolOCR(
       container,
-      {
-        bufferSize: options.thresholdBufferSize,
-        daemons: options.thresholdDaemons,
-        grid: options.thresholdGrid,
-      },
-      options.experimentalBufferSizeRecognition
+      this.getFixedThresholds(),
+      this.settings.experimentalBufferSizeRecognition
     );
   }
 }
