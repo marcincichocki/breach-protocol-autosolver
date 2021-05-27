@@ -29,6 +29,11 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
         ...state,
         history: [payload, ...state.history].slice(0, options.debugLimit),
       };
+    case 'SET_SETTINGS':
+      return {
+        ...state,
+        settings: payload,
+      };
   }
 }
 
@@ -39,18 +44,21 @@ export class Store {
       activeDisplayId: undefined,
       autoUpdate: true,
       delay: 75,
-      disableAutoExit: false,
-      disableSound: false,
-      experimentalBufferSizeRecognition: false,
+      autoExit: true,
+      soundEnabled: true,
+      experimentalBufferSizeRecognition: true,
       format: 'png',
       historySize: 10,
       keyBind: 'CommandOrControl+num0',
       preserveSourceOnSuccess: false,
-      skipUpdateCheck: false,
-      soundPath: 'C:/Windows/Media/Windows Foreground.wav',
+      checkForUpdates: true,
+      errorSoundPath: 'C:/Windows/Media/Windows Foreground.wav',
       thresholdBufferSize: undefined,
+      thresholdBufferSizeAuto: true,
       thresholdDaemons: undefined,
+      thresholdDaemonsAuto: true,
       thresholdGrid: undefined,
+      thresholdGridAuto: true,
       useScaling: false,
     },
   });
@@ -86,6 +94,7 @@ export class Store {
     this.state = reducer(action, this.state);
 
     dest.send('state', this.state);
+    event.sender.send(action.type, action.payload);
     dest.send(action.type, action.payload);
   }
 
@@ -119,6 +128,7 @@ export class Store {
 
   dispose() {
     this.history.set('data', this.state.history);
+    this.settings.set(this.state.settings);
 
     ipc.removeAllListeners('state');
     ipc.removeAllListeners('async-request');
