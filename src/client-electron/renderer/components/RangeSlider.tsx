@@ -82,3 +82,7 @@ export function RangeSlider(props: RangeSliderProps) {
     </RangeWrapper>
   );
 }
+
+export const ThresholdSlider = (props: RangeSliderProps) => (
+  <RangeSlider {...props} min={0} max={255} />
+);
