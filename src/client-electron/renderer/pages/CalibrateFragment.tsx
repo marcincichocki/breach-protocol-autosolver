@@ -6,15 +6,18 @@ import { rendererAsyncRequestDispatcher as dispatch } from '../../common';
 import { fromCamelCase } from '../common';
 import {
   Col,
+  Field,
   FlatButton,
+  Form,
   FragmentPreview,
+  Label,
   RangeSlider,
   RawDataPreview,
   Row,
   Spinner,
   Switch,
+  useField,
 } from '../components';
-import { Field, Form, Label, useField } from '../components/Form';
 
 interface CalibrateFragmentProps {
   entry: HistoryEntry;
