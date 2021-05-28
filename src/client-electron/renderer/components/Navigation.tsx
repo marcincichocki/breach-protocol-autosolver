@@ -1,7 +1,6 @@
-import styled from 'styled-components';
+import { memo } from 'react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { useContext } from 'react';
-import { StateContext } from '../state';
+import styled from 'styled-components';
 
 const Nav = styled.nav`
   display: flex;
@@ -32,20 +31,15 @@ export const NavLink = styled(RouterNavLink)`
   }
 `;
 
-export const Navigation = () => {
-  const state = useContext(StateContext);
-  const { uuid } = state.history[0];
-
-  return (
-    <Nav>
-      <List>
-        <ListItem>
-          <NavLink to="/history">History</NavLink>
-        </ListItem>
-        <ListItem>
-          <NavLink to="/settings">Settings</NavLink>
-        </ListItem>
-      </List>
-    </Nav>
-  );
-};
+export const Navigation = memo(() => (
+  <Nav>
+    <List>
+      <ListItem>
+        <NavLink to="/history">History</NavLink>
+      </ListItem>
+      <ListItem>
+        <NavLink to="/settings">Settings</NavLink>
+      </ListItem>
+    </List>
+  </Nav>
+));
