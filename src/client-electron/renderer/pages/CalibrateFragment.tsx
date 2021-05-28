@@ -120,7 +120,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           </Field>
           <FlatButton
             type="submit"
-            disabled={testResult.isValid}
+            disabled={!testResult.isValid}
             color="accent"
             style={{ alignSelf: 'flex-end' }}
           >
