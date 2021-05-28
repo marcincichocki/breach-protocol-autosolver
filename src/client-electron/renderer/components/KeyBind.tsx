@@ -241,10 +241,9 @@ function toKeyCodes(accelerator: Accelerator) {
     .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
 }
 
-// TODO: refactor this to field context
 export const KeyBind = () => {
   const { value, setValue } = useField();
-
+  const [visited, setVisited] = useState(false);
   const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
@@ -260,14 +259,10 @@ export const KeyBind = () => {
       keys
     );
 
-  // TODO: return latest value on blur
   function onBlur() {
-    // setPressed(keys);
     setDirty(false);
     setVisited(false);
   }
-
-  const [visited, setVisited] = useState(false);
 
   function onFocus() {
     setVisited(true);
