@@ -48,7 +48,7 @@ interface FormContext<T> {
   values: T;
   setValues: (values: T) => void;
   onValuesChange?: (values: T, name: string) => void;
-  onHover?: (name: string) => void;
+  onHover?: (name: keyof T) => void;
 }
 
 const FormContext = createContext<FormContext<any>>(undefined);
@@ -60,7 +60,7 @@ export function useForm<T>() {
 interface FormProps<T> {
   initialValues: T;
   onValuesChange?: (values: T, name: string) => void;
-  onHover?: (name: string) => void;
+  onHover?: (name: keyof T) => void;
   onSubmit?: (values: T) => void;
 }
 

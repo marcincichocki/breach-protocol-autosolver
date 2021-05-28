@@ -9,6 +9,7 @@ import {
   Response,
   State,
 } from '../common';
+import { defaultOptions } from '../options';
 
 function reducer<T>({ type, payload }: Action<T>, state: State) {
   switch (type) {
@@ -43,27 +44,7 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
 export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
-    defaults: {
-      activeDisplayId: undefined,
-      autoUpdate: true,
-      delay: 75,
-      autoExit: true,
-      soundEnabled: true,
-      experimentalBufferSizeRecognition: true,
-      format: 'png',
-      historySize: 10,
-      keyBind: 'CommandOrControl+num0',
-      preserveSourceOnSuccess: false,
-      checkForUpdates: true,
-      errorSoundPath: 'C:/Windows/Media/Windows Foreground.wav',
-      thresholdBufferSize: undefined,
-      thresholdBufferSizeAuto: true,
-      thresholdDaemons: undefined,
-      thresholdDaemonsAuto: true,
-      thresholdGrid: undefined,
-      thresholdGridAuto: true,
-      useScaling: false,
-    },
+    defaults: defaultOptions,
   });
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',

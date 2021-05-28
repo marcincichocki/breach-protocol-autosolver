@@ -1,4 +1,5 @@
 import { AppSettings } from '@/client-electron/common';
+import { optionsDescription } from '@/client-electron/options';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
   FC,
@@ -62,14 +63,12 @@ const Description = styled.p`
   text-align: center;
 `;
 
-const descriptions: Record<string, any> = {};
-
-const FieldDescription = ({ name }: any) => {
-  if (!descriptions[name]) {
+const FieldDescription = ({ name }: { name: keyof AppSettings }) => {
+  if (!optionsDescription[name]) {
     return <Description></Description>;
   }
 
-  return <Description>{descriptions[name]}</Description>;
+  return <Description>{optionsDescription[name]}</Description>;
 };
 
 const GeneralSettings = () => {
@@ -241,7 +240,7 @@ const RecognitionSettings = ({
 
 export const Settings: FC = () => {
   const { settings, displays } = useContext(StateContext);
-  const [activeField, setActiveField] = useState<string>();
+  const [activeField, setActiveField] = useState<keyof AppSettings>();
 
   function onValuesChange(payload: AppSettings) {
     dispatch({ type: 'SET_SETTINGS', payload });
