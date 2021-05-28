@@ -109,8 +109,10 @@ export class Store {
   }
 
   dispose() {
-    this.history.set('data', this.state.history);
-    this.settings.set(this.state.settings);
+    if (process.env.NODE_ENV === 'production') {
+      this.history.set('data', this.state.history);
+      this.settings.set(this.state.settings);
+    }
 
     ipc.removeAllListeners('state');
     ipc.removeAllListeners('async-request');
