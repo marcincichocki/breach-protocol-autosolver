@@ -92,18 +92,17 @@ export const StatusBar: FC = () => {
   } = useContext(StateContext);
   const show = useSettingsChangeListener();
   const history = useHistory();
+  const activeDisplay = displays.find((d) => d.id === activeDisplayId);
 
   function goToDisplaySetting() {
     history.push('/settings?goToDisplay=true');
   }
 
-  const activeDisplay = displays.find((d) => d.id === activeDisplayId);
-
   return (
     <StatusBarWrapper>
       <StatusBarItem>{process.env.npm_package_version}</StatusBarItem>
       <InteractiveStatusBarItem onClick={goToDisplaySetting}>
-        {activeDisplayId ? getDisplayName(activeDisplay) : 'Loading...'}
+        {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
       <StatusBarItem>{getWorkerStatusMessage(status)}</StatusBarItem>
       <Spacer />
