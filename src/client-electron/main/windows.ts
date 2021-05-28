@@ -18,9 +18,11 @@ const workerOptions = {
   },
 };
 
-const rendererOptions = {
+const rendererOptions: BrowserWindowConstructorOptions = {
   minWidth: 1280,
   minHeight: 720,
+  frame: true,
+  autoHideMenuBar: true,
   webPreferences: {
     nodeIntegration: true,
     contextIsolation: false,
