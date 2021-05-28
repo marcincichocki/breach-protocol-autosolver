@@ -64,18 +64,16 @@ const IconButton = styled.button<{ close?: boolean }>`
   }
 `;
 
-export const TitleBar = memo(() => {
-  return (
-    <StyledTitleBar>
-      <IconButton onClick={() => ipc.send('app-minimize')}>
-        <MinimizeIcon />
-      </IconButton>
-      <IconButton onClick={() => ipc.send('app-restore')}>
-        <DownIcon />
-      </IconButton>
-      <IconButton close onClick={() => ipc.send('app-close')}>
-        <CloseIcon />
-      </IconButton>
-    </StyledTitleBar>
-  );
-});
+export const TitleBar = memo(() => (
+  <StyledTitleBar>
+    <IconButton onClick={() => ipc.send('app-minimize')}>
+      <MinimizeIcon />
+    </IconButton>
+    <IconButton onClick={() => ipc.send('app-maximize')}>
+      <DownIcon />
+    </IconButton>
+    <IconButton close onClick={() => ipc.send('app-close')}>
+      <CloseIcon />
+    </IconButton>
+  </StyledTitleBar>
+));
