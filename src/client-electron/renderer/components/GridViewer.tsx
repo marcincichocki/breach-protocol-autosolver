@@ -23,13 +23,12 @@ const GridWrapper = styled.div<{ size: number }>`
 `;
 
 const Square = styled.div<{ active: boolean; highlight: boolean }>`
-  ${({ highlight }) =>
-    highlight
-      ? `
-    --border: 4px;
-    --size: 7px;
-  `
-      : ''}
+  ${(p) =>
+    p.highlight &&
+    css`
+      --border: 4px;
+      --size: 7px;
+    `}
 
   box-sizing: border-box;
   display: flex;

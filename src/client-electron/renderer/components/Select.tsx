@@ -1,12 +1,12 @@
-import { useContext, useState } from 'react';
-import styled, { css } from 'styled-components';
+import { useState } from 'react';
+import styled from 'styled-components';
 import {
   ArrowLeft,
   ArrowLeftOutline,
   ArrowRight,
   ArrowRightOutline,
 } from './Arrows';
-import { FieldContext } from './Form';
+import { useField } from './Form';
 
 const SelectWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -109,7 +109,7 @@ interface SelectProps {
 }
 
 export const Select = ({ options, disabled }: SelectProps) => {
-  const { value, setValue, onChange } = useContext(FieldContext);
+  const { value, setValue, onChange } = useField<string>();
 
   // NOTE: this might cause error.
   const [index, setIndex] = useState<number>(

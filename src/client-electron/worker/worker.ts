@@ -7,11 +7,13 @@ import {
   SharpImageContainer,
 } from '@/core';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
+import { listDisplays } from 'screenshot-desktop';
 import sharp from 'sharp';
 import {
   Action,
+  AppSettings,
   Request,
+  State,
   TestThresholdData,
   workerAsyncRequestListener,
   WorkerStatus,
@@ -19,8 +21,6 @@ import {
 import { BreachProtocolAutosolver } from './autosolver';
 
 export class BreachProtocolWorker {
-  private activeDisplayId: string = null;
-
   private disposeAsyncRequestListener: () => void = null;
 
   private fragments: {
@@ -29,36 +29,52 @@ export class BreachProtocolWorker {
     bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
   } = null;
 
-  async bootstrap() {
-    this.registerListeners();
+  private settings: AppSettings = ipc.sendSync('get-state').settings;
 
+  private async loadAndSetActiveDisplay() {
+    const displays = await listDisplays();
+
+    this.dispatch({ type: 'SET_DISPLAYS', payload: displays });
+
+    const { activeDisplayId } = this.settings;
+
+    if (displays.find((d) => d.id === activeDisplayId)) return;
+
+    this.dispatch({
+      type: 'UPDATE_SETTINGS',
+      payload: { activeDisplayId: displays[0].id },
+      meta: { notify: false },
+    });
+  }
+
+  async bootstrap() {
     this.updateStatus(WorkerStatus.Bootstrap);
+
+    this.registerListeners();
 
     // TODO: change lang, or remove it completly.
     setLang('en');
-    const displays = await listDisplays();
-    this.activeDisplayId = displays[0].id;
 
-    this.dispatch({ type: 'SET_DISPLAYS', payload: displays });
-    this.dispatch({ type: 'SET_ACTIVE_DISPLAY', payload: displays[0] });
-
+    await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
 
     this.updateStatus(WorkerStatus.Ready);
     ipc.send('worker:ready');
   }
 
-  dispose() {
+  async dispose() {
     ipc.removeAllListeners('worker:solve');
-    ipc.removeAllListeners('SET_ACTIVE_DISPLAY');
+    ipc.removeAllListeners('state');
 
     this.disposeAsyncRequestListener();
     this.disposeTestThreshold();
+
+    await BreachProtocolOCRFragment.terminateScheduler();
   }
 
   private registerListeners() {
     ipc.on('worker:solve', this.onWorkerSolve.bind(this));
-    ipc.on('SET_ACTIVE_DISPLAY', this.onSetActiveDisplay.bind(this));
+    ipc.on('state', this.onStateChanged.bind(this));
 
     this.disposeAsyncRequestListener = workerAsyncRequestListener(
       this.handleAsyncRequest.bind(this)
@@ -68,18 +84,20 @@ export class BreachProtocolWorker {
   private async onWorkerSolve() {
     this.updateStatus(WorkerStatus.Working);
 
-    const bpa = new BreachProtocolAutosolver(this.activeDisplayId);
+    const bpa = new BreachProtocolAutosolver(this.settings);
     await bpa.solve();
 
     this.dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
     this.updateStatus(WorkerStatus.Ready);
   }
 
-  private onSetActiveDisplay(
+  private onStateChanged(
     e: IpcRendererEvent,
-    display: ScreenshotDisplayOutput
+    { payload, type }: Action<State>
   ) {
-    this.activeDisplayId = display.id;
+    if (type === 'UPDATE_SETTINGS') {
+      this.settings = payload.settings;
+    }
   }
 
   private async handleAsyncRequest(req: Request) {

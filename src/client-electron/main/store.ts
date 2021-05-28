@@ -9,14 +9,10 @@ import {
   Response,
   State,
 } from '../common';
+import { defaultOptions } from '../options';
 
 function reducer<T>({ type, payload }: Action<T>, state: State) {
   switch (type) {
-    case 'SET_ACTIVE_DISPLAY':
-      return {
-        ...state,
-        activeDisplay: payload,
-      };
     case 'SET_DISPLAYS':
       return {
         ...state,
@@ -29,13 +25,21 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
         ...state,
         history: [payload, ...state.history].slice(0, options.debugLimit),
       };
+    case 'UPDATE_SETTINGS':
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          ...payload,
+        },
+      };
   }
 }
 
 export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
-    defaults: {},
+    defaults: defaultOptions,
   });
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',
@@ -52,8 +56,7 @@ export class Store {
     return {
       history: this.history.get('data'),
       displays: [],
-      activeDisplay: null,
-      settings: {},
+      settings: this.settings.store,
       status: null,
     };
   }
@@ -65,11 +68,16 @@ export class Store {
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    const dest = this.getDest(action);
     this.state = reducer(action, this.state);
 
-    dest.send('state', this.state);
-    dest.send(action.type, action.payload);
+    const dest = this.getDest(action);
+    const returnAction = { payload: this.state, type: action.type };
+
+    dest.send('state', returnAction);
+    event.sender.send('state', returnAction);
+
+    event.sender.send(action.type, action);
+    dest.send(action.type, action);
   }
 
   private onGetState(event: IpcMainEvent) {
@@ -101,7 +109,10 @@ export class Store {
   }
 
   dispose() {
-    this.history.set('data', this.state.history);
+    if (process.env.NODE_ENV === 'production') {
+      this.history.set('data', this.state.history);
+      this.settings.set(this.state.settings);
+    }
 
     ipc.removeAllListeners('state');
     ipc.removeAllListeners('async-request');

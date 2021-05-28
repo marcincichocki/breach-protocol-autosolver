@@ -6,7 +6,7 @@ import {
   SequenceJSON,
 } from '@/core';
 import { Options } from '@/platform-node/cli';
-import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,20 +34,39 @@ export interface HistoryEntry {
   finishedAt: number;
   status: BreachProtocolStatus;
   fileName: string;
-  options: Options;
+  settings: AppSettings;
   fragments: BreachProtocolFragmentResults;
   sequences: SequenceJSON[];
   result: BreachProtocolResultJSON;
   exitStrategy: BreachProtocolExitStrategy;
 }
 
-export interface AppSettings {}
+export interface AppSettings {
+  keyBind: Accelerator;
+  historySize: number;
+  preserveSourceOnSuccess: boolean;
+  soundEnabled: boolean;
+  errorSoundPath: string;
+  checkForUpdates: boolean;
+  autoUpdate: boolean;
+  thresholdGrid: number;
+  thresholdGridAuto: boolean;
+  thresholdDaemons: number;
+  thresholdDaemonsAuto: boolean;
+  thresholdBufferSize: number;
+  thresholdBufferSizeAuto: boolean;
+  delay: number;
+  autoExit: boolean;
+  useScaling: boolean;
+  experimentalBufferSizeRecognition: boolean;
+  format: 'png' | 'jpg';
+  activeDisplayId: string;
+}
 
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
-  activeDisplay: ScreenshotDisplayOutput;
-  settings: {};
+  settings: AppSettings;
   status: WorkerStatus;
 }
 
@@ -57,6 +76,7 @@ export interface Action<T = any> {
   type: string;
   payload?: T;
   origin: Origin;
+  meta?: Record<string, any>;
 }
 
 export interface Request<T = any> {

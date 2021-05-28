@@ -1,7 +1,8 @@
-import { BreachProtocolStatus, WorkerStatus } from '@/client-electron/common';
-import { FC, useContext } from 'react';
-import { MdClose, MdDone } from 'react-icons/md';
+import { WorkerStatus } from '@/client-electron/common';
+import { FC, useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { getDisplayName, useIpcEvent } from '../common';
 import { StateContext } from '../state';
 
 const Spacer = styled.div`
@@ -14,6 +15,16 @@ const StatusBarItem = styled.div`
   align-items: center;
   display: inline-flex;
   padding: 0 8px;
+  opacity: 1;
+
+  &.enter {
+    transition: opacity 0.1s ease-out;
+  }
+
+  &.leave {
+    transition: opacity 0.5s;
+    opacity: 0;
+  }
 `;
 
 const InteractiveStatusBarItem = styled(StatusBarItem)`
@@ -50,21 +61,52 @@ function getWorkerStatusMessage(status: WorkerStatus) {
   }
 }
 
+function useSettingsChangeListener(delay = 2000) {
+  const [show, setShow] = useState(false);
+  let id: any = null;
+
+  useIpcEvent(['SET_SETTINGS', 'UPDATE_SETTINGS'], (e, { meta }: any) => {
+    if (meta?.notify === false) {
+      return;
+    }
+
+    if (id) {
+      clearTimeout(id);
+    }
+
+    setShow(true);
+
+    id = setTimeout(() => {
+      setShow(false);
+    }, delay);
+  });
+
+  return show;
+}
+
 export const StatusBar: FC = () => {
-  const state = useContext(StateContext);
-  const { status } = state.history[0];
+  const {
+    displays,
+    status,
+    settings: { activeDisplayId },
+  } = useContext(StateContext);
+  const show = useSettingsChangeListener();
+  const history = useHistory();
+  const activeDisplay = displays.find((d) => d.id === activeDisplayId);
+
+  function goToDisplaySetting() {
+    history.push('/settings?goToDisplay=true');
+  }
 
   return (
     <StatusBarWrapper>
-      <StatusBarItem>
-        {status === BreachProtocolStatus.Resolved ? <MdDone /> : <MdClose />}
-      </StatusBarItem>
-      <InteractiveStatusBarItem>
-        {state.activeDisplay?.id}
+      <StatusBarItem>{process.env.npm_package_version}</StatusBarItem>
+      <InteractiveStatusBarItem onClick={goToDisplaySetting}>
+        {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
-      <StatusBarItem>{getWorkerStatusMessage(state?.status)}</StatusBarItem>
+      <StatusBarItem>{getWorkerStatusMessage(status)}</StatusBarItem>
       <Spacer />
-      <StatusBarItem>placeholder</StatusBarItem>
+      <StatusBarItem className={show ? 'enter' : 'leave'}>Saved</StatusBarItem>
     </StatusBarWrapper>
   );
 };

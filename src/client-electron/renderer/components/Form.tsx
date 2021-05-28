@@ -1,6 +1,8 @@
 import {
   ChangeEvent,
   createContext,
+  FormEvent,
+  forwardRef,
   PropsWithChildren,
   useContext,
   useState,
@@ -27,6 +29,10 @@ const StyledField = styled(Row)`
   gap: 1rem;
   align-items: center;
 
+  > div {
+    flex-shrink: 0;
+  }
+
   &:hover > ${StyledLabel} {
     color: var(--accent);
     background: linear-gradient(
@@ -38,24 +44,49 @@ const StyledField = styled(Row)`
   }
 `;
 
-export const FormContext = createContext(undefined);
-
-interface FormProps {
-  initialValues: Record<string, string | number | boolean>;
+interface FormContext<T> {
+  values: T;
+  setValues: (values: T) => void;
+  onValuesChange?: (values: T, name: keyof T) => void;
+  onHover?: (name: keyof T) => void;
 }
 
-export const Form = ({
+const FormContext = createContext<FormContext<any>>(undefined);
+
+export function useForm<T>() {
+  return useContext<FormContext<T>>(FormContext);
+}
+
+interface FormProps<T> {
+  initialValues: T;
+  onValuesChange?: (values: T, name: keyof T) => void;
+  onHover?: (name: keyof T) => void;
+  onSubmit?: (values: T) => void;
+}
+
+export const Form = <T,>({
   initialValues,
   children,
-}: PropsWithChildren<FormProps>) => {
+  onHover,
+  onValuesChange,
+  onSubmit,
+}: PropsWithChildren<FormProps<T>>) => {
   const [values, setValues] = useState(initialValues);
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    onSubmit(values);
+  }
+
   return (
-    <StyledForm>
+    <StyledForm onSubmit={onSubmit ? handleSubmit : undefined}>
       <FormContext.Provider
         value={{
           values,
           setValues,
+          onHover,
+          onValuesChange,
         }}
       >
         {children}
@@ -64,57 +95,73 @@ export const Form = ({
   );
 };
 
+interface FieldContext<T> {
+  name: string;
+  value: T;
+  setValue: (value: T, options?: { emit: boolean }) => void;
+  onChange: (event: ChangeEvent<any>) => void;
+}
+
+const FieldContext = createContext<FieldContext<any>>(undefined);
+
+export function useField<T>() {
+  return useContext<FieldContext<T>>(FieldContext);
+}
+
 interface FieldProps {
   name: string;
   onValueChange?: (currentValue: any) => void;
+  render?: (props: { values: any }) => JSX.Element;
 }
 
-export const FieldContext = createContext(undefined);
+export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
+  ({ name, children, onValueChange, render }, ref) => {
+    const { values, setValues, onHover, onValuesChange } =
+      useContext(FormContext);
+    const value = values[name];
 
-export const Field = ({
-  name,
-  children,
-  onValueChange,
-}: PropsWithChildren<FieldProps>) => {
-  const { values, setValues } = useContext(FormContext);
-  const value = values[name];
+    function setValue(
+      value: string | number | boolean,
+      options = { emit: true }
+    ) {
+      const newValues = { ...values, [name]: value };
+      setValues(newValues);
 
-  function setValue(
-    value: string | number | boolean,
-    options = { emit: true }
-  ) {
-    setValues({
-      ...values,
-      [name]: value,
-    });
+      if (options.emit) {
+        if (onValueChange) onValueChange(value);
+        if (onValuesChange) onValuesChange(newValues, name);
+      }
+    }
 
-    if (onValueChange && options.emit) onValueChange(value);
-  }
+    function onChange(event: ChangeEvent<any>) {
+      const { value, checked, type } = event.target;
 
-  function onChange(event: ChangeEvent<any>) {
-    const { value, checked, type } = event.target;
+      setValue(type === 'checkbox' ? checked : value);
+    }
 
-    setValue(type === 'checkbox' ? checked : value);
-  }
-
-  return (
-    <StyledField>
-      <FieldContext.Provider
-        value={{
-          name,
-          value,
-          setValue,
-          onChange,
-        }}
+    return (
+      <StyledField
+        ref={ref}
+        onMouseEnter={onHover ? () => onHover(name) : undefined}
+        onMouseLeave={onHover ? () => onHover(null) : undefined}
       >
-        {children}
-      </FieldContext.Provider>
-    </StyledField>
-  );
-};
+        <FieldContext.Provider
+          value={{
+            name,
+            value,
+            setValue,
+            onChange,
+          }}
+        >
+          {render ? render({ values }) : children}
+        </FieldContext.Provider>
+      </StyledField>
+    );
+  }
+);
 
 export const Label = ({ children }: PropsWithChildren<{}>) => {
-  const { name } = useContext(FieldContext);
+  const { name } = useField();
 
   return <StyledLabel htmlFor={name}>{children}</StyledLabel>;
 };

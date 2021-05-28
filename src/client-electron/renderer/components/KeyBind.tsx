@@ -1,6 +1,7 @@
 import { Accelerator } from 'electron';
 import { Fragment, KeyboardEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useField } from './Form';
 
 /**
  * Map between {@link KeyboardEvent.code} and electron.js accelerator code
@@ -188,7 +189,7 @@ export const useKeyPress = (
 const KeyBindWrapper = styled.div`
   width: 510px;
   height: 50px;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--primary-dark);
   background: var(--background);
   display: flex;
   justify-content: center;
@@ -196,10 +197,17 @@ const KeyBindWrapper = styled.div`
   gap: 7px;
   color: var(--accent);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 24px;
+  cursor: pointer;
+
+  &:hover:not(:focus-within) {
+    background: var(--primary-darker);
+    border-color: var(--accent);
+  }
 
   &:focus-within {
     border-color: var(--accent);
+    background: #367c7f;
   }
 `;
 
@@ -217,10 +225,12 @@ const VisuallyHiddenInput = styled.input`
   appearance: none;
 `;
 
-const KeyCode = styled.kbd`
+export const KeyCode = styled.kbd`
   border: 1px solid var(--accent);
-  padding: 4px 10px;
+  padding: 0 8px;
   font-family: 'Rajdhani';
+  min-width: 32px;
+  box-sizing: border-box;
 `;
 
 function toKeyCodes(accelerator: Accelerator) {
@@ -231,14 +241,15 @@ function toKeyCodes(accelerator: Accelerator) {
     .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
 }
 
-// TODO: refactor this to field context
-export const KeyBind = ({ accelerator }: { accelerator: string }) => {
-  const keys = toKeyCodes(accelerator);
+export const KeyBind = () => {
+  const { value, setValue } = useField();
+  const [visited, setVisited] = useState(false);
+  const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
-        // TODO: emit accepted value
+        setValue(pressed.map((p) => p.electronCode).join('+'));
         ref.current.blur();
       },
       () => {
@@ -248,14 +259,10 @@ export const KeyBind = ({ accelerator }: { accelerator: string }) => {
       keys
     );
 
-  // TODO: return latest value on blur
   function onBlur() {
-    // setPressed(keys);
     setDirty(false);
     setVisited(false);
   }
-
-  const [visited, setVisited] = useState(false);
 
   function onFocus() {
     setVisited(true);

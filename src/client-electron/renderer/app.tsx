@@ -3,7 +3,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useIpcEvent, useIpcState } from './common';
 import { Navigation, StatusBar } from './components';
-import { Calibrate, History } from './pages';
+import { Calibrate, History, Settings } from './pages';
 import { StateContext } from './state';
 
 const Main = styled.main`
@@ -19,7 +19,7 @@ export const App = () => {
 
   // Change route when new history entry has been added.
   // TODO: investigate re-renders
-  useIpcEvent('ADD_HISTORY_ENTRY', () => history.replace('/history'));
+  useIpcEvent(['ADD_HISTORY_ENTRY'], () => history.replace('/history'));
 
   return (
     <StateContext.Provider value={state}>
@@ -28,6 +28,7 @@ export const App = () => {
         <Switch>
           <Route path="/history" component={History} />
           <Route path="/calibrate/:entryId" component={Calibrate} />
+          <Route path="/settings" component={Settings} />
         </Switch>
       </Main>
       <StatusBar />

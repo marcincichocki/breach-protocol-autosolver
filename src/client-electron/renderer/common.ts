@@ -2,7 +2,8 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { State } from '../common';
+import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import { Action, State } from '../common';
 import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */
@@ -38,14 +39,18 @@ export function transformTimestamp(timestamp: number) {
 }
 
 export function useIpcEvent<T>(
-  channel: string,
+  channels: string[],
   callback: (event: IpcRendererEvent, value: T) => void
 ) {
   useEffect(() => {
-    ipc.on(channel, callback);
+    channels.forEach((c) => {
+      ipc.on(c, callback);
+    });
 
     return () => {
-      ipc.removeListener(channel, callback);
+      channels.forEach((c) => {
+        ipc.removeListener(c, callback);
+      });
     };
   }, []);
 }
@@ -53,11 +58,19 @@ export function useIpcEvent<T>(
 export function useIpcState() {
   const [state, setState] = useState<State>(ipc.sendSync('get-state'));
 
-  function handleEvent(e: IpcRendererEvent, newState: State) {
-    setState(newState);
+  function handleEvent(e: IpcRendererEvent, { payload }: Action<State>) {
+    setState(payload);
   }
 
-  useIpcEvent('state', handleEvent);
+  useIpcEvent(['state'], handleEvent);
 
   return state;
+}
+
+export function getDisplayName(display: ScreenshotDisplayOutput) {
+  return `${display.name} (${display.width}x${display.height})`;
+}
+
+export function dispatch(action: Omit<Action, 'origin'>) {
+  return ipc.send('state', { ...action, origin: 'renderer' });
 }

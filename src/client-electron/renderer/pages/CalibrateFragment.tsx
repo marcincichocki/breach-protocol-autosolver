@@ -1,20 +1,28 @@
 import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { rendererAsyncRequestDispatcher as dispatch } from '../../common';
-import { fromCamelCase } from '../common';
+import { rendererAsyncRequestDispatcher as asyncRequest } from '../../common';
+import { fromCamelCase, dispatch } from '../common';
 import {
   Col,
+  Field,
   FlatButton,
+  Form,
   FragmentPreview,
+  Label,
   RangeSlider,
   RawDataPreview,
   Row,
   Spinner,
   Switch,
+  useField,
 } from '../components';
-import { Field, FieldContext, Form, Label } from '../components/Form';
+
+interface CalibrateFormValues {
+  showBoxes: boolean;
+  testThreshold: number;
+}
 
 interface CalibrateFragmentProps {
   entry: HistoryEntry;
@@ -25,7 +33,7 @@ const ThresholdUpdater = ({
 }: {
   threshold: number;
 }): JSX.Element => {
-  const { setValue } = useContext(FieldContext);
+  const { setValue } = useField<number>();
 
   useEffect(() => {
     setValue(threshold, { emit: false });
@@ -34,28 +42,34 @@ const ThresholdUpdater = ({
   return null;
 };
 
+function capitalize(s: string) {
+  return s[0].toUpperCase() + s.slice(1);
+}
+
 export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
   const { fileName } = entry;
   const result = entry.fragments.find((f) => f.id === fragmentId);
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
-  const disableRangeSlider =
-    entry.options.experimentalBufferSizeRecognition &&
-    fragmentId === 'bufferSize';
+  const isBufferSize = fragmentId === 'bufferSize';
+  const isExperimental =
+    entry.settings.experimentalBufferSizeRecognition && isBufferSize;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
-  const [testThreshold, setTestThreshold] = useState<number>(result.threshold);
+  const [testThreshold, setTestThreshold] = useState<number>(
+    result.threshold ?? 0
+  );
 
   useEffect(() => {
     setTestResult(result);
-    setTestThreshold(result.threshold);
+    setTestThreshold(result.threshold ?? 0);
   }, [fragmentId]);
 
   async function onTestThreshold(threshold: number) {
     setLoading(true);
 
-    const result = await dispatch<
+    const result = await asyncRequest<
       BreachProtocolFragmentResults[number],
       TestThresholdData
     >({
@@ -65,6 +79,16 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
 
     setTestResult(result);
     setLoading(false);
+  }
+
+  function handleSubmit(values: CalibrateFormValues) {
+    const key = `threshold${capitalize(fragmentId)}`;
+    const payload = {
+      [key]: values.testThreshold,
+      [`${key}Auto`]: false,
+    };
+
+    dispatch({ type: 'UPDATE_SETTINGS', payload });
   }
 
   return (
@@ -77,28 +101,32 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
     >
       <Col style={{ gap: '1rem', flexGrow: 1 }}>
         <RawDataPreview rawData={testResult.rawData} />
-        <Form initialValues={{ showBoxes, testThreshold }}>
+        <Form<CalibrateFormValues>
+          initialValues={{ showBoxes, testThreshold }}
+          onSubmit={handleSubmit}
+        >
           <Field name="showBoxes" onValueChange={setShowBoxes}>
             <Label>Show boxes</Label>
-            <Switch />
+            <Switch disabled={isBufferSize} />
           </Field>
           <Field name="testThreshold" onValueChange={onTestThreshold}>
             <Label>Test threshold</Label>
             <RangeSlider
               min={0}
               max={255}
-              disabled={loading || disableRangeSlider}
+              disabled={loading || isExperimental}
             />
             <ThresholdUpdater threshold={testThreshold} />
           </Field>
+          <FlatButton
+            type="submit"
+            disabled={!testResult.isValid || isExperimental}
+            color="accent"
+            style={{ alignSelf: 'flex-end' }}
+          >
+            Update {fromCamelCase(fragmentId)} threshold
+          </FlatButton>
         </Form>
-        <FlatButton
-          disabled={!testResult.isValid}
-          color="accent"
-          style={{ alignSelf: 'flex-end' }}
-        >
-          Update {fromCamelCase(fragmentId)} threshold
-        </FlatButton>
       </Col>
       <Col
         style={{

@@ -31,7 +31,9 @@ export function createBrowserWindows() {
   const worker = createWindow('worker', workerOptions);
   const renderer = createWindow('renderer', rendererOptions);
 
-  renderer.webContents.openDevTools();
+  if (process.env.NODE_ENV === 'development') {
+    renderer.webContents.openDevTools();
+  }
 
   return { worker, renderer };
 }

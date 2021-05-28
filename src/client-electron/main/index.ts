@@ -15,11 +15,20 @@ async function main() {
     app.quit();
   });
 
-  ipc.once('worker:ready', () => {
-    globalShortcut.register('CommandOrControl+numdec', () => {
-      worker.webContents.send('worker:solve');
-    });
+  ipc.on('renderer:key-bind-change', (e, keyBind) => {
+    globalShortcut.unregisterAll();
+    globalShortcut.register(keyBind, onWorkerSolve);
   });
+
+  ipc.once('worker:ready', () => {
+    const { keyBind } = store.getState().settings;
+
+    globalShortcut.register(keyBind, onWorkerSolve);
+  });
+
+  function onWorkerSolve() {
+    worker.webContents.send('worker:solve');
+  }
 }
 
 main();

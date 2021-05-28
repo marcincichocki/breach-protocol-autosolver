@@ -1,7 +1,7 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import { join } from 'path';
-import webpack from 'webpack';
+import webpack, { EnvironmentPlugin } from 'webpack';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -41,5 +41,6 @@ export const config: webpack.Configuration = {
       template: join(__dirname, '../public/renderer.html'),
       filename: 'renderer.html',
     }),
+    new EnvironmentPlugin(['npm_package_version']),
   ],
 };
