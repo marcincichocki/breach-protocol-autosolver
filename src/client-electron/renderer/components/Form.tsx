@@ -47,7 +47,7 @@ const StyledField = styled(Row)`
 interface FormContext<T> {
   values: T;
   setValues: (values: T) => void;
-  onValuesChange?: (values: T, name: string) => void;
+  onValuesChange?: (values: T, name: keyof T) => void;
   onHover?: (name: keyof T) => void;
 }
 
@@ -59,7 +59,7 @@ export function useForm<T>() {
 
 interface FormProps<T> {
   initialValues: T;
-  onValuesChange?: (values: T, name: string) => void;
+  onValuesChange?: (values: T, name: keyof T) => void;
   onHover?: (name: keyof T) => void;
   onSubmit?: (values: T) => void;
 }

@@ -25,11 +25,6 @@ function reducer<T>({ type, payload }: Action<T>, state: State) {
         ...state,
         history: [payload, ...state.history].slice(0, options.debugLimit),
       };
-    case 'SET_SETTINGS':
-      return {
-        ...state,
-        settings: payload,
-      };
     case 'UPDATE_SETTINGS':
       return {
         ...state,

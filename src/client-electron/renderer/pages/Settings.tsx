@@ -242,8 +242,10 @@ export const Settings: FC = () => {
   const { settings, displays } = useContext(StateContext);
   const [activeField, setActiveField] = useState<keyof AppSettings>();
 
-  function onValuesChange(payload: AppSettings) {
-    dispatch({ type: 'SET_SETTINGS', payload });
+  function onValuesChange(values: AppSettings, name: keyof AppSettings) {
+    const payload = { [name]: values[name] };
+
+    dispatch({ type: 'UPDATE_SETTINGS', payload });
   }
 
   return (

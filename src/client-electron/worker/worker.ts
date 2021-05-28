@@ -95,7 +95,7 @@ export class BreachProtocolWorker {
     e: IpcRendererEvent,
     { payload, type }: Action<State>
   ) {
-    if (type === 'SET_SETTINGS' || type === 'UPDATE_SETTINGS') {
+    if (type === 'UPDATE_SETTINGS') {
       this.settings = payload.settings;
     }
   }
