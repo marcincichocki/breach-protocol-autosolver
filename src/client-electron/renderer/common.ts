@@ -58,8 +58,8 @@ export function useIpcEvent<T>(
 export function useIpcState() {
   const [state, setState] = useState<State>(ipc.sendSync('get-state'));
 
-  function handleEvent(e: IpcRendererEvent, newState: State) {
-    setState(newState);
+  function handleEvent(e: IpcRendererEvent, { payload }: Action<State>) {
+    setState(payload);
   }
 
   useIpcEvent(['state'], handleEvent);

@@ -13,6 +13,7 @@ import {
   Action,
   AppSettings,
   Request,
+  State,
   TestThresholdData,
   workerAsyncRequestListener,
   WorkerStatus,
@@ -63,6 +64,7 @@ export class BreachProtocolWorker {
 
   async dispose() {
     ipc.removeAllListeners('worker:solve');
+    ipc.removeAllListeners('state');
 
     this.disposeAsyncRequestListener();
     this.disposeTestThreshold();
@@ -72,7 +74,7 @@ export class BreachProtocolWorker {
 
   private registerListeners() {
     ipc.on('worker:solve', this.onWorkerSolve.bind(this));
-    ipc.on('SET_SETTINGS', this.onSetSettings.bind(this));
+    ipc.on('state', this.onStateChanged.bind(this));
 
     this.disposeAsyncRequestListener = workerAsyncRequestListener(
       this.handleAsyncRequest.bind(this)
@@ -89,8 +91,13 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Ready);
   }
 
-  private onSetSettings(e: IpcRendererEvent, { payload }: Action<AppSettings>) {
-    this.settings = payload;
+  private onStateChanged(
+    e: IpcRendererEvent,
+    { payload, type }: Action<State>
+  ) {
+    if (type === 'SET_SETTINGS' || type === 'UPDATE_SETTINGS') {
+      this.settings = payload.settings;
+    }
   }
 
   private async handleAsyncRequest(req: Request) {

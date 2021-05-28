@@ -92,11 +92,13 @@ export class Store {
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    const dest = this.getDest(action);
     this.state = reducer(action, this.state);
 
-    dest.send('state', this.state);
-    event.sender.send('state', this.state);
+    const dest = this.getDest(action);
+    const returnAction = { payload: this.state, type: action.type };
+
+    dest.send('state', returnAction);
+    event.sender.send('state', returnAction);
 
     event.sender.send(action.type, action);
     dest.send(action.type, action);
