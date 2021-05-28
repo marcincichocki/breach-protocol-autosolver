@@ -15,6 +15,22 @@ async function main() {
     app.quit();
   });
 
+  ipc.on('app-close', () => {
+    renderer.close();
+  });
+
+  ipc.on('app-minimize', () => {
+    renderer.minimize();
+  });
+
+  ipc.on('app-maximize', () => {
+    if (renderer.isMaximized()) {
+      renderer.unmaximize();
+    } else {
+      renderer.maximize();
+    }
+  });
+
   ipc.on('renderer:key-bind-change', (e, keyBind) => {
     globalShortcut.unregisterAll();
     globalShortcut.register(keyBind, onWorkerSolve);

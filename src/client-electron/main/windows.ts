@@ -1,5 +1,8 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import isWsl from 'is-wsl';
 import { join } from 'path';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow(name: string, options: BrowserWindowConstructorOptions) {
   const window = new BrowserWindow(options);
@@ -9,7 +12,7 @@ function createWindow(name: string, options: BrowserWindowConstructorOptions) {
   return window;
 }
 
-const workerOptions = {
+const workerOptions: BrowserWindowConstructorOptions = {
   show: false,
   webPreferences: {
     nodeIntegration: true,
@@ -18,9 +21,12 @@ const workerOptions = {
   },
 };
 
-const rendererOptions = {
+const rendererOptions: BrowserWindowConstructorOptions = {
   minWidth: 1280,
   minHeight: 720,
+  // Maximize and drag does not work on wsl2.
+  frame: isDev && isWsl ? true : false,
+  autoHideMenuBar: true,
   webPreferences: {
     nodeIntegration: true,
     contextIsolation: false,
@@ -31,7 +37,7 @@ export function createBrowserWindows() {
   const worker = createWindow('worker', workerOptions);
   const renderer = createWindow('renderer', rendererOptions);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (isDev) {
     renderer.webContents.openDevTools();
   }
 

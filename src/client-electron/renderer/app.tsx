@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useIpcEvent, useIpcState } from './common';
-import { Navigation, StatusBar } from './components';
+import { Navigation, StatusBar, TitleBar } from './components';
 import { Calibrate, History, Settings } from './pages';
 import { StateContext } from './state';
 
@@ -23,6 +23,7 @@ export const App = () => {
 
   return (
     <StateContext.Provider value={state}>
+      <TitleBar />
       <Navigation />
       <Main>
         <Switch>
