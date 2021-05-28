@@ -12,7 +12,7 @@ function createWindow(name: string, options: BrowserWindowConstructorOptions) {
   return window;
 }
 
-const workerOptions = {
+const workerOptions: BrowserWindowConstructorOptions = {
   show: false,
   webPreferences: {
     nodeIntegration: true,
@@ -24,6 +24,7 @@ const workerOptions = {
 const rendererOptions: BrowserWindowConstructorOptions = {
   minWidth: 1280,
   minHeight: 720,
+  // Maximize and drag does not work on wsl2.
   frame: isDev && isWsl ? true : false,
   autoHideMenuBar: true,
   webPreferences: {
