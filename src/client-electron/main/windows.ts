@@ -1,5 +1,8 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import isWsl from 'is-wsl';
 import { join } from 'path';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow(name: string, options: BrowserWindowConstructorOptions) {
   const window = new BrowserWindow(options);
@@ -21,7 +24,7 @@ const workerOptions = {
 const rendererOptions: BrowserWindowConstructorOptions = {
   minWidth: 1280,
   minHeight: 720,
-  frame: true,
+  frame: isDev && isWsl ? true : false,
   autoHideMenuBar: true,
   webPreferences: {
     nodeIntegration: true,
@@ -33,7 +36,7 @@ export function createBrowserWindows() {
   const worker = createWindow('worker', workerOptions);
   const renderer = createWindow('renderer', rendererOptions);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (isDev) {
     renderer.webContents.openDevTools();
   }
 
