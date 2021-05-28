@@ -121,7 +121,7 @@ const AutoSolverSettings = () => {
       </Field>
       <Field name="errorSoundPath">
         <Label>Error sound path</Label>
-        <File />
+        <File accept=".mp3,.wav" />
       </Field>
       <Field name="delay">
         <Label>Delay</Label>

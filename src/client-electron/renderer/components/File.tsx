@@ -8,7 +8,11 @@ const Path = styled.output`
   font-weight: 500;
 `;
 
-export const File = () => {
+interface FileProps {
+  accept?: string;
+}
+
+export const File = ({ accept }: FileProps) => {
   const { setValue, value, name } = useField<string>();
   const [displayName, setDisplayName] = useState<string>(
     value.slice(value.lastIndexOf('/') + 1)
@@ -29,7 +33,7 @@ export const File = () => {
       <FlatButton as="label" htmlFor={name} color="accent">
         Change sound path
       </FlatButton>
-      <input type="file" id={name} onChange={onChange} hidden />
+      <input type="file" accept={accept} id={name} onChange={onChange} hidden />
     </>
   );
 };
