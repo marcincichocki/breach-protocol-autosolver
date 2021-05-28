@@ -93,10 +93,9 @@ const H2 = styled.h2`
 
 export const History: FC = () => {
   const { history } = useContext(StateContext);
+  const { path } = useRouteMatch();
 
   if (!history.length) return <NoHistory />;
-
-  const { path } = useRouteMatch();
 
   return (
     <HistoryWrapper>
