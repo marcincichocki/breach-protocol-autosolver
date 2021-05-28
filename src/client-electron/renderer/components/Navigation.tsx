@@ -7,6 +7,7 @@ const Nav = styled.nav`
   display: flex;
   justify-content: center;
   margin: 24px 0;
+  user-select: none;
 `;
 
 const List = styled.ul`
