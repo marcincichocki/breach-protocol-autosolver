@@ -53,7 +53,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
   const isBufferSize = fragmentId === 'bufferSize';
-  const disableRangeSlider =
+  const isExperimental =
     entry.settings.experimentalBufferSizeRecognition && isBufferSize;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
@@ -114,13 +114,13 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
             <RangeSlider
               min={0}
               max={255}
-              disabled={loading || disableRangeSlider}
+              disabled={loading || isExperimental}
             />
             <ThresholdUpdater threshold={testThreshold} />
           </Field>
           <FlatButton
             type="submit"
-            disabled={!testResult.isValid}
+            disabled={!testResult.isValid || isExperimental}
             color="accent"
             style={{ alignSelf: 'flex-end' }}
           >
