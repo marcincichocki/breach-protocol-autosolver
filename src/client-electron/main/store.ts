@@ -4,6 +4,7 @@ import ElectronStore from 'electron-store';
 import {
   Action,
   AppSettings,
+  AppStats,
   HistoryEntry,
   Request,
   Response,
@@ -46,6 +47,16 @@ export class Store {
     defaults: { data: [] },
   });
 
+  private stats = new ElectronStore<AppStats>({
+    name: 'stats',
+    defaults: {
+      globalCountError: 1,
+      globalCountSuccess: 10,
+      sessionCountError: 0,
+      sessionCountSuccess: 2,
+    },
+  });
+
   private state = this.getInitialState();
 
   constructor(private worker: WebContents, private renderer: WebContents) {
@@ -58,6 +69,7 @@ export class Store {
       displays: [],
       settings: this.settings.store,
       status: null,
+      stats: this.stats.store,
     };
   }
 

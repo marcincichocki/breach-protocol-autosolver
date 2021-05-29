@@ -63,11 +63,19 @@ export interface AppSettings {
   activeDisplayId: string;
 }
 
+export interface AppStats {
+  sessionCountSuccess: number;
+  globalCountSuccess: number;
+  sessionCountError: number;
+  globalCountError: number;
+}
+
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
   settings: AppSettings;
   status: WorkerStatus;
+  stats: AppStats;
 }
 
 type Origin = 'worker' | 'renderer';
