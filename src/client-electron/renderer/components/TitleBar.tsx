@@ -30,6 +30,13 @@ const CloseIcon = () => (
   </StyledSvg>
 );
 
+const MenuIcon = () => (
+  <StyledSvg>
+    <path fill="currentColor" d="M5.707 7l4.95 4.95-.707.707L5 7.707z" />
+    <path fill="currentColor" d="M14.9 7.707l-4.95 4.95-.707-.708L14.193 7z" />
+  </StyledSvg>
+);
+
 const StyledTitleBar = styled.nav`
   position: absolute;
   top: 0;
@@ -66,6 +73,9 @@ const IconButton = styled.button<{ close?: boolean }>`
 
 export const TitleBar = memo(() => (
   <StyledTitleBar>
+    <IconButton onClick={() => ipc.send('show-help-menu')}>
+      <MenuIcon></MenuIcon>
+    </IconButton>
     <IconButton onClick={() => ipc.send('app-minimize')}>
       <MinimizeIcon />
     </IconButton>
