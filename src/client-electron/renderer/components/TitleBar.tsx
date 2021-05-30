@@ -73,16 +73,16 @@ const IconButton = styled.button<{ close?: boolean }>`
 
 export const TitleBar = memo(() => (
   <StyledTitleBar>
-    <IconButton onClick={() => ipc.send('show-help-menu')}>
+    <IconButton onClick={() => ipc.send('renderer:show-help-menu')}>
       <MenuIcon></MenuIcon>
     </IconButton>
-    <IconButton onClick={() => ipc.send('app-minimize')}>
+    <IconButton onClick={() => ipc.send('renderer:minimize')}>
       <MinimizeIcon />
     </IconButton>
-    <IconButton onClick={() => ipc.send('app-maximize')}>
+    <IconButton onClick={() => ipc.send('renderer:maximize')}>
       <DownIcon />
     </IconButton>
-    <IconButton close onClick={() => ipc.send('app-close')}>
+    <IconButton close onClick={() => ipc.send('renderer:close')}>
       <CloseIcon />
     </IconButton>
   </StyledTitleBar>
