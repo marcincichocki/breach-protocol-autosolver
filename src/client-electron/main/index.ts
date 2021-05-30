@@ -1,4 +1,11 @@
-import { app, globalShortcut, ipcMain as ipc } from 'electron';
+import {
+  app,
+  globalShortcut,
+  ipcMain as ipc,
+  Menu,
+  MenuItemConstructorOptions,
+  shell,
+} from 'electron';
 import { Store } from './store';
 import { createBrowserWindows } from './windows';
 
@@ -29,6 +36,30 @@ async function main() {
     } else {
       renderer.maximize();
     }
+  });
+
+  ipc.on('show-help-menu', () => {
+    const template: MenuItemConstructorOptions[] = [
+      {
+        label: 'Homepage',
+        click() {
+          shell.openExternal(process.env.npm_package_homepage);
+        },
+      },
+      { type: 'separator' },
+      {
+        label: 'Report bug',
+        click() {
+          shell.openExternal(process.env.npm_package_bugs_url);
+        },
+      },
+    ];
+
+    const menu = Menu.buildFromTemplate(template);
+
+    menu.popup({
+      window: renderer,
+    });
   });
 
   ipc.on('renderer:key-bind-change', (e, keyBind) => {
