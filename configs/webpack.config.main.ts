@@ -1,5 +1,5 @@
 import { join } from 'path';
-import webpack from 'webpack';
+import webpack, { EnvironmentPlugin } from 'webpack';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 export const config: webpack.Configuration = {
@@ -23,4 +23,11 @@ export const config: webpack.Configuration = {
       },
     ],
   },
+  plugins: [
+    new EnvironmentPlugin([
+      'npm_package_version',
+      'npm_package_homepage',
+      'npm_package_bugs_url',
+    ]),
+  ],
 };
