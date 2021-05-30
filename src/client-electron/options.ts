@@ -21,7 +21,7 @@ const options = [
   ),
   new BreachProtocolOption(
     'delay',
-    'Delay in miliseconds between output clicks.',
+    'Delay in milliseconds between output clicks.',
     75
   ),
   new BreachProtocolOption(
@@ -46,7 +46,7 @@ const options = [
   ),
   new BreachProtocolOption(
     'historySize',
-    'Ammount of history entires saved.',
+    'Amount of history entires saved.',
     10
   ),
   new BreachProtocolOption(
@@ -56,12 +56,12 @@ const options = [
   ),
   new BreachProtocolOption(
     'preserveSourceOnSuccess',
-    'Preserve image source after succesful breach protocol. This might take a lot of space depending on format and history size options.',
+    'Preserve image source after successful breach protocol. This might take a lot of space depending on format and history size options.',
     false
   ),
   new BreachProtocolOption(
     'checkForUpdates',
-    'Check for updates on start up.',
+    'Check for updates on startup.',
     true
   ),
   new BreachProtocolOption(
@@ -102,7 +102,7 @@ const options = [
   new BreachProtocolOption(
     'useScaling',
     'Use Windows scaling to calculate coordinates of squares.',
-    true
+    false
   ),
 ];
 
