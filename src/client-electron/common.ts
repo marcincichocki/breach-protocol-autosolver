@@ -78,7 +78,7 @@ export interface State {
   stats: AppStats;
 }
 
-type Origin = 'worker' | 'renderer';
+export type Origin = 'worker' | 'renderer';
 
 export interface Action<T = any> {
   type: string;

@@ -1,4 +1,5 @@
 import { AppSettings } from '@/client-electron/common';
+import { UpdateSettingsAction } from '@/client-electron/actions';
 import { optionsDescription } from '@/client-electron/options';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
@@ -245,7 +246,7 @@ export const Settings: FC = () => {
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
     const payload = { [name]: values[name] };
 
-    dispatch({ type: 'UPDATE_SETTINGS', payload });
+    dispatch(new UpdateSettingsAction(payload));
   }
 
   return (

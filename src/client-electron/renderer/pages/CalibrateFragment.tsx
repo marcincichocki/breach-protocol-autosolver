@@ -1,3 +1,4 @@
+import { UpdateSettingsAction } from '@/client-electron/actions';
 import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
 import { FC, useEffect, useState } from 'react';
@@ -88,7 +89,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
       [`${key}Auto`]: false,
     };
 
-    dispatch({ type: 'UPDATE_SETTINGS', payload });
+    dispatch(new UpdateSettingsAction(payload));
   }
 
   return (

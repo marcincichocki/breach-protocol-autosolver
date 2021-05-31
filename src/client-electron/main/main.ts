@@ -1,5 +1,5 @@
 import { app, globalShortcut, ipcMain as ipc, Menu, shell } from 'electron';
-import { Store } from './store';
+import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
 export class Main {

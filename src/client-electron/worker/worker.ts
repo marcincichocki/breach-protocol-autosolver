@@ -18,6 +18,12 @@ import {
   workerAsyncRequestListener,
   WorkerStatus,
 } from '../common';
+import {
+  AddHistoryEntryAction,
+  SetDisplaysAction,
+  SetStatusAction,
+  UpdateSettingsAction,
+} from '../actions';
 import { BreachProtocolAutosolver } from './autosolver';
 
 export class BreachProtocolWorker {
@@ -34,17 +40,17 @@ export class BreachProtocolWorker {
   private async loadAndSetActiveDisplay() {
     const displays = await listDisplays();
 
-    this.dispatch({ type: 'SET_DISPLAYS', payload: displays });
+    this.dispatch(new SetDisplaysAction(displays));
 
     const { activeDisplayId } = this.settings;
 
     if (displays.find((d) => d.id === activeDisplayId)) return;
 
-    this.dispatch({
-      type: 'UPDATE_SETTINGS',
-      payload: { activeDisplayId: displays[0].id },
-      meta: { notify: false },
-    });
+    this.dispatch(
+      new UpdateSettingsAction({ activeDisplayId: displays[0].id }, 'worker', {
+        notify: false,
+      })
+    );
   }
 
   async bootstrap() {
@@ -87,7 +93,7 @@ export class BreachProtocolWorker {
     const bpa = new BreachProtocolAutosolver(this.settings);
     await bpa.solve();
 
-    this.dispatch({ type: 'ADD_HISTORY_ENTRY', payload: bpa.toJSON() });
+    this.dispatch(new AddHistoryEntryAction(bpa.toJSON()));
     this.updateStatus(WorkerStatus.Ready);
   }
 
@@ -134,10 +140,10 @@ export class BreachProtocolWorker {
   }
 
   private updateStatus(payload: WorkerStatus) {
-    this.dispatch({ type: 'SET_STATUS', payload });
+    this.dispatch(new SetStatusAction(payload));
   }
 
-  private dispatch(action: Omit<Action, 'origin'>) {
-    ipc.send('state', { ...action, origin: 'worker' });
+  private dispatch(action: Action) {
+    ipc.send('state', action);
   }
 }
