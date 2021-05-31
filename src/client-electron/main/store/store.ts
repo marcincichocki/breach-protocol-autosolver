@@ -17,19 +17,23 @@ export class Store {
     name: 'settings',
     defaults: defaultOptions,
   });
+
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',
     defaults: { data: [] },
   });
 
+  private defaultStats: AppStats = {
+    countSuccess: 0,
+    countError: 0,
+    timeApprox: 0,
+    daemonsCount: 0,
+    daemonsSolvedCount: 0,
+  };
+
   private stats = new ElectronStore<AppStats>({
     name: 'stats',
-    defaults: {
-      globalCountError: 1,
-      globalCountSuccess: 10,
-      sessionCountError: 0,
-      sessionCountSuccess: 2,
-    },
+    defaults: this.defaultStats,
   });
 
   private state = this.getInitialState();
@@ -44,7 +48,8 @@ export class Store {
       displays: [],
       settings: this.settings.store,
       status: null,
-      stats: this.stats.store,
+      stats: this.defaultStats,
+      globalStats: this.stats.store,
     };
   }
 
@@ -96,6 +101,7 @@ export class Store {
   }
 
   dispose() {
+    // TODO: save stats.
     if (process.env.NODE_ENV === 'production') {
       this.history.set('data', this.state.history);
       this.settings.set(this.state.settings);

@@ -64,10 +64,11 @@ export interface AppSettings {
 }
 
 export interface AppStats {
-  sessionCountSuccess: number;
-  globalCountSuccess: number;
-  sessionCountError: number;
-  globalCountError: number;
+  countSuccess: number;
+  countError: number;
+  timeApprox: number;
+  daemonsSolvedCount: number;
+  daemonsCount: number;
 }
 
 export interface State {
@@ -76,6 +77,7 @@ export interface State {
   settings: AppSettings;
   status: WorkerStatus;
   stats: AppStats;
+  globalStats: AppStats;
 }
 
 export type Origin = 'worker' | 'renderer';

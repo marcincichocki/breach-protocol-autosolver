@@ -45,7 +45,7 @@ const StatSubtitle = styled.h3`
   text-transform: uppercase;
 `;
 
-function getAmmountOfTimeSaved(timeSpent: number) {
+function getAmountOfTimeSaved(timeSpent: number) {
   const minutesLeftAsSeconds = timeSpent % 3600;
   const hours = secondsToHours(timeSpent);
   const minutes = secondsToMinutes(minutesLeftAsSeconds);
@@ -88,17 +88,28 @@ const Stats = styled.section`
 `;
 
 export const Dashboard = memo(() => {
-  const { stats } = useContext(StateContext);
-
-  const timeSpent = 423;
-  const timeSaved = getAmmountOfTimeSaved(timeSpent);
+  const { stats, globalStats } = useContext(StateContext);
+  const countSuccess = stats.countSuccess + globalStats.countSuccess;
+  const daemonsSolvedCount =
+    stats.daemonsSolvedCount + globalStats.daemonsSolvedCount;
+  const daemonsCount = stats.daemonsCount + globalStats.daemonsCount;
+  const daemonsSolved = daemonsCount
+    ? (daemonsSolvedCount / daemonsCount) * 100
+    : 0;
+  const solvedPercentage = `${daemonsSolved.toFixed(2)}%`;
+  const timeSaved = getAmountOfTimeSaved(
+    stats.timeApprox + globalStats.timeApprox
+  );
 
   return (
     <Row style={{ gap: '1rem', flexGrow: 1 }}>
       <Stats>
-        <Stat title={30} subtitle="Solved during this session" />
-        <Stat title={999} subtitle="Solved overall" />
-        <Stat title="93.5%" subtitle="Daemons acqured" />
+        <Stat
+          title={stats.countSuccess}
+          subtitle="Solved during this session"
+        />
+        <Stat title={countSuccess} subtitle="Solved overall" />
+        <Stat title={solvedPercentage} subtitle="Daemons acquired" />
         <Stat title={timeSaved} subtitle="Time saved(approx)" />
       </Stats>
       <DashboardActions></DashboardActions>

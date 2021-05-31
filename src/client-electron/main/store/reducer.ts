@@ -2,11 +2,14 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import {
   Action,
   AppSettings,
+  AppStats,
+  BreachProtocolStatus,
   HistoryEntry,
   State,
   WorkerStatus,
 } from '../../common';
 import { ActionTypes } from '../../actions';
+import { getDaemons } from '@/core/common';
 
 type Handler<T, S = State> = (state: S, action: Action<T>) => State;
 
@@ -32,13 +35,47 @@ const setStatus: Handler<WorkerStatus> = (state, { payload }) => ({
   status: payload,
 });
 
+function getStatsFromHistoryEntry(
+  {
+    timeApprox,
+    countError,
+    countSuccess,
+    daemonsCount,
+    daemonsSolvedCount,
+  }: AppStats,
+  { status, fragments, result }: HistoryEntry
+) {
+  if (status === BreachProtocolStatus.Resolved) {
+    countSuccess += 1;
+
+    const daemons = fragments.find(getDaemons);
+
+    // Add 5 seconds for every daemon.
+    timeApprox += daemons.rawData.length * 5;
+    // Add 2 seconds for every square
+    timeApprox += result.resolvedSequence.value.length * 2;
+
+    daemonsCount += daemons.rawData.length;
+    daemonsSolvedCount += result.sequence.parts.length;
+  } else {
+    countError += 1;
+  }
+
+  return {
+    countSuccess,
+    countError,
+    timeApprox,
+    daemonsCount,
+    daemonsSolvedCount,
+  };
+}
+
 const addHistoryEntry: Handler<HistoryEntry> = (state, { payload }) => {
-  // TODO: add stats
-  const stats = {};
+  const stats = getStatsFromHistoryEntry(state.stats, payload);
   const { historySize } = state.settings;
   const history = [payload, ...state.history].slice(0, historySize);
 
-  return { ...state, history };
+  return { ...state, history, stats };
 };
 
 const updateSettings: Handler<Partial<AppSettings>> = (state, { payload }) => {
