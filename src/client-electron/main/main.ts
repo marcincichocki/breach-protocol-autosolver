@@ -24,8 +24,6 @@ export class Main {
   /** Hidden "worker" window, does all the heavy lifting(ocr, solving). */
   private worker: Electron.BrowserWindow = null;
 
-  private settings: AppSettings = null;
-
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
       label: 'Homepage',
@@ -63,7 +61,6 @@ export class Main {
   init() {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents);
-    this.settings = this.store.getState().settings;
 
     this.renderer = renderer;
     this.worker = worker;
@@ -72,16 +69,16 @@ export class Main {
   }
 
   private createTray() {
-    let appIcon = new Tray(join(__dirname, icon));
+    const tray = new Tray(join(__dirname, icon));
     const contextMenu = Menu.buildFromTemplate(this.trayMenu);
 
-    appIcon.on('double-click', () => {
+    tray.on('double-click', () => {
       this.renderer.show();
     });
-    appIcon.setToolTip('Breach Protocol Autosolver');
-    appIcon.setContextMenu(contextMenu);
+    tray.setToolTip('Breach Protocol Autosolver');
+    tray.setContextMenu(contextMenu);
 
-    return appIcon;
+    return tray;
   }
 
   private registerListeners() {
@@ -102,7 +99,7 @@ export class Main {
   }
 
   private onRendererMinimize(event: Electron.Event) {
-    if (!this.settings.minimizeToTray) {
+    if (!this.getSettings().minimizeToTray) {
       return;
     }
 
@@ -115,7 +112,7 @@ export class Main {
   }
 
   private onRendererRestore() {
-    if (!this.settings.minimizeToTray) {
+    if (!this.getSettings().minimizeToTray) {
       return;
     }
 
@@ -139,7 +136,7 @@ export class Main {
   }
 
   private onWorkerReady() {
-    const { keyBind } = this.settings;
+    const { keyBind } = this.getSettings();
 
     this.registerKeyBind(keyBind);
   }
@@ -217,5 +214,9 @@ export class Main {
     } else {
       this.renderer.maximize();
     }
+  }
+
+  private getSettings() {
+    return this.store.getState().settings;
   }
 }
