@@ -24,6 +24,7 @@ export const config: webpack.Configuration = {
     new HtmlWebpackPlugin({
       template: join(__dirname, '../public/renderer.html'),
       filename: 'renderer.html',
+      title: process.env.npm_package_build_productName,
     }),
   ],
 };
