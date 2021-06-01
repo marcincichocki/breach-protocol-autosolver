@@ -42,7 +42,7 @@ export class Main {
   private trayMenu: Electron.MenuItemConstructorOptions[] = [
     {
       label: 'Show',
-      click() {
+      click: () => {
         this.renderer.show();
       },
     },
