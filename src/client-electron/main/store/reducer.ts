@@ -1,4 +1,6 @@
+import { isDaemonsFragment } from '@/core/common';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import { ActionTypes } from '../../actions';
 import {
   Action,
   AppSettings,
@@ -8,8 +10,6 @@ import {
   State,
   WorkerStatus,
 } from '../../common';
-import { ActionTypes } from '../../actions';
-import { getDaemons } from '@/core/common';
 
 type Handler<T, S = State> = (state: S, action: Action<T>) => State;
 
@@ -51,7 +51,7 @@ function getStatsFromHistoryEntry(
     countSuccessSession += 1;
     countSuccess += 1;
 
-    const daemonsFragment = fragments.find(getDaemons);
+    const daemonsFragment = fragments.find(isDaemonsFragment);
     const daemonsSize = daemonsFragment.rawData.length;
 
     // Add 5 seconds for every daemon and 2 seconds for every square.

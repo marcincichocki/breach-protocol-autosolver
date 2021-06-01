@@ -161,14 +161,15 @@ export function resolveExitStrategy(
   };
 }
 
-function getFragment<T extends BreachProtocolFragmentResult<any>>(
+function isFragment<T extends BreachProtocolFragmentResult<any>>(
   id: FragmentId
 ) {
   return (f: BreachProtocolFragmentResult<any>): f is T => f.id === id;
 }
 
-export const getGrid = getFragment<BreachProtocolGridFragmentResult>('grid');
-export const getBufferSize =
-  getFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
-export const getDaemons =
-  getFragment<BreachProtocolDaemonsFragmentResult>('daemons');
+export const isGridFragment =
+  isFragment<BreachProtocolGridFragmentResult>('grid');
+export const isBufferSizeFragment =
+  isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
+export const isDaemonsFragment =
+  isFragment<BreachProtocolDaemonsFragmentResult>('daemons');

@@ -4,20 +4,14 @@ import {
   COLS,
   cross,
   generateSquareMap,
+  isGridFragment,
   ROWS,
 } from '../common';
-import {
-  BreachProtocolFragmentResult,
-  BreachProtocolFragmentResults,
-  FragmentId,
-} from './base';
+import { BreachProtocolFragmentResults, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
-import {
-  BreachProtocolGridFragment,
-  BreachProtocolGridFragmentResult,
-} from './grid';
+import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
 
 export class BreachProtocolRecognitionResult {
@@ -51,14 +45,8 @@ export class BreachProtocolRecognitionResult {
     return cross(rows, cols);
   }
 
-  private isGridFragment(
-    fragment: BreachProtocolFragmentResult<any>
-  ): fragment is BreachProtocolGridFragmentResult {
-    return fragment.id === 'grid';
-  }
-
   private getPositionSquareMap() {
-    const grid = this.results.find(this.isGridFragment);
+    const grid = this.results.find(isGridFragment);
     const { top, left } = grid.boundingBox;
     const { boxes } = grid.source;
     const squares = this.getSquares(boxes.length);
