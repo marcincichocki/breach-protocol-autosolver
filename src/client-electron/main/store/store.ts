@@ -1,49 +1,41 @@
-import { options } from '@/platform-node/cli';
 import { ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
 import {
   Action,
   AppSettings,
+  AppStats,
   HistoryEntry,
   Request,
   Response,
   State,
-} from '../common';
-import { defaultOptions } from '../options';
-
-function reducer<T>({ type, payload }: Action<T>, state: State) {
-  switch (type) {
-    case 'SET_DISPLAYS':
-      return {
-        ...state,
-        displays: payload,
-      };
-    case 'SET_STATUS':
-      return { ...state, status: payload };
-    case 'ADD_HISTORY_ENTRY':
-      return {
-        ...state,
-        history: [payload, ...state.history].slice(0, options.debugLimit),
-      };
-    case 'UPDATE_SETTINGS':
-      return {
-        ...state,
-        settings: {
-          ...state.settings,
-          ...payload,
-        },
-      };
-  }
-}
+} from '../../common';
+import { defaultOptions } from '../../options';
+import { appReducer } from './reducer';
 
 export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
     defaults: defaultOptions,
   });
+
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',
     defaults: { data: [] },
+  });
+
+  private defaultStats: AppStats = {
+    countSuccessSession: 0,
+    countSuccess: 0,
+    countErrorSession: 0,
+    countError: 0,
+    approxDuration: 0,
+    daemonsCount: 0,
+    daemonsSolvedCount: 0,
+  };
+
+  private stats = new ElectronStore<AppStats>({
+    name: 'stats',
+    defaults: this.defaultStats,
   });
 
   private state = this.getInitialState();
@@ -58,6 +50,7 @@ export class Store {
       displays: [],
       settings: this.settings.store,
       status: null,
+      stats: this.stats.store,
     };
   }
 
@@ -68,7 +61,7 @@ export class Store {
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    this.state = reducer(action, this.state);
+    this.state = appReducer(this.state, action);
 
     const dest = this.getDest(action);
     const returnAction = { payload: this.state, type: action.type };
@@ -104,14 +97,23 @@ export class Store {
     return action.origin === 'worker' ? this.renderer : this.worker;
   }
 
+  private preserveState() {
+    this.history.set('data', this.state.history);
+    this.settings.set(this.state.settings);
+    this.stats.set({
+      ...this.state.stats,
+      countSuccessSession: 0,
+      countErrorSession: 0,
+    });
+  }
+
   getState() {
     return this.state;
   }
 
   dispose() {
     if (process.env.NODE_ENV === 'production') {
-      this.history.set('data', this.state.history);
-      this.settings.set(this.state.settings);
+      this.preserveState();
     }
 
     ipc.removeAllListeners('state');

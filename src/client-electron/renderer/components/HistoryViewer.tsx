@@ -1,27 +1,14 @@
 import { HistoryEntry } from '@/client-electron/common';
 import {
-  BreachProtocolBufferSizeFragmentResult,
-  BreachProtocolDaemonsFragmentResult,
-  BreachProtocolFragmentResult,
-  BreachProtocolGridFragmentResult,
-  FragmentId,
-} from '@/core';
+  isBufferSizeFragment,
+  isDaemonsFragment,
+  isGridFragment,
+} from '@/core/common';
 import { FC, useState } from 'react';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
 import { GridViewer } from './GridViewer';
-
-function getFragment<T extends BreachProtocolFragmentResult<any>>(
-  id: FragmentId
-) {
-  return (f: BreachProtocolFragmentResult<any>): f is T => f.id === id;
-}
-
-const getGrid = getFragment<BreachProtocolGridFragmentResult>('grid');
-const getBufferSize =
-  getFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
-const getDaemons = getFragment<BreachProtocolDaemonsFragmentResult>('daemons');
 
 export interface Highlight {
   from: number;
@@ -34,9 +21,9 @@ interface HistoryViewerProps {
 
 export const HistoryViewer: FC<HistoryViewerProps> = ({ entry }) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
-  const { rawData: grid } = entry.fragments.find(getGrid);
-  const { rawData: bufferSize } = entry.fragments.find(getBufferSize);
-  const { rawData: daemons } = entry.fragments.find(getDaemons);
+  const { rawData: grid } = entry.fragments.find(isGridFragment);
+  const { rawData: bufferSize } = entry.fragments.find(isBufferSizeFragment);
+  const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const { path } = entry.result;
 
   return (

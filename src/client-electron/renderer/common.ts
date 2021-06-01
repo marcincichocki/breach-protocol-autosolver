@@ -71,6 +71,6 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
 }
 
-export function dispatch(action: Omit<Action, 'origin'>) {
-  return ipc.send('state', { ...action, origin: 'renderer' });
+export function dispatch(action: Action) {
+  return ipc.send('state', action);
 }

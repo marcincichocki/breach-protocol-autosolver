@@ -35,6 +35,11 @@ export const Navigation = memo(() => (
   <Nav>
     <List>
       <ListItem>
+        <NavLink exact to="/">
+          Dashboard
+        </NavLink>
+      </ListItem>
+      <ListItem>
         <NavLink to="/history">History</NavLink>
       </ListItem>
       <ListItem>

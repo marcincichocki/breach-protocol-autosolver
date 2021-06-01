@@ -1,5 +1,12 @@
 import { uniqueBy } from '@/common';
 import { BreachProtocolResult } from './game';
+import {
+  BreachProtocolBufferSizeFragmentResult,
+  BreachProtocolDaemonsFragmentResult,
+  BreachProtocolFragmentResult,
+  BreachProtocolGridFragmentResult,
+  FragmentId,
+} from './ocr';
 import { Daemon, memoizedFindOverlap, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
@@ -153,3 +160,16 @@ export function resolveExitStrategy(
     shouldForceClose,
   };
 }
+
+function isFragment<T extends BreachProtocolFragmentResult<any>>(
+  id: FragmentId
+) {
+  return (f: BreachProtocolFragmentResult<any>): f is T => f.id === id;
+}
+
+export const isGridFragment =
+  isFragment<BreachProtocolGridFragmentResult>('grid');
+export const isBufferSizeFragment =
+  isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
+export const isDaemonsFragment =
+  isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
