@@ -9,6 +9,7 @@ import {
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
+import { AppSettings } from '../common';
 import icon from '../renderer/assets/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
@@ -22,6 +23,8 @@ export class Main {
 
   /** Hidden "worker" window, does all the heavy lifting(ocr, solving). */
   private worker: Electron.BrowserWindow = null;
+
+  private settings: AppSettings = null;
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
@@ -60,6 +63,7 @@ export class Main {
   init() {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents);
+    this.settings = this.store.getState().settings;
 
     this.renderer = renderer;
     this.worker = worker;
@@ -93,25 +97,41 @@ export class Main {
 
     this.renderer.once('ready-to-show', () => this.renderer.show());
     this.renderer.once('closed', this.onRendererClosed.bind(this));
-    this.renderer.on('minimize', (event: Electron.Event) => {
-      event.preventDefault();
+    this.renderer.on('minimize', this.onRendererMinimize.bind(this));
+    this.renderer.on('restore', this.onRendererRestore.bind(this));
+  }
 
-      this.tray = this.createTray();
+  private onRendererMinimize(event: Electron.Event) {
+    if (!this.settings.minimizeToTray) {
+      return;
+    }
 
-      this.renderer.setSkipTaskbar(true);
-      this.renderer.hide();
-    });
+    event.preventDefault();
 
-    this.renderer.on('restore', () => {
-      this.renderer.show();
-      this.renderer.setSkipTaskbar(false);
+    this.tray = this.createTray();
 
-      this.tray.destroy();
-    });
+    this.renderer.setSkipTaskbar(true);
+    this.renderer.hide();
+  }
+
+  private onRendererRestore() {
+    if (!this.settings.minimizeToTray) {
+      return;
+    }
+
+    this.renderer.show();
+    this.renderer.setSkipTaskbar(false);
+
+    this.tray.destroy();
   }
 
   private removeAllListeners() {
     ipc.removeAllListeners();
+
+    this.renderer.removeAllListeners();
+    this.worker.removeAllListeners();
+
+    globalShortcut.unregisterAll();
   }
 
   private registerKeyBind(keyBind: Electron.Accelerator) {
@@ -119,7 +139,7 @@ export class Main {
   }
 
   private onWorkerReady() {
-    const { keyBind } = this.store.getState().settings;
+    const { keyBind } = this.settings;
 
     this.registerKeyBind(keyBind);
   }
@@ -179,8 +199,6 @@ export class Main {
     this.store = null;
 
     this.removeAllListeners();
-
-    globalShortcut.unregisterAll();
 
     app.quit();
   }
