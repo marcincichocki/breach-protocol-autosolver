@@ -46,10 +46,11 @@ export class Main {
         this.renderer.show();
       },
     },
+    { type: 'separator' },
     {
       label: 'Exit',
-      click() {
-        app.quit();
+      click: () => {
+        this.renderer.close();
       },
     },
   ];
