@@ -37,8 +37,10 @@ const setStatus: Handler<WorkerStatus> = (state, { payload }) => ({
 
 function getStatsFromHistoryEntry(
   {
-    timeApprox,
+    approxDuration,
+    countErrorSession,
     countError,
+    countSuccessSession,
     countSuccess,
     daemonsCount,
     daemonsSolvedCount,
@@ -46,25 +48,31 @@ function getStatsFromHistoryEntry(
   { status, fragments, result }: HistoryEntry
 ) {
   if (status === BreachProtocolStatus.Resolved) {
+    countSuccessSession += 1;
     countSuccess += 1;
 
-    const daemons = fragments.find(getDaemons);
+    const daemonsFragment = fragments.find(getDaemons);
+    const daemonsSize = daemonsFragment.rawData.length;
 
-    // Add 5 seconds for every daemon.
-    timeApprox += daemons.rawData.length * 5;
-    // Add 2 seconds for every square
-    timeApprox += result.resolvedSequence.value.length * 2;
+    // Add 5 seconds for every daemon and 2 seconds for every square.
+    const sequenceDuration = daemonsSize * 5;
+    const gridDuration = result.resolvedSequence.value.length * 2;
 
-    daemonsCount += daemons.rawData.length;
+    approxDuration += sequenceDuration + gridDuration;
+
+    daemonsCount += daemonsSize;
     daemonsSolvedCount += result.sequence.parts.length;
   } else {
+    countErrorSession += 1;
     countError += 1;
   }
 
   return {
-    countSuccess,
+    approxDuration,
+    countErrorSession,
     countError,
-    timeApprox,
+    countSuccessSession,
+    countSuccess,
     daemonsCount,
     daemonsSolvedCount,
   };

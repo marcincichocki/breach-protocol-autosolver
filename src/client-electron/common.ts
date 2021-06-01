@@ -64,11 +64,26 @@ export interface AppSettings {
 }
 
 export interface AppStats {
+  /** Amount of successful breach protocols during session. */
+  countSuccessSession: number;
+
+  /** Total amount of successful breach protocols. */
   countSuccess: number;
+
+  /** Amount of failed breach protocols during session. */
+  countErrorSession: number;
+
+  /** Total amount of failed breach protocols. */
   countError: number;
-  timeApprox: number;
-  daemonsSolvedCount: number;
+
+  /** Sum of approximated duration of every successful breach protocol. */
+  approxDuration: number;
+
+  /** Total amount of daemons. */
   daemonsCount: number;
+
+  /** Total amount of solved daemons. */
+  daemonsSolvedCount: number;
 }
 
 export interface State {
@@ -77,7 +92,6 @@ export interface State {
   settings: AppSettings;
   status: WorkerStatus;
   stats: AppStats;
-  globalStats: AppStats;
 }
 
 export type Origin = 'worker' | 'renderer';

@@ -24,9 +24,11 @@ export class Store {
   });
 
   private defaultStats: AppStats = {
+    countSuccessSession: 0,
     countSuccess: 0,
+    countErrorSession: 0,
     countError: 0,
-    timeApprox: 0,
+    approxDuration: 0,
     daemonsCount: 0,
     daemonsSolvedCount: 0,
   };
@@ -48,8 +50,7 @@ export class Store {
       displays: [],
       settings: this.settings.store,
       status: null,
-      stats: this.defaultStats,
-      globalStats: this.stats.store,
+      stats: this.stats.store,
     };
   }
 
@@ -96,15 +97,23 @@ export class Store {
     return action.origin === 'worker' ? this.renderer : this.worker;
   }
 
+  private preserveState() {
+    this.history.set('data', this.state.history);
+    this.settings.set(this.state.settings);
+    this.stats.set({
+      ...this.state.stats,
+      countSuccessSession: 0,
+      countErrorSession: 0,
+    });
+  }
+
   getState() {
     return this.state;
   }
 
   dispose() {
-    // TODO: save stats.
     if (process.env.NODE_ENV === 'production') {
-      this.history.set('data', this.state.history);
-      this.settings.set(this.state.settings);
+      this.preserveState();
     }
 
     ipc.removeAllListeners('state');

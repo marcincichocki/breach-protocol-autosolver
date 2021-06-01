@@ -1,3 +1,4 @@
+import { AppStats, State } from '@/client-electron/common';
 import { formatDuration, secondsToHours, secondsToMinutes } from 'date-fns';
 import { memo, useContext } from 'react';
 import styled from 'styled-components';
@@ -87,29 +88,31 @@ const Stats = styled.section`
   grid-template-columns: repeat(2, 1fr);
 `;
 
-export const Dashboard = memo(() => {
-  const { stats, globalStats } = useContext(StateContext);
-  const countSuccess = stats.countSuccess + globalStats.countSuccess;
-  const daemonsSolvedCount =
-    stats.daemonsSolvedCount + globalStats.daemonsSolvedCount;
-  const daemonsCount = stats.daemonsCount + globalStats.daemonsCount;
+function getSolvedDaemonsPercentage({
+  daemonsSolvedCount,
+  daemonsCount,
+}: AppStats) {
   const daemonsSolved = daemonsCount
     ? (daemonsSolvedCount / daemonsCount) * 100
     : 0;
-  const solvedPercentage = `${daemonsSolved.toFixed(2)}%`;
-  const timeSaved = getAmountOfTimeSaved(
-    stats.timeApprox + globalStats.timeApprox
-  );
+
+  return `${daemonsSolved.toFixed(2)}%`;
+}
+
+export const Dashboard = memo(() => {
+  const { stats } = useContext(StateContext);
+  const daemonsSolvedPercentage = getSolvedDaemonsPercentage(stats);
+  const timeSaved = getAmountOfTimeSaved(stats.approxDuration);
 
   return (
     <Row style={{ gap: '1rem', flexGrow: 1 }}>
       <Stats>
         <Stat
-          title={stats.countSuccess}
+          title={stats.countSuccessSession}
           subtitle="Solved during this session"
         />
-        <Stat title={countSuccess} subtitle="Solved overall" />
-        <Stat title={solvedPercentage} subtitle="Daemons acquired" />
+        <Stat title={stats.countSuccess} subtitle="Solved overall" />
+        <Stat title={daemonsSolvedPercentage} subtitle="Daemons acquired" />
         <Stat title={timeSaved} subtitle="Time saved(approx)" />
       </Stats>
       <DashboardActions></DashboardActions>
