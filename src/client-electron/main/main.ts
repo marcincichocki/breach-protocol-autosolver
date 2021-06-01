@@ -5,9 +5,11 @@ import {
   ipcMain as ipc,
   Menu,
   shell,
+  Tray,
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
+import icon from '../renderer/assets/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
@@ -37,6 +39,23 @@ export class Main {
     },
   ];
 
+  private trayMenu: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'Show',
+      click() {
+        this.renderer.show();
+      },
+    },
+    {
+      label: 'Exit',
+      click() {
+        app.quit();
+      },
+    },
+  ];
+
+  tray: Electron.Tray;
+
   init() {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents);
@@ -45,6 +64,19 @@ export class Main {
     this.worker = worker;
 
     this.registerListeners();
+  }
+
+  private createTray() {
+    let appIcon = new Tray(join(__dirname, icon));
+    const contextMenu = Menu.buildFromTemplate(this.trayMenu);
+
+    appIcon.on('double-click', () => {
+      this.renderer.show();
+    });
+    appIcon.setToolTip('Breach Protocol Autosolver');
+    appIcon.setContextMenu(contextMenu);
+
+    return appIcon;
   }
 
   private registerListeners() {
@@ -60,6 +92,21 @@ export class Main {
 
     this.renderer.once('ready-to-show', () => this.renderer.show());
     this.renderer.once('closed', this.onRendererClosed.bind(this));
+    this.renderer.on('minimize', (event: Electron.Event) => {
+      event.preventDefault();
+
+      this.tray = this.createTray();
+
+      this.renderer.setSkipTaskbar(true);
+      this.renderer.hide();
+    });
+
+    this.renderer.on('restore', () => {
+      this.renderer.show();
+      this.renderer.setSkipTaskbar(false);
+
+      this.tray.destroy();
+    });
   }
 
   private removeAllListeners() {
