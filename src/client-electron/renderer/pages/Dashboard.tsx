@@ -1,4 +1,4 @@
-import { AppStats, State } from '@/client-electron/common';
+import { AppStats } from '@/client-electron/common';
 import { formatDuration, secondsToHours, secondsToMinutes } from 'date-fns';
 import { memo, useContext } from 'react';
 import styled from 'styled-components';
@@ -62,16 +62,21 @@ interface StatProps {
 
 const StatWrapper = styled.div`
   flex-grow: 1;
-  padding: 2rem;
-  border: 1px solid var(--primary);
-  background: var(--background);
 `;
 
-const DashboardActions = styled.aside`
+const Actions = styled.aside`
   width: 33%;
-  border: 1px solid var(--primary);
-  background: var(--background);
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ActionsHeader = styled.h2`
+  margin: 0;
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1;
 `;
 
 const Stat = memo(({ title, subtitle }: StatProps) => (
@@ -86,6 +91,7 @@ const Stats = styled.section`
   grid-gap: 1rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  padding: 1rem;
 `;
 
 function getSolvedDaemonsPercentage({
@@ -105,7 +111,7 @@ export const Dashboard = memo(() => {
   const timeSaved = getAmountOfTimeSaved(stats.approxDuration);
 
   return (
-    <Row style={{ gap: '1rem', flexGrow: 1 }}>
+    <Row style={{ gap: '1rem', flexGrow: 1, padding: '2rem' }}>
       <Stats>
         <Stat
           title={stats.countSuccessSession}
@@ -115,7 +121,7 @@ export const Dashboard = memo(() => {
         <Stat title={daemonsSolvedPercentage} subtitle="Daemons acquired" />
         <Stat title={timeSaved} subtitle="Time saved(approx)" />
       </Stats>
-      <DashboardActions></DashboardActions>
+      <Actions></Actions>
     </Row>
   );
 });
