@@ -75,7 +75,7 @@ export class Main {
     tray.on('double-click', () => {
       this.renderer.show();
     });
-    tray.setToolTip('Breach Protocol Autosolver');
+    tray.setToolTip(process.env.npm_package_build_productName);
     tray.setContextMenu(contextMenu);
 
     return tray;
