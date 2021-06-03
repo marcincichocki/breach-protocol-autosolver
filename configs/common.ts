@@ -13,7 +13,7 @@ export const commonPlugins: WebpackPluginInstance[] = [
     'npm_package_build_productName',
   ]),
   new EnvironmentPlugin({
-    GIT_COMMIT_DATE: git('show -s --format=%ct'),
+    GIT_COMMIT_DATE: +git('show -s --format=%ct'),
     GIT_COMMIT_SHA: git('rev-parse HEAD'),
     GIT_TAG: git('describe --abbrev=0'),
   }),
