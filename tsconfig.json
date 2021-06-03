@@ -6,6 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2019",
     "noImplicitAny": true,
+    "noImplicitOverride": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",

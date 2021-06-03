@@ -2,9 +2,9 @@ import sharp from 'sharp';
 import { BreachProtocolFragmentBoundingBox } from './base';
 
 export abstract class ImageContainer<T> {
-  readonly instance: T;
+  abstract readonly instance: T;
 
-  readonly dimensions: { x: number; y: number };
+  abstract readonly dimensions: { x: number; y: number };
 
   /** Crop image and turn it into 8bit. */
   abstract process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox): T;

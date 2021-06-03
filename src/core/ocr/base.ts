@@ -142,7 +142,7 @@ export abstract class BreachProtocolOCRFragment<
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
-  constructor(public container: ImageContainer<TImage>) {
+  constructor(container: ImageContainer<TImage>) {
     super(container);
 
     // Initializing workers takes a lot of time. Loading them every time
