@@ -2,7 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
-import { commonPlugins } from './common';
+import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -17,13 +17,7 @@ export const config: webpack.Configuration = {
     plugins: [new TsconfigPathsPlugin()],
   },
   module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-      },
-    ],
+    rules: [...commonRules],
   },
   externals: {
     sharp: 'commonjs sharp',

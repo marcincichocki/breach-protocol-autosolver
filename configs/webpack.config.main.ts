@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
-import { commonPlugins } from './common';
+import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -16,13 +16,7 @@ export const config: webpack.Configuration = {
     filename: 'main.js',
   },
   module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-      },
-    ],
+    rules: [...commonRules],
   },
   plugins: [...commonPlugins],
 };

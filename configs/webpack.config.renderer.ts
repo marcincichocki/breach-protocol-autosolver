@@ -1,13 +1,8 @@
-import { execSync } from 'child_process';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
-import { commonPlugins } from './common';
-
-function git(command: string) {
-  return execSync(`git ${command}`).toString().trim();
-}
+import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -22,25 +17,7 @@ export const config: webpack.Configuration = {
     plugins: [new TsconfigPathsPlugin()],
   },
   module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-      },
-      {
-        test: /\.ttf$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.svg$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-    ],
+    rules: [...commonRules],
   },
   plugins: [
     ...commonPlugins,
