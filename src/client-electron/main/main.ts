@@ -1,4 +1,13 @@
-import { app, globalShortcut, ipcMain as ipc, Menu, shell } from 'electron';
+import {
+  app,
+  dialog,
+  globalShortcut,
+  ipcMain as ipc,
+  Menu,
+  shell,
+} from 'electron';
+import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
+import { extname, join } from 'path';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
@@ -44,6 +53,7 @@ export class Main {
     ipc.on('renderer:maximize', this.onAppMaximize.bind(this));
     ipc.on('renderer:show-help-menu', this.onShowHelpMenu.bind(this));
     ipc.on('renderer:key-bind-change', this.onKeyBindChange.bind(this));
+    ipc.on('renderer:dump-debug-info', this.onDumpDebugInfo.bind(this));
 
     // Start listening on keybind when worker is fully loaded.
     ipc.once('worker:ready', this.onWorkerReady.bind(this));
@@ -76,6 +86,32 @@ export class Main {
     globalShortcut.unregisterAll();
 
     this.registerKeyBind(keyBind);
+  }
+
+  private async onDumpDebugInfo(e: Electron.IpcMain, entryId: string) {
+    const defaultPath = `bpa-dump-${entryId}.tgz`;
+    const { canceled, filePath } = await dialog.showSaveDialog(this.renderer, {
+      defaultPath,
+    });
+
+    if (canceled) {
+      return;
+    }
+
+    const entry = this.store.getState().history.find((e) => e.uuid === entryId);
+    const tmpPath = join(app.getPath('userData'), 'tmp');
+    const tmpEntryPath = join(tmpPath, 'entry.json');
+    const tmpSourcePath = join(tmpPath, `source${extname(entry.fileName)}`);
+
+    ensureDirSync(tmpPath);
+    writeJSONSync(tmpEntryPath, entry);
+    copyFileSync(entry.fileName, tmpSourcePath);
+
+    const { default: tar } = await import('tar');
+
+    await tar.create({ gzip: true, file: filePath, cwd: tmpPath }, ['./']);
+
+    remove(tmpPath);
   }
 
   private onShowHelpMenu() {
