@@ -5,7 +5,6 @@ import {
   FragmentId,
   SequenceJSON,
 } from '@/core';
-import { Options } from '@/platform-node/cli';
 import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,6 +28,8 @@ export enum BreachProtocolSolveProgress {
 }
 
 export interface HistoryEntry {
+  version: string;
+  commitSha: string;
   uuid: string;
   startedAt: number;
   finishedAt: number;
