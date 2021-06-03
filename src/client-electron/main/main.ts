@@ -101,11 +101,15 @@ export class Main {
     const entry = this.store.getState().history.find((e) => e.uuid === entryId);
     const tmpPath = join(app.getPath('userData'), 'tmp');
     const tmpEntryPath = join(tmpPath, 'entry.json');
-    const tmpSourcePath = join(tmpPath, `source${extname(entry.fileName)}`);
 
     ensureDirSync(tmpPath);
     writeJSONSync(tmpEntryPath, entry);
-    copyFileSync(entry.fileName, tmpSourcePath);
+
+    if (entry.fileName) {
+      const tmpSourcePath = join(tmpPath, `source${extname(entry.fileName)}`);
+
+      copyFileSync(entry.fileName, tmpSourcePath);
+    }
 
     const { default: tar } = await import('tar');
 
