@@ -1,6 +1,7 @@
 import { join } from 'path';
-import webpack, { EnvironmentPlugin } from 'webpack';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
+import webpack from 'webpack';
+import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -15,19 +16,7 @@ export const config: webpack.Configuration = {
     filename: 'main.js',
   },
   module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-      },
-    ],
+    rules: [...commonRules],
   },
-  plugins: [
-    new EnvironmentPlugin([
-      'npm_package_version',
-      'npm_package_homepage',
-      'npm_package_bugs_url',
-    ]),
-  ],
+  plugins: [...commonPlugins],
 };

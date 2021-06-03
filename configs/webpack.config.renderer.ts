@@ -1,7 +1,8 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import { join } from 'path';
-import webpack, { EnvironmentPlugin } from 'webpack';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
+import webpack from 'webpack';
+import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -16,31 +17,13 @@ export const config: webpack.Configuration = {
     plugins: [new TsconfigPathsPlugin()],
   },
   module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-      },
-      {
-        test: /\.ttf$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.svg$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-    ],
+    rules: [...commonRules],
   },
   plugins: [
+    ...commonPlugins,
     new HtmlWebpackPlugin({
       template: join(__dirname, '../public/renderer.html'),
       filename: 'renderer.html',
     }),
-    new EnvironmentPlugin(['npm_package_version']),
   ],
 };
