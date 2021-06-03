@@ -1,5 +1,5 @@
 /**
- * Using font-face in {@link createGlobalStyle} cause Chrome to 
+ * Using font-face in sc' createGlobalStyle cause Chrome to 
  * refetch fonts on route change. Loading them separatly solves
  * the issue.
  */
