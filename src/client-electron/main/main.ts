@@ -92,6 +92,7 @@ export class Main {
     const defaultPath = `bpa-dump-${entryId}.tgz`;
     const { canceled, filePath } = await dialog.showSaveDialog(this.renderer, {
       defaultPath,
+      filters: [{ name: 'Archive', extensions: ['tgz'] }],
     });
 
     if (canceled) {
