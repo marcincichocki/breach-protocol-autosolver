@@ -1,7 +1,13 @@
+import { execSync } from 'child_process';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import { join } from 'path';
-import webpack, { EnvironmentPlugin } from 'webpack';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
+import webpack from 'webpack';
+import { commonPlugins } from './common';
+
+function git(command: string) {
+  return execSync(`git ${command}`).toString().trim();
+}
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -37,10 +43,10 @@ export const config: webpack.Configuration = {
     ],
   },
   plugins: [
+    ...commonPlugins,
     new HtmlWebpackPlugin({
       template: join(__dirname, '../public/renderer.html'),
       filename: 'renderer.html',
     }),
-    new EnvironmentPlugin(['npm_package_version']),
   ],
 };
