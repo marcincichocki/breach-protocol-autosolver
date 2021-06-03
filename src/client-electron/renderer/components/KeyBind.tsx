@@ -1,5 +1,10 @@
 import { Accelerator } from 'electron';
-import { Fragment, KeyboardEvent, useRef, useState } from 'react';
+import {
+  Fragment,
+  KeyboardEvent as ReactKeyboardEvent,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
 
@@ -158,7 +163,7 @@ export const useKeyPress = (
   const [count, setCount] = useState(0);
   const [dirty, setDirty] = useState(false);
 
-  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+  function onKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
     event.stopPropagation();
 

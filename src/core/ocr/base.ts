@@ -142,15 +142,17 @@ export abstract class BreachProtocolOCRFragment<
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
-  constructor(public container: ImageContainer<TImage>) {
+  constructor(container: ImageContainer<TImage>) {
     super(container);
 
-    // Initializing workers takes a lot of time. Loading them every time
-    // when class is instantiated is a big performance bottleneck.
-    // Instead call {@link BreachProtocolOCRFragment.initScheduler} during
-    // bootstrap to init tesseract workers and
-    // {@link BreachProtocolOCRFragment.terminateSchedulers} during exit
-    // to terminated them.
+    /**
+     * Initializing workers takes a lot of time. Loading them every time
+     * when class is instantiated is a big performance bottleneck.
+     * Instead call {@link BreachProtocolOCRFragment.initScheduler}
+     * during bootstrap to init tesseract workers and
+     * {@link BreachProtocolOCRFragment.terminateScheduler} during exit
+     * to terminated them.
+     */
     if (!BreachProtocolOCRFragment.scheduler) {
       throw new Error('Scheduler is not initialized!');
     }
