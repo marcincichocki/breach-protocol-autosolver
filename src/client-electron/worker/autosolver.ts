@@ -131,6 +131,7 @@ export class BreachProtocolAutosolver {
   }
 
   private resolve() {
+    // TODO: put this behind flag
     this.removeSourceImage();
 
     return this.finishWithStatus(BreachProtocolStatus.Resolved);

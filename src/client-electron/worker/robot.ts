@@ -12,26 +12,28 @@ export abstract class Robot {
 
   constructor(
     protected readonly settings: AppSettings,
-    private readonly basePath: string
+    private readonly basePath: string,
+    protected readonly scaling: number = 1
   ) {
     ensureDirSync(this.screenshotDir);
   }
 
   abstract click(): Promise<any>;
 
+  abstract move(x: number, y: number, restart?: boolean): Promise<any>;
+
   abstract movePointerAway(): Promise<any>;
 
   abstract exit(): Promise<any>;
-
-  abstract move(x: number, y: number): Promise<any>;
 
   sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
 
   async captureScreen(screen: string = this.settings.activeDisplayId) {
-    // TODO: move pointer back
-    // TODO: remove oldest screenshot
+    // TODO: remove screenshot that is associated with
+    // entry that is about to be deleted. This cannot
+    // use previous method of deleting files by count.
     await this.movePointerAway();
 
     const { format } = this.settings;
@@ -60,8 +62,8 @@ export abstract class BreachProtocolRobot extends Robot {
     for (const square of path) {
       const { x, y } = squareMap.get(square);
 
-      await this.move(x, y);
-      // await this.click();
+      await this.move(x, y, false);
+      await this.click();
       await this.sleep();
     }
 
@@ -90,28 +92,18 @@ export class WindowsRobot extends BreachProtocolRobot {
   private x = 0;
   private y = 0;
 
-  private nircmd(command: string, options = {}) {
-    const bin = './vendor/nircmd/nircmd.exe';
-    const args = command.split(' ');
-
-    return new Promise((resolve, reject) => {
-      execFile(bin, args, options, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
-  }
+  private readonly bin = './vendor/nircmd/nircmd.exe';
 
   click() {
     return this.nircmd('sendmouse left click');
   }
 
-  async move(x: number, y: number) {
-    // TODO: use settings;
-    const scaling = 1;
+  async move(x: number, y: number, restart = true) {
+    if (restart) {
+      await this.movePointerAway();
+    }
+
+    const scaling = this.settings.useScaling ? this.scaling : 1;
     const sX = (x - this.x) / scaling;
     const sY = (y - this.y) / scaling;
     const r = await this.moveRelative(sX, sY);
@@ -131,6 +123,20 @@ export class WindowsRobot extends BreachProtocolRobot {
 
   exit() {
     return this.nircmd('sendkeypress esc');
+  }
+
+  private nircmd(command: string, options = {}) {
+    const args = command.split(' ');
+
+    return new Promise((resolve, reject) => {
+      execFile(this.bin, args, options, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
   }
 
   private moveRelative(x: number, y: number) {
