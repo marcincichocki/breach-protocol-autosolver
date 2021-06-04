@@ -13,7 +13,6 @@ import {
   SharpImageContainer,
   transformRawData,
 } from '@/core';
-import { captureScreen, resolveBreachProtocol } from '@/platform-node/robot';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { play } from 'sound-play';
@@ -24,6 +23,7 @@ import {
   BreachProtocolStatus,
   HistoryEntry,
 } from '../common';
+import { WindowsRobot } from './robot';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
@@ -50,12 +50,12 @@ export class BreachProtocolAutosolver {
 
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
+  private robot = new WindowsRobot(this.settings);
+
   constructor(private readonly settings: AppSettings) {}
 
   async solve() {
-    this.fileName = (await captureScreen(
-      this.settings.activeDisplayId
-    )) as string;
+    this.fileName = await this.robot.captureScreen();
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.isValid) {
@@ -75,7 +75,7 @@ export class BreachProtocolAutosolver {
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
     this.exitStrategy = resolveExitStrategy(this.result, this.data);
 
-    await resolveBreachProtocol(
+    await this.robot.resolveBreachProtocol(
       this.result.path,
       this.recognitionResult.positionSquareMap,
       this.exitStrategy
