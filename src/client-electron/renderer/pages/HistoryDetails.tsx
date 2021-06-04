@@ -32,12 +32,12 @@ const OpenInExplorer: FC<{ fileName: string }> = ({ fileName, children }) => {
   );
 };
 
-const DumpDebugInfo = ({
+const SaveSnapshot = ({
   entryId,
   children,
 }: PropsWithChildren<{ entryId: string }>) => {
   return (
-    <LinkButton onClick={() => ipc.send('renderer:dump-debug-info', entryId)}>
+    <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
       {children}
     </LinkButton>
   );
@@ -50,7 +50,7 @@ const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
       Re-calibrate
     </FlatButton>
     <OpenInExplorer fileName={entry.fileName}>Show source</OpenInExplorer>
-    <DumpDebugInfo entryId={entry.uuid}>Dump debug info</DumpDebugInfo>
+    <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
   </Col>
 );
 
@@ -91,7 +91,7 @@ export const HistoryDetails: FC = () => {
           ) : (
             <DetailText>Source not available</DetailText>
           )}
-          <DumpDebugInfo entryId={entry.uuid}>Dump debug info</DumpDebugInfo>
+          <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
         </Col>
       </Row>
     </Col>

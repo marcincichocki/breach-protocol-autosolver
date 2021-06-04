@@ -53,7 +53,7 @@ export class Main {
     ipc.on('renderer:maximize', this.onAppMaximize.bind(this));
     ipc.on('renderer:show-help-menu', this.onShowHelpMenu.bind(this));
     ipc.on('renderer:key-bind-change', this.onKeyBindChange.bind(this));
-    ipc.on('renderer:dump-debug-info', this.onDumpDebugInfo.bind(this));
+    ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
 
     // Start listening on keybind when worker is fully loaded.
     ipc.once('worker:ready', this.onWorkerReady.bind(this));
@@ -88,8 +88,8 @@ export class Main {
     this.registerKeyBind(keyBind);
   }
 
-  private async onDumpDebugInfo(e: Electron.IpcMain, entryId: string) {
-    const defaultPath = `bpa-dump-${entryId}.tgz`;
+  private async onSaveSnapshot(e: Electron.IpcMain, entryId: string) {
+    const defaultPath = `bpa-snapshot-${entryId}.tgz`;
     const { canceled, filePath } = await dialog.showSaveDialog(this.renderer, {
       defaultPath,
       filters: [{ name: 'Archive', extensions: ['tgz'] }],
