@@ -1,7 +1,7 @@
 import { BreachProtocolStatus, HistoryEntry } from '@/client-electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
-import { shell } from 'electron';
-import { FC } from 'react';
+import { ipcRenderer as ipc, shell } from 'electron';
+import { FC, PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
@@ -32,6 +32,17 @@ const OpenInExplorer: FC<{ fileName: string }> = ({ fileName, children }) => {
   );
 };
 
+const SaveSnapshot = ({
+  entryId,
+  children,
+}: PropsWithChildren<{ entryId: string }>) => {
+  return (
+    <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
+      {children}
+    </LinkButton>
+  );
+};
+
 const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
   <Col style={{ margin: 'auto', alignItems: 'center', gap: '1rem' }}>
     <Heading2>Error while trying to gather data</Heading2>
@@ -39,8 +50,14 @@ const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
       Re-calibrate
     </FlatButton>
     <OpenInExplorer fileName={entry.fileName}>Show source</OpenInExplorer>
+    <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
   </Col>
 );
+
+const DetailText = styled.span`
+  font-size: 1.1rem;
+  font-weight: 500;
+`;
 
 export const HistoryDetails: FC = () => {
   const entry = useHistoryEntryFromParam();
@@ -58,17 +75,24 @@ export const HistoryDetails: FC = () => {
     <Col style={{ gap: '1rem' }}>
       <HistoryViewer entry={entry} />
       <Row style={{ justifyContent: 'space-between' }}>
-        <Col>Done in {duration}</Col>
-        {entry.fileName && (
-          <Col>
-            <OpenInExplorer fileName={entry.fileName}>
-              Show source
-            </OpenInExplorer>
-            <TextLink to={`/calibrate/${entry.uuid}/grid`}>
-              Re-calibrate
-            </TextLink>
-          </Col>
-        )}
+        <Col>
+          <DetailText>Done in {duration}</DetailText>
+        </Col>
+        <Col style={{ alignItems: 'flex-end' }}>
+          {entry.fileName ? (
+            <>
+              <OpenInExplorer fileName={entry.fileName}>
+                Show source
+              </OpenInExplorer>
+              <TextLink to={`/calibrate/${entry.uuid}/grid`}>
+                Re-calibrate
+              </TextLink>
+            </>
+          ) : (
+            <DetailText>Source not available</DetailText>
+          )}
+          <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
+        </Col>
       </Row>
     </Col>
   );

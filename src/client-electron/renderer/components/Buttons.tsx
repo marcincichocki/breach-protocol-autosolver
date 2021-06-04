@@ -65,4 +65,5 @@ export const LinkButton = styled.button`
   cursor: pointer;
   font-family: Rajdhani;
   font-size: 1rem;
+  font-weight: 500;
 `;
