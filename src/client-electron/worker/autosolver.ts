@@ -23,7 +23,7 @@ import {
   BreachProtocolStatus,
   HistoryEntry,
 } from '../common';
-import { WindowsRobot } from './robot';
+import { BreachProtocolRobot } from './robot';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
@@ -50,9 +50,10 @@ export class BreachProtocolAutosolver {
 
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
-  private robot = new WindowsRobot(this.settings);
-
-  constructor(private readonly settings: AppSettings) {}
+  constructor(
+    private readonly settings: AppSettings,
+    private robot: BreachProtocolRobot
+  ) {}
 
   async solve() {
     this.fileName = await this.robot.captureScreen();

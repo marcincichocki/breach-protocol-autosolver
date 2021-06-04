@@ -1,17 +1,19 @@
 import { Point } from '@/common';
 import { BreachProtocolExitStrategy } from '@/core';
 import { execFile } from 'child_process';
-import { app } from 'electron';
 import { ensureDirSync } from 'fs-extra';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
 import screenshot from 'screenshot-desktop';
 import { AppSettings } from '../common';
 
-abstract class Robot {
-  private screenshotDir = join(app.getPath('userData'), 'screenshots');
+export abstract class Robot {
+  private screenshotDir = join(this.basePath, 'screenshots');
 
-  constructor(protected readonly settings: AppSettings) {
+  constructor(
+    protected readonly settings: AppSettings,
+    private readonly basePath: string
+  ) {
     ensureDirSync(this.screenshotDir);
   }
 
@@ -47,7 +49,7 @@ abstract class Robot {
   }
 }
 
-abstract class BreachProtocolRobot extends Robot {
+export abstract class BreachProtocolRobot extends Robot {
   async resolveBreachProtocol(
     path: string[],
     squareMap: Map<string, Point>,

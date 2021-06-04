@@ -25,6 +25,7 @@ import {
   UpdateSettingsAction,
 } from '../actions';
 import { BreachProtocolAutosolver } from './autosolver';
+import { WindowsRobot } from './robot';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
@@ -87,10 +88,11 @@ export class BreachProtocolWorker {
     );
   }
 
-  private async onWorkerSolve() {
+  private async onWorkerSolve(e: IpcRendererEvent, basePath: string) {
     this.updateStatus(WorkerStatus.Working);
 
-    const bpa = new BreachProtocolAutosolver(this.settings);
+    const robot = new WindowsRobot(this.settings, basePath);
+    const bpa = new BreachProtocolAutosolver(this.settings, robot);
     await bpa.solve();
 
     this.dispatch(new AddHistoryEntryAction(bpa.toJSON()));
