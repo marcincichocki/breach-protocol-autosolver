@@ -58,6 +58,7 @@ export class Main {
     // Start listening on keybind when worker is fully loaded.
     ipc.once('worker:ready', this.onWorkerReady.bind(this));
 
+    this.renderer.once('ready-to-show', () => this.renderer.show());
     this.renderer.once('closed', this.onRendererClosed.bind(this));
   }
 

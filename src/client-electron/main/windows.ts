@@ -22,6 +22,7 @@ const workerOptions: BrowserWindowConstructorOptions = {
 };
 
 const rendererOptions: BrowserWindowConstructorOptions = {
+  show: false,
   minWidth: 1280,
   minHeight: 720,
   // Maximize and drag does not work on wsl2.
