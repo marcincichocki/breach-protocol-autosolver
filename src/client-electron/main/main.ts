@@ -5,9 +5,11 @@ import {
   ipcMain as ipc,
   Menu,
   shell,
+  Tray,
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
+import icon from '../renderer/assets/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
@@ -37,6 +39,24 @@ export class Main {
     },
   ];
 
+  private trayMenu: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'Show',
+      click: () => {
+        this.renderer.show();
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Exit',
+      click: () => {
+        this.renderer.close();
+      },
+    },
+  ];
+
+  tray: Electron.Tray;
+
   init() {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents);
@@ -45,6 +65,19 @@ export class Main {
     this.worker = worker;
 
     this.registerListeners();
+  }
+
+  private createTray() {
+    const tray = new Tray(join(__dirname, icon));
+    const contextMenu = Menu.buildFromTemplate(this.trayMenu);
+
+    tray.on('double-click', () => {
+      this.renderer.show();
+    });
+    tray.setToolTip(process.env.npm_package_build_productName);
+    tray.setContextMenu(contextMenu);
+
+    return tray;
   }
 
   private registerListeners() {
@@ -60,10 +93,41 @@ export class Main {
 
     this.renderer.once('ready-to-show', () => this.renderer.show());
     this.renderer.once('closed', this.onRendererClosed.bind(this));
+    this.renderer.on('minimize', this.onRendererMinimize.bind(this));
+    this.renderer.on('restore', this.onRendererRestore.bind(this));
+  }
+
+  private onRendererMinimize(event: Electron.Event) {
+    if (!this.getSettings().minimizeToTray) {
+      return;
+    }
+
+    event.preventDefault();
+
+    this.tray = this.createTray();
+
+    this.renderer.setSkipTaskbar(true);
+    this.renderer.hide();
+  }
+
+  private onRendererRestore() {
+    if (!this.getSettings().minimizeToTray) {
+      return;
+    }
+
+    this.renderer.show();
+    this.renderer.setSkipTaskbar(false);
+
+    this.tray.destroy();
   }
 
   private removeAllListeners() {
     ipc.removeAllListeners();
+
+    this.renderer.removeAllListeners();
+    this.worker.removeAllListeners();
+
+    globalShortcut.unregisterAll();
   }
 
   private registerKeyBind(keyBind: Electron.Accelerator) {
@@ -71,7 +135,7 @@ export class Main {
   }
 
   private onWorkerReady() {
-    const { keyBind } = this.store.getState().settings;
+    const { keyBind } = this.getSettings();
 
     this.registerKeyBind(keyBind);
   }
@@ -132,8 +196,6 @@ export class Main {
 
     this.removeAllListeners();
 
-    globalShortcut.unregisterAll();
-
     app.quit();
   }
 
@@ -151,5 +213,9 @@ export class Main {
     } else {
       this.renderer.maximize();
     }
+  }
+
+  private getSettings() {
+    return this.store.getState().settings;
   }
 }

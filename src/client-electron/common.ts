@@ -62,6 +62,7 @@ export interface AppSettings {
   experimentalBufferSizeRecognition: boolean;
   format: 'png' | 'jpg';
   activeDisplayId: string;
+  minimizeToTray: boolean;
 }
 
 export interface AppStats {

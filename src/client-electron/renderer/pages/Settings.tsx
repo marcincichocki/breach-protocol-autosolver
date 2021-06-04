@@ -80,6 +80,10 @@ const GeneralSettings = () => {
 
   return (
     <Section title="General">
+      <Field name="minimizeToTray">
+        <Label>Minimize to tray</Label>
+        <Switch />
+      </Field>
       <Field name="historySize">
         <Label>History size</Label>
         <RangeSlider min={1} max={100} />

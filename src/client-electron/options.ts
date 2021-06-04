@@ -104,6 +104,11 @@ const options = [
     'Use Windows scaling to calculate coordinates of squares.',
     false
   ),
+  new BreachProtocolOption(
+    'minimizeToTray',
+    'Minimize app to system tray.',
+    true
+  ),
 ];
 
 function reduceOptions<T>(

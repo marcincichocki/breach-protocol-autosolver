@@ -1,6 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import isWsl from 'is-wsl';
 import { join } from 'path';
+import icon from '../renderer/assets/icon.png';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -27,6 +28,7 @@ const rendererOptions: BrowserWindowConstructorOptions = {
   minHeight: 720,
   // Maximize and drag does not work on wsl2.
   frame: isDev && isWsl ? true : false,
+  icon: join(__dirname, icon),
   autoHideMenuBar: true,
   webPreferences: {
     nodeIntegration: true,
