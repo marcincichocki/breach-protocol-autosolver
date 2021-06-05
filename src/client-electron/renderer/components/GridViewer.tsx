@@ -1,13 +1,15 @@
 import { COLS, cross, GridRawData, ROWS } from '@/core/common';
-import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
+const cssVars = { size: 5, gutter: 16, square: 40, border: 1 };
+const cssVarsHighlight = { size: 7, border: 4 };
+
 const GridWrapper = styled.div<{ size: number }>`
-  --size: 5px;
-  --gutter: 16px;
-  --square: 40px;
-  --border: 1px;
+  --size: ${cssVars.size}px;
+  --gutter: ${cssVars.gutter}px;
+  --square: ${cssVars.square}px;
+  --border: ${cssVars.border}px;
 
   width: 376px;
   height: 376px;
@@ -26,8 +28,8 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
   ${(p) =>
     p.highlight &&
     css`
-      --border: 4px;
-      --size: 7px;
+      --border: ${cssVarsHighlight.border}px;
+      --size: ${cssVarsHighlight.size}px;
     `}
 
   box-sizing: border-box;
@@ -84,6 +86,14 @@ function getLineSizeFor(o: LineOrientation) {
   };
 }
 
+function getLinePosition({ dir, highlight }: LineProps) {
+  const borderSize = highlight
+    ? `${cssVarsHighlight.border}px`
+    : 'var(--border)';
+
+  return `${dir}: calc(var(--square) + var(--size) - ${borderSize})`;
+}
+
 const arrowBorders = css`
   border-top: ${getArrowBorderFor('top')};
   border-right: ${getArrowBorderFor('right')};
@@ -98,9 +108,17 @@ interface LineProps {
   offset: number;
   dir: LineDirection;
   orientation: LineOrientation;
+  highlight: boolean;
 }
 
 const Line = styled.div<LineProps>`
+  ${(p) =>
+    p.highlight &&
+    css`
+      --border: 1px;
+      --size: 5px;
+    `}
+
   color: var(--accent);
   pointer-events: none;
   position: absolute;
@@ -108,7 +126,7 @@ const Line = styled.div<LineProps>`
   z-index: -1;
   width: ${getLineSizeFor('vertical')};
   height: ${getLineSizeFor('horizontal')};
-  ${({ dir }) => dir}: calc(var(--square) + var(--size) - var(--border));
+  ${getLinePosition};
 
   &::after {
     content: '';
@@ -124,7 +142,7 @@ function findOffset(a: string, b: string, list: string) {
   return ia < ib ? ib - ia : ib - ia;
 }
 
-function getLineProps(from: string, to: string): LineProps {
+function getLineProps(from: string, to: string): Omit<LineProps, 'highlight'> {
   const [startRow, startCol] = from;
   const [endRow, endCol] = to;
   const orientation = startRow === endRow ? 'horizontal' : 'vertical';
@@ -151,7 +169,7 @@ interface GridViewerProps {
   highlight?: Highlight;
 }
 
-export const GridViewer: FC<GridViewerProps> = ({ grid, path, highlight }) => {
+export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
   const size = Math.sqrt(grid.length);
   const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
 
@@ -166,11 +184,16 @@ export const GridViewer: FC<GridViewerProps> = ({ grid, path, highlight }) => {
           highlight != null
             ? index >= highlight.from && index <= highlight.to
             : false;
+        const shouldHighlightArrow =
+          highlight != null ? index === highlight.from : false;
 
         return (
           <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
-              <Line {...getLineProps(path[index - 1], path[index])} />
+              <Line
+                {...getLineProps(path[index - 1], path[index])}
+                highlight={shouldHighlightArrow}
+              />
             )}
             {value}
           </Square>
