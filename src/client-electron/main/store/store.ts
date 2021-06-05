@@ -1,6 +1,7 @@
+import { ActionTypes } from '@/client-electron/actions';
 import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
-import { ensureDirSync, removeSync } from 'fs-extra';
+import { ensureDirSync, remove, removeSync } from 'fs-extra';
 import { join } from 'path';
 import {
   Action,
@@ -47,6 +48,7 @@ export class Store {
   private middlewares: Middleware[] = [];
 
   constructor(private worker: WebContents, private renderer: WebContents) {
+    this.attachMiddleware(this.removeLastHistoryEntry);
     this.registerStoreListeners();
   }
 
@@ -73,6 +75,26 @@ export class Store {
     ipc.removeAllListeners('async-request');
     ipc.removeAllListeners('async-response');
     ipc.removeAllListeners('get-state');
+  }
+
+  private removeLastHistoryEntry(action: Action) {
+    if (action.type === ActionTypes.ADD_HISTORY_ENTRY) {
+      const { history, settings } = this.state;
+      const { length } = history;
+
+      if (length >= settings.historySize) {
+        const { fileName } = history[length - 1];
+
+        if (fileName) {
+          remove(fileName);
+        }
+
+        this.dispatch({
+          type: ActionTypes.REMOVE_LAST_HISTORY_ENTRY,
+          origin: 'worker',
+        });
+      }
+    }
   }
 
   private createScreenshotDir() {

@@ -9,8 +9,6 @@ import {
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
-import { ActionTypes } from '../actions';
-import { Action } from '../common';
 import icon from '../renderer/assets/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
@@ -63,40 +61,10 @@ export class Main {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents);
 
-    this.attachStoreMiddlewares();
-
     this.renderer = renderer;
     this.worker = worker;
 
     this.registerListeners();
-  }
-
-  private attachStoreMiddlewares() {
-    if (process.env.NODE_ENV === 'development') {
-      this.store.attachMiddleware(console.log);
-    }
-
-    this.store.attachMiddleware(this.removeLastHistoryEntry.bind(this));
-  }
-
-  private removeLastHistoryEntry(action: Action) {
-    if (action.type === ActionTypes.ADD_HISTORY_ENTRY) {
-      const { history, settings } = this.store.getState();
-      const { length } = history;
-
-      if (length >= settings.historySize) {
-        const lastHistoryEntry = history[length - 1];
-
-        if (lastHistoryEntry.fileName) {
-          remove(lastHistoryEntry.fileName);
-        }
-
-        this.store.dispatch({
-          type: ActionTypes.REMOVE_LAST_HISTORY_ENTRY,
-          origin: 'worker',
-        });
-      }
-    }
   }
 
   private createTray() {
