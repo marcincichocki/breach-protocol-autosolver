@@ -7,13 +7,7 @@ import {
   shell,
   Tray,
 } from 'electron';
-import {
-  copyFileSync,
-  ensureDirSync,
-  remove,
-  removeSync,
-  writeJSONSync,
-} from 'fs-extra';
+import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
 import { ActionTypes } from '../actions';
 import { Action } from '../common';
@@ -94,7 +88,7 @@ export class Main {
         const lastHistoryEntry = history[length - 1];
 
         if (lastHistoryEntry.fileName) {
-          removeSync(lastHistoryEntry.fileName);
+          remove(lastHistoryEntry.fileName);
         }
 
         this.store.dispatch({

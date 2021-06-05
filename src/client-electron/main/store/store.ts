@@ -1,5 +1,7 @@
-import { ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
+import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
+import { ensureDirSync, removeSync } from 'fs-extra';
+import { join } from 'path';
 import {
   Action,
   AppSettings,
@@ -63,6 +65,8 @@ export class Store {
   dispose() {
     if (process.env.NODE_ENV === 'production') {
       this.preserveState();
+    } else if (process.env.NODE_ENV === 'development') {
+      removeSync(this.state.settings.screenshotDir);
     }
 
     ipc.removeAllListeners('state');
@@ -71,11 +75,21 @@ export class Store {
     ipc.removeAllListeners('get-state');
   }
 
+  private createScreenshotDir() {
+    const path = join(app.getPath('userData'), 'screenshots');
+
+    ensureDirSync(path);
+
+    return path;
+  }
+
   private getInitialState(): State {
+    const screenshotDir = this.createScreenshotDir();
+
     return {
       history: this.history.get('data'),
       displays: [],
-      settings: this.settings.store,
+      settings: { ...this.settings.store, screenshotDir },
       status: null,
       stats: this.stats.store,
     };

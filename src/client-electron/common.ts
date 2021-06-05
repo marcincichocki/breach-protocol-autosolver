@@ -63,6 +63,7 @@ export interface AppSettings {
   format: 'png' | 'jpg';
   activeDisplayId: string;
   minimizeToTray: boolean;
+  screenshotDir: string;
 }
 
 export interface AppStats {
