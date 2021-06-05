@@ -12,6 +12,8 @@ import {
 import { defaultOptions } from '../../options';
 import { appReducer } from './reducer';
 
+type Middleware = (action: Action) => void;
+
 export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
@@ -40,8 +42,33 @@ export class Store {
 
   private state = this.getInitialState();
 
+  private middlewares: Middleware[] = [];
+
   constructor(private worker: WebContents, private renderer: WebContents) {
     this.registerStoreListeners();
+  }
+
+  dispatch(action: Action) {
+    this.state = appReducer(this.state, action);
+  }
+
+  attachMiddleware(middleware: Middleware) {
+    this.middlewares.push(middleware);
+  }
+
+  getState() {
+    return this.state;
+  }
+
+  dispose() {
+    if (process.env.NODE_ENV === 'production') {
+      this.preserveState();
+    }
+
+    ipc.removeAllListeners('state');
+    ipc.removeAllListeners('async-request');
+    ipc.removeAllListeners('async-response');
+    ipc.removeAllListeners('get-state');
   }
 
   private getInitialState(): State {
@@ -60,8 +87,15 @@ export class Store {
     ipc.on('async-request', this.onAsyncRequest.bind(this));
   }
 
+  private applyMiddleWare(action: Action) {
+    for (const middleware of this.middlewares) {
+      middleware(action);
+    }
+  }
+
   private onState(event: IpcMainEvent, action: Action) {
-    this.state = appReducer(this.state, action);
+    this.applyMiddleWare(action);
+    this.dispatch(action);
 
     const dest = this.getDest(action);
     const returnAction = { payload: this.state, type: action.type };
@@ -105,20 +139,5 @@ export class Store {
       countSuccessSession: 0,
       countErrorSession: 0,
     });
-  }
-
-  getState() {
-    return this.state;
-  }
-
-  dispose() {
-    if (process.env.NODE_ENV === 'production') {
-      this.preserveState();
-    }
-
-    ipc.removeAllListeners('state');
-    ipc.removeAllListeners('async-request');
-    ipc.removeAllListeners('async-response');
-    ipc.removeAllListeners('get-state');
   }
 }
