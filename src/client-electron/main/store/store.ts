@@ -123,14 +123,14 @@ export class Store {
     ipc.on('async-request', this.onAsyncRequest.bind(this));
   }
 
-  private applyMiddleWare(action: Action) {
+  private applyMiddleware(action: Action) {
     for (const middleware of this.middlewares) {
       middleware(action);
     }
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    this.applyMiddleWare(action);
+    this.applyMiddleware(action);
     this.dispatch(action);
 
     const dest = this.getDest(action);
