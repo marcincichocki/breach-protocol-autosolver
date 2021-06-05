@@ -42,6 +42,8 @@ export interface HistoryEntry {
   exitStrategy: BreachProtocolExitStrategy;
 }
 
+export type SourceFormat = 'png' | 'jpg';
+
 export interface AppSettings {
   keyBind: Accelerator;
   historySize: number;
@@ -60,7 +62,7 @@ export interface AppSettings {
   autoExit: boolean;
   useScaling: boolean;
   experimentalBufferSizeRecognition: boolean;
-  format: 'png' | 'jpg';
+  format: SourceFormat;
   activeDisplayId: string;
   minimizeToTray: boolean;
   screenshotDir: string;
