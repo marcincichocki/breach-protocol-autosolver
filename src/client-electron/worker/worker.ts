@@ -7,7 +7,7 @@ import {
   SharpImageContainer,
 } from '@/core';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { listDisplays } from 'screenshot-desktop';
+import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import {
   Action,
@@ -25,9 +25,12 @@ import {
   UpdateSettingsAction,
 } from '../actions';
 import { BreachProtocolAutosolver } from './autosolver';
+import { WindowsRobot } from './robot';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
+
+  private displays: ScreenshotDisplayOutput[] = null;
 
   private fragments: {
     grid: BreachProtocolGridFragment<sharp.Sharp>;
@@ -38,18 +41,20 @@ export class BreachProtocolWorker {
   private settings: AppSettings = ipc.sendSync('get-state').settings;
 
   private async loadAndSetActiveDisplay() {
-    const displays = await listDisplays();
+    this.displays = await listDisplays();
 
-    this.dispatch(new SetDisplaysAction(displays));
+    this.dispatch(new SetDisplaysAction(this.displays));
 
     const { activeDisplayId } = this.settings;
 
-    if (displays.find((d) => d.id === activeDisplayId)) return;
+    if (this.displays.find((d) => d.id === activeDisplayId)) return;
 
     this.dispatch(
-      new UpdateSettingsAction({ activeDisplayId: displays[0].id }, 'worker', {
-        notify: false,
-      })
+      new UpdateSettingsAction(
+        { activeDisplayId: this.displays[0].id },
+        'worker',
+        { notify: false }
+      )
     );
   }
 
@@ -87,10 +92,13 @@ export class BreachProtocolWorker {
     );
   }
 
-  private async onWorkerSolve() {
+  private async onWorkerSolve(e: IpcRendererEvent, basePath: string) {
     this.updateStatus(WorkerStatus.Working);
 
-    const bpa = new BreachProtocolAutosolver(this.settings);
+    const { activeDisplayId } = this.settings;
+    const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
+    const robot = new WindowsRobot(this.settings, basePath, dpiScale);
+    const bpa = new BreachProtocolAutosolver(this.settings, robot);
     await bpa.solve();
 
     this.dispatch(new AddHistoryEntryAction(bpa.toJSON()));

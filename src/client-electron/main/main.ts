@@ -141,7 +141,7 @@ export class Main {
   }
 
   private onWorkerSolve() {
-    this.worker.webContents.send('worker:solve');
+    this.worker.webContents.send('worker:solve', app.getPath('userData'));
   }
 
   private onKeyBindChange(

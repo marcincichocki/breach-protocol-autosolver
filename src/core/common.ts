@@ -127,6 +127,7 @@ export interface BreachProtocolExitStrategy {
 }
 
 // TODO: allow raw data to be accessed from result
+/** TODO: move this to {@link BreachProtocolResult} */
 export function resolveExitStrategy(
   result: BreachProtocolResult,
   data: BreachProtocolRawData
