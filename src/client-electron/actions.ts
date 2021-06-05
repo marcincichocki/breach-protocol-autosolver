@@ -12,6 +12,7 @@ export const ActionTypes = {
   SET_STATUS: 'SET_STATUS',
   ADD_HISTORY_ENTRY: 'ADD_HISTORY_ENTRY',
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
+  REMOVE_LAST_HISTORY_ENTRY: 'REMOVE_LAST_HISTORY_ENTRY',
 } as const;
 
 export class SetStatusAction implements Action {
