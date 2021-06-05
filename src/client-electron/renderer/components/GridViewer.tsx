@@ -115,8 +115,8 @@ const Line = styled.div<LineProps>`
   ${(p) =>
     p.highlight &&
     css`
-      --border: 1px;
-      --size: 5px;
+      --border: ${cssVars.border}px;
+      --size: ${cssVars.size}px;
     `}
 
   color: var(--accent);
