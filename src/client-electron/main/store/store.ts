@@ -48,7 +48,7 @@ export class Store {
   private middlewares: Middleware[] = [];
 
   constructor(private worker: WebContents, private renderer: WebContents) {
-    this.attachMiddleware(this.removeLastHistoryEntry);
+    this.attachMiddleware(this.removeLastHistoryEntry.bind(this));
     this.registerStoreListeners();
   }
 
