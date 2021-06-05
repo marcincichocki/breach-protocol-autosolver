@@ -265,7 +265,7 @@ export const Settings: FC = () => {
 
   return (
     <SettingsWrapper>
-      {status === WorkerStatus.Ready ? (
+      {status !== WorkerStatus.Bootstrap ? (
         <>
           <FieldDescription name={activeField} />
           <Col
