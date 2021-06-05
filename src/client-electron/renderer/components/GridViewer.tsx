@@ -86,10 +86,8 @@ function getLineSizeFor(o: LineOrientation) {
   };
 }
 
-function getLinePosition({ dir, highlight }: LineProps) {
-  const borderSize = highlight
-    ? `${cssVarsHighlight.border}px`
-    : 'var(--border)';
+function getLinePosition({ dir, ignore }: LineProps) {
+  const borderSize = ignore ? `${cssVarsHighlight.border}px` : 'var(--border)';
 
   return `${dir}: calc(var(--square) + var(--size) - ${borderSize})`;
 }
@@ -108,12 +106,12 @@ interface LineProps {
   offset: number;
   dir: LineDirection;
   orientation: LineOrientation;
-  highlight: boolean;
+  ignore: boolean;
 }
 
 const Line = styled.div<LineProps>`
   ${(p) =>
-    p.highlight &&
+    p.ignore &&
     css`
       --border: ${cssVars.border}px;
       --size: ${cssVars.size}px;
@@ -142,7 +140,7 @@ function findOffset(a: string, b: string, list: string) {
   return ia < ib ? ib - ia : ib - ia;
 }
 
-function getLineProps(from: string, to: string): Omit<LineProps, 'highlight'> {
+function getLineProps(from: string, to: string): Omit<LineProps, 'ignore'> {
   const [startRow, startCol] = from;
   const [endRow, endCol] = to;
   const orientation = startRow === endRow ? 'horizontal' : 'vertical';
@@ -184,7 +182,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           highlight != null
             ? index >= highlight.from && index <= highlight.to
             : false;
-        const shouldHighlightArrow =
+        const shouldIgnoreHighlightArrow =
           highlight != null ? index === highlight.from : false;
 
         return (
@@ -192,7 +190,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
             {shouldRenderLine && (
               <Line
                 {...getLineProps(path[index - 1], path[index])}
-                highlight={shouldHighlightArrow}
+                ignore={shouldIgnoreHighlightArrow}
               />
             )}
             {value}
