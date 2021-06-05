@@ -1,5 +1,5 @@
-import { BreachProtocolSource } from '@/core';
-import { FC, useEffect, useRef } from 'react';
+import { SourceFormat } from '@/client-electron/common';
+import { useEffect, useRef } from 'react';
 
 function getStrokeRectCords(
   box: Tesseract.Bbox,
@@ -14,25 +14,25 @@ function getStrokeRectCords(
   return { x, y, width, height };
 }
 
-function renderFragmentToCanvas(
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D,
-  fragment: string,
-  boxes: Tesseract.Bbox[],
-  showBoxes: boolean
-) {
-  const image = new Image();
-  // TODO: use format flag?
-  image.src = `data:image/png;base64,${fragment}`;
+function renderFragmentToCanvas({
+  canvas,
+  image,
+  boxes,
+  showBoxes,
+  format,
+}: FragmentPreviewProps & { canvas: HTMLCanvasElement }) {
+  const imageEl = new Image();
+  const context = canvas.getContext('2d');
+  const mime = `image/${format === 'jpg' ? 'jpeg' : 'png'}`;
 
-  image.onload = () => {
+  imageEl.onload = () => {
     const base = 600;
-    const scale = base / image.width;
+    const scale = base / imageEl.width;
     const lineWidth = 2;
     canvas.width = base;
-    canvas.height = image.height * scale;
+    canvas.height = imageEl.height * scale;
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    context.drawImage(imageEl, 0, 0, canvas.width, canvas.height);
 
     if (!boxes || !showBoxes) return;
 
@@ -45,27 +45,26 @@ function renderFragmentToCanvas(
       context.strokeRect(x, y, width, height);
     }
   };
+
+  imageEl.src = `data:${mime};base64,${image}`;
 }
 
 interface FragmentPreviewProps {
   image: string;
   boxes: Tesseract.Bbox[];
   showBoxes: boolean;
+  format: SourceFormat;
 }
 
-export const FragmentPreview: FC<FragmentPreviewProps> = ({
-  image,
-  boxes,
-  showBoxes,
-}) => {
+export const FragmentPreview = (props: FragmentPreviewProps) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = ref.current;
-    const context = canvas.getContext('2d');
-
-    renderFragmentToCanvas(canvas, context, image, boxes, showBoxes);
-  }, [image, showBoxes]);
+    renderFragmentToCanvas({
+      ...props,
+      canvas: ref.current,
+    });
+  }, [props.image, props.showBoxes]);
 
   return <canvas ref={ref} style={{ alignSelf: 'flex-start' }} />;
 };
