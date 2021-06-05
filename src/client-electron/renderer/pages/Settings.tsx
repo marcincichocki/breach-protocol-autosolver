@@ -1,5 +1,5 @@
-import { AppSettings } from '@/client-electron/common';
 import { UpdateSettingsAction } from '@/client-electron/actions';
+import { AppSettings, WorkerStatus } from '@/client-electron/common';
 import { optionsDescription } from '@/client-electron/options';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
@@ -22,6 +22,7 @@ import {
   Label,
   RangeSlider,
   Select,
+  Spinner,
   Switch,
   ThresholdSlider,
   useForm,
@@ -243,8 +244,17 @@ const RecognitionSettings = ({
   );
 };
 
+const SettingsWrapper = styled(Col)`
+  max-width: 70%;
+  margin: 0 auto;
+  gap: 1rem;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const Settings: FC = () => {
-  const { settings, displays } = useContext(StateContext);
+  const { settings, displays, status } = useContext(StateContext);
   const [activeField, setActiveField] = useState<keyof AppSettings>();
 
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
@@ -254,31 +264,30 @@ export const Settings: FC = () => {
   }
 
   return (
-    <Col
-      style={{
-        maxWidth: '70%',
-        margin: '0 auto',
-        gap: '1rem',
-        flexGrow: 1,
-      }}
-    >
-      <FieldDescription name={activeField} />
-      <Col
-        style={{
-          overflowY: 'auto',
-          padding: '0 1rem',
-        }}
-      >
-        <Form<AppSettings>
-          initialValues={settings}
-          onHover={setActiveField}
-          onValuesChange={onValuesChange}
-        >
-          <GeneralSettings />
-          <AutoSolverSettings />
-          <RecognitionSettings displays={displays} />
-        </Form>
-      </Col>
-    </Col>
+    <SettingsWrapper>
+      {status === WorkerStatus.Ready ? (
+        <>
+          <FieldDescription name={activeField} />
+          <Col
+            style={{
+              overflowY: 'auto',
+              padding: '0 1rem',
+            }}
+          >
+            <Form<AppSettings>
+              initialValues={settings}
+              onHover={setActiveField}
+              onValuesChange={onValuesChange}
+            >
+              <GeneralSettings />
+              <AutoSolverSettings />
+              <RecognitionSettings displays={displays} />
+            </Form>
+          </Col>
+        </>
+      ) : (
+        <Spinner />
+      )}
+    </SettingsWrapper>
   );
 };
