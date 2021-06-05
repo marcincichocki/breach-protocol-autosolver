@@ -1,5 +1,8 @@
-import { ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
+import { ActionTypes } from '@/client-electron/actions';
+import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
+import { ensureDirSync, remove, removeSync } from 'fs-extra';
+import { join } from 'path';
 import {
   Action,
   AppSettings,
@@ -11,6 +14,8 @@ import {
 } from '../../common';
 import { defaultOptions } from '../../options';
 import { appReducer } from './reducer';
+
+type Middleware = (action: Action) => void;
 
 export class Store {
   private settings = new ElectronStore<AppSettings>({
@@ -40,15 +45,73 @@ export class Store {
 
   private state = this.getInitialState();
 
+  private middlewares: Middleware[] = [];
+
   constructor(private worker: WebContents, private renderer: WebContents) {
+    this.attachMiddleware(this.removeLastHistoryEntry.bind(this));
     this.registerStoreListeners();
   }
 
+  dispatch(action: Action) {
+    this.state = appReducer(this.state, action);
+  }
+
+  attachMiddleware(middleware: Middleware) {
+    this.middlewares.push(middleware);
+  }
+
+  getState() {
+    return this.state;
+  }
+
+  dispose() {
+    if (process.env.NODE_ENV === 'production') {
+      this.preserveState();
+    } else if (process.env.NODE_ENV === 'development') {
+      removeSync(this.state.settings.screenshotDir);
+    }
+
+    ipc.removeAllListeners('state');
+    ipc.removeAllListeners('async-request');
+    ipc.removeAllListeners('async-response');
+    ipc.removeAllListeners('get-state');
+  }
+
+  private removeLastHistoryEntry(action: Action) {
+    if (action.type === ActionTypes.ADD_HISTORY_ENTRY) {
+      const { history, settings } = this.state;
+      const { length } = history;
+
+      if (length >= settings.historySize) {
+        const { fileName } = history[length - 1];
+
+        if (fileName) {
+          remove(fileName);
+        }
+
+        this.dispatch({
+          type: ActionTypes.REMOVE_LAST_HISTORY_ENTRY,
+          origin: 'worker',
+        });
+      }
+    }
+  }
+
+  private createScreenshotDir() {
+    const path = join(app.getPath('userData'), 'screenshots');
+
+    ensureDirSync(path);
+
+    return path;
+  }
+
   private getInitialState(): State {
+    const screenshotDir = this.createScreenshotDir();
+
     return {
       history: this.history.get('data'),
       displays: [],
-      settings: this.settings.store,
+      settings: { ...this.settings.store, screenshotDir },
       status: null,
       stats: this.stats.store,
     };
@@ -60,8 +123,15 @@ export class Store {
     ipc.on('async-request', this.onAsyncRequest.bind(this));
   }
 
+  private applyMiddleware(action: Action) {
+    for (const middleware of this.middlewares) {
+      middleware(action);
+    }
+  }
+
   private onState(event: IpcMainEvent, action: Action) {
-    this.state = appReducer(this.state, action);
+    this.applyMiddleware(action);
+    this.dispatch(action);
 
     const dest = this.getDest(action);
     const returnAction = { payload: this.state, type: action.type };
@@ -105,20 +175,5 @@ export class Store {
       countSuccessSession: 0,
       countErrorSession: 0,
     });
-  }
-
-  getState() {
-    return this.state;
-  }
-
-  dispose() {
-    if (process.env.NODE_ENV === 'production') {
-      this.preserveState();
-    }
-
-    ipc.removeAllListeners('state');
-    ipc.removeAllListeners('async-request');
-    ipc.removeAllListeners('async-response');
-    ipc.removeAllListeners('get-state');
   }
 }

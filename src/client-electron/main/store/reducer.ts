@@ -11,7 +11,7 @@ import {
   WorkerStatus,
 } from '../../common';
 
-type Handler<T, S = State> = (state: S, action: Action<T>) => State;
+type Handler<T = any, S = State> = (state: S, action: Action<T>) => State;
 
 export function createReducer<S = State>(
   handlers: Record<string, Handler<any, S>>
@@ -80,8 +80,7 @@ function getStatsFromHistoryEntry(
 
 const addHistoryEntry: Handler<HistoryEntry> = (state, { payload }) => {
   const stats = getStatsFromHistoryEntry(state.stats, payload);
-  const { historySize } = state.settings;
-  const history = [payload, ...state.history].slice(0, historySize);
+  const history = [payload, ...state.history];
 
   return { ...state, history, stats };
 };
@@ -95,9 +94,17 @@ const updateSettings: Handler<Partial<AppSettings>> = (state, { payload }) => {
   return { ...state, settings };
 };
 
+const removeLastHistoryEntry: Handler = (state) => {
+  return {
+    ...state,
+    history: state.history.slice(0, -1),
+  };
+};
+
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
   [ActionTypes.SET_STATUS]: setStatus,
   [ActionTypes.ADD_HISTORY_ENTRY]: addHistoryEntry,
   [ActionTypes.UPDATE_SETTINGS]: updateSettings,
+  [ActionTypes.REMOVE_LAST_HISTORY_ENTRY]: removeLastHistoryEntry,
 });

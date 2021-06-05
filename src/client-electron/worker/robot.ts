@@ -1,22 +1,16 @@
 import { Point } from '@/common';
 import { BreachProtocolExitStrategy } from '@/core';
 import { execFile } from 'child_process';
-import { ensureDirSync } from 'fs-extra';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
 import screenshot from 'screenshot-desktop';
 import { AppSettings } from '../common';
 
 export abstract class Robot {
-  private screenshotDir = join(this.basePath, 'screenshots');
-
   constructor(
     protected readonly settings: AppSettings,
-    private readonly basePath: string,
     protected readonly scaling: number = 1
-  ) {
-    ensureDirSync(this.screenshotDir);
-  }
+  ) {}
 
   abstract click(): Promise<any>;
 
@@ -47,7 +41,7 @@ export abstract class Robot {
     const now = new Date().toString();
     const name = sanitize(now, { replacement: ' ' });
 
-    return join(this.screenshotDir, `${name}.${ext}`);
+    return join(this.settings.screenshotDir, `${name}.${ext}`);
   }
 }
 
@@ -57,7 +51,7 @@ export abstract class BreachProtocolRobot extends Robot {
     squareMap: Map<string, Point>,
     { shouldForceClose, willExit }: BreachProtocolExitStrategy
   ) {
-    this.movePointerAway();
+    await this.movePointerAway();
 
     for (const square of path) {
       const { x, y } = squareMap.get(square);

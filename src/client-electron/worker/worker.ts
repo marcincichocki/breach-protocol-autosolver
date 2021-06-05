@@ -92,13 +92,14 @@ export class BreachProtocolWorker {
     );
   }
 
-  private async onWorkerSolve(e: IpcRendererEvent, basePath: string) {
+  private async onWorkerSolve() {
     this.updateStatus(WorkerStatus.Working);
 
     const { activeDisplayId } = this.settings;
     const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
-    const robot = new WindowsRobot(this.settings, basePath, dpiScale);
+    const robot = new WindowsRobot(this.settings, dpiScale);
     const bpa = new BreachProtocolAutosolver(this.settings, robot);
+
     await bpa.solve();
 
     this.dispatch(new AddHistoryEntryAction(bpa.toJSON()));
