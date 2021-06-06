@@ -147,7 +147,7 @@ export abstract class BreachProtocolOCRFragment<
 > extends BreachProtocolFragment<TData, TImage, TId> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
-  protected readonly correctionMap = new Map<string, HexNumber>([
+  public static readonly correctionMap = new Map<string, HexNumber>([
     ['1E', '1C'],
     ['EB', 'E9'],
     ['F9', 'E9'],
@@ -211,8 +211,8 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   protected amendSymbol(symbol: string) {
-    if (this.correctionMap.has(symbol)) {
-      return this.correctionMap.get(symbol);
+    if (BreachProtocolOCRFragment.correctionMap.has(symbol)) {
+      return BreachProtocolOCRFragment.correctionMap.get(symbol);
     }
 
     return symbol as HexNumber;

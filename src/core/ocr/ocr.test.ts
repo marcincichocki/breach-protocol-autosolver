@@ -22,7 +22,12 @@ interface RegistryEntry {
   bufferSize: BufferSize;
 }
 
-type Resolution = '1920x1080' | '2560x1440' | '3440x1440' | '3840x2160';
+type Resolution =
+  | '1024x768'
+  | '1920x1080'
+  | '2560x1440'
+  | '3440x1440'
+  | '3840x2160';
 type Registry = Record<Resolution, RegistryEntry[]>;
 
 describe('image container', () => {
@@ -180,6 +185,18 @@ describe('ocr', () => {
     await BreachProtocolOCRFragment.terminateScheduler();
   });
 
+  it.each(getRegistryFor('1024x768'))(
+    'should correctly ocr 1024x768/%s',
+    async (f: string, entry: RegistryEntry) => {
+      BreachProtocolOCRFragment.correctionMap.set('EE', '1C');
+      BreachProtocolOCRFragment.correctionMap.set('DE', '1C');
+      BreachProtocolOCRFragment.correctionMap.set('57', 'E9');
+      BreachProtocolOCRFragment.correctionMap.set('AC', '1C');
+
+      await compareOcrToJson(entry, '1024x768', { grid: 155, daemons: 140 });
+    }
+  );
+
   it.each(getRegistryFor('1920x1080'))(
     'should correctly ocr 1920x1080/%s',
     async (f: string, entry: RegistryEntry) => {
@@ -210,11 +227,22 @@ describe('ocr', () => {
 });
 
 function getRegistryFor(resolution: Resolution) {
-  return (registry as Registry)[resolution].map((e) => [e.fileName, e]);
+  return (registry as Registry)[resolution].map((e) => [e.fileName, e]) as [
+    string,
+    RegistryEntry
+  ][];
 }
 
-async function compareOcrToJson(entry: RegistryEntry, resolution: Resolution) {
-  const [ocr, trim] = await recognizeRegistryEntry(entry, resolution);
+async function compareOcrToJson(
+  entry: RegistryEntry,
+  resolution: Resolution,
+  thresholds?: Partial<Record<FragmentId, number>>
+) {
+  const [ocr, trim] = await recognizeRegistryEntry(
+    entry,
+    resolution,
+    thresholds
+  );
 
   expect(ocr.rawData.grid).toEqual(entry.grid);
   expect(ocr.rawData.daemons).toEqual(entry.daemons);
