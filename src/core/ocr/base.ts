@@ -24,10 +24,19 @@ export interface BreachProtocolSource {
   boxes: Tesseract.Bbox[];
 }
 
+export enum FragmentResultStatus {
+  VALID,
+  INVALID_SYMBOLS,
+  // This is not breach protocol screenshot or threshold is completly off.
+  INVALID_SIZE,
+  INVALID_CONTROL_GROUPS,
+}
+
 interface BreachProtocolFragmentResultBase<TId extends FragmentId> {
   readonly boundingBox: BreachProtocolFragmentBoundingBox;
   readonly isValid: boolean;
   readonly id: TId;
+  readonly status: FragmentResultStatus;
 }
 
 export interface BreachProtocolFragmentResult<
