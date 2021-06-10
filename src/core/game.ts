@@ -39,13 +39,13 @@ export class BreachProtocolResult implements Serializable {
   ) {}
 
   toJSON(): BreachProtocolResultJSON {
-    const { path, rawPath, sequence, exitStrategy } = this;
+    const { path, rawPath, exitStrategy } = this;
 
     return {
       path,
       rawPath,
       exitStrategy,
-      sequence: sequence.toJSON(),
+      sequence: this.sequence.toJSON(),
       resolvedSequence: this.resolvedSequence.toJSON(),
     };
   }
