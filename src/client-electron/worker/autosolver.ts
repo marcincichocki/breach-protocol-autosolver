@@ -5,7 +5,6 @@ import {
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
   FragmentId,
-  Sequence,
   SharpImageContainer,
 } from '@/core';
 import { remove } from 'fs-extra';

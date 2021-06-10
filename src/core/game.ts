@@ -50,7 +50,7 @@ export class BreachProtocolResult implements Serializable {
     };
   }
 
-  resolveExitStrategy(): BreachProtocolExitStrategy {
+  private resolveExitStrategy(): BreachProtocolExitStrategy {
     const { tValue: base } = this.resolvedSequence;
     const { bufferSize, daemons } = this.game.rawData;
 
