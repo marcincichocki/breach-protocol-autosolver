@@ -3,10 +3,7 @@ import {
   BreachProtocol,
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
-  makeSequences,
-  resolveExitStrategy,
   SharpImageContainer,
-  transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
 import ora from 'ora';
@@ -50,9 +47,11 @@ export async function solveBreachProtocol(screenId: string) {
     return;
   }
 
-  const exitStrategy = resolveExitStrategy(result, ocr.rawData);
-
-  await resolveBreachProtocol(result.path, ocr.positionSquareMap, exitStrategy);
+  await resolveBreachProtocol(
+    result.path,
+    ocr.positionSquareMap,
+    result.exitStrategy
+  );
 
   log.succeed(t`SOLVER_DONE`);
 }

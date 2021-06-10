@@ -1,5 +1,4 @@
 import {
-  BreachProtocolExitStrategy,
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
   FragmentId,
