@@ -1,11 +1,5 @@
 import { DaemonsRawData } from './common';
-import {
-  findOverlap,
-  getSequenceFromPermutation,
-  makeSequences,
-  parseDaemons,
-  Sequence,
-} from './sequence';
+import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
 
 describe('sequences', () => {
   it('should find correct overlaps', () => {
@@ -71,7 +65,7 @@ describe('sequences', () => {
 
   it('should create correct sequence out of permutation', () => {
     const [p1] = parseDaemons([['BD', '55']]);
-    const s1 = getSequenceFromPermutation(p1);
+    const s1 = Sequence.fromPermutation(p1);
 
     expect(s1.length).toBe(2);
     expect(s1.value).toEqual(p1[0].value);
@@ -82,7 +76,7 @@ describe('sequences', () => {
       ['BD', 'BD'],
       ['7A', '55'],
     ]);
-    const s2 = getSequenceFromPermutation(p2);
+    const s2 = Sequence.fromPermutation(p2);
 
     expect(s2.length).toBe(4);
     expect(s2.value).toEqual(p2.flatMap((d) => d.value));
@@ -94,7 +88,7 @@ describe('sequences', () => {
       ['1C', '1C'],
       ['1C', 'BD'],
     ]);
-    const s3 = getSequenceFromPermutation(p3);
+    const s3 = Sequence.fromPermutation(p3);
 
     expect(s3.length).toBe(4);
     expect(s3.value).toEqual(['1C', '1C', '1C', 'BD']);
