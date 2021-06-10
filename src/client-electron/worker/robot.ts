@@ -137,6 +137,7 @@ export class WindowsRobot extends BreachProtocolRobot {
   }
 }
 
+// TODO: Add linux and macos robots
 function getPlatformRobot(platform = process.platform) {
   switch (platform) {
     case 'win32':

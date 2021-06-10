@@ -22,18 +22,13 @@ import { BreachProtocolRobot } from './robot';
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
 
-  /** Source file path. */
   private fileName: string;
 
-  /** Start and finish time. */
-  private startedAt = Date.now();
+  private readonly startedAt = Date.now();
   private finishedAt: number;
 
-  /** OCR result */
   private recognitionResult: BreachProtocolRecognitionResult;
-
   private game: BreachProtocol;
-
   private result: BreachProtocolResult;
 
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
@@ -41,7 +36,7 @@ export class BreachProtocolAutosolver {
 
   constructor(
     private readonly settings: AppSettings,
-    private robot: BreachProtocolRobot
+    private readonly robot: BreachProtocolRobot
   ) {}
 
   async solve() {
@@ -70,7 +65,7 @@ export class BreachProtocolAutosolver {
     return this.resolve();
   }
 
-  toJSON(): HistoryEntry {
+  private toJSON(): HistoryEntry {
     return {
       ...this.getBaseState(),
       ...this.getFragmentsValidState(),

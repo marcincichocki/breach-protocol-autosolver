@@ -73,8 +73,6 @@ describe('utilities', () => {
 });
 
 describe('Breach protocol solve', () => {
-  const daemons: DaemonsRawData = [];
-
   test('should resolve 3 base cases', () => {
     // prettier-ignore
     const grid: GridRawData = [
@@ -83,7 +81,7 @@ describe('Breach protocol solve', () => {
       '55', '55', '1C'
     ]
     const bufferSize = 5;
-    const g1 = new BreachProtocol({ grid, bufferSize, daemons });
+    const g1 = new BreachProtocol({ grid, bufferSize, daemons: [] });
     const results = [
       // case 1) all symbols are accesible from the start.
       ['55', '55', 'E9'],

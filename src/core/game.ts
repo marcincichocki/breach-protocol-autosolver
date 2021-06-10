@@ -101,9 +101,6 @@ export class BreachProtocolResult implements Serializable {
   }
 }
 
-/**
- * Provides methods to find solution for given rawData
- */
 export class BreachProtocol {
   // Grid is always a square.
   private readonly size = Math.sqrt(this.rawData.grid.length);
@@ -142,9 +139,8 @@ export class BreachProtocol {
   }
 
   /**
-   * Try to solve current grid with provided sequences.
-   * If no sequences were provided, all permutations of
-   * given daemons are used.
+   * Try to solve current grid with provided sequences or
+   * sequences produced from daemons.
    *
    * @param sequences List of sequences to try.
    */
