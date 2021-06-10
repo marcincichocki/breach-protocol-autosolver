@@ -39,7 +39,6 @@ export interface HistoryEntry {
   fragments: BreachProtocolFragmentResults;
   sequences: SequenceJSON[];
   result: BreachProtocolResultJSON;
-  exitStrategy: BreachProtocolExitStrategy;
 }
 
 export type SourceFormat = 'png' | 'jpg';

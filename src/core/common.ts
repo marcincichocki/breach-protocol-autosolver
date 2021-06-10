@@ -121,10 +121,10 @@ export function transformRawData({
   };
 }
 
-export interface BreachProtocolExitStrategy {
+export type BreachProtocolExitStrategy = {
   willExit: boolean;
   shouldForceClose: boolean;
-}
+};
 
 // TODO: allow raw data to be accessed from result
 /** TODO: move this to {@link BreachProtocolResult} */
@@ -134,7 +134,7 @@ export function resolveExitStrategy(
 ): BreachProtocolExitStrategy {
   const { path, sequence } = result;
   // Destructuring method would break context.
-  const { tValue: base } = result.getResolvedSequence();
+  const { tValue: base } = result.resolvedSequence;
 
   // BP will exit automatically when all of the buffer has been used.
   const willExit = path.length === data.bufferSize;

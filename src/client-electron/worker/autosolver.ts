@@ -1,17 +1,12 @@
 import { BitMask } from '@/common';
 import {
   BreachProtocol,
-  BreachProtocolData,
-  BreachProtocolExitStrategy,
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
   FragmentId,
-  makeSequences,
-  resolveExitStrategy,
   Sequence,
   SharpImageContainer,
-  transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
@@ -28,26 +23,21 @@ import { BreachProtocolRobot } from './robot';
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
 
+  /** Source file path. */
   private fileName: string;
 
+  /** Start and finish time. */
   private startedAt = Date.now();
-
   private finishedAt: number;
 
-  private data: BreachProtocolData;
-
-  private sequences: Sequence[];
+  /** OCR result */
+  private recognitionResult: BreachProtocolRecognitionResult;
 
   private game: BreachProtocol;
 
   private result: BreachProtocolResult;
 
-  private exitStrategy: BreachProtocolExitStrategy;
-
-  private recognitionResult: BreachProtocolRecognitionResult;
-
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
-
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
   constructor(
@@ -64,22 +54,18 @@ export class BreachProtocolAutosolver {
     }
 
     this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
-    this.data = transformRawData(this.recognitionResult.rawData);
-    this.sequences = makeSequences(this.data.daemons, this.data.bufferSize);
-    this.game = new BreachProtocol(this.data.tGrid, this.data.bufferSize);
-    this.result = this.game.solve(this.sequences);
+    this.game = new BreachProtocol(this.recognitionResult.rawData);
+    this.result = this.game.solve();
 
     if (!this.result) {
       return this.reject();
     }
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
-    this.exitStrategy = resolveExitStrategy(this.result, this.data);
 
     await this.robot.resolveBreachProtocol(
-      this.result.path,
-      this.recognitionResult.positionSquareMap,
-      this.exitStrategy
+      this.result,
+      this.recognitionResult.positionSquareMap
     );
 
     return this.resolve();
@@ -111,7 +97,7 @@ export class BreachProtocolAutosolver {
     const bool = this.progress.has(BreachProtocolSolveProgress.FragmentsValid);
 
     return {
-      sequences: bool ? this.sequences.map((s) => s.toJSON()) : null,
+      sequences: bool ? this.game.sequences.map((s) => s.toJSON()) : null,
     };
   }
 
@@ -120,7 +106,6 @@ export class BreachProtocolAutosolver {
 
     return {
       result: bool ? this.result.toJSON() : null,
-      exitStrategy: bool ? this.exitStrategy : null,
     };
   }
 
@@ -142,7 +127,7 @@ export class BreachProtocolAutosolver {
     this.status = status;
     this.finishedAt = Date.now();
 
-    return this.status;
+    return this.toJSON();
   }
 
   private notifyUser() {

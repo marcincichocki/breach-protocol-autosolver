@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { BreachProtocolExitStrategy } from '@/core';
+import { BreachProtocolResult } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
@@ -47,9 +47,8 @@ export abstract class Robot {
 
 export abstract class BreachProtocolRobot extends Robot {
   async resolveBreachProtocol(
-    path: string[],
-    squareMap: Map<string, Point>,
-    { shouldForceClose, willExit }: BreachProtocolExitStrategy
+    { path, exitStrategy }: BreachProtocolResult,
+    squareMap: Map<string, Point>
   ) {
     await this.movePointerAway();
 
@@ -63,7 +62,7 @@ export abstract class BreachProtocolRobot extends Robot {
 
     // Breach protocol exits on its own when sequence fill
     // buffer completly.
-    if (!willExit && this.settings.autoExit) {
+    if (!exitStrategy.willExit && this.settings.autoExit) {
       // If buffer is not yet filled, but sequence is finished
       // breach protocol will hang on exit screen. Pressing esc
       // exits it.
@@ -75,7 +74,7 @@ export abstract class BreachProtocolRobot extends Robot {
       // to find correct squares, autosolver will stop.
       // To hanlde such case we have to press esc twice: once to stop it, and
       // second time to exit it.
-      if (shouldForceClose) {
+      if (exitStrategy.shouldForceClose) {
         await this.exit();
       }
     }
@@ -137,3 +136,14 @@ export class WindowsRobot extends BreachProtocolRobot {
     return this.nircmd(`sendmouse move ${x} ${y}`);
   }
 }
+
+function getPlatformRobot(platform = process.platform) {
+  switch (platform) {
+    case 'win32':
+      return WindowsRobot;
+    default:
+      return WindowsRobot;
+  }
+}
+
+export const PlatformRobot = getPlatformRobot();
