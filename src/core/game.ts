@@ -46,7 +46,7 @@ export class BreachProtocolResult implements Serializable {
       rawPath,
       exitStrategy,
       sequence: sequence.toJSON(),
-      resolvedSequence: this.getResolvedSequence().toJSON(),
+      resolvedSequence: this.resolvedSequence.toJSON(),
     };
   }
 
