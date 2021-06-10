@@ -37,10 +37,8 @@ export async function solveBreachProtocol(screenId: string) {
   await remove(fileName);
   log.text = t`SOLVER_START`;
 
-  const data = transformRawData(ocr.rawData);
-  const sequences = makeSequences(data.daemons, data.bufferSize);
-  const game = new BreachProtocol(data.tGrid, data.bufferSize);
-  const result = game.solve(sequences);
+  const game = new BreachProtocol(ocr.rawData);
+  const result = game.solve();
 
   if (!result) {
     if (!options.disableSound) {
