@@ -16,6 +16,7 @@ import data from './test-data.json';
 const registryBreachProtocols = [
   ...registry['1920x1080'],
   ...registry['2560x1440'],
+  ...registry['3440x1440'],
   ...registry['3840x2160'],
 ] as BreachProtocolRawData[];
 
