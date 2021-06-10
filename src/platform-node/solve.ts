@@ -3,10 +3,7 @@ import {
   BreachProtocol,
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
-  makeSequences,
-  resolveExitStrategy,
   SharpImageContainer,
-  transformRawData,
 } from '@/core';
 import { remove } from 'fs-extra';
 import ora from 'ora';
@@ -37,10 +34,8 @@ export async function solveBreachProtocol(screenId: string) {
   await remove(fileName);
   log.text = t`SOLVER_START`;
 
-  const data = transformRawData(ocr.rawData);
-  const sequences = makeSequences(data.daemons, data.bufferSize);
-  const game = new BreachProtocol(data.tGrid, data.bufferSize);
-  const result = game.solve(sequences);
+  const game = new BreachProtocol(ocr.rawData);
+  const result = game.solve();
 
   if (!result) {
     if (!options.disableSound) {
@@ -52,9 +47,11 @@ export async function solveBreachProtocol(screenId: string) {
     return;
   }
 
-  const exitStrategy = resolveExitStrategy(result, ocr.rawData);
-
-  await resolveBreachProtocol(result.path, ocr.positionSquareMap, exitStrategy);
+  await resolveBreachProtocol(
+    result.path,
+    ocr.positionSquareMap,
+    result.exitStrategy
+  );
 
   log.succeed(t`SOLVER_DONE`);
 }

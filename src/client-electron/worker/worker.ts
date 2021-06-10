@@ -25,7 +25,7 @@ import {
   UpdateSettingsAction,
 } from '../actions';
 import { BreachProtocolAutosolver } from './autosolver';
-import { WindowsRobot } from './robot';
+import { PlatformRobot } from './robot';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
@@ -97,12 +97,11 @@ export class BreachProtocolWorker {
 
     const { activeDisplayId } = this.settings;
     const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
-    const robot = new WindowsRobot(this.settings, dpiScale);
+    const robot = new PlatformRobot(this.settings, dpiScale);
     const bpa = new BreachProtocolAutosolver(this.settings, robot);
+    const entry = await bpa.solve();
 
-    await bpa.solve();
-
-    this.dispatch(new AddHistoryEntryAction(bpa.toJSON()));
+    this.dispatch(new AddHistoryEntryAction(entry));
     this.updateStatus(WorkerStatus.Ready);
   }
 

@@ -69,19 +69,6 @@ export function findOverlap(s1: string, s2: string) {
 
 export const memoizedFindOverlap = memoize(findOverlap);
 
-export function getSequenceFromPermutation(permutation: Daemon[]) {
-  let { tValue } = permutation[0];
-
-  for (let i = 1; i < permutation.length; i++) {
-    tValue = memoizedFindOverlap(tValue, permutation[i].tValue);
-  }
-
-  const value = tValue.split('').map(toHex);
-  const parts = permutation.flatMap((d) => d.getParts());
-
-  return new Sequence(value, parts);
-}
-
 // interface will lose its index signature.
 export type SequenceJSON = {
   value: HexNumber[];
@@ -107,6 +94,19 @@ export class Sequence implements Serializable {
       value: this.value,
       parts: this.parts.map((p) => p.index),
     };
+  }
+
+  static fromPermutation(permutation: Daemon[]) {
+    let { tValue } = permutation[0];
+
+    for (let i = 1; i < permutation.length; i++) {
+      tValue = memoizedFindOverlap(tValue, permutation[i].tValue);
+    }
+
+    const value = tValue.split('').map(toHex);
+    const parts = permutation.flatMap((d) => d.getParts());
+
+    return new Sequence(value, parts);
   }
 }
 
@@ -148,12 +148,12 @@ export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(byUniqueValue())
-    .map((d) => getSequenceFromPermutation([d]));
+    .map((d) => Sequence.fromPermutation([d]));
 
   const regularSequences = permute(regularDaemons)
     .flatMap((p) => p.map((d, i) => p.slice(0, i + 1)))
     .filter(uniqueWith(getPermutationId))
-    .map(getSequenceFromPermutation);
+    .map((p) => Sequence.fromPermutation(p));
 
   return regularSequences
     .concat(childSequences)

@@ -5,32 +5,24 @@ import {
   cross,
   DaemonRawData,
   DaemonsRawData,
-  fromHex,
   generateSquareMap,
   getUnits,
   GridRawData,
-  resolveExitStrategy,
-  transformRawData,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
-import {
-  Daemon,
-  getSequenceFromPermutation,
-  makeSequences,
-  parseDaemons,
-  Sequence,
-} from './sequence';
+import { Daemon, parseDaemons, Sequence } from './sequence';
 import data from './test-data.json';
 
 const registryBreachProtocols = [
   ...registry['1920x1080'],
   ...registry['2560x1440'],
+  ...registry['3440x1440'],
   ...registry['3840x2160'],
 ] as BreachProtocolRawData[];
 
-const transformedData = data
-  .concat(registryBreachProtocols)
-  .map((d) => transformRawData(d as BreachProtocolRawData));
+const testData = (data as BreachProtocolRawData[]).concat(
+  registryBreachProtocols
+);
 
 describe('utilities', () => {
   test('should combine 2 strings', () => {
@@ -82,9 +74,14 @@ describe('utilities', () => {
 
 describe('Breach protocol solve', () => {
   test('should resolve 3 base cases', () => {
-    const grid = ['d', 'd', 'b', 'd', 'b', 'a', 'd', 'd', 'b'];
+    // prettier-ignore
+    const grid: GridRawData = [
+      '55', '55', '1C', 
+      '55', '1C', 'E9',
+      '55', '55', '1C'
+    ]
     const bufferSize = 5;
-    const g1 = new BreachProtocol(grid, bufferSize);
+    const g1 = new BreachProtocol({ grid, bufferSize, daemons: [] });
     const results = [
       // case 1) all symbols are accesible from the start.
       ['55', '55', 'E9'],
@@ -106,12 +103,11 @@ describe('Breach protocol solve', () => {
   });
 
   it('should find best sequences and solve BPs from raw data', () => {
-    transformedData.forEach((d, i) => {
-      const game = new BreachProtocol(d.tGrid, d.bufferSize);
-      const sequences = makeSequences(d.daemons, d.bufferSize);
-      const result = game.solve(sequences);
+    testData.forEach((rawData) => {
+      const game = new BreachProtocol(rawData);
+      const result = game.solve();
 
-      expect(result.path.length).toBeLessThanOrEqual(d.bufferSize);
+      expect(result.path.length).toBeLessThanOrEqual(rawData.bufferSize);
       expectResolvedSequenceToContainDaemons(result);
     });
   });
@@ -131,14 +127,13 @@ describe('Breach protocol solve', () => {
     ];
     const bufferSize1: BufferSize = 7;
 
-    const data1 = transformRawData({
+    const data1 = {
       grid: grid1,
       daemons: daemons1,
       bufferSize: bufferSize1,
-    });
-    const g1 = new BreachProtocol(data1.tGrid, bufferSize1);
-    const sequences1 = makeSequences(daemons1, bufferSize1);
-    const result1 = g1.solve(sequences1);
+    };
+    const g1 = new BreachProtocol(data1);
+    const result1 = g1.solve();
 
     expect(result1.path.length).toBeLessThan(result1.rawPath.length);
     expect(result1.path).not.toEqual(result1.rawPath);
@@ -158,14 +153,13 @@ describe('Breach protocol solve', () => {
     ];
     const bufferSize2: BufferSize = 7;
 
-    const data2 = transformRawData({
+    const data2 = {
       grid: grid2,
       daemons: daemons2,
       bufferSize: bufferSize2,
-    });
-    const g2 = new BreachProtocol(data2.tGrid, bufferSize2);
-    const sequences2 = makeSequences(daemons2, bufferSize2);
-    const result2 = g2.solve(sequences2);
+    };
+    const g2 = new BreachProtocol(data2);
+    const result2 = g2.solve();
 
     expect(result2.path.length).toBeLessThan(result2.rawPath.length);
     expect(result2.path).not.toEqual(result2.rawPath);
@@ -181,20 +175,19 @@ describe('Breach protocol solve', () => {
       '55', '55', 'BD', 'E9', 'E9',
       '55', '1C', '55', '1C', 'E9',
     ]
-    const tGrid = grid.map(fromHex);
 
     it('should not use force exit when BP exits automatically', () => {
       const bufferSize = 4;
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
-      const s1 = getSequenceFromPermutation(p1);
-      const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
-      const rawData = {
+      const s1 = Sequence.fromPermutation(p1);
+      const result = new BreachProtocol({
+        grid,
         bufferSize,
         daemons,
-      } as BreachProtocolRawData;
+      }).solveForSequence(s1);
 
-      expect(resolveExitStrategy(result, rawData)).toEqual({
+      expect(result.exitStrategy).toEqual({
         willExit: true,
         shouldForceClose: false,
       });
@@ -204,14 +197,14 @@ describe('Breach protocol solve', () => {
       const bufferSize = 5;
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
-      const s1 = getSequenceFromPermutation(p1);
-      const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
-      const rawData = {
+      const s1 = Sequence.fromPermutation(p1);
+      const result = new BreachProtocol({
+        grid,
         bufferSize,
         daemons,
-      } as BreachProtocolRawData;
+      }).solveForSequence(s1);
 
-      expect(resolveExitStrategy(result, rawData)).toEqual({
+      expect(result.exitStrategy).toEqual({
         willExit: false,
         shouldForceClose: false,
       });
@@ -221,14 +214,14 @@ describe('Breach protocol solve', () => {
       const bufferSize = 5;
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C'], ['7A']];
       const [p1] = parseDaemons(daemons);
-      const s1 = getSequenceFromPermutation(p1.slice(0, 2));
-      const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
-      const rawData = {
+      const s1 = Sequence.fromPermutation(p1.slice(0, 2));
+      const result = new BreachProtocol({
+        grid,
         bufferSize,
         daemons,
-      } as BreachProtocolRawData;
+      }).solveForSequence(s1);
 
-      expect(resolveExitStrategy(result, rawData)).toEqual({
+      expect(result.exitStrategy).toEqual({
         willExit: false,
         shouldForceClose: true,
       });
@@ -241,14 +234,14 @@ describe('Breach protocol solve', () => {
         ['1C', '7A'],
       ];
       const [p1] = parseDaemons(daemons);
-      const s1 = getSequenceFromPermutation(p1.slice(0, 1));
-      const result = new BreachProtocol(tGrid, bufferSize).solveForSequence(s1);
-      const rawData = {
+      const s1 = Sequence.fromPermutation(p1.slice(0, 1));
+      const result = new BreachProtocol({
+        grid,
         bufferSize,
         daemons,
-      } as BreachProtocolRawData;
+      }).solveForSequence(s1);
 
-      expect(resolveExitStrategy(result, rawData)).toEqual({
+      expect(result.exitStrategy).toEqual({
         willExit: false,
         shouldForceClose: true,
       });
@@ -257,9 +250,7 @@ describe('Breach protocol solve', () => {
 });
 
 function expectResolvedSequenceToContainDaemons(result: BreachProtocolResult) {
-  const resolved = result.getResolvedSequence();
-
   result.sequence.parts.forEach((d) => {
-    expect(resolved.tValue).toContain(d.tValue);
+    expect(result.resolvedSequence.tValue).toContain(d.tValue);
   });
 }

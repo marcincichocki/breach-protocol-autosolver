@@ -1,44 +1,87 @@
 import { Serializable } from '@/common';
 import {
-  BufferSize,
+  BreachProtocolExitStrategy,
+  BreachProtocolRawData,
   COLS,
   cross,
+  fromHex,
   generateSquareMap,
   getUnits,
   ROWS,
   toHex,
 } from './common';
-import { Sequence, SequenceJSON } from './sequence';
+import {
+  makeSequences,
+  memoizedFindOverlap,
+  Sequence,
+  SequenceJSON,
+} from './sequence';
 
 export type BreachProtocolResultJSON = {
   path: string[];
   rawPath: string[];
   sequence: SequenceJSON;
   resolvedSequence: SequenceJSON;
+  exitStrategy: BreachProtocolExitStrategy;
 };
 
 export class BreachProtocolResult implements Serializable {
   public readonly path = this.rawPath.slice(0, this.findEndIndex());
 
+  public readonly resolvedSequence = this.getResolvedSequence();
+
+  public readonly exitStrategy = this.resolveExitStrategy();
+
   constructor(
     public readonly sequence: Sequence,
     public readonly rawPath: string[],
-    public readonly breachProtocol: BreachProtocol
+    public readonly game: BreachProtocol
   ) {}
 
   toJSON(): BreachProtocolResultJSON {
-    const { path, rawPath, sequence } = this;
+    const { path, rawPath, exitStrategy } = this;
 
     return {
       path,
       rawPath,
-      sequence: sequence.toJSON(),
-      resolvedSequence: this.getResolvedSequence().toJSON(),
+      exitStrategy,
+      sequence: this.sequence.toJSON(),
+      resolvedSequence: this.resolvedSequence.toJSON(),
+    };
+  }
+
+  private resolveExitStrategy(): BreachProtocolExitStrategy {
+    const { tValue: base } = this.resolvedSequence;
+    const { bufferSize, daemons } = this.game.rawData;
+
+    // BP will exit automatically when all of the buffer has been used.
+    const willExit = this.path.length === bufferSize;
+
+    // Get daemons that were not used in resolved sequence.
+    // There is no point of finding shorthest daemon,
+    // since in very rare cases longer daemon could create
+    // better sequence than its shorther peers(bigger overlap).
+    const shouldForceClose = daemons
+      .filter((d, i) => !this.sequence.indexes.includes(i))
+      .some((d) => {
+        const daemon = d.map(fromHex).join('');
+        const r = memoizedFindOverlap(base, daemon);
+
+        // If potential result(which will never happen) will
+        // "fit" in a buffer, then exit again(once to stop,
+        // second time to exit).
+        // Otherwise user will have to exit manually.
+        return r.length <= bufferSize;
+      });
+
+    return {
+      willExit,
+      shouldForceClose,
     };
   }
 
   private resolvePath(path: string[]) {
-    return path.map((s) => this.breachProtocol.gridMap.get(s));
+    return path.map((s) => this.game.gridMap.get(s));
   }
 
   private findEndIndex() {
@@ -50,10 +93,8 @@ export class BreachProtocolResult implements Serializable {
     return Math.max(...indexes);
   }
 
-  /**
-   * Produces sequence from resolved path.
-   */
-  getResolvedSequence() {
+  // Produces sequence from resolved path.
+  private getResolvedSequence() {
     const value = this.resolvePath(this.path).map(toHex);
 
     return new Sequence(value, this.sequence.parts);
@@ -62,7 +103,7 @@ export class BreachProtocolResult implements Serializable {
 
 export class BreachProtocol {
   // Grid is always a square.
-  private readonly size = Math.sqrt(this.grid.length);
+  private readonly size = Math.sqrt(this.rawData.grid.length);
 
   // Rows and columns trimmed to right size.
   private readonly rows = ROWS.slice(0, this.size);
@@ -80,12 +121,16 @@ export class BreachProtocol {
   );
 
   // Map of each square and corresponding grid value.
-  readonly gridMap = generateSquareMap(this.squares, (s, i) => this.grid[i]);
+  readonly gridMap = generateSquareMap(this.squares, (s, i) =>
+    fromHex(this.rawData.grid[i])
+  );
 
-  constructor(
-    public grid: string[], // public deamons: string[], // public bufferSize: BufferSize
-    public bufferSize: BufferSize
-  ) {}
+  public readonly sequences = makeSequences(
+    this.rawData.daemons,
+    this.rawData.bufferSize
+  );
+
+  constructor(public readonly rawData: BreachProtocolRawData) {}
 
   solveForSequence(sequence: Sequence) {
     const path = this.findPath(sequence.tValue);
@@ -94,11 +139,12 @@ export class BreachProtocol {
   }
 
   /**
-   * Try to solve current grid with provided sequences.
+   * Try to solve current grid with provided sequences or
+   * sequences produced from daemons.
    *
    * @param sequences List of sequences to try.
    */
-  solve(sequences: Sequence[]) {
+  solve(sequences: Sequence[] = this.sequences) {
     if (!sequences.length) {
       return null;
     }
@@ -120,7 +166,7 @@ export class BreachProtocol {
     square: string = 'A1',
     dir: 0 | 1 = 0,
     subPath: string[] = [],
-    bufferLeft: number = this.bufferSize,
+    bufferLeft: number = this.rawData.bufferSize,
     fullSequence = ''
   ): string[] {
     if (bufferLeft - sequence.length < 0) return null;
@@ -167,7 +213,7 @@ export class BreachProtocol {
 
     // If buffer is empty, but there are no results, restart
     // search and match any square.
-    if (bufferLeft === this.bufferSize && !ignoreFound) {
+    if (bufferLeft === this.rawData.bufferSize && !ignoreFound) {
       return this.findPath(fullSequence, true);
     }
 
