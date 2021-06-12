@@ -3,6 +3,7 @@ import { DaemonsRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
+  BreachProtocolFragmentStatus,
 } from './base';
 
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
@@ -35,9 +36,19 @@ export class BreachProtocolDaemonsFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  isValid(rawData: DaemonsRawData) {
-    const isCorrectSize = rawData.every((d) => d.length <= 5);
+  private isCorrectSize(rawData: DaemonsRawData) {
+    return rawData.every((d) => d.length <= 5);
+  }
 
-    return this.validateSymbols(rawData.flat()) && isCorrectSize;
+  getStatus(rawData: DaemonsRawData) {
+    if (!this.isCorrectSize(rawData)) {
+      return BreachProtocolFragmentStatus.InvalidSize;
+    }
+
+    if (!this.validateSymbols(rawData.flat())) {
+      return BreachProtocolFragmentStatus.InvalidSymbols;
+    }
+
+    return BreachProtocolFragmentStatus.Valid;
   }
 }

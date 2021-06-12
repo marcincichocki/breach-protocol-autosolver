@@ -1,6 +1,9 @@
-import { Point } from '@/common';
-import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
-import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
+import { BufferSize } from '../common';
+import {
+  BreachProtocolBufferSizeBase,
+  BreachProtocolFragmentResult,
+  BreachProtocolFragmentStatus,
+} from './base';
 
 class BufferSizeControlGroup {
   /** Thickness of control group in pixels. */
@@ -34,7 +37,7 @@ export type BreachProtocolBufferSizeFragmentResult =
 
 export class BreachProtocolBufferSizeFragment<
   TImage
-> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
+> extends BreachProtocolBufferSizeBase<TImage> {
   private readonly controlGroups = [
     // Buffer boxes.
     new BufferSizeControlGroup(0.12, 0.22, 255),
@@ -42,30 +45,7 @@ export class BreachProtocolBufferSizeFragment<
     new BufferSizeControlGroup(0.7, 1, 0),
   ];
 
-  readonly id = 'bufferSize';
-
-  readonly p1 = new Point(0.42, 0.167);
-
-  readonly p2 = new Point(0.8, 0.225);
-
-  readonly boundingBox = this.getFragmentBoundingBox();
-
-  readonly fragment = this.container.process(this.boundingBox);
-
-  /** Percentage that padding in buffer box takes. */
-  private readonly padding = 0.00937;
-
-  /** Percentage that buffer square takes. */
-  private readonly square = 0.0164;
-
-  /** Percentage that gap between buffer squares takes. */
-  private readonly gap = 0.00546;
-
   private static cachedThreshold: number = null;
-
-  isValid(n: number) {
-    return Number.isInteger(n) && n >= BUFFER_SIZE_MIN && n <= BUFFER_SIZE_MAX;
-  }
 
   private async checkControlGroupsForThreshold(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
@@ -118,7 +98,7 @@ export class BreachProtocolBufferSizeFragment<
     const rawBuffer = await this.container.toRawBuffer(fragment);
     const bufferSize = this.getBufferSizeFromPixels(rawBuffer);
 
-    if (!this.isValid(bufferSize)) {
+    if (this.getStatus(bufferSize) !== BreachProtocolFragmentStatus.Valid) {
       // In rare cases where given value is wrong, repeat with
       // binary search. For example when user changes gamma mid
       // game, saved value will be wrong. This allows to recalibrate

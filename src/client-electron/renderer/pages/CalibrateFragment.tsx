@@ -1,10 +1,11 @@
 import { UpdateSettingsAction } from '@/client-electron/actions';
 import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
+import { BreachProtocolFragmentStatus } from '@/core/ocr/base';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { rendererAsyncRequestDispatcher as asyncRequest } from '../../common';
-import { fromCamelCase, dispatch } from '../common';
+import { dispatch, fromCamelCase } from '../common';
 import {
   Col,
   Field,
@@ -56,6 +57,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const isBufferSize = fragmentId === 'bufferSize';
   const isExperimental =
     entry.settings.experimentalBufferSizeRecognition && isBufferSize;
+  const isValid = testResult.status === BreachProtocolFragmentStatus.Valid;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
   const [testThreshold, setTestThreshold] = useState<number>(
@@ -121,7 +123,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           </Field>
           <FlatButton
             type="submit"
-            disabled={!testResult.isValid || isExperimental}
+            disabled={!isValid || isExperimental}
             color="accent"
             style={{ alignSelf: 'flex-end' }}
           >

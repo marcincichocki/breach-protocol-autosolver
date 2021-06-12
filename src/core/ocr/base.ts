@@ -1,6 +1,13 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { createScheduler, createWorker } from 'tesseract.js';
-import { BreachProtocolRawData, HexNumber, HEX_NUMBERS } from '../common';
+import {
+  BreachProtocolRawData,
+  BufferSize,
+  BUFFER_SIZE_MAX,
+  BUFFER_SIZE_MIN,
+  HexNumber,
+  HEX_NUMBERS,
+} from '../common';
 import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
 import { BreachProtocolGridFragmentResult } from './grid';
@@ -24,19 +31,17 @@ export interface BreachProtocolSource {
   boxes: Tesseract.Bbox[];
 }
 
-export enum FragmentResultStatus {
-  VALID,
-  INVALID_SYMBOLS,
-  // This is not breach protocol screenshot or threshold is completly off.
-  INVALID_SIZE,
-  INVALID_CONTROL_GROUPS,
+export enum BreachProtocolFragmentStatus {
+  Valid,
+  InvalidSymbols,
+  InvalidSize,
 }
 
 interface BreachProtocolFragmentResultBase<TId extends FragmentId> {
   readonly boundingBox: BreachProtocolFragmentBoundingBox;
-  readonly isValid: boolean;
   readonly id: TId;
-  readonly status: FragmentResultStatus;
+  readonly isValid: boolean;
+  readonly status: BreachProtocolFragmentStatus;
 }
 
 export interface BreachProtocolFragmentResult<
@@ -88,16 +93,17 @@ export abstract class BreachProtocolFragment<
     threshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>>;
 
-  /** Check if recognized data is valid. */
-  abstract isValid(data: TData): boolean;
+  abstract getStatus(data: TData): BreachProtocolFragmentStatus;
 
   private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
     const { id, boundingBox } = this;
-    const isValid = this.isValid(rawData);
+    const status = this.getStatus(rawData);
+    const isValid = status === BreachProtocolFragmentStatus.Valid;
 
     return {
       id,
       boundingBox,
+      status,
       isValid,
     };
   }
@@ -279,4 +285,35 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   static scheduler: Tesseract.Scheduler;
+}
+
+export abstract class BreachProtocolBufferSizeBase<
+  TImage
+> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
+  readonly id = 'bufferSize';
+
+  readonly p1 = new Point(0.42, 0.167);
+
+  readonly p2 = new Point(0.8, 0.225);
+
+  readonly boundingBox = this.getFragmentBoundingBox();
+
+  readonly fragment = this.container.process(this.boundingBox);
+
+  /** Percentage that padding in buffer box takes. */
+  protected readonly padding = 0.00937;
+
+  /** Percentage that buffer square takes. */
+  protected readonly square = 0.0164;
+
+  /** Percentage that gap between buffer squares takes. */
+  protected readonly gap = 0.00546;
+
+  getStatus(n: number) {
+    if (!Number.isInteger(n) || n < BUFFER_SIZE_MIN || n > BUFFER_SIZE_MAX) {
+      return BreachProtocolFragmentStatus.InvalidSize;
+    }
+
+    return BreachProtocolFragmentStatus.Valid;
+  }
 }
