@@ -1,10 +1,11 @@
+import { RemoveHistoryEntryAction } from '@/client-electron/actions';
 import { BreachProtocolStatus, HistoryEntry } from '@/client-electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
 import { ipcRenderer as ipc, shell } from 'electron';
 import { FC, PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useHistoryEntryFromParam } from '../common';
+import { dispatch, useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
 
 const Heading2 = styled.h2`
@@ -20,28 +21,29 @@ const TextLink = styled(Link)`
   color: var(--accent);
 `;
 
-const OpenInExplorer: FC<{ fileName: string }> = ({ fileName, children }) => {
+const OpenInExplorer = ({ fileName }: { fileName: string }) => {
   if (!fileName) {
     return null;
   }
 
   return (
     <LinkButton onClick={() => shell.showItemInFolder(fileName)}>
-      {children}
+      Open in explorer
     </LinkButton>
   );
 };
 
-const SaveSnapshot = ({
-  entryId,
-  children,
-}: PropsWithChildren<{ entryId: string }>) => {
-  return (
-    <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
-      {children}
-    </LinkButton>
-  );
-};
+const SaveSnapshot = ({ entryId }: { entryId: string }) => (
+  <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
+    Save snapshot
+  </LinkButton>
+);
+
+const RemoveEntry = ({ entryId }: { entryId: string }) => (
+  <LinkButton onClick={() => dispatch(new RemoveHistoryEntryAction(entryId))}>
+    Remove entry
+  </LinkButton>
+);
 
 const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
   <Col style={{ margin: 'auto', alignItems: 'center', gap: '1rem' }}>
@@ -49,8 +51,9 @@ const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
     <FlatButton color="accent" as={Link} to={`/calibrate/${entry.uuid}/grid`}>
       Re-calibrate
     </FlatButton>
-    <OpenInExplorer fileName={entry.fileName}>Show source</OpenInExplorer>
-    <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
+    <OpenInExplorer fileName={entry.fileName} />
+    <SaveSnapshot entryId={entry.uuid} />
+    <RemoveEntry entryId={entry.uuid} />
   </Col>
 );
 
@@ -81,9 +84,7 @@ export const HistoryDetails: FC = () => {
         <Col style={{ alignItems: 'flex-end' }}>
           {entry.fileName ? (
             <>
-              <OpenInExplorer fileName={entry.fileName}>
-                Show source
-              </OpenInExplorer>
+              <OpenInExplorer fileName={entry.fileName} />
               <TextLink to={`/calibrate/${entry.uuid}/grid`}>
                 Re-calibrate
               </TextLink>
@@ -91,7 +92,8 @@ export const HistoryDetails: FC = () => {
           ) : (
             <DetailText>Source not available</DetailText>
           )}
-          <SaveSnapshot entryId={entry.uuid}>Save snapshot</SaveSnapshot>
+          <SaveSnapshot entryId={entry.uuid} />
+          <RemoveEntry entryId={entry.uuid} />
         </Col>
       </Row>
     </Col>

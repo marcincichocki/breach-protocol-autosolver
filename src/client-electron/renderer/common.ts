@@ -1,7 +1,7 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { Action, State } from '../common';
 import { StateContext } from './state';
@@ -73,4 +73,10 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
 
 export function dispatch(action: Action) {
   return ipc.send('state', action);
+}
+
+export function useHistoryRedirect(channels: string[]) {
+  const history = useHistory();
+
+  useIpcEvent(channels, () => history.replace('/history'));
 }
