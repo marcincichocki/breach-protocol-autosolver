@@ -94,12 +94,15 @@ const updateSettings: Handler<Partial<AppSettings>> = (state, { payload }) => {
   return { ...state, settings };
 };
 
-const removeLastHistoryEntry: Handler = (state) => {
-  return {
-    ...state,
-    history: state.history.slice(0, -1),
-  };
-};
+const removeLastHistoryEntry: Handler = (state) => ({
+  ...state,
+  history: state.history.slice(0, -1),
+});
+
+const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
+  ...state,
+  history: state.history.filter((e) => e.uuid !== payload),
+});
 
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
@@ -107,4 +110,5 @@ export const appReducer = createReducer<State>({
   [ActionTypes.ADD_HISTORY_ENTRY]: addHistoryEntry,
   [ActionTypes.UPDATE_SETTINGS]: updateSettings,
   [ActionTypes.REMOVE_LAST_HISTORY_ENTRY]: removeLastHistoryEntry,
+  [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
 });
