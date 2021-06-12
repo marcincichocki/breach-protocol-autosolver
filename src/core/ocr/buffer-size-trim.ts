@@ -1,35 +1,11 @@
-import { Point } from '@/common';
-import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../common';
-import { BreachProtocolFragment } from './base';
+import { BufferSize } from '../common';
+import { BreachProtocolBufferSizeBase } from './base';
 import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 
 export class BreachProtocolBufferSizeTrimFragment<
   TImage
-> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
-  readonly id = 'bufferSize';
-
-  readonly p1 = new Point(0.42, 0.167);
-
-  readonly p2 = new Point(0.8, 0.225);
-
-  readonly boundingBox = this.getFragmentBoundingBox();
-
-  readonly fragment = this.container.processBufferSizeFragment(
-    this.boundingBox
-  );
-
-  /** Percentage that padding in buffer box takes. */
-  private readonly padding = 0.00937;
-
-  /** Percentage that buffer square takes. */
-  private readonly square = 0.0164;
-
-  /** Percentage that gap between buffer squares takes. */
-  private readonly gap = 0.00546;
-
-  isValid(n: number) {
-    return Number.isInteger(n) && n >= BUFFER_SIZE_MIN && n <= BUFFER_SIZE_MAX;
-  }
+> extends BreachProtocolBufferSizeBase<TImage> {
+  override readonly fragment = this.container.processBufferSizeFragment(this.boundingBox);
 
   // Ensure compatibility with current api.
   async recognize(

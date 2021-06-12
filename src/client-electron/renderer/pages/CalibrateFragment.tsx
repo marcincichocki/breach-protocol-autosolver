@@ -4,7 +4,7 @@ import { BreachProtocolFragmentResults, FragmentId } from '@/core';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { rendererAsyncRequestDispatcher as asyncRequest } from '../../common';
-import { fromCamelCase, dispatch } from '../common';
+import { dispatch, fromCamelCase } from '../common';
 import {
   Col,
   Field,

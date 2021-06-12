@@ -3,6 +3,7 @@ import { GridRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolOCRFragment,
+  BreachProtocolFragmentStatus,
 } from './base';
 
 export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
@@ -39,7 +40,15 @@ export class BreachProtocolGridFragment<
     return n > 0 && Math.sqrt(n) % 1 === 0;
   }
 
-  isValid(rawData: GridRawData) {
-    return this.validateSymbols(rawData) && this.isSquare(rawData.length);
+  getStatus(rawData: GridRawData) {
+    if (!this.isSquare(rawData.length)) {
+      return BreachProtocolFragmentStatus.InvalidSize;
+    }
+
+    if (!this.validateSymbols(rawData)) {
+      return BreachProtocolFragmentStatus.InvalidSymbols;
+    }
+
+    return BreachProtocolFragmentStatus.Valid;
   }
 }

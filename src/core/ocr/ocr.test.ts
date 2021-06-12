@@ -2,7 +2,11 @@ import path from 'path';
 import sharp from 'sharp';
 import registry from '../../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
-import { BreachProtocolOCRFragment, FragmentId } from './base';
+import {
+  BreachProtocolOCRFragment,
+  FragmentId,
+  BreachProtocolFragmentStatus,
+} from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
@@ -113,6 +117,7 @@ describe('raw data validation', () => {
     ['FF', '55'],
   ];
   const bufferSize: BufferSize = 6;
+  const valid = BreachProtocolFragmentStatus.Valid;
 
   it('should pass it if data is valid', () => {
     const gridFragment = new BreachProtocolGridFragment(testContainer);
@@ -121,9 +126,9 @@ describe('raw data validation', () => {
       testContainer
     );
 
-    expect(gridFragment.isValid(grid)).toBeTruthy();
-    expect(daemonsFragment.isValid(daemons)).toBeTruthy();
-    expect(bufferSizeFragment.isValid(bufferSize)).toBeTruthy();
+    expect(gridFragment.getStatus(grid)).toBe(valid);
+    expect(daemonsFragment.getStatus(daemons)).toBe(valid);
+    expect(bufferSizeFragment.getStatus(bufferSize)).toBe(valid);
   });
 
   it('should throw an error if grid is invalid', () => {
@@ -137,7 +142,7 @@ describe('raw data validation', () => {
     ] as GridRawData[];
 
     invalidGrids.forEach((grid) => {
-      expect(fragment.isValid(grid)).toBeFalsy();
+      expect(fragment.getStatus(grid)).not.toBe(valid);
     });
   });
 
@@ -151,7 +156,7 @@ describe('raw data validation', () => {
     ] as DaemonsRawData[];
 
     invalidDaemons.forEach((daemons) => {
-      expect(fragment.isValid(daemons)).toBeFalsy();
+      expect(fragment.getStatus(daemons)).not.toBe(valid);
     });
   });
 
@@ -160,7 +165,7 @@ describe('raw data validation', () => {
     const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
 
     invalidBufferSizes.forEach((bufferSize) => {
-      expect(fragment.isValid(bufferSize)).toBeFalsy();
+      expect(fragment.getStatus(bufferSize)).not.toBe(valid);
     });
   });
 });
