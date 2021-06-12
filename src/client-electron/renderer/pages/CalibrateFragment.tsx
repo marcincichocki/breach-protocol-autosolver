@@ -57,7 +57,6 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   const isBufferSize = fragmentId === 'bufferSize';
   const isExperimental =
     entry.settings.experimentalBufferSizeRecognition && isBufferSize;
-  const isValid = testResult.status === BreachProtocolFragmentStatus.Valid;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
   const [testThreshold, setTestThreshold] = useState<number>(
@@ -123,7 +122,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
           </Field>
           <FlatButton
             type="submit"
-            disabled={!isValid || isExperimental}
+            disabled={!testResult.isValid || isExperimental}
             color="accent"
             style={{ alignSelf: 'flex-end' }}
           >
