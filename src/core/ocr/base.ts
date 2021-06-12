@@ -93,7 +93,7 @@ export abstract class BreachProtocolFragment<
     threshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>>;
 
-  abstract getStatus(data: TData): BreachProtocolFragmentStatus;
+  abstract getStatus(rawData: TData): BreachProtocolFragmentStatus;
 
   private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
     const { id, boundingBox } = this;
