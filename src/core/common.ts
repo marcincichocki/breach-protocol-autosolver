@@ -1,5 +1,4 @@
 import { uniqueBy } from '@/common';
-import { BreachProtocolResult } from './game';
 import {
   BreachProtocolBufferSizeFragmentResult,
   BreachProtocolDaemonsFragmentResult,
@@ -7,7 +6,7 @@ import {
   BreachProtocolGridFragmentResult,
   FragmentId,
 } from './ocr';
-import { Daemon, memoizedFindOverlap, Sequence } from './sequence';
+import { Daemon, Sequence } from './sequence';
 
 export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexNumber = typeof HEX_NUMBERS[number];
@@ -97,28 +96,6 @@ export interface BreachProtocolRawData {
   grid: GridRawData;
   daemons: DaemonsRawData;
   bufferSize: BufferSize;
-}
-
-export interface BreachProtocolData extends BreachProtocolRawData {
-  tGrid: string[];
-  tDaemons: string[];
-}
-
-export function transformRawData({
-  grid,
-  daemons,
-  bufferSize,
-}: BreachProtocolRawData): BreachProtocolData {
-  const tGrid = grid.map(fromHex);
-  const tDaemons = daemons.map((d) => d.map(fromHex).join(''));
-
-  return {
-    tGrid,
-    tDaemons,
-    grid,
-    daemons,
-    bufferSize,
-  };
 }
 
 export type BreachProtocolExitStrategy = {
