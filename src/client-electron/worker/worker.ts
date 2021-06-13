@@ -1,4 +1,3 @@
-import { setLang } from '@/common';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
@@ -40,6 +39,8 @@ export class BreachProtocolWorker {
 
   private settings: AppSettings = ipc.sendSync('get-state').settings;
 
+  private status: WorkerStatus;
+
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
 
@@ -62,9 +63,6 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Bootstrap);
 
     this.registerListeners();
-
-    // TODO: change lang, or remove it completly.
-    setLang('en');
 
     await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
@@ -93,6 +91,10 @@ export class BreachProtocolWorker {
   }
 
   private async onWorkerSolve() {
+    if (this.status !== WorkerStatus.Ready) {
+      return;
+    }
+
     this.updateStatus(WorkerStatus.Working);
 
     const { activeDisplayId } = this.settings;
@@ -147,8 +149,9 @@ export class BreachProtocolWorker {
     return fragment.recognize(req.data.threshold, false);
   }
 
-  private updateStatus(payload: WorkerStatus) {
-    this.dispatch(new SetStatusAction(payload));
+  private updateStatus(status: WorkerStatus) {
+    this.status = status;
+    this.dispatch(new SetStatusAction(status));
   }
 
   private dispatch(action: Action) {
