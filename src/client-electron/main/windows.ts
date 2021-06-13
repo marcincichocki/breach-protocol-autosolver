@@ -27,7 +27,7 @@ const rendererOptions: BrowserWindowConstructorOptions = {
   minWidth: 1280,
   minHeight: 720,
   // Maximize and drag does not work on wsl2.
-  frame: isDev && isWsl ? true : false,
+  frame: isDev && isWsl,
   icon: join(__dirname, icon),
   autoHideMenuBar: true,
   webPreferences: {

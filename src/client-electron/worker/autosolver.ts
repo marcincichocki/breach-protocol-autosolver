@@ -9,7 +9,6 @@ import {
 } from '@/core';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
-import { play } from 'sound-play';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AppSettings,
@@ -126,7 +125,7 @@ export class BreachProtocolAutosolver {
 
   private notifyUser() {
     if (this.settings.soundEnabled) {
-      play(this.settings.errorSoundPath);
+      new Audio(this.settings.errorSoundPath).play();
     }
   }
 
