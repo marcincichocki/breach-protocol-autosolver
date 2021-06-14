@@ -19,8 +19,5 @@ declare namespace NodeJS {
 
     /** Timestamp of HEAD. */
     GIT_COMMIT_DATE: string;
-
-    /** Latest git tag. */
-    GIT_TAG: string;
   }
 }
