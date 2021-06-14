@@ -16,4 +16,4 @@ jobs:
           node-version: 12.x
       - run: npm ci
       - run: npm test
-      - run: npm run electron:build
+      - run: npm run electron:build -- --publish never
