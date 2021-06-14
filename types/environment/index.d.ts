@@ -1,5 +1,7 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
+    NODE_ENV: 'development' | 'production' | 'none';
+
     /** Version from npm config. */
     npm_package_version: string;
 
