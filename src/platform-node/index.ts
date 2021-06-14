@@ -1,4 +1,2 @@
-import { bootstrap } from './bootstrap';
-import { register } from './register';
-
-bootstrap().then(register);
+export * from './robot';
+export * from './sharp-image-container';

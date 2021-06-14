@@ -1,4 +1,5 @@
 import { ActionTypes } from '@/client-electron/actions';
+import { isDev, isProd } from '@/common';
 import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
 import { ensureDirSync, remove, removeSync } from 'fs-extra';
@@ -65,9 +66,9 @@ export class Store {
   }
 
   dispose() {
-    if (process.env.NODE_ENV === 'production') {
+    if (isProd) {
       this.preserveState();
-    } else if (process.env.NODE_ENV === 'development') {
+    } else if (isDev) {
       removeSync(this.state.settings.screenshotDir);
     }
 

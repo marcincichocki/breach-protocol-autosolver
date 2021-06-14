@@ -5,8 +5,8 @@ import {
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
   FragmentId,
-  SharpImageContainer,
 } from '@/core';
+import { BreachProtocolRobot, SharpImageContainer } from '@/platform-node';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +16,6 @@ import {
   BreachProtocolStatus,
   HistoryEntry,
 } from '../common';
-import { BreachProtocolRobot } from './robot';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();

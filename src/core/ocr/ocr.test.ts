@@ -1,17 +1,18 @@
+import { SharpImageContainer } from '@/platform-node';
 import path from 'path';
 import sharp from 'sharp';
 import registry from '../../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
 import {
+  BreachProtocolFragmentStatus,
   BreachProtocolOCRFragment,
   FragmentId,
-  BreachProtocolFragmentStatus,
 } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
-import { ImageContainer, SharpImageContainer } from './image-container';
+import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
 
 interface RegistryEntry {

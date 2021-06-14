@@ -9,10 +9,14 @@ declare module 'screenshot-desktop' {
 
     function all(): Promise<Buffer[]> | Promise<string[]>;
 
+    type ScreenshotFormat = 'jpg' | 'png';
+
+    type ScreenshotLinuxLibrary = 'scrot' | 'imagemagick';
+
     interface ScreenshotOptions {
       filename?: string;
-      format?: string;
-      linuxLibrary?: 'scrot' | 'imagemagick';
+      format?: ScreenshotFormat;
+      linuxLibrary?: ScreenshotLinuxLibrary;
       screen?: string;
     }
 

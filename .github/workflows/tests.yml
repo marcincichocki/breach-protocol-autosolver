@@ -16,10 +16,4 @@ jobs:
           node-version: 12.x
       - run: npm ci
       - run: npm test
-      - run: npm run build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: breach-protocol-autosolver-${{ github.sha }}
-          path: build/
-          if-no-files-found: error
-          retention-days: 7
+      - run: npm run electron:build -- --publish never

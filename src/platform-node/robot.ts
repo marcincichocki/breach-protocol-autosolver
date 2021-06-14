@@ -1,112 +1,155 @@
-import { Point, t, getScaling } from '@/common';
-import { BreachProtocolExitStrategy } from '@/core';
+import { Point } from '@/common';
+import { BreachProtocolResult } from '@/core';
 import { execFile } from 'child_process';
-import isWsl from 'is-wsl';
-import screenshot from 'screenshot-desktop';
-import { options } from './cli';
-import { getScreenShotPath, removeOldestScreenShot } from './debug';
+import { join } from 'path';
+import sanitize from 'sanitize-filename';
+import screenshot, { ScreenshotFormat } from 'screenshot-desktop';
 
-export async function resolveBreachProtocol(
-  path: string[],
-  squareMap: Map<string, Point>,
-  { shouldForceClose, willExit }: BreachProtocolExitStrategy
-) {
-  const to = await mouseMove();
+export interface RobotSettings {
+  delay: number;
+  activeDisplayId: string;
+  format: ScreenshotFormat;
+  screenshotDir: string;
+  autoExit: boolean;
+  useScaling: boolean;
+}
 
-  for (const square of path) {
-    const { x, y } = squareMap.get(square);
+export abstract class Robot {
+  constructor(
+    protected readonly settings: RobotSettings,
+    protected readonly scaling: number = 1
+  ) {}
 
-    await to(x, y);
-    await click();
-    await sleep();
+  abstract click(): Promise<any>;
+
+  abstract move(x: number, y: number, restart?: boolean): Promise<any>;
+
+  abstract movePointerAway(): Promise<any>;
+
+  abstract exit(): Promise<any>;
+
+  sleep(delay: number = this.settings.delay) {
+    return new Promise((r) => setTimeout(r, delay));
   }
 
-  // Breach protocol exits on its own when sequence fill
-  // buffer completly.
-  if (!willExit && !options.disableAutoExit) {
-    // If buffer is not yet filled, but sequence is finished
-    // breach protocol will hang on exit screen. Pressing esc
-    // exits it.
-    await exit();
+  async captureScreen(screen: string = this.settings.activeDisplayId) {
+    await this.movePointerAway();
 
-    // Sometimes sequence does not use every daemon, and there might be
-    // a rare case in which sequence ended, but there is still enough space
-    // in a buffer to fit leftover daemons. However, since it is impossible
-    // to find correct squares, autosolver will stop.
-    // To hanlde such case we have to press esc twice: once to stop it, and
-    // second time to exit it.
-    if (shouldForceClose) {
-      await exit();
+    const { format } = this.settings;
+    const filename = this.getScreenShotPath(format);
+
+    // screenshot-desktop always returns string if filename is provided.
+    return screenshot({ format, screen, filename }) as Promise<string>;
+  }
+
+  private getScreenShotPath(ext: string) {
+    const now = new Date().toString();
+    const name = sanitize(now, { replacement: ' ' });
+
+    return join(this.settings.screenshotDir, `${name}.${ext}`);
+  }
+}
+
+export abstract class BreachProtocolRobot extends Robot {
+  async resolveBreachProtocol(
+    { path, exitStrategy }: BreachProtocolResult,
+    squareMap: Map<string, Point>
+  ) {
+    await this.movePointerAway();
+
+    for (const square of path) {
+      const { x, y } = squareMap.get(square);
+
+      await this.move(x, y, false);
+      await this.click();
+      await this.sleep();
+    }
+
+    // Breach protocol exits on its own when sequence fill
+    // buffer completly.
+    if (!exitStrategy.willExit && this.settings.autoExit) {
+      // If buffer is not yet filled, but sequence is finished
+      // breach protocol will hang on exit screen. Pressing esc
+      // exits it.
+      await this.exit();
+
+      // Sometimes sequence does not use every daemon, and there might be
+      // a rare case in which sequence ended, but there is still enough space
+      // in a buffer to fit leftover daemons. However, since it is impossible
+      // to find correct squares, autosolver will stop.
+      // To hanlde such case we have to press esc twice: once to stop it, and
+      // second time to exit it.
+      if (exitStrategy.shouldForceClose) {
+        await this.exit();
+      }
     }
   }
 }
 
-export async function captureScreen(screen: string) {
-  const { format } = options;
-  // Move pointer away to not mess with ocr.
-  await movePointerAway();
-  await removeOldestScreenShot();
+export class WindowsRobot extends BreachProtocolRobot {
+  private x = 0;
+  private y = 0;
 
-  const filename = getScreenShotPath(format);
+  private readonly bin = './vendor/nircmd/nircmd.exe';
 
-  return screenshot({ format, screen, filename });
-}
-
-async function nircmd(command: string, options = {}) {
-  const bin = './vendor/nircmd/nircmd.exe';
-
-  if (process.platform !== 'win32' && !isWsl) {
-    throw new Error(t`UNSUPORTED_OS`);
+  click() {
+    return this.nircmd('sendmouse left click');
   }
 
-  return new Promise((resolve, reject) => {
-    execFile(bin, command.split(' '), options, (err, res) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-}
+  async move(x: number, y: number, restart = true) {
+    if (restart) {
+      await this.movePointerAway();
+    }
 
-function movePointerAway() {
-  return move(-9999, -9999);
-}
+    const scaling = this.settings.useScaling ? this.scaling : 1;
+    const sX = (x - this.x) / scaling;
+    const sY = (y - this.y) / scaling;
+    const r = await this.moveRelative(sX, sY);
 
-function move(...args: number[]) {
-  return nircmd(`sendmouse move ${args.join(' ')}`);
-}
-
-function click() {
-  return nircmd('sendmouse left click');
-}
-
-async function mouseMove(restart = true) {
-  if (restart) {
-    await movePointerAway();
-  }
-
-  let oldX = 0;
-  let oldY = 0;
-  const scaling = options.useScaling ? getScaling() : 1;
-
-  return async (x: number, y: number) => {
-    const sX = (x - oldX) / scaling;
-    const sY = (y - oldY) / scaling;
-    const r = await move(sX, sY);
-
-    oldX = x;
-    oldY = y;
+    this.x = x;
+    this.y = y;
 
     return r;
-  };
+  }
+
+  movePointerAway() {
+    this.x = 0;
+    this.y = 0;
+
+    return this.moveRelative(-9999, -9999);
+  }
+
+  exit() {
+    return this.nircmd('sendkeypress esc');
+  }
+
+  private nircmd(command: string, options = {}) {
+    const args = command.split(' ');
+
+    return new Promise((resolve, reject) => {
+      execFile(this.bin, args, options, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  }
+
+  private moveRelative(x: number, y: number) {
+    return this.nircmd(`sendmouse move ${x} ${y}`);
+  }
 }
 
-function sleep(delay: number = options.delay) {
-  return new Promise((r) => setTimeout(r, delay));
+// TODO: Add linux and macos robots
+function getPlatformRobot(platform = process.platform) {
+  switch (platform) {
+    case 'win32':
+      return WindowsRobot;
+    default:
+      return WindowsRobot;
+  }
 }
 
-function exit() {
-  return nircmd('sendkeypress esc');
-}
+export const PlatformRobot = getPlatformRobot();

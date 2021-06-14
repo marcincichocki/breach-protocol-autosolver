@@ -1,5 +1,4 @@
-import { BreachProtocolResultJSON } from '@/core';
-import { DaemonsRawData } from '@/core/common';
+import { BreachProtocolResultJSON, DaemonsRawData } from '@/core';
 import { FC } from 'react';
 import styled from 'styled-components';
 import { Highlight } from './HistoryViewer';

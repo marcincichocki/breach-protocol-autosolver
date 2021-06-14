@@ -1,5 +1,5 @@
-import { SourceFormat } from '@/client-electron/common';
 import { useEffect, useRef } from 'react';
+import { ScreenshotFormat } from 'screenshot-desktop';
 
 function getStrokeRectCords(
   box: Tesseract.Bbox,
@@ -53,7 +53,7 @@ interface FragmentPreviewProps {
   image: string;
   boxes: Tesseract.Bbox[];
   showBoxes: boolean;
-  format: SourceFormat;
+  format: ScreenshotFormat;
 }
 
 export const FragmentPreview = (props: FragmentPreviewProps) => {

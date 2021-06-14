@@ -35,13 +35,6 @@ export function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
   }) as T;
 }
 
-export function swap<T1 = any, T2 = any>([a, b]: readonly [T1, T2]): [
-  b: T2,
-  a: T1
-] {
-  return [b, a];
-}
-
 // https://stackoverflow.com/a/37580979/4777077
 export function permute<T>(permutation: T[]) {
   const { length } = permutation;
@@ -70,17 +63,6 @@ export function permute<T>(permutation: T[]) {
 
 export class Point {
   constructor(public x: number, public y: number) {}
-}
-
-export function createLogger(enable = false) {
-  return (...args: any[]) => (enable ? console.log.apply(this, args) : null);
-}
-
-export function pressAnyKey() {
-  return new Promise((r) => {
-    process.stdin.resume();
-    process.stdin.once('data', r);
-  });
 }
 
 export function chunk(str: string, size: number) {
@@ -135,3 +117,6 @@ export class BitMask {
     return this;
   }
 }
+
+export const isDev = process.env.NODE_ENV === 'development';
+export const isProd = process.env.NODE_ENV === 'production';

@@ -1,7 +1,6 @@
-import { BufferSize } from '@/core/common';
+import { BreachProtocolResultJSON, BufferSize } from '@/core';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { BreachProtocolResultJSON } from '@/core/game';
 import { Highlight } from './HistoryViewer';
 
 // TODO: extract Square and use it here.

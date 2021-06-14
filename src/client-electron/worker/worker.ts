@@ -1,14 +1,19 @@
-import { setLang } from '@/common';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
   BreachProtocolOCRFragment,
-  SharpImageContainer,
 } from '@/core';
+import { PlatformRobot, SharpImageContainer } from '@/platform-node';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
+import {
+  AddHistoryEntryAction,
+  SetDisplaysAction,
+  SetStatusAction,
+  UpdateSettingsAction,
+} from '../actions';
 import {
   Action,
   AppSettings,
@@ -18,14 +23,7 @@ import {
   workerAsyncRequestListener,
   WorkerStatus,
 } from '../common';
-import {
-  AddHistoryEntryAction,
-  SetDisplaysAction,
-  SetStatusAction,
-  UpdateSettingsAction,
-} from '../actions';
 import { BreachProtocolAutosolver } from './autosolver';
-import { PlatformRobot } from './robot';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
@@ -39,6 +37,8 @@ export class BreachProtocolWorker {
   } = null;
 
   private settings: AppSettings = ipc.sendSync('get-state').settings;
+
+  private status: WorkerStatus;
 
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
@@ -62,9 +62,6 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Bootstrap);
 
     this.registerListeners();
-
-    // TODO: change lang, or remove it completly.
-    setLang('en');
 
     await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
@@ -93,11 +90,13 @@ export class BreachProtocolWorker {
   }
 
   private async onWorkerSolve() {
+    if (this.status !== WorkerStatus.Ready) {
+      return;
+    }
+
     this.updateStatus(WorkerStatus.Working);
 
-    const { activeDisplayId } = this.settings;
-    const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
-    const robot = new PlatformRobot(this.settings, dpiScale);
+    const robot = this.getRobot();
     const bpa = new BreachProtocolAutosolver(this.settings, robot);
     const entry = await bpa.solve();
 
@@ -112,6 +111,13 @@ export class BreachProtocolWorker {
     if (type === 'UPDATE_SETTINGS') {
       this.settings = payload.settings;
     }
+  }
+
+  private getRobot() {
+    const { activeDisplayId } = this.settings;
+    const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
+
+    return new PlatformRobot(this.settings, dpiScale);
   }
 
   private async handleAsyncRequest(req: Request) {
@@ -147,8 +153,9 @@ export class BreachProtocolWorker {
     return fragment.recognize(req.data.threshold, false);
   }
 
-  private updateStatus(payload: WorkerStatus) {
-    this.dispatch(new SetStatusAction(payload));
+  private updateStatus(status: WorkerStatus) {
+    this.status = status;
+    this.dispatch(new SetStatusAction(status));
   }
 
   private dispatch(action: Action) {
