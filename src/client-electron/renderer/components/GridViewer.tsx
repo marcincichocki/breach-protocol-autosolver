@@ -1,4 +1,4 @@
-import { COLS, cross, GridRawData, ROWS } from '@/core/common';
+import { COLS, cross, GridRawData, ROWS } from '@/core';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 

@@ -4,6 +4,7 @@ import {
   FragmentId,
   SequenceJSON,
 } from '@/core';
+import { RobotSettings } from '@/platform-node';
 import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,9 +41,7 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
-export type SourceFormat = 'png' | 'jpg';
-
-export interface AppSettings {
+export interface AppSettings extends RobotSettings {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
@@ -50,20 +49,14 @@ export interface AppSettings {
   errorSoundPath: string;
   checkForUpdates: boolean;
   autoUpdate: boolean;
+  minimizeToTray: boolean;
   thresholdGrid: number;
   thresholdGridAuto: boolean;
   thresholdDaemons: number;
   thresholdDaemonsAuto: boolean;
   thresholdBufferSize: number;
   thresholdBufferSizeAuto: boolean;
-  delay: number;
-  autoExit: boolean;
-  useScaling: boolean;
   experimentalBufferSizeRecognition: boolean;
-  format: SourceFormat;
-  activeDisplayId: string;
-  minimizeToTray: boolean;
-  screenshotDir: string;
 }
 
 export interface AppStats {

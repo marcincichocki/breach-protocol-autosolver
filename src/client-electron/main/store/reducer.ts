@@ -1,4 +1,4 @@
-import { isDaemonsFragment } from '@/core/common';
+import { isDaemonsFragment } from '@/core';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { ActionTypes } from '../../actions';
 import {

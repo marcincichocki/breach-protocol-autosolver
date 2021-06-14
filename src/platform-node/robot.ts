@@ -3,12 +3,20 @@ import { BreachProtocolResult } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
-import screenshot from 'screenshot-desktop';
-import { AppSettings } from '../common';
+import screenshot, { ScreenshotFormat } from 'screenshot-desktop';
+
+export interface RobotSettings {
+  delay: number;
+  activeDisplayId: string;
+  format: ScreenshotFormat;
+  screenshotDir: string;
+  autoExit: boolean;
+  useScaling: boolean;
+}
 
 export abstract class Robot {
   constructor(
-    protected readonly settings: AppSettings,
+    protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
@@ -25,9 +33,6 @@ export abstract class Robot {
   }
 
   async captureScreen(screen: string = this.settings.activeDisplayId) {
-    // TODO: remove screenshot that is associated with
-    // entry that is about to be deleted. This cannot
-    // use previous method of deleting files by count.
     await this.movePointerAway();
 
     const { format } = this.settings;
