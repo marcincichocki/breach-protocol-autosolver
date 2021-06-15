@@ -149,8 +149,12 @@ export abstract class BreachProtocolOCRFragment<
   // This map contains some common errors.
   public static readonly correctionMap = new Map<string, HexNumber>([
     ['1E', '1C'],
+    ['EE', '1C'],
+    ['DE', '1C'],
+    ['AC', '1C'],
     ['EB', 'E9'],
     ['F9', 'E9'],
+    ['57', 'E9'],
     ['ED', 'BD'],
   ]);
 

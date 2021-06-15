@@ -188,11 +188,7 @@ describe('ocr', () => {
   it.each(getRegistryFor('1024x768'))(
     'should correctly ocr 1024x768/%s',
     async (f: string, entry: RegistryEntry) => {
-      BreachProtocolOCRFragment.correctionMap.set('EE', '1C');
-      BreachProtocolOCRFragment.correctionMap.set('DE', '1C');
-      BreachProtocolOCRFragment.correctionMap.set('57', 'E9');
-      BreachProtocolOCRFragment.correctionMap.set('AC', '1C');
-
+      // This resolution requires fixed thresholds.
       await compareOcrToJson(entry, '1024x768', { grid: 155, daemons: 140 });
     }
   );
