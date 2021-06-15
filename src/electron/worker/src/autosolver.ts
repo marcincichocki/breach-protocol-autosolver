@@ -1,10 +1,4 @@
 import { BitMask } from '@/common';
-import {
-  AppSettings,
-  BreachProtocolSolveProgress,
-  BreachProtocolStatus,
-  HistoryEntry,
-} from '@/electron/common';
 import { BreachProtocolRobot, SharpImageContainer } from '@/common/node';
 import {
   BreachProtocol,
@@ -13,6 +7,12 @@ import {
   BreachProtocolResult,
   FragmentId,
 } from '@/core';
+import {
+  AppSettings,
+  BreachProtocolSolveProgress,
+  BreachProtocolStatus,
+  HistoryEntry,
+} from '@/electron/common';
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';

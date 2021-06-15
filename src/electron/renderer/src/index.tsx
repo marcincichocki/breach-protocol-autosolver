@@ -1,7 +1,7 @@
 import { render } from 'react-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { App } from './app';
 import { GlobalStyles } from './styles/global';
-import { HashRouter as Router } from 'react-router-dom';
 
 render(
   <>

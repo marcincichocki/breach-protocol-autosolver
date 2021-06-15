@@ -1,10 +1,10 @@
+import { RobotSettings } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
   FragmentId,
   SequenceJSON,
 } from '@/core';
-import { RobotSettings } from '@/common/node';
 import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';

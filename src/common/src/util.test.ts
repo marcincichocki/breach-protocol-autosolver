@@ -1,11 +1,11 @@
 import {
+  BitMask,
   chunk,
   getClosest,
   memoize,
   unique,
   uniqueBy,
   uniqueWith,
-  BitMask,
 } from './util';
 
 describe('utils', () => {
