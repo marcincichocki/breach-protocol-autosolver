@@ -223,10 +223,9 @@ describe('ocr', () => {
 });
 
 function getRegistryFor(resolution: Resolution) {
-  return (registry as Registry)[resolution].map((e) => [e.fileName, e]) as [
-    string,
-    RegistryEntry
-  ][];
+  return (registry as Registry)[resolution].map(
+    (e) => [e.fileName, e] as [string, RegistryEntry]
+  );
 }
 
 async function compareOcrToJson(
