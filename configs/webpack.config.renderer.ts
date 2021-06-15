@@ -22,7 +22,7 @@ export const config: webpack.Configuration = {
   plugins: [
     ...commonPlugins,
     new HtmlWebpackPlugin({
-      template: join(__dirname, '../public/renderer.html'),
+      template: join(__dirname, '../src/client-electron/renderer/index.html'),
       filename: 'renderer.html',
       title: process.env.npm_package_build_productName,
     }),
