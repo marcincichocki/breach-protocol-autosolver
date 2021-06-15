@@ -5,7 +5,7 @@ import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/electron/main/src/index.ts'),
+  entry: join(__dirname, '../src/electron/main/index.ts'),
   target: 'electron-main',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
