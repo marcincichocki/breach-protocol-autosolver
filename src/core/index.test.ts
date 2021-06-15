@@ -1,4 +1,4 @@
-import registry from '../bp-registry/registry.json';
+import registry from './bp-registry/registry.json';
 import {
   BreachProtocolRawData,
   BufferSize,
