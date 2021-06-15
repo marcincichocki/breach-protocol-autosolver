@@ -249,11 +249,7 @@ async function recognizeRegistryEntry(
   resolution: Resolution,
   thresholds?: Partial<Record<FragmentId, number>>
 ) {
-  const file = path.join(
-    './src/core/src/bp-registry',
-    resolution,
-    entry.fileName
-  );
+  const file = path.join('./src/core/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
   const container = await SharpImageContainer.create(image);
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
