@@ -1,4 +1,5 @@
 import registry from './bp-registry/registry.json';
+import data from './bp-registry/test-data.json';
 import {
   BreachProtocolRawData,
   BufferSize,
@@ -11,9 +12,9 @@ import {
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
-import data from './test-data.json';
 
 const registryBreachProtocols = [
+  ...registry['1024x768'],
   ...registry['1920x1080'],
   ...registry['2560x1440'],
   ...registry['3440x1440'],
