@@ -2,7 +2,7 @@ import { isDev } from '@/common';
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import isWsl from 'is-wsl';
 import { join } from 'path';
-import icon from '../../renderer/src/assets/icon.png';
+import icon from '../renderer/assets/icon.png';
 
 function createWindow(name: string, options: BrowserWindowConstructorOptions) {
   const window = new BrowserWindow(options);
