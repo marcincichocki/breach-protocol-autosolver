@@ -6,7 +6,7 @@ import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/client-electron/renderer/index.tsx'),
+  entry: join(__dirname, '../src/electron/renderer/src/index.tsx'),
   target: 'electron-renderer',
   output: {
     path: join(__dirname, '../dist'),
@@ -22,7 +22,7 @@ export const config: webpack.Configuration = {
   plugins: [
     ...commonPlugins,
     new HtmlWebpackPlugin({
-      template: join(__dirname, '../src/client-electron/renderer/index.html'),
+      template: join(__dirname, '../src/electron/renderer/src/index.html'),
       filename: 'renderer.html',
       title: process.env.npm_package_build_productName,
     }),
