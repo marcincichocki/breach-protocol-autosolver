@@ -28,7 +28,6 @@ type Resolution =
   | '2560x1440'
   | '3440x1440'
   | '3840x2160';
-type Registry = Record<Resolution, RegistryEntry[]>;
 
 describe('image container', () => {
   const aspectRatio = ImageContainer.ASPECT_RATIO;
@@ -223,7 +222,7 @@ describe('ocr', () => {
 });
 
 function getRegistryFor(resolution: Resolution) {
-  return (registry as Registry)[resolution].map(
+  return registry[resolution].map(
     (e) => [e.fileName, e] as [string, RegistryEntry]
   );
 }
