@@ -26,7 +26,7 @@ const testData = (data as BreachProtocolRawData[]).concat(
 );
 
 describe('utilities', () => {
-  test('should combine 2 strings', () => {
+  it('should combine 2 strings', () => {
     const a = 'ab';
     const b = '12';
     const result = cross(a, b);
@@ -35,7 +35,7 @@ describe('utilities', () => {
     expect(result.length).toBe(a.length * b.length);
   });
 
-  test('should return array of units in correct order', () => {
+  it('should return array of units in correct order', () => {
     const result = getUnits('abc', '123');
 
     expect(result).toEqual([
@@ -55,7 +55,7 @@ describe('utilities', () => {
     ]);
   });
 
-  test('should generate square map with correct values', () => {
+  it('should generate square map with correct values', () => {
     const squares = cross('ab', '12');
     const result = generateSquareMap(squares, (squre, index) => {
       if (squre === 'b2') {
@@ -74,7 +74,7 @@ describe('utilities', () => {
 });
 
 describe('Breach protocol solve', () => {
-  test('should resolve 3 base cases', () => {
+  it('should resolve 3 base cases', () => {
     // prettier-ignore
     const grid: GridRawData = [
       '55', '55', '1C', 
