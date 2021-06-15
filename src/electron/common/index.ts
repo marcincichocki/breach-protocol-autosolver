@@ -1,3 +1,3 @@
-export * from './src/actions';
-export * from './src/common';
-export * from './src/options';
+export * from './actions';
+export * from './common';
+export * from './options';
