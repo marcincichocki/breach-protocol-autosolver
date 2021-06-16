@@ -1,6 +1,6 @@
+import { ActionTypes } from '@/electron/common';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { ActionTypes } from '../actions';
 import { useHistoryRedirect, useIpcState } from './common';
 import { Navigation, StatusBar, TitleBar } from './components';
 import { Calibrate, Dashboard, History, Settings } from './pages';

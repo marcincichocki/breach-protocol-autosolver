@@ -2,8 +2,8 @@ import { Point } from '@/common';
 import { DaemonsRawData } from '../common';
 import {
   BreachProtocolFragmentResult,
-  BreachProtocolOCRFragment,
   BreachProtocolFragmentStatus,
+  BreachProtocolOCRFragment,
 } from './base';
 
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<

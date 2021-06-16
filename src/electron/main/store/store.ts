@@ -1,19 +1,19 @@
-import { ActionTypes } from '@/client-electron/actions';
 import { isDev, isProd } from '@/common';
-import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
-import ElectronStore from 'electron-store';
-import { ensureDirSync, remove, removeSync } from 'fs-extra';
-import { join } from 'path';
 import {
   Action,
+  ActionTypes,
   AppSettings,
   AppStats,
+  defaultOptions,
   HistoryEntry,
   Request,
   Response,
   State,
-} from '../../common';
-import { defaultOptions } from '../../options';
+} from '@/electron/common';
+import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
+import ElectronStore from 'electron-store';
+import { ensureDirSync, remove, removeSync } from 'fs-extra';
+import { join } from 'path';
 import { appReducer } from './reducer';
 
 type Middleware = (action: Action) => void;

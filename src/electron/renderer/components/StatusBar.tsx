@@ -1,4 +1,4 @@
-import { WorkerStatus } from '@/client-electron/common';
+import { WorkerStatus } from '@/electron/common';
 import { FC, useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';

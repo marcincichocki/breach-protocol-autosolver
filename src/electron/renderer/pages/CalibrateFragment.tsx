@@ -1,9 +1,12 @@
-import { UpdateSettingsAction } from '@/client-electron/actions';
-import { HistoryEntry, TestThresholdData } from '@/client-electron/common';
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
+import {
+  HistoryEntry,
+  rendererAsyncRequestDispatcher as asyncRequest,
+  TestThresholdData,
+  UpdateSettingsAction,
+} from '@/electron/common';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { rendererAsyncRequestDispatcher as asyncRequest } from '../../common';
 import { dispatch, fromCamelCase } from '../common';
 import {
   Col,

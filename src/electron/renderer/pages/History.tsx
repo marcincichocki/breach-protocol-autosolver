@@ -1,4 +1,4 @@
-import { BreachProtocolStatus } from '@/client-electron/common';
+import { BreachProtocolStatus } from '@/electron/common';
 import { FC, useContext } from 'react';
 import { MdClose, MdDone } from 'react-icons/md';
 import {

@@ -1,4 +1,4 @@
-import { AppStats } from '@/client-electron/common';
+import { AppStats } from '@/electron/common';
 import { formatDuration, secondsToHours, secondsToMinutes } from 'date-fns';
 import { memo, useContext } from 'react';
 import styled from 'styled-components';

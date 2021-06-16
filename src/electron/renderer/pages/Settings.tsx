@@ -1,6 +1,9 @@
-import { UpdateSettingsAction } from '@/client-electron/actions';
-import { AppSettings, WorkerStatus } from '@/client-electron/common';
-import { optionsDescription } from '@/client-electron/options';
+import {
+  AppSettings,
+  optionsDescription,
+  UpdateSettingsAction,
+  WorkerStatus,
+} from '@/electron/common';
 import { Accelerator, ipcRenderer as ipc } from 'electron';
 import {
   FC,

@@ -1,28 +1,26 @@
+import { PlatformRobot, SharpImageContainer } from '@/common/node';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
   BreachProtocolOCRFragment,
 } from '@/core';
-import { PlatformRobot, SharpImageContainer } from '@/platform-node';
+import {
+  Action,
+  AddHistoryEntryAction,
+  AppSettings,
+  Request,
+  SetDisplaysAction,
+  SetStatusAction,
+  State,
+  TestThresholdData,
+  UpdateSettingsAction,
+  workerAsyncRequestListener,
+  WorkerStatus,
+} from '@/electron/common';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
-import {
-  AddHistoryEntryAction,
-  SetDisplaysAction,
-  SetStatusAction,
-  UpdateSettingsAction,
-} from '../actions';
-import {
-  Action,
-  AppSettings,
-  Request,
-  State,
-  TestThresholdData,
-  workerAsyncRequestListener,
-  WorkerStatus,
-} from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
 
 export class BreachProtocolWorker {

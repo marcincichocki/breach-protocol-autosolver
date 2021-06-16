@@ -1,4 +1,4 @@
-import { rendererAsyncRequestDispatcher as asyncRequest } from '@/client-electron/common';
+import { rendererAsyncRequestDispatcher as asyncRequest } from '@/electron/common';
 import { FC, useEffect } from 'react';
 import { MdKeyboardBackspace } from 'react-icons/md';
 import { Link, Route, useRouteMatch } from 'react-router-dom';

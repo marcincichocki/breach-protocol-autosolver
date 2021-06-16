@@ -1,8 +1,11 @@
-import { RemoveHistoryEntryAction } from '@/client-electron/actions';
-import { BreachProtocolStatus, HistoryEntry } from '@/client-electron/common';
+import {
+  BreachProtocolStatus,
+  HistoryEntry,
+  RemoveHistoryEntryAction,
+} from '@/electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
 import { ipcRenderer as ipc, shell } from 'electron';
-import { FC, PropsWithChildren } from 'react';
+import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatch, useHistoryEntryFromParam } from '../common';

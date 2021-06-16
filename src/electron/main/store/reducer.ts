@@ -1,15 +1,15 @@
 import { isDaemonsFragment } from '@/core';
-import { ScreenshotDisplayOutput } from 'screenshot-desktop';
-import { ActionTypes } from '../../actions';
 import {
   Action,
+  ActionTypes,
   AppSettings,
   AppStats,
   BreachProtocolStatus,
   HistoryEntry,
   State,
   WorkerStatus,
-} from '../../common';
+} from '@/electron/common';
+import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 
 type Handler<T = any, S = State> = (state: S, action: Action<T>) => State;
 

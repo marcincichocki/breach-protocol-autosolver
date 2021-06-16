@@ -90,7 +90,7 @@ export class WindowsRobot extends BreachProtocolRobot {
   private x = 0;
   private y = 0;
 
-  private readonly bin = './vendor/nircmd/nircmd.exe';
+  private readonly bin = './resources/win32/nircmd/nircmd.exe';
 
   click() {
     return this.nircmd('sendmouse left click');

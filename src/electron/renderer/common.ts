@@ -1,9 +1,9 @@
+import { Action, State } from '@/electron/common';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
-import { Action, State } from '../common';
 import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */

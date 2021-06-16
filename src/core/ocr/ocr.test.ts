@@ -1,7 +1,7 @@
-import { SharpImageContainer } from '@/platform-node';
+import { SharpImageContainer } from '@/common/node';
 import path from 'path';
 import sharp from 'sharp';
-import registry from '../../bp-registry/registry.json';
+import registry from '../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
 import {
   BreachProtocolFragmentStatus,
@@ -28,7 +28,6 @@ type Resolution =
   | '2560x1440'
   | '3440x1440'
   | '3840x2160';
-type Registry = Record<Resolution, RegistryEntry[]>;
 
 describe('image container', () => {
   const aspectRatio = ImageContainer.ASPECT_RATIO;
@@ -223,7 +222,7 @@ describe('ocr', () => {
 });
 
 function getRegistryFor(resolution: Resolution) {
-  return (registry as Registry)[resolution].map(
+  return registry[resolution].map(
     (e) => [e.fileName, e] as [string, RegistryEntry]
   );
 }
@@ -250,7 +249,7 @@ async function recognizeRegistryEntry(
   resolution: Resolution,
   thresholds?: Partial<Record<FragmentId, number>>
 ) {
-  const file = path.join('./src/bp-registry', resolution, entry.fileName);
+  const file = path.join('./src/core/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
   const container = await SharpImageContainer.create(image);
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);

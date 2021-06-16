@@ -1,9 +1,9 @@
-import { HistoryEntry } from '@/client-electron/common';
 import {
   isBufferSizeFragment,
   isDaemonsFragment,
   isGridFragment,
-} from '@/core/common';
+} from '@/core';
+import { HistoryEntry } from '@/electron/common';
 import { FC, useState } from 'react';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';

@@ -1,4 +1,5 @@
 import { BitMask } from '@/common';
+import { BreachProtocolRobot, SharpImageContainer } from '@/common/node';
 import {
   BreachProtocol,
   breachProtocolOCR,
@@ -6,16 +7,15 @@ import {
   BreachProtocolResult,
   FragmentId,
 } from '@/core';
-import { BreachProtocolRobot, SharpImageContainer } from '@/platform-node';
-import { remove } from 'fs-extra';
-import sharp from 'sharp';
-import { v4 as uuidv4 } from 'uuid';
 import {
   AppSettings,
   BreachProtocolSolveProgress,
   BreachProtocolStatus,
   HistoryEntry,
-} from '../common';
+} from '@/electron/common';
+import { remove } from 'fs-extra';
+import sharp from 'sharp';
+import { v4 as uuidv4 } from 'uuid';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
