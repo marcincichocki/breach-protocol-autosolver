@@ -1,5 +1,5 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import { createScheduler, createWorker } from 'tesseract.js';
+import Tesseract, { createScheduler, createWorker } from 'tesseract.js';
 import {
   BreachProtocolRawData,
   BufferSize,
@@ -250,9 +250,9 @@ export abstract class BreachProtocolOCRFragment<
     return this.thresholds.get(value);
   }
 
-  private static async initWorker() {
+  private static async initWorker(options: Partial<Tesseract.WorkerOptions>) {
     const lang = 'BreachProtocol';
-    const w = createWorker();
+    const w = createWorker(options);
 
     await w.load();
     await w.loadLanguage(lang);
@@ -264,13 +264,15 @@ export abstract class BreachProtocolOCRFragment<
     return w;
   }
 
-  static async initScheduler() {
+  static async initScheduler(
+    options: Partial<Tesseract.WorkerOptions> = { cachePath: './resources' }
+  ) {
     if (BreachProtocolOCRFragment.scheduler) {
       throw new Error('Scheduler is alredy initialized.');
     }
 
-    const w1 = await BreachProtocolOCRFragment.initWorker();
-    const w2 = await BreachProtocolOCRFragment.initWorker();
+    const w1 = await BreachProtocolOCRFragment.initWorker(options);
+    const w2 = await BreachProtocolOCRFragment.initWorker(options);
 
     const scheduler = createScheduler();
 
