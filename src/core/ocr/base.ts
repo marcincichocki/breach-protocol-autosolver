@@ -1,5 +1,5 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import Tesseract, { createScheduler, createWorker } from 'tesseract.js';
+import { createScheduler, createWorker } from 'tesseract.js';
 import {
   BreachProtocolRawData,
   BufferSize,
