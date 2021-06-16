@@ -47,7 +47,10 @@ const StyledSection = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const Section = ({ title, children }: PropsWithChildren<{ title: string }>) => {
