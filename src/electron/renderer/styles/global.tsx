@@ -15,8 +15,6 @@ export const GlobalStyles = createGlobalStyle`
 
   html,
   body {
-    height: 100%;
-    max-height: 100%;
     font-family: Rajdhani;
     color: #fff;
     letter-spacing: -0.5px;
@@ -25,12 +23,13 @@ export const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     background: linear-gradient(180deg, #3a1216 0%, var(--background) 82%);
+    overflow: hidden;
   }
 
   #root {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
   }
 
   ::-webkit-scrollbar {
