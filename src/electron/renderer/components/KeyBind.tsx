@@ -250,10 +250,12 @@ export const KeyBind = () => {
   const [visited, setVisited] = useState(false);
   const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
+  let reason: string = null;
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
         setValue(pressed.map((p) => p.electronCode).join('+'));
+        reason = 'enter';
         ref.current.blur();
       },
       () => {
@@ -264,6 +266,11 @@ export const KeyBind = () => {
     );
 
   function onBlur() {
+    if (reason !== 'enter') {
+      setPressed(keys);
+    }
+
+    reason = null;
     setDirty(false);
     setVisited(false);
   }
