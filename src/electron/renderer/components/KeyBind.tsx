@@ -1,4 +1,3 @@
-import { Accelerator } from 'electron';
 import {
   Fragment,
   KeyboardEvent as ReactKeyboardEvent,
@@ -238,7 +237,7 @@ export const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
-function toKeyCodes(accelerator: Accelerator) {
+function toKeyCodes(accelerator: Electron.Accelerator) {
   const codes = Object.keys(CODES_MAP);
 
   return accelerator
