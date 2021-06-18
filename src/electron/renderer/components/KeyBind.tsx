@@ -1,4 +1,3 @@
-import { Accelerator } from 'electron';
 import {
   Fragment,
   KeyboardEvent as ReactKeyboardEvent,
@@ -238,7 +237,7 @@ export const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
-function toKeyCodes(accelerator: Accelerator) {
+function toKeyCodes(accelerator: Electron.Accelerator) {
   const codes = Object.keys(CODES_MAP);
 
   return accelerator
@@ -251,10 +250,12 @@ export const KeyBind = () => {
   const [visited, setVisited] = useState(false);
   const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
+  let reset = true;
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
         setValue(pressed.map((p) => p.electronCode).join('+'));
+        reset = false;
         ref.current.blur();
       },
       () => {
@@ -265,6 +266,11 @@ export const KeyBind = () => {
     );
 
   function onBlur() {
+    if (reset) {
+      setPressed(keys);
+    }
+
+    reset = true;
     setDirty(false);
     setVisited(false);
   }
