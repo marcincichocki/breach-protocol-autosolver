@@ -1,20 +1,29 @@
 import { execSync } from 'child_process';
-import { EnvironmentPlugin, RuleSetRule, WebpackPluginInstance } from 'webpack';
+import {
+  DefinePlugin,
+  EnvironmentPlugin,
+  RuleSetRule,
+  WebpackPluginInstance,
+} from 'webpack';
 
 function git(command: string) {
   return execSync(`git ${command}`, { encoding: 'utf-8' }).trim();
 }
 
+const pkg = require('../package.json');
+
 export const commonPlugins: WebpackPluginInstance[] = [
-  new EnvironmentPlugin([
-    'npm_package_version',
-    'npm_package_homepage',
-    'npm_package_bugs_url',
-    'npm_package_build_productName',
-  ]),
   new EnvironmentPlugin({
     GIT_COMMIT_DATE: git('show -s --format=%ct'),
     GIT_COMMIT_SHA: git('rev-parse HEAD'),
+  }),
+  new DefinePlugin({
+    'process.env.npm_package_version': JSON.stringify(pkg.version),
+    'process.env.npm_package_homepage': JSON.stringify(pkg.homepage),
+    'process.env.npm_package_bugs_url': JSON.stringify(pkg.bugs),
+    'process.env.npm_package_build_productName': JSON.stringify(
+      pkg.build.productName
+    ),
   }),
 ];
 
