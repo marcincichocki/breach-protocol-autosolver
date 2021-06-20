@@ -101,7 +101,7 @@ export const StatusBar: FC = () => {
 
   return (
     <StatusBarWrapper>
-      <StatusBarItem>v{VERSION}</StatusBarItem>
+      <StatusBarItem>{VERSION}</StatusBarItem>
       <InteractiveStatusBarItem onClick={goToDisplaySetting}>
         {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
