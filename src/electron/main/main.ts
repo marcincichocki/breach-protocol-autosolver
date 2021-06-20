@@ -1,5 +1,6 @@
 import {
   app,
+  clipboard,
   dialog,
   globalShortcut,
   ipcMain as ipc,
@@ -24,6 +25,12 @@ export class Main {
   private worker: Electron.BrowserWindow = null;
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'About',
+      click: () => {
+        this.showAboutDialog();
+      },
+    },
     {
       label: 'Homepage',
       click() {
@@ -217,5 +224,33 @@ export class Main {
 
   private getSettings() {
     return this.store.getState().settings;
+  }
+
+  private async showAboutDialog() {
+    const os = await import('os');
+    const detail = [
+      `Version: ${VERSION}`,
+      `Commit: ${GIT_COMMIT_SHA}`,
+      `Date: ${new Date(GIT_COMMIT_DATE)}`,
+      `Electron: ${process.versions.electron}`,
+      `Chrome: ${process.versions.chrome}`,
+      `Node.js: ${process.versions.node}`,
+      `V8: ${process.versions.v8}`,
+      `OS: ${os.version()} ${os.release()}`,
+    ].join('\n');
+
+    const { response } = await dialog.showMessageBox(this.renderer, {
+      type: 'info',
+      title: 'About',
+      message: PRODUCT_NAME,
+      detail,
+      buttons: ['Ok', 'Copy'],
+      noLink: true,
+      cancelId: 0,
+    });
+
+    if (response === 1) {
+      clipboard.writeText(detail);
+    }
   }
 }

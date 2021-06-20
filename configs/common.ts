@@ -9,7 +9,9 @@ const pkg = require('../package.json');
 
 export const commonPlugins: WebpackPluginInstance[] = [
   new DefinePlugin({
-    GIT_COMMIT_DATE: JSON.stringify(git('show -s --format=%ct')),
+    GIT_COMMIT_DATE: JSON.stringify(
+      git('log -1 --format=%cd --date=iso-strict')
+    ),
     GIT_COMMIT_SHA: JSON.stringify(git('rev-parse HEAD')),
     VERSION: JSON.stringify(pkg.version),
     HOMEPAGE_URL: JSON.stringify(pkg.homepage),
