@@ -46,6 +46,7 @@ const StatusBarWrapper = styled.footer`
   padding: 0 12px;
   gap: 0.5rem;
   display: flex;
+  flex-shrink: 0;
 `;
 
 function getWorkerStatusMessage(status: WorkerStatus) {
