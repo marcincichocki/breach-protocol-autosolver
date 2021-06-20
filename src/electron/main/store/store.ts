@@ -1,3 +1,4 @@
+import { isDev, isProd } from '@/common';
 import {
   Action,
   ActionTypes,
@@ -65,9 +66,9 @@ export class Store {
   }
 
   dispose() {
-    if (IS_PROD) {
+    if (isProd) {
       this.preserveState();
-    } else if (IS_DEV) {
+    } else if (isDev) {
       removeSync(this.state.settings.screenshotDir);
     }
 

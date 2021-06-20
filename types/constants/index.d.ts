@@ -1,9 +1,3 @@
-/** Whether current mode is development. */
-declare const IS_DEV: boolean;
-
-/** Whether current mode is production. */
-declare const IS_PROD: boolean;
-
 /** Timestamp of HEAD. */
 declare const GIT_COMMIT_DATE: string;
 

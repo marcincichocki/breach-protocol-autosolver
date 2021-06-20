@@ -117,3 +117,9 @@ export class BitMask {
     return this;
   }
 }
+
+/** Whether current mode is development. */
+export const isDev = process.env.NODE_ENV === 'development';
+
+/** Whether current mode is production. */
+export const isProd = process.env.NODE_ENV === 'production';
