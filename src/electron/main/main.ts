@@ -9,7 +9,7 @@ import {
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
-import icon from '../renderer/assets/icon.png';
+import icon from '../../../resources/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
