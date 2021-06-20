@@ -24,7 +24,6 @@ export const config: webpack.Configuration = {
   plugins: [
     ...commonPlugins,
     new HtmlWebpackPlugin({
-      template: join(__dirname, '../src/electron/renderer/index.html'),
       filename: 'renderer.html',
       title: pkg.build.productName,
     }),

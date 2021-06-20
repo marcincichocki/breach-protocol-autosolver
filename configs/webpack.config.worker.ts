@@ -27,7 +27,6 @@ export const config: webpack.Configuration = {
   plugins: [
     ...commonPlugins,
     new HtmlWebpackPlugin({
-      template: join(__dirname, '../src/electron/worker/index.html'),
       filename: 'worker.html',
     }),
   ],
