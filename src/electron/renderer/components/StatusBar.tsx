@@ -46,6 +46,7 @@ const StatusBarWrapper = styled.footer`
   padding: 0 12px;
   gap: 0.5rem;
   display: flex;
+  flex-shrink: 0;
 `;
 
 function getWorkerStatusMessage(status: WorkerStatus) {
@@ -100,7 +101,7 @@ export const StatusBar: FC = () => {
 
   return (
     <StatusBarWrapper>
-      <StatusBarItem>{process.env.npm_package_version}</StatusBarItem>
+      <StatusBarItem>{VERSION}</StatusBarItem>
       <InteractiveStatusBarItem onClick={goToDisplaySetting}>
         {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>

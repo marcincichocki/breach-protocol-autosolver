@@ -73,8 +73,8 @@ export class BreachProtocolAutosolver {
 
   private getBaseState() {
     return {
-      version: process.env.npm_package_version,
-      commitSha: process.env.GIT_COMMIT_SHA,
+      version: VERSION,
+      commitSha: GIT_COMMIT_SHA,
       uuid: this.uuid,
       status: this.status,
       startedAt: this.startedAt,

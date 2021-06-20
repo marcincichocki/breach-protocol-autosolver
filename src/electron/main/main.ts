@@ -1,5 +1,6 @@
 import {
   app,
+  clipboard,
   dialog,
   globalShortcut,
   ipcMain as ipc,
@@ -9,7 +10,7 @@ import {
 } from 'electron';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
-import icon from '../renderer/assets/icon.png';
+import icon from '../../../resources/icon.png';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
@@ -25,16 +26,22 @@ export class Main {
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
+      label: 'About',
+      click: () => {
+        this.showAboutDialog();
+      },
+    },
+    {
       label: 'Homepage',
       click() {
-        shell.openExternal(process.env.npm_package_homepage);
+        shell.openExternal(HOMEPAGE_URL);
       },
     },
     { type: 'separator' },
     {
       label: 'Report bug',
       click() {
-        shell.openExternal(process.env.npm_package_bugs_url);
+        shell.openExternal(BUGS_URL);
       },
     },
   ];
@@ -74,7 +81,7 @@ export class Main {
     tray.on('double-click', () => {
       this.renderer.show();
     });
-    tray.setToolTip(process.env.npm_package_build_productName);
+    tray.setToolTip(PRODUCT_NAME);
     tray.setContextMenu(contextMenu);
 
     return tray;
@@ -217,5 +224,33 @@ export class Main {
 
   private getSettings() {
     return this.store.getState().settings;
+  }
+
+  private async showAboutDialog() {
+    const os = await import('os');
+    const detail = [
+      `Version: ${VERSION}`,
+      `Commit: ${GIT_COMMIT_SHA}`,
+      `Date: ${new Date(GIT_COMMIT_DATE)}`,
+      `Electron: ${process.versions.electron}`,
+      `Chrome: ${process.versions.chrome}`,
+      `Node.js: ${process.versions.node}`,
+      `V8: ${process.versions.v8}`,
+      `OS: ${os.version()} ${os.release()}`,
+    ].join('\n');
+
+    const { response } = await dialog.showMessageBox(this.renderer, {
+      type: 'info',
+      title: 'About',
+      message: PRODUCT_NAME,
+      detail,
+      buttons: ['Ok', 'Copy'],
+      noLink: true,
+      cancelId: 0,
+    });
+
+    if (response === 1) {
+      clipboard.writeText(detail);
+    }
   }
 }
