@@ -4,6 +4,8 @@ import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
 import { commonPlugins, commonRules } from './common';
 
+const pkg = require('../package.json');
+
 export const config: webpack.Configuration = {
   mode: 'development',
   entry: join(__dirname, '../src/electron/renderer/index.tsx'),
@@ -24,7 +26,7 @@ export const config: webpack.Configuration = {
     new HtmlWebpackPlugin({
       template: join(__dirname, '../src/electron/renderer/index.html'),
       filename: 'renderer.html',
-      title: process.env.npm_package_build_productName,
+      title: pkg.build.productName,
     }),
   ],
 };

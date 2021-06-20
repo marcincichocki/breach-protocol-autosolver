@@ -27,14 +27,14 @@ export class Main {
     {
       label: 'Homepage',
       click() {
-        shell.openExternal(process.env.npm_package_homepage);
+        shell.openExternal(HOMEPAGE_URL);
       },
     },
     { type: 'separator' },
     {
       label: 'Report bug',
       click() {
-        shell.openExternal(process.env.npm_package_bugs_url);
+        shell.openExternal(BUGS_URL);
       },
     },
   ];
@@ -74,7 +74,7 @@ export class Main {
     tray.on('double-click', () => {
       this.renderer.show();
     });
-    tray.setToolTip(process.env.npm_package_build_productName);
+    tray.setToolTip(PRODUCT_NAME);
     tray.setContextMenu(contextMenu);
 
     return tray;
