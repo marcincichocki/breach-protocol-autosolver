@@ -1,7 +1,7 @@
-/** Timestamp of HEAD. */
+/** Date of last commit. */
 declare const GIT_COMMIT_DATE: string;
 
-/** HEAD hash. */
+/** Hash of last commit. */
 declare const GIT_COMMIT_SHA: string;
 
 /** Version from npm config. */
