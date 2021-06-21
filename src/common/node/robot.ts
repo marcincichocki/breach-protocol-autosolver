@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { BreachProtocolResult } from '@/core';
+import { BreachProtocolResult, getOffset } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
@@ -28,6 +28,8 @@ export abstract class Robot {
 
   abstract exit(): Promise<any>;
 
+  abstract pressKey(key: string): Promise<any>;
+
   sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
@@ -51,6 +53,39 @@ export abstract class Robot {
 }
 
 export abstract class BreachProtocolRobot extends Robot {
+  async resolveBreachProtocolWithKeyboard({
+    path,
+    exitStrategy,
+  }: BreachProtocolResult) {
+    // start at A1
+    await this.movePointerAway();
+    await this.pressKey('left');
+    await this.pressKey('right');
+
+    let from = 'A1';
+    for (const to of path) {
+      const { offset, orientation } = getOffset(from, to);
+      const dir =
+        orientation === 'horizontal'
+          ? offset < 0
+            ? 'left'
+            : 'right'
+          : orientation === 'vertical'
+          ? offset < 0
+            ? 'up'
+            : 'down'
+          : null;
+      const absOffset = Math.abs(offset);
+
+      for (let i = 0; i < absOffset; i++) {
+        await this.pressKey(dir);
+        await this.sleep();
+      }
+
+      from = to;
+    }
+  }
+
   async resolveBreachProtocol(
     { path, exitStrategy }: BreachProtocolResult,
     squareMap: Map<string, Point>
@@ -120,7 +155,7 @@ export class WindowsRobot extends BreachProtocolRobot {
   }
 
   exit() {
-    return this.nircmd('sendkeypress esc');
+    return this.pressKey('esc');
   }
 
   private nircmd(command: string, options = {}) {
@@ -139,6 +174,10 @@ export class WindowsRobot extends BreachProtocolRobot {
 
   private moveRelative(x: number, y: number) {
     return this.nircmd(`sendmouse move ${x} ${y}`);
+  }
+
+  pressKey(key: string) {
+    return this.nircmd(`sendkeypress ${key}`);
   }
 }
 
