@@ -106,6 +106,14 @@ export class Store {
         }
       }
     }
+
+    if (type === ActionTypes.REMOVE_HISTORY_ENTRY) {
+      const { fileName } = this.state.history.find((e) => e.uuid === payload);
+
+      if (fileName) {
+        remove(fileName);
+      }
+    }
   }
 
   private createScreenshotDir() {
