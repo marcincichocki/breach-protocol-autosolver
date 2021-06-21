@@ -7,6 +7,7 @@ import {
   DaemonRawData,
   DaemonsRawData,
   generateSquareMap,
+  getOffset,
   getUnits,
   GridRawData,
 } from './common';
@@ -70,6 +71,29 @@ describe('utilities', () => {
     expect(result.get('b1')).toBe(2);
     expect(result.get('b2')).toBe(42);
     expect(result.size).toBe(squares.length);
+  });
+
+  it('should calculate correct offset between squares', () => {
+    expect(getOffset('A1', 'A7')).toEqual({
+      offset: 6,
+      orientation: 'horizontal',
+    });
+    expect(getOffset('C6', 'C5')).toEqual({
+      offset: -1,
+      orientation: 'horizontal',
+    });
+    expect(getOffset('A6', 'D6')).toEqual({
+      offset: 3,
+      orientation: 'vertical',
+    });
+    expect(getOffset('G2', 'C2')).toEqual({
+      offset: -4,
+      orientation: 'vertical',
+    });
+    expect(getOffset('A1', 'A1')).toEqual({
+      offset: 0,
+      orientation: 'horizontal',
+    });
   });
 });
 

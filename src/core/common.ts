@@ -115,3 +115,27 @@ export const isBufferSizeFragment =
   isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
 export const isDaemonsFragment =
   isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
+
+function findOffset(a: string, b: string, list: string) {
+  const ia = list.indexOf(a);
+  const ib = list.indexOf(b);
+
+  return ia < ib ? ib - ia : ib - ia;
+}
+
+export type OffsetOrientation = 'horizontal' | 'vertical';
+
+export function getOffset(from: string, to: string) {
+  const [startRow, startCol] = from;
+  const [endRow, endCol] = to;
+  const orientation: OffsetOrientation =
+    startRow === endRow ? 'horizontal' : 'vertical';
+  const isHorizontal = orientation === 'horizontal';
+  const a = isHorizontal ? startCol : startRow;
+  const b = isHorizontal ? endCol : endRow;
+
+  return {
+    offset: findOffset(a, b, isHorizontal ? COLS : ROWS),
+    orientation,
+  };
+}

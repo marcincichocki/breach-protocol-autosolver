@@ -1,4 +1,11 @@
-import { COLS, cross, GridRawData, ROWS } from '@/core';
+import {
+  COLS,
+  cross,
+  getOffset,
+  GridRawData,
+  OffsetOrientation,
+  ROWS,
+} from '@/core';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -51,7 +58,7 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
 `;
 
 function getArrowBorderFor(d: LineDirection) {
-  const o: LineOrientation =
+  const o: OffsetOrientation =
     d === 'bottom' || d === 'top' ? 'horizontal' : 'vertical';
 
   return ({ dir, orientation }: LineProps) => {
@@ -74,7 +81,7 @@ function getArrowPosition({ dir, orientation }: LineProps) {
   `;
 }
 
-function getLineSizeFor(o: LineOrientation) {
+function getLineSizeFor(o: OffsetOrientation) {
   return ({ offset, orientation }: LineProps) => {
     const absOffset = Math.abs(offset);
     const squareSize = `var(--square) * ${absOffset - 1}`;
@@ -100,12 +107,11 @@ const arrowBorders = css`
 `;
 
 type LineDirection = 'top' | 'right' | 'bottom' | 'left';
-type LineOrientation = 'horizontal' | 'vertical';
 
 interface LineProps {
   offset: number;
   dir: LineDirection;
-  orientation: LineOrientation;
+  orientation: OffsetOrientation;
   ignore: boolean;
 }
 
@@ -133,30 +139,18 @@ const Line = styled.div<LineProps>`
   }
 `;
 
-function findOffset(a: string, b: string, list: string) {
-  const ia = list.indexOf(a);
-  const ib = list.indexOf(b);
-
-  return ia < ib ? ib - ia : ib - ia;
-}
-
 function getLineProps(from: string, to: string): Omit<LineProps, 'ignore'> {
-  const [startRow, startCol] = from;
-  const [endRow, endCol] = to;
-  const orientation = startRow === endRow ? 'horizontal' : 'vertical';
-  const isHorizontal = orientation === 'horizontal';
-  const a = isHorizontal ? startCol : startRow;
-  const b = isHorizontal ? endCol : endRow;
-  const offset = findOffset(a, b, isHorizontal ? COLS : ROWS);
-  const dir = isHorizontal
-    ? offset < 0
-      ? 'left'
-      : 'right'
-    : orientation === 'vertical'
-    ? offset < 0
-      ? 'top'
-      : 'bottom'
-    : null;
+  const { orientation, offset } = getOffset(from, to);
+  const dir =
+    orientation === 'horizontal'
+      ? offset < 0
+        ? 'left'
+        : 'right'
+      : orientation === 'vertical'
+      ? offset < 0
+        ? 'top'
+        : 'bottom'
+      : null;
 
   return { dir, offset, orientation };
 }
