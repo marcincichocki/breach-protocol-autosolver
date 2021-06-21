@@ -1,6 +1,8 @@
 import {
+  alert,
   AppSettings,
   optionsDescription,
+  RemoveLastNHistoryEntriesAction,
   UpdateSettingsAction,
   WorkerStatus,
 } from '@/electron/common';
@@ -79,11 +81,33 @@ const FieldDescription = ({ name }: { name: keyof AppSettings }) => {
   return <Description>{optionsDescription[name]}</Description>;
 };
 
-const GeneralSettings = () => {
+const GeneralSettings = ({ historySize }: { historySize: number }) => {
   const formatOptions = [
     { name: 'jpg', value: 'jpg' },
     { name: 'png', value: 'png' },
   ];
+
+  async function onHistorySizeChange(
+    value: number,
+    next: (restart?: boolean) => void
+  ) {
+    if (value < historySize) {
+      const { response } = await alert({
+        title: 'this is title',
+        message: 'message',
+        buttons: ['ok delete', 'no get me out of here!'],
+        cancelId: 1,
+      });
+
+      if (response === 1) {
+        return next(true);
+      }
+
+      dispatch(new RemoveLastNHistoryEntriesAction(historySize - value));
+    }
+
+    next();
+  }
 
   return (
     <Section title="General">
@@ -93,7 +117,11 @@ const GeneralSettings = () => {
       </Field>
       <Field name="historySize">
         <Label>History size</Label>
-        <RangeSlider min={1} max={100} />
+        <RangeSlider
+          min={1}
+          max={100}
+          beforeValueChange={onHistorySizeChange}
+        />
       </Field>
       <Field name="preserveSourceOnSuccess">
         <Label>Preserve sources</Label>
@@ -260,11 +288,13 @@ const SettingsWrapper = styled(Col)`
 `;
 
 export const Settings: FC = () => {
-  const { settings, displays, status } = useContext(StateContext);
+  const { settings, displays, status, history } = useContext(StateContext);
   const [activeField, setActiveField] = useState<keyof AppSettings>();
 
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
     const payload = { [name]: values[name] };
+
+    console.log('updating form', payload);
 
     dispatch(new UpdateSettingsAction(payload));
   }
@@ -285,7 +315,7 @@ export const Settings: FC = () => {
               onHover={setActiveField}
               onValuesChange={onValuesChange}
             >
-              <GeneralSettings />
+              <GeneralSettings historySize={history.length} />
               <AutoSolverSettings />
               <RecognitionSettings displays={displays} />
             </Form>
