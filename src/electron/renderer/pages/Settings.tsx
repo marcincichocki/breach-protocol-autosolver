@@ -118,7 +118,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         <Label>History size</Label>
         <RangeSlider
           min={1}
-          max={100}
+          max={25}
           beforeValueChange={onBeforeHistorySizeChange}
         />
       </Field>
@@ -292,8 +292,6 @@ export const Settings: FC = () => {
 
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
     const payload = { [name]: values[name] };
-
-    console.log('updating form', payload);
 
     dispatch(new UpdateSettingsAction(payload));
   }
