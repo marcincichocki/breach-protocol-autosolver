@@ -87,10 +87,6 @@ export class Main {
     return tray;
   }
 
-  private showAlert(options: Electron.MessageBoxOptions) {
-    return dialog.showMessageBox(this.renderer, options);
-  }
-
   private registerListeners() {
     ipc.on('renderer:close', this.onAppClose.bind(this));
     ipc.on('renderer:minimize', this.onAppMinimize.bind(this));
@@ -98,11 +94,7 @@ export class Main {
     ipc.on('renderer:show-help-menu', this.onShowHelpMenu.bind(this));
     ipc.on('renderer:key-bind-change', this.onKeyBindChange.bind(this));
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
-    ipc.handle(
-      'alert',
-      (e: Electron.IpcMainEvent, options: Electron.MessageBoxOptions) =>
-        this.showAlert(options)
-    );
+    ipc.handle('renderer:show-message-box', this.onShowMessageBox);
 
     // Start listening on keybind when worker is fully loaded.
     ipc.once('worker:ready', this.onWorkerReady.bind(this));
@@ -198,6 +190,13 @@ export class Main {
     await tar.create({ gzip: true, file: filePath, cwd: tmpPath }, ['./']);
 
     remove(tmpPath);
+  }
+
+  private onShowMessageBox(
+    e: Electron.IpcMainEvent,
+    options: Electron.MessageBoxOptions
+  ) {
+    return dialog.showMessageBox(options);
   }
 
   private onShowHelpMenu() {

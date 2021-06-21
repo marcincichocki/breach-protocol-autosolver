@@ -1,5 +1,4 @@
 import {
-  alert,
   AppSettings,
   optionsDescription,
   RemoveLastNHistoryEntriesAction,
@@ -18,7 +17,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { dispatch, getDisplayName } from '../common';
+import { dispatch, getDisplayName, NativeDialog } from '../common';
 import {
   Col,
   Field,
@@ -87,23 +86,23 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
     { name: 'png', value: 'png' },
   ];
 
-  async function onHistorySizeChange(
+  async function onBeforeHistorySizeChange(
     value: number,
     next: (restart?: boolean) => void
   ) {
     if (value < historySize) {
-      const { response } = await alert({
-        title: 'this is title',
-        message: 'message',
-        buttons: ['ok delete', 'no get me out of here!'],
-        cancelId: 1,
+      const count = historySize - value;
+      const entryText = count > 1 ? 'entries' : 'entry';
+      const result = await NativeDialog.confirm({
+        message: 'This action is irreversible!',
+        detail: `${count} history ${entryText} will be deleted. Continue?`,
       });
 
-      if (response === 1) {
+      if (!result) {
         return next(true);
       }
 
-      dispatch(new RemoveLastNHistoryEntriesAction(historySize - value));
+      dispatch(new RemoveLastNHistoryEntriesAction(count));
     }
 
     next();
@@ -120,7 +119,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         <RangeSlider
           min={1}
           max={100}
-          beforeValueChange={onHistorySizeChange}
+          beforeValueChange={onBeforeHistorySizeChange}
         />
       </Field>
       <Field name="preserveSourceOnSuccess">
