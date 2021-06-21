@@ -12,7 +12,7 @@ export const ActionTypes = {
   SET_STATUS: 'SET_STATUS',
   ADD_HISTORY_ENTRY: 'ADD_HISTORY_ENTRY',
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
-  REMOVE_LAST_HISTORY_ENTRY: 'REMOVE_LAST_HISTORY_ENTRY',
+  REMOVE_LAST_N_HISTORY_ENTRIES: 'REMOVE_LAST_N_HISTORY_ENTRIES',
   REMOVE_HISTORY_ENTRY: 'REMOVE_HISTORY_ENTRY',
 } as const;
 
@@ -45,6 +45,15 @@ export class AddHistoryEntryAction implements Action {
   readonly origin = 'worker';
 
   constructor(public payload: HistoryEntry) {}
+}
+
+export class RemoveLastNHistoryEntriesAction implements Action {
+  readonly type = ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES;
+
+  constructor(
+    public readonly payload: number,
+    public origin: Origin = 'renderer'
+  ) {}
 }
 
 export class RemoveHistoryEntryAction implements Action {

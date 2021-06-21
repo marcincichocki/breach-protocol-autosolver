@@ -5,6 +5,7 @@ import {
   AppStats,
   defaultOptions,
   HistoryEntry,
+  RemoveLastNHistoryEntriesAction,
   Request,
   Response,
   State,
@@ -91,10 +92,7 @@ export class Store {
           remove(fileName);
         }
 
-        this.dispatch({
-          type: ActionTypes.REMOVE_LAST_HISTORY_ENTRY,
-          origin: 'worker',
-        });
+        this.dispatch(new RemoveLastNHistoryEntriesAction(1, 'worker'));
       }
     }
   }
