@@ -19,6 +19,7 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
 import { dispatch, getDisplayName, NativeDialog } from '../common';
 import {
+  BeforeValueChange,
   Col,
   Field,
   File,
@@ -86,10 +87,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
     { name: 'png', value: 'png' },
   ];
 
-  async function onBeforeHistorySizeChange(
-    value: number,
-    next: (restart?: boolean) => void
-  ) {
+  const onBeforeHistorySizeChange: BeforeValueChange = async (value, next) => {
     if (value < historySize) {
       const count = historySize - value;
       const entryText = count > 1 ? 'entries' : 'entry';
@@ -106,7 +104,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
     }
 
     next();
-  }
+  };
 
   return (
     <Section title="General">

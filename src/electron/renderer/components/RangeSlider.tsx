@@ -2,11 +2,13 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
 
+export type BeforeValueChange = (
+  newValue: number,
+  next: (restart?: boolean) => void
+) => void;
+
 interface RangeSliderProps {
-  beforeValueChange?: (
-    value: number,
-    next: (restart?: boolean) => void
-  ) => void;
+  beforeValueChange?: BeforeValueChange;
   disabled?: boolean;
   min?: number;
   max?: number;
