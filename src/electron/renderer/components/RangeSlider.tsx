@@ -2,7 +2,13 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
 
+export type BeforeValueChange = (
+  newValue: number,
+  next: (restart?: boolean) => void
+) => void;
+
 interface RangeSliderProps {
+  beforeValueChange?: BeforeValueChange;
   disabled?: boolean;
   min?: number;
   max?: number;
@@ -61,7 +67,7 @@ function coerceInputValue(e: ChangeEvent<HTMLInputElement>) {
   return parseInt(e.target.value, 10);
 }
 
-export function RangeSlider(props: RangeSliderProps) {
+export function RangeSlider({ beforeValueChange, ...props }: RangeSliderProps) {
   const { value, setValue } = useField<number>();
   const [displayValue, setDisplayValue] = useState(value);
 
@@ -69,14 +75,25 @@ export function RangeSlider(props: RangeSliderProps) {
     setDisplayValue(value);
   }, [value]);
 
+  function onValueChange(e: any) {
+    const newValue = coerceInputValue(e);
+    const next = (restart?: boolean) =>
+      restart ? setDisplayValue(value) : setValue(newValue);
+
+    if (beforeValueChange) {
+      beforeValueChange(newValue, next);
+    } else {
+      next();
+    }
+  }
+
   return (
     <RangeWrapper disabled={props.disabled}>
       <Range
         {...props}
         value={displayValue}
         onChange={(e) => setDisplayValue(coerceInputValue(e))}
-        onMouseUp={(e: any) => setValue(coerceInputValue(e))}
-        onKeyUp={(e: any) => setValue(coerceInputValue(e))}
+        onMouseUp={onValueChange}
       />
       <RangeValue>{displayValue}</RangeValue>
     </RangeWrapper>

@@ -5,6 +5,7 @@ import {
   AppStats,
   defaultOptions,
   HistoryEntry,
+  RemoveLastNHistoryEntriesAction,
   Request,
   Response,
   State,
@@ -48,16 +49,13 @@ export class Store {
   private middlewares: Middleware[] = [];
 
   constructor(private worker: WebContents, private renderer: WebContents) {
-    this.attachMiddleware(this.removeLastHistoryEntry.bind(this));
+    this.attachMiddlewares();
     this.registerStoreListeners();
   }
 
   dispatch(action: Action) {
+    this.applyMiddleware(action);
     this.state = appReducer(this.state, action);
-  }
-
-  attachMiddleware(middleware: Middleware) {
-    this.middlewares.push(middleware);
   }
 
   getState() {
@@ -79,22 +77,41 @@ export class Store {
     ipc.removeAllListeners('get-state');
   }
 
+  private attachMiddlewares() {
+    this.middlewares.push(this.removeLastHistoryEntry.bind(this));
+
+    if (process.env.NODE_ENV === 'production') {
+      this.middlewares.push(this.removeHistoryEntriesSources.bind(this));
+    }
+  }
+
   private removeLastHistoryEntry(action: Action) {
     if (action.type === ActionTypes.ADD_HISTORY_ENTRY) {
       const { history, settings } = this.state;
       const { length } = history;
 
       if (length >= settings.historySize) {
-        const { fileName } = history[length - 1];
+        this.dispatch(new RemoveLastNHistoryEntriesAction(1, 'worker'));
+      }
+    }
+  }
 
+  private removeHistoryEntriesSources({ type, payload }: Action) {
+    if (type === ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES) {
+      const entries = this.state.history.slice(-1 * payload);
+
+      for (const { fileName } of entries) {
         if (fileName) {
           remove(fileName);
         }
+      }
+    }
 
-        this.dispatch({
-          type: ActionTypes.REMOVE_LAST_HISTORY_ENTRY,
-          origin: 'worker',
-        });
+    if (type === ActionTypes.REMOVE_HISTORY_ENTRY) {
+      const { fileName } = this.state.history.find((e) => e.uuid === payload);
+
+      if (fileName) {
+        remove(fileName);
       }
     }
   }
@@ -132,7 +149,6 @@ export class Store {
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    this.applyMiddleware(action);
     this.dispatch(action);
 
     const dest = this.getDest(action);

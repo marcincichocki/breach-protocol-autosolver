@@ -80,3 +80,28 @@ export function useHistoryRedirect(channels: string[]) {
 
   useIpcEvent(channels, () => history.replace('/history'));
 }
+
+export class NativeDialog {
+  static async confirm(options: Electron.MessageBoxOptions) {
+    const defaultOptions: Partial<Electron.MessageBoxOptions> = {
+      title: 'Confirm',
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true,
+      type: 'warning',
+      buttons: ['Ok', 'Cancel'],
+    };
+    const { response } = await NativeDialog.showMessageBox({
+      ...defaultOptions,
+      ...options,
+    });
+
+    return !response;
+  }
+
+  private static showMessageBox(
+    options: Electron.MessageBoxOptions
+  ): Promise<Electron.MessageBoxReturnValue> {
+    return ipc.invoke('renderer:show-message-box', options);
+  }
+}

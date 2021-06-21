@@ -94,9 +94,9 @@ const updateSettings: Handler<Partial<AppSettings>> = (state, { payload }) => {
   return { ...state, settings };
 };
 
-const removeLastHistoryEntry: Handler = (state) => ({
+const removeLastNHistoryEntries: Handler<number> = (state, { payload }) => ({
   ...state,
-  history: state.history.slice(0, -1),
+  history: state.history.slice(0, -1 * payload),
 });
 
 const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
@@ -109,6 +109,6 @@ export const appReducer = createReducer<State>({
   [ActionTypes.SET_STATUS]: setStatus,
   [ActionTypes.ADD_HISTORY_ENTRY]: addHistoryEntry,
   [ActionTypes.UPDATE_SETTINGS]: updateSettings,
-  [ActionTypes.REMOVE_LAST_HISTORY_ENTRY]: removeLastHistoryEntry,
+  [ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES]: removeLastNHistoryEntries,
   [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
 });

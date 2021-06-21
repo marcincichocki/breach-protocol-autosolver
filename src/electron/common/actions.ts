@@ -12,7 +12,7 @@ export const ActionTypes = {
   SET_STATUS: 'SET_STATUS',
   ADD_HISTORY_ENTRY: 'ADD_HISTORY_ENTRY',
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
-  REMOVE_LAST_HISTORY_ENTRY: 'REMOVE_LAST_HISTORY_ENTRY',
+  REMOVE_LAST_N_HISTORY_ENTRIES: 'REMOVE_LAST_N_HISTORY_ENTRIES',
   REMOVE_HISTORY_ENTRY: 'REMOVE_HISTORY_ENTRY',
 } as const;
 
@@ -20,23 +20,23 @@ export class SetStatusAction implements Action {
   readonly type = ActionTypes.SET_STATUS;
   readonly origin = 'worker';
 
-  constructor(public payload: WorkerStatus) {}
+  constructor(public readonly payload: WorkerStatus) {}
 }
 
 export class SetDisplaysAction implements Action {
   readonly type = ActionTypes.SET_DISPLAYS;
   readonly origin = 'worker';
 
-  constructor(public payload: ScreenshotDisplayOutput[]) {}
+  constructor(public readonly payload: ScreenshotDisplayOutput[]) {}
 }
 
 export class UpdateSettingsAction implements Action {
   readonly type = ActionTypes.UPDATE_SETTINGS;
 
   constructor(
-    public payload: Partial<AppSettings>,
-    public origin: Origin = 'renderer',
-    public meta?: Record<string, any>
+    public readonly payload: Partial<AppSettings>,
+    public readonly origin: Origin = 'renderer',
+    public readonly meta?: Record<string, any>
   ) {}
 }
 
@@ -44,7 +44,16 @@ export class AddHistoryEntryAction implements Action {
   readonly type = ActionTypes.ADD_HISTORY_ENTRY;
   readonly origin = 'worker';
 
-  constructor(public payload: HistoryEntry) {}
+  constructor(public readonly payload: HistoryEntry) {}
+}
+
+export class RemoveLastNHistoryEntriesAction implements Action {
+  readonly type = ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES;
+
+  constructor(
+    public readonly payload: number,
+    public readonly origin: Origin = 'renderer'
+  ) {}
 }
 
 export class RemoveHistoryEntryAction implements Action {

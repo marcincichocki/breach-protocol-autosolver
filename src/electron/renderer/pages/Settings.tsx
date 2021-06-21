@@ -1,6 +1,7 @@
 import {
   AppSettings,
   optionsDescription,
+  RemoveLastNHistoryEntriesAction,
   UpdateSettingsAction,
   WorkerStatus,
 } from '@/electron/common';
@@ -16,8 +17,9 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { dispatch, getDisplayName } from '../common';
+import { dispatch, getDisplayName, NativeDialog } from '../common';
 import {
+  BeforeValueChange,
   Col,
   Field,
   File,
@@ -79,11 +81,30 @@ const FieldDescription = ({ name }: { name: keyof AppSettings }) => {
   return <Description>{optionsDescription[name]}</Description>;
 };
 
-const GeneralSettings = () => {
+const GeneralSettings = ({ historySize }: { historySize: number }) => {
   const formatOptions = [
     { name: 'jpg', value: 'jpg' },
     { name: 'png', value: 'png' },
   ];
+
+  const onBeforeHistorySizeChange: BeforeValueChange = async (value, next) => {
+    if (value < historySize) {
+      const count = historySize - value;
+      const entryText = count > 1 ? 'entries' : 'entry';
+      const result = await NativeDialog.confirm({
+        message: 'This action is irreversible!',
+        detail: `${count} history ${entryText} will be deleted. Continue?`,
+      });
+
+      if (!result) {
+        return next(true);
+      }
+
+      dispatch(new RemoveLastNHistoryEntriesAction(count));
+    }
+
+    next();
+  };
 
   return (
     <Section title="General">
@@ -93,7 +114,11 @@ const GeneralSettings = () => {
       </Field>
       <Field name="historySize">
         <Label>History size</Label>
-        <RangeSlider min={1} max={100} />
+        <RangeSlider
+          min={1}
+          max={25}
+          beforeValueChange={onBeforeHistorySizeChange}
+        />
       </Field>
       <Field name="preserveSourceOnSuccess">
         <Label>Preserve sources</Label>
@@ -260,7 +285,7 @@ const SettingsWrapper = styled(Col)`
 `;
 
 export const Settings: FC = () => {
-  const { settings, displays, status } = useContext(StateContext);
+  const { settings, displays, status, history } = useContext(StateContext);
   const [activeField, setActiveField] = useState<keyof AppSettings>();
 
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
@@ -285,7 +310,7 @@ export const Settings: FC = () => {
               onHover={setActiveField}
               onValuesChange={onValuesChange}
             >
-              <GeneralSettings />
+              <GeneralSettings historySize={history.length} />
               <AutoSolverSettings />
               <RecognitionSettings displays={displays} />
             </Form>
