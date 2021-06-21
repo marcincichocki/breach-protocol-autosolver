@@ -49,20 +49,13 @@ export class Store {
   private middlewares: Middleware[] = [];
 
   constructor(private worker: WebContents, private renderer: WebContents) {
-    this.attachMiddlewares([
-      this.removeLastHistoryEntry.bind(this),
-      this.removeHistoryEntriesSources.bind(this),
-    ]);
+    this.attachMiddlewares();
     this.registerStoreListeners();
   }
 
   dispatch(action: Action) {
     this.applyMiddleware(action);
     this.state = appReducer(this.state, action);
-  }
-
-  attachMiddlewares(middleware: Middleware[]) {
-    this.middlewares = this.middlewares.concat(middleware);
   }
 
   getState() {
@@ -84,6 +77,14 @@ export class Store {
     ipc.removeAllListeners('get-state');
   }
 
+  private attachMiddlewares() {
+    this.middlewares.push(this.removeLastHistoryEntry.bind(this));
+
+    if (process.env.NODE_ENV === 'production') {
+      this.middlewares.push(this.removeHistoryEntriesSources.bind(this));
+    }
+  }
+
   private removeLastHistoryEntry(action: Action) {
     if (action.type === ActionTypes.ADD_HISTORY_ENTRY) {
       const { history, settings } = this.state;
@@ -97,11 +98,7 @@ export class Store {
 
   private removeHistoryEntriesSources({ type, payload }: Action) {
     if (type === ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES) {
-      if (process.env.NODE_ENV === 'development') {
-        return;
-      }
-
-      const entries = this.state.history.slice(0, -1 * payload);
+      const entries = this.state.history.slice(-1 * payload);
 
       for (const { fileName } of entries) {
         if (fileName) {
