@@ -87,6 +87,10 @@ export class Main {
     return tray;
   }
 
+  private showAlert(options: Electron.MessageBoxOptions) {
+    return dialog.showMessageBox(this.renderer, options);
+  }
+
   private registerListeners() {
     ipc.on('renderer:close', this.onAppClose.bind(this));
     ipc.on('renderer:minimize', this.onAppMinimize.bind(this));
@@ -94,6 +98,11 @@ export class Main {
     ipc.on('renderer:show-help-menu', this.onShowHelpMenu.bind(this));
     ipc.on('renderer:key-bind-change', this.onKeyBindChange.bind(this));
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
+    ipc.handle(
+      'alert',
+      (e: Electron.IpcMainEvent, options: Electron.MessageBoxOptions) =>
+        this.showAlert(options)
+    );
 
     // Start listening on keybind when worker is fully loaded.
     ipc.once('worker:ready', this.onWorkerReady.bind(this));
@@ -160,7 +169,7 @@ export class Main {
     this.registerKeyBind(keyBind);
   }
 
-  private async onSaveSnapshot(e: Electron.IpcMain, entryId: string) {
+  private async onSaveSnapshot(e: Electron.IpcMainEvent, entryId: string) {
     const defaultPath = `bpa-snapshot-${entryId}.tgz`;
     const { canceled, filePath } = await dialog.showSaveDialog(this.renderer, {
       defaultPath,

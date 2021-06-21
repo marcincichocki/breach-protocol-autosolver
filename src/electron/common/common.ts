@@ -156,3 +156,9 @@ export interface TestThresholdData {
   threshold: number;
   fragmentId: FragmentId;
 }
+
+export function alert(
+  options: Electron.MessageBoxOptions
+): Promise<Electron.MessageBoxReturnValue> {
+  return ipc.invoke('alert', options);
+}
