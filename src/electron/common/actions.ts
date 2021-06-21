@@ -20,23 +20,23 @@ export class SetStatusAction implements Action {
   readonly type = ActionTypes.SET_STATUS;
   readonly origin = 'worker';
 
-  constructor(public payload: WorkerStatus) {}
+  constructor(public readonly payload: WorkerStatus) {}
 }
 
 export class SetDisplaysAction implements Action {
   readonly type = ActionTypes.SET_DISPLAYS;
   readonly origin = 'worker';
 
-  constructor(public payload: ScreenshotDisplayOutput[]) {}
+  constructor(public readonly payload: ScreenshotDisplayOutput[]) {}
 }
 
 export class UpdateSettingsAction implements Action {
   readonly type = ActionTypes.UPDATE_SETTINGS;
 
   constructor(
-    public payload: Partial<AppSettings>,
-    public origin: Origin = 'renderer',
-    public meta?: Record<string, any>
+    public readonly payload: Partial<AppSettings>,
+    public readonly origin: Origin = 'renderer',
+    public readonly meta?: Record<string, any>
   ) {}
 }
 
@@ -44,7 +44,7 @@ export class AddHistoryEntryAction implements Action {
   readonly type = ActionTypes.ADD_HISTORY_ENTRY;
   readonly origin = 'worker';
 
-  constructor(public payload: HistoryEntry) {}
+  constructor(public readonly payload: HistoryEntry) {}
 }
 
 export class RemoveLastNHistoryEntriesAction implements Action {
@@ -52,7 +52,7 @@ export class RemoveLastNHistoryEntriesAction implements Action {
 
   constructor(
     public readonly payload: number,
-    public origin: Origin = 'renderer'
+    public readonly origin: Origin = 'renderer'
   ) {}
 }
 
