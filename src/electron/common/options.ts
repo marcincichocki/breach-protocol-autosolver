@@ -109,6 +109,11 @@ const options = [
     'Minimize app to system tray.',
     true
   ),
+  new BreachProtocolOption(
+    'outputDevice',
+    'Output device that will be used to solve breach protocol.',
+    'keyboard'
+  ),
 ];
 
 function reduceOptions<T>(

@@ -66,7 +66,7 @@ export class BreachProtocolAutosolver {
   }
 
   private getResolver(): BreachProtocolResolver {
-    return this.settings.resolver === 'keyboard'
+    return this.settings.outputDevice === 'keyboard'
       ? new BreachProtocolKeyboardResolver(this.robot)
       : new BreachProtocolMouseResolver(
           this.robot,
