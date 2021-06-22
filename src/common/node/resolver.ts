@@ -60,6 +60,10 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
   }
 
   private async moveToPosition(from: string, to: string) {
+    if (from === to) {
+      return;
+    }
+
     const { offset, dir } = getGap(from, to);
     const key = this.dirs[dir];
     let i = Math.abs(offset);
@@ -73,9 +77,12 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
   private async init() {
     // If pointer is hovering over grid next commands can be uncertain.
     await this.robot.moveAway();
+    await this.robot.sleep();
     // Select "A1" square.
     await this.robot.pressKey(BreachProtocolRobotKeys.Left);
+    await this.robot.sleep();
     await this.robot.pressKey(BreachProtocolRobotKeys.Right);
+    await this.robot.sleep();
 
     return 'A1';
   }
