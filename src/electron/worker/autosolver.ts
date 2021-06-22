@@ -1,6 +1,11 @@
 import { BitMask } from '@/common';
 import { BreachProtocolRobot, SharpImageContainer } from '@/common/node';
 import {
+  BreachProtocolKeyboardResolver,
+  BreachProtocolMouseResolver,
+  BreachProtocolResolver,
+} from '@/common/node/resolver';
+import {
   BreachProtocol,
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
@@ -55,12 +60,18 @@ export class BreachProtocolAutosolver {
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
 
-    await this.robot.resolveBreachProtocol(
-      this.result,
-      this.recognitionResult.positionSquareMap
-    );
+    await this.getResolver().resolveAndExit(this.result);
 
     return this.resolve();
+  }
+
+  private getResolver(): BreachProtocolResolver {
+    return this.settings.resolver === 'keyboard'
+      ? new BreachProtocolKeyboardResolver(this.robot)
+      : new BreachProtocolMouseResolver(
+          this.robot,
+          this.recognitionResult.positionSquareMap
+        );
   }
 
   private toJSON(): HistoryEntry {
