@@ -116,17 +116,14 @@ export const isBufferSizeFragment =
 export const isDaemonsFragment =
   isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
 
-function findOffset(a: string, b: string, list: string) {
+function getOffset(a: string, b: string, list: string) {
   const ia = list.indexOf(a);
   const ib = list.indexOf(b);
 
   return ia < ib ? ib - ia : ib - ia;
 }
 
-export function getDir(
-  orientation: OffsetOrientation,
-  offset: number
-): OffsetDirection {
+function getDir(orientation: GapOrientation, offset: number): GapDirection {
   switch (orientation) {
     case 'horizontal':
       return offset < 0 ? 'left' : 'right';
@@ -135,18 +132,28 @@ export function getDir(
   }
 }
 
-export type OffsetOrientation = 'horizontal' | 'vertical';
-export type OffsetDirection = 'top' | 'right' | 'bottom' | 'left';
+export type GapOrientation = 'horizontal' | 'vertical';
+export type GapDirection = 'top' | 'right' | 'bottom' | 'left';
 
-export function getOffset(from: string, to: string) {
+export interface Gap {
+  offset: number;
+  orientation: GapOrientation;
+  dir: GapDirection;
+}
+
+export function getGap(from: string, to: string): Gap {
+  if (from === to) {
+    return null;
+  }
+
   const [startRow, startCol] = from;
   const [endRow, endCol] = to;
-  const orientation: OffsetOrientation =
+  const orientation: GapOrientation =
     startRow === endRow ? 'horizontal' : 'vertical';
   const isHorizontal = orientation === 'horizontal';
   const a = isHorizontal ? startCol : startRow;
   const b = isHorizontal ? endCol : endRow;
-  const offset = findOffset(a, b, isHorizontal ? COLS : ROWS);
+  const offset = getOffset(a, b, isHorizontal ? COLS : ROWS);
   const dir = getDir(orientation, offset);
 
   return {

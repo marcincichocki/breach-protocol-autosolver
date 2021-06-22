@@ -7,7 +7,7 @@ import {
   DaemonRawData,
   DaemonsRawData,
   generateSquareMap,
-  getOffset,
+  getGap,
   getUnits,
   GridRawData,
 } from './common';
@@ -73,27 +73,28 @@ describe('utilities', () => {
     expect(result.size).toBe(squares.length);
   });
 
-  it('should calculate correct offset between squares', () => {
-    expect(getOffset('A1', 'A7')).toEqual({
+  it('should generate correct gap between squares', () => {
+    expect(getGap('A1', 'A7')).toEqual({
       offset: 6,
       orientation: 'horizontal',
+      dir: 'right',
     });
-    expect(getOffset('C6', 'C5')).toEqual({
+    expect(getGap('C6', 'C5')).toEqual({
       offset: -1,
       orientation: 'horizontal',
+      dir: 'left',
     });
-    expect(getOffset('A6', 'D6')).toEqual({
+    expect(getGap('A6', 'D6')).toEqual({
       offset: 3,
       orientation: 'vertical',
+      dir: 'bottom',
     });
-    expect(getOffset('G2', 'C2')).toEqual({
+    expect(getGap('G2', 'C2')).toEqual({
       offset: -4,
       orientation: 'vertical',
+      dir: 'top',
     });
-    expect(getOffset('A1', 'A1')).toEqual({
-      offset: 0,
-      orientation: 'horizontal',
-    });
+    expect(getGap('A1', 'A1')).toEqual(null);
   });
 });
 

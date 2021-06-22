@@ -1,10 +1,10 @@
 import {
   COLS,
   cross,
-  getOffset,
+  GapDirection,
+  GapOrientation,
+  getGap,
   GridRawData,
-  OffsetDirection,
-  OffsetOrientation,
   ROWS,
 } from '@/core';
 import styled, { css } from 'styled-components';
@@ -58,8 +58,8 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
     ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
 `;
 
-function getArrowBorderFor(d: OffsetDirection) {
-  const o: OffsetOrientation =
+function getArrowBorderFor(d: GapDirection) {
+  const o: GapOrientation =
     d === 'bottom' || d === 'top' ? 'horizontal' : 'vertical';
 
   return ({ dir, orientation }: LineProps) => {
@@ -82,7 +82,7 @@ function getArrowPosition({ dir, orientation }: LineProps) {
   `;
 }
 
-function getLineSizeFor(o: OffsetOrientation) {
+function getLineSizeFor(o: GapOrientation) {
   return ({ offset, orientation }: LineProps) => {
     const absOffset = Math.abs(offset);
     const squareSize = `var(--square) * ${absOffset - 1}`;
@@ -109,8 +109,8 @@ const arrowBorders = css`
 
 interface LineProps {
   offset: number;
-  dir: OffsetDirection;
-  orientation: OffsetOrientation;
+  dir: GapDirection;
+  orientation: GapOrientation;
   ignore: boolean;
 }
 
@@ -137,10 +137,6 @@ const Line = styled.div<LineProps>`
     ${getArrowPosition}
   }
 `;
-
-function getLineProps(from: string, to: string): Omit<LineProps, 'ignore'> {
-  return getOffset(from, to);
-}
 
 interface GridViewerProps {
   grid: GridRawData;
@@ -170,7 +166,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
               <Line
-                {...getLineProps(path[index - 1], path[index])}
+                {...getGap(path[index - 1], path[index])}
                 ignore={shouldIgnoreHighlightArrow}
               />
             )}

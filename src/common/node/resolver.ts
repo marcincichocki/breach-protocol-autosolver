@@ -1,12 +1,20 @@
 import {
   BreachProtocolExitStrategy,
   BreachProtocolResult,
-  getOffset,
+  GapDirection,
+  getGap,
 } from '@/core';
 import { Point } from '../util';
-import { BreachProtocolRobot, Keys } from './robot';
+import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
 
 export abstract class BreachProtocolResolver {
+  protected readonly dirs: Record<GapDirection, BreachProtocolRobotKeys> = {
+    left: BreachProtocolRobotKeys.Left,
+    right: BreachProtocolRobotKeys.Right,
+    top: BreachProtocolRobotKeys.Up,
+    bottom: BreachProtocolRobotKeys.Down,
+  };
+
   constructor(public readonly robot: BreachProtocolRobot) {}
 
   abstract resolve(path: string[]): Promise<void>;
@@ -23,7 +31,7 @@ export abstract class BreachProtocolResolver {
       // If buffer is not yet filled, but sequence is finished
       // breach protocol will hang on exit screen. Pressing esc
       // exits it.
-      await this.robot.exit();
+      await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
 
       // Sometimes sequence does not use every daemon, and there might be
       // a rare case in which sequence ended, but there is still enough space
@@ -32,7 +40,7 @@ export abstract class BreachProtocolResolver {
       // To hanlde such case we have to press esc twice: once to stop it, and
       // second time to exit it.
       if (shouldForceClose) {
-        await this.robot.exit();
+        await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
       }
     }
   }
@@ -40,29 +48,36 @@ export abstract class BreachProtocolResolver {
 
 export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
   async resolve(path: string[]) {
-    let from = 'A1';
-    await this.init();
+    let from = await this.init();
 
     for (const to of path) {
-      const { offset, dir } = getOffset(from, to);
-      const key = this.robot.getKeyFromDir(dir);
-      const absOffset = Math.abs(offset);
-
-      for (let i = 0; i < absOffset; i++) {
-        await this.robot.pressKey(key);
-        await this.robot.sleep();
-      }
+      await this.moveToPosition(from, to);
+      await this.robot.pressKey(BreachProtocolRobotKeys.Enter);
+      await this.robot.sleep();
 
       from = to;
     }
   }
 
+  private async moveToPosition(from: string, to: string) {
+    const { offset, dir } = getGap(from, to);
+    const key = this.dirs[dir];
+    let i = Math.abs(offset);
+
+    while (i--) {
+      await this.robot.pressKey(key);
+      await this.robot.sleep();
+    }
+  }
+
   private async init() {
     // If pointer is hovering over grid next commands can be uncertain.
-    await this.robot.movePointerAway();
+    await this.robot.moveAway();
     // Select "A1" square.
-    await this.robot.pressKey(Keys.Left);
-    await this.robot.pressKey(Keys.Right);
+    await this.robot.pressKey(BreachProtocolRobotKeys.Left);
+    await this.robot.pressKey(BreachProtocolRobotKeys.Right);
+
+    return 'A1';
   }
 }
 
@@ -75,7 +90,7 @@ export class BreachProtocolMouseResolver extends BreachProtocolResolver {
   }
 
   async resolve(path: string[]) {
-    await this.robot.movePointerAway();
+    await this.robot.moveAway();
 
     for (const square of path) {
       const { x, y } = this.squareMap.get(square);
