@@ -25,7 +25,7 @@ describe('resolvers', () => {
   });
 
   it('should press keys correct amount of times', async () => {
-    await keyboardResolver.resolve(['A3', 'C3', 'C2', 'A2', 'A4'].slice(0, 2));
+    await keyboardResolver.resolve(['A3', 'C3', 'C2', 'A2', 'A4']);
 
     // init     +2
     // A1 -> A3 +3
@@ -33,7 +33,7 @@ describe('resolvers', () => {
     // C3 -> C2 +2
     // C2 -> A2 +3
     // A2 -> A4 +2
-    expect(robot.pressKey).toBeCalledTimes(8);
+    expect(robot.pressKey).toBeCalledTimes(15);
   });
 
   it('should press keys correct ammount of times with when going backwards', async () => {

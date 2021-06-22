@@ -99,12 +99,20 @@ describe('utilities', () => {
   });
 
   it('should correctly determine if square is between other squares', () => {
+    // horizontal
     expect(isBetween('A3', 'A1', 'A7')).toBe(true);
-    expect(isBetween('A3', 'A1', 'B2')).toBe(false);
+    // vertical
     expect(isBetween('B4', 'A4', 'G4')).toBe(true);
+    // invalid from to
+    expect(isBetween('A3', 'A1', 'B2')).toBe(false);
+    // sqaure not in range
     expect(isBetween('C3', 'A2', 'A4')).toBe(false);
+    // in range, backward vertical
     expect(isBetween('E1', 'G1', 'B1')).toBe(true);
+    // square is start
     expect(isBetween('A3', 'A3', 'C3')).toBe(false);
+    // square is end
+    expect(isBetween('C3', 'A3', 'C3')).toBe(false);
   });
 });
 

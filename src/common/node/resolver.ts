@@ -67,10 +67,18 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
       return;
     }
 
-    const { offset, dir } = getGap(from, to);
+    const { offset, dir, orientation } = getGap(from, to);
+    // Static part of squares.
+    const x = orientation === 'horizontal' ? from[0] : from[1];
     const key = this.dirs[dir];
     // Get amount of "blank" squares in a line to target.
-    const { length } = done.filter((s) => isBetween(s, from, to));
+    const { length } = done
+      // Remove stuff that is not on the same row or column.
+      .filter((s) => s.includes(x))
+      // Only leave items that are between.
+      .filter((s) => isBetween(s, from, to));
+
+    // Remove "blank" squares from offset.
     let i = Math.abs(offset) - length;
 
     while (i--) {
