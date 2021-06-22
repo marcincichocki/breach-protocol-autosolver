@@ -1,4 +1,3 @@
-import { OffsetDirection } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
@@ -13,7 +12,7 @@ export interface RobotSettings {
   useScaling: boolean;
 }
 
-export enum Keys {
+export enum BreachProtocolRobotKeys {
   Escape,
   Enter,
   Down,
@@ -23,40 +22,33 @@ export enum Keys {
 }
 
 export abstract class BreachProtocolRobot {
-  abstract readonly keys: Record<Keys, string>;
-
-  private readonly dirs: Record<OffsetDirection, Keys> = {
-    left: Keys.Left,
-    right: Keys.Right,
-    top: Keys.Up,
-    bottom: Keys.Down,
-  };
+  protected abstract readonly keys: Record<BreachProtocolRobotKeys, string>;
 
   constructor(
     public readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
-  getKeyFromDir(dir: OffsetDirection) {
-    return this.dirs[dir];
-  }
-
+  /** Click with left mouse button. */
   abstract click(): Promise<any>;
 
+  /** Move cursor to given coordinates. */
   abstract move(x: number, y: number, restart?: boolean): Promise<any>;
 
-  abstract movePointerAway(): Promise<any>;
+  /** Move cursor into top left corner. */
+  abstract moveAway(): Promise<any>;
 
-  abstract exit(): Promise<any>;
+  /** Press given key. */
+  abstract pressKey(key: BreachProtocolRobotKeys): Promise<any>;
 
-  abstract pressKey(key: Keys): Promise<any>;
-
+  /** Wait for given amount of miliseconds. */
   sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
 
+  /** Make screenshot of given screen and save it in screenshot dir. */
   async captureScreen(screen: string = this.settings.activeDisplayId) {
-    await this.movePointerAway();
+    await this.moveAway();
 
     const { format } = this.settings;
     const filename = this.getScreenShotPath(format);
@@ -74,17 +66,17 @@ export abstract class BreachProtocolRobot {
 }
 
 export class WindowsRobot extends BreachProtocolRobot {
+  protected readonly keys = {
+    [BreachProtocolRobotKeys.Escape]: 'esc',
+    [BreachProtocolRobotKeys.Enter]: 'enter',
+    [BreachProtocolRobotKeys.Up]: 'up',
+    [BreachProtocolRobotKeys.Down]: 'down',
+    [BreachProtocolRobotKeys.Left]: 'left',
+    [BreachProtocolRobotKeys.Right]: 'right',
+  };
+
   private x = 0;
   private y = 0;
-
-  readonly keys = {
-    [Keys.Escape]: 'esc',
-    [Keys.Enter]: 'enter',
-    [Keys.Down]: 'down',
-    [Keys.Up]: 'up',
-    [Keys.Left]: 'left',
-    [Keys.Right]: 'right',
-  };
 
   private readonly bin = './resources/win32/nircmd/nircmd.exe';
 
@@ -94,7 +86,7 @@ export class WindowsRobot extends BreachProtocolRobot {
 
   async move(x: number, y: number, restart = true) {
     if (restart) {
-      await this.movePointerAway();
+      await this.moveAway();
     }
 
     const scaling = this.settings.useScaling ? this.scaling : 1;
@@ -108,15 +100,11 @@ export class WindowsRobot extends BreachProtocolRobot {
     return r;
   }
 
-  movePointerAway() {
+  moveAway() {
     this.x = 0;
     this.y = 0;
 
     return this.moveRelative(-9999, -9999);
-  }
-
-  exit() {
-    return this.pressKey(Keys.Escape);
   }
 
   private nircmd(command: string, options = {}) {
@@ -137,7 +125,7 @@ export class WindowsRobot extends BreachProtocolRobot {
     return this.nircmd(`sendmouse move ${x} ${y}`);
   }
 
-  pressKey(key: Keys) {
+  pressKey(key: BreachProtocolRobotKeys) {
     return this.nircmd(`sendkeypress ${this.keys[key]}`);
   }
 }
