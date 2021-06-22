@@ -163,25 +163,30 @@ export function getGap(from: string, to: string): Gap {
   };
 }
 
+function isBetweenDir(elements: string) {
+  return (a: string, b: string, s: string) => {
+    const ia = elements.indexOf(a);
+    const ib = elements.indexOf(b);
+    const is = elements.indexOf(s);
+    const min = Math.min(ia, ib);
+    const max = Math.max(ia, ib);
+
+    return is > min && is < max;
+  };
+}
+
+/** Check if square is between 2 other squares. */
 export function isBetween(square: string, from: string, to: string) {
-  const [startRow, startCol] = from;
-  const [endRow, endCol] = to;
+  const [fromRow, fromCol] = from;
+  const [toRow, toCol] = to;
   const [squareRow, squareCol] = square;
 
-  if (startRow === endRow && squareRow === startRow) {
-    const start = COLS.indexOf(startCol);
-    const end = COLS.indexOf(endCol);
-    const s = COLS.indexOf(squareCol);
-
-    return s > start && s < end;
+  if (fromRow === toRow && squareRow === fromRow) {
+    return isBetweenDir(COLS)(fromCol, toCol, squareCol);
   }
 
-  if (startCol === endCol && squareCol === startCol) {
-    const start = ROWS.indexOf(startRow);
-    const end = ROWS.indexOf(endRow);
-    const s = ROWS.indexOf(squareRow);
-
-    return s > start && s < end;
+  if (fromCol === toCol && fromCol === squareCol) {
+    return isBetweenDir(ROWS)(fromRow, toRow, squareRow);
   }
 
   return false;

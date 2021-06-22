@@ -69,6 +69,7 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 
     const { offset, dir } = getGap(from, to);
     const key = this.dirs[dir];
+    // Get amount of "blank" squares in a line to target.
     const { length } = done.filter((s) => isBetween(s, from, to));
     let i = Math.abs(offset) - length;
 
