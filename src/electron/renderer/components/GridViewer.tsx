@@ -3,6 +3,7 @@ import {
   cross,
   getOffset,
   GridRawData,
+  OffsetDirection,
   OffsetOrientation,
   ROWS,
 } from '@/core';
@@ -57,7 +58,7 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
     ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
 `;
 
-function getArrowBorderFor(d: LineDirection) {
+function getArrowBorderFor(d: OffsetDirection) {
   const o: OffsetOrientation =
     d === 'bottom' || d === 'top' ? 'horizontal' : 'vertical';
 
@@ -106,11 +107,9 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-type LineDirection = 'top' | 'right' | 'bottom' | 'left';
-
 interface LineProps {
   offset: number;
-  dir: LineDirection;
+  dir: OffsetDirection;
   orientation: OffsetOrientation;
   ignore: boolean;
 }
@@ -140,19 +139,7 @@ const Line = styled.div<LineProps>`
 `;
 
 function getLineProps(from: string, to: string): Omit<LineProps, 'ignore'> {
-  const { orientation, offset } = getOffset(from, to);
-  const dir =
-    orientation === 'horizontal'
-      ? offset < 0
-        ? 'left'
-        : 'right'
-      : orientation === 'vertical'
-      ? offset < 0
-        ? 'top'
-        : 'bottom'
-      : null;
-
-  return { dir, offset, orientation };
+  return getOffset(from, to);
 }
 
 interface GridViewerProps {

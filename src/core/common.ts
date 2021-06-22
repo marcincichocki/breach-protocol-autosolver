@@ -123,7 +123,20 @@ function findOffset(a: string, b: string, list: string) {
   return ia < ib ? ib - ia : ib - ia;
 }
 
+export function getDir(
+  orientation: OffsetOrientation,
+  offset: number
+): OffsetDirection {
+  switch (orientation) {
+    case 'horizontal':
+      return offset < 0 ? 'left' : 'right';
+    case 'vertical':
+      return offset < 0 ? 'top' : 'bottom';
+  }
+}
+
 export type OffsetOrientation = 'horizontal' | 'vertical';
+export type OffsetDirection = 'top' | 'right' | 'bottom' | 'left';
 
 export function getOffset(from: string, to: string) {
   const [startRow, startCol] = from;
@@ -133,9 +146,12 @@ export function getOffset(from: string, to: string) {
   const isHorizontal = orientation === 'horizontal';
   const a = isHorizontal ? startCol : startRow;
   const b = isHorizontal ? endCol : endRow;
+  const offset = findOffset(a, b, isHorizontal ? COLS : ROWS);
+  const dir = getDir(orientation, offset);
 
   return {
-    offset: findOffset(a, b, isHorizontal ? COLS : ROWS),
+    offset,
     orientation,
+    dir,
   };
 }
