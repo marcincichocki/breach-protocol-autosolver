@@ -3,6 +3,7 @@ import {
   BreachProtocolResult,
   GapDirection,
   getGap,
+  isBetween,
 } from '@/core';
 import { Point } from '../util';
 import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
@@ -51,7 +52,9 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
     let from = await this.init();
 
     for (const to of path) {
-      await this.moveToPosition(from, to);
+      const done = path.slice(0, path.indexOf(to));
+
+      await this.moveToPosition(from, to, done);
       await this.robot.pressKey(BreachProtocolRobotKeys.Enter);
       await this.robot.sleep();
 
@@ -59,14 +62,17 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
     }
   }
 
-  private async moveToPosition(from: string, to: string) {
+  private async moveToPosition(from: string, to: string, done: string[]) {
     if (from === to) {
       return;
     }
 
     const { offset, dir } = getGap(from, to);
     const key = this.dirs[dir];
-    let i = Math.abs(offset);
+
+    const empty = done.filter((s) => isBetween(s, from, to)).length;
+
+    let i = Math.abs(offset) - empty;
 
     while (i--) {
       await this.robot.pressKey(key);

@@ -162,3 +162,27 @@ export function getGap(from: string, to: string): Gap {
     dir,
   };
 }
+
+export function isBetween(square: string, from: string, to: string) {
+  const [startRow, startCol] = from;
+  const [endRow, endCol] = to;
+  const [squareRow, squareCol] = square;
+
+  if (startRow === endRow) {
+    const start = COLS.indexOf(startCol);
+    const end = COLS.indexOf(endCol);
+    const s = COLS.indexOf(squareCol);
+
+    return s > start && s < end;
+  }
+
+  if (startCol === endCol) {
+    const start = ROWS.indexOf(startRow);
+    const end = ROWS.indexOf(endRow);
+    const s = ROWS.indexOf(squareRow);
+
+    return s > start && s < end;
+  }
+
+  return false;
+}

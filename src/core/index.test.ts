@@ -10,6 +10,7 @@ import {
   getGap,
   getUnits,
   GridRawData,
+  isBetween,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
@@ -95,6 +96,12 @@ describe('utilities', () => {
       dir: 'top',
     });
     expect(getGap('A1', 'A1')).toEqual(null);
+  });
+
+  it('should correctly determine if square is between other squares', () => {
+    expect(isBetween('A3', 'A1', 'A7')).toBe(true);
+    expect(isBetween('A3', 'A1', 'B2')).toBe(false);
+    expect(isBetween('B4', 'A4', 'G4')).toBe(true);
   });
 });
 
