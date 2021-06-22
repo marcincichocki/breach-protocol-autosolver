@@ -1,5 +1,4 @@
-import { Point } from '@/common';
-import { BreachProtocolResult, getOffset } from '@/core';
+import { OffsetDirection } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
@@ -14,11 +13,33 @@ export interface RobotSettings {
   useScaling: boolean;
 }
 
-export abstract class Robot {
+export enum Keys {
+  Escape,
+  Enter,
+  Down,
+  Up,
+  Left,
+  Right,
+}
+
+export abstract class BreachProtocolRobot {
+  abstract readonly keys: Record<Keys, string>;
+
+  private readonly dirs: Record<OffsetDirection, Keys> = {
+    left: Keys.Left,
+    right: Keys.Right,
+    top: Keys.Up,
+    bottom: Keys.Down,
+  };
+
   constructor(
-    protected readonly settings: RobotSettings,
+    public readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
+
+  getKeyFromDir(dir: OffsetDirection) {
+    return this.dirs[dir];
+  }
 
   abstract click(): Promise<any>;
 
@@ -28,7 +49,7 @@ export abstract class Robot {
 
   abstract exit(): Promise<any>;
 
-  abstract pressKey(key: string): Promise<any>;
+  abstract pressKey(key: Keys): Promise<any>;
 
   sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
@@ -52,78 +73,18 @@ export abstract class Robot {
   }
 }
 
-export abstract class BreachProtocolRobot extends Robot {
-  async resolveBreachProtocolWithKeyboard({
-    path,
-    exitStrategy,
-  }: BreachProtocolResult) {
-    // start at A1
-    await this.movePointerAway();
-    await this.pressKey('left');
-    await this.pressKey('right');
-
-    let from = 'A1';
-    for (const to of path) {
-      const { offset, orientation } = getOffset(from, to);
-      const dir =
-        orientation === 'horizontal'
-          ? offset < 0
-            ? 'left'
-            : 'right'
-          : orientation === 'vertical'
-          ? offset < 0
-            ? 'up'
-            : 'down'
-          : null;
-      const absOffset = Math.abs(offset);
-
-      for (let i = 0; i < absOffset; i++) {
-        await this.pressKey(dir);
-        await this.sleep();
-      }
-
-      from = to;
-    }
-  }
-
-  async resolveBreachProtocol(
-    { path, exitStrategy }: BreachProtocolResult,
-    squareMap: Map<string, Point>
-  ) {
-    await this.movePointerAway();
-
-    for (const square of path) {
-      const { x, y } = squareMap.get(square);
-
-      await this.move(x, y, false);
-      await this.click();
-      await this.sleep();
-    }
-
-    // Breach protocol exits on its own when sequence fill
-    // buffer completly.
-    if (!exitStrategy.willExit && this.settings.autoExit) {
-      // If buffer is not yet filled, but sequence is finished
-      // breach protocol will hang on exit screen. Pressing esc
-      // exits it.
-      await this.exit();
-
-      // Sometimes sequence does not use every daemon, and there might be
-      // a rare case in which sequence ended, but there is still enough space
-      // in a buffer to fit leftover daemons. However, since it is impossible
-      // to find correct squares, autosolver will stop.
-      // To hanlde such case we have to press esc twice: once to stop it, and
-      // second time to exit it.
-      if (exitStrategy.shouldForceClose) {
-        await this.exit();
-      }
-    }
-  }
-}
-
 export class WindowsRobot extends BreachProtocolRobot {
   private x = 0;
   private y = 0;
+
+  readonly keys = {
+    [Keys.Escape]: 'esc',
+    [Keys.Enter]: 'enter',
+    [Keys.Down]: 'down',
+    [Keys.Up]: 'up',
+    [Keys.Left]: 'left',
+    [Keys.Right]: 'right',
+  };
 
   private readonly bin = './resources/win32/nircmd/nircmd.exe';
 
@@ -155,7 +116,7 @@ export class WindowsRobot extends BreachProtocolRobot {
   }
 
   exit() {
-    return this.pressKey('esc');
+    return this.pressKey(Keys.Escape);
   }
 
   private nircmd(command: string, options = {}) {
@@ -176,8 +137,8 @@ export class WindowsRobot extends BreachProtocolRobot {
     return this.nircmd(`sendmouse move ${x} ${y}`);
   }
 
-  pressKey(key: string) {
-    return this.nircmd(`sendkeypress ${key}`);
+  pressKey(key: Keys) {
+    return this.nircmd(`sendkeypress ${this.keys[key]}`);
   }
 }
 
