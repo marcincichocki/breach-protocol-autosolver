@@ -69,10 +69,8 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 
     const { offset, dir } = getGap(from, to);
     const key = this.dirs[dir];
-
-    const empty = done.filter((s) => isBetween(s, from, to)).length;
-
-    let i = Math.abs(offset) - empty;
+    const { length } = done.filter((s) => isBetween(s, from, to));
+    let i = Math.abs(offset) - length;
 
     while (i--) {
       await this.robot.pressKey(key);

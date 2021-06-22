@@ -102,6 +102,7 @@ describe('utilities', () => {
     expect(isBetween('A3', 'A1', 'A7')).toBe(true);
     expect(isBetween('A3', 'A1', 'B2')).toBe(false);
     expect(isBetween('B4', 'A4', 'G4')).toBe(true);
+    expect(isBetween('C3', 'A2', 'A4')).toBe(false);
   });
 });
 

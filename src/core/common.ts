@@ -168,7 +168,7 @@ export function isBetween(square: string, from: string, to: string) {
   const [endRow, endCol] = to;
   const [squareRow, squareCol] = square;
 
-  if (startRow === endRow) {
+  if (startRow === endRow && squareRow === startRow) {
     const start = COLS.indexOf(startCol);
     const end = COLS.indexOf(endCol);
     const s = COLS.indexOf(squareCol);
@@ -176,7 +176,7 @@ export function isBetween(square: string, from: string, to: string) {
     return s > start && s < end;
   }
 
-  if (startCol === endCol) {
+  if (startCol === endCol && squareCol === startCol) {
     const start = ROWS.indexOf(startRow);
     const end = ROWS.indexOf(endRow);
     const s = ROWS.indexOf(squareRow);
