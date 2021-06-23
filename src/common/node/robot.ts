@@ -25,7 +25,7 @@ export abstract class BreachProtocolRobot {
   protected abstract readonly keys: Record<BreachProtocolRobotKeys, string>;
 
   constructor(
-    public readonly settings: RobotSettings,
+    protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
