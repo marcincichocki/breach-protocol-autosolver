@@ -1,6 +1,5 @@
 import {
   BreachProtocolExitStrategy,
-  BreachProtocolResult,
   GapDirection,
   getGap,
   isBetween,
@@ -16,19 +15,15 @@ export abstract class BreachProtocolResolver {
     bottom: BreachProtocolRobotKeys.Down,
   };
 
-  constructor(public readonly robot: BreachProtocolRobot) {}
+  constructor(protected readonly robot: BreachProtocolRobot) {}
 
+  /** Output solution to the game. */
   abstract resolve(path: string[]): Promise<void>;
 
-  async resolveAndExit({ path, exitStrategy }: BreachProtocolResult) {
-    await this.resolve(path);
-    await this.handleExit(exitStrategy);
-  }
-
+  /** Exit BP manually if required. */
   async handleExit({ willExit, shouldForceClose }: BreachProtocolExitStrategy) {
-    // Breach protocol exits on its own when sequence fill
-    // buffer completly.
-    if (!willExit && this.robot.settings.autoExit) {
+    // Breach protocol exits on its own when sequence fill buffer completly.
+    if (!willExit) {
       // If buffer is not yet filled, but sequence is finished
       // breach protocol will hang on exit screen. Pressing esc
       // exits it.
@@ -104,7 +99,7 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 export class BreachProtocolMouseResolver extends BreachProtocolResolver {
   constructor(
     robot: BreachProtocolRobot,
-    public readonly squareMap: Map<string, Point>
+    private readonly squareMap: Map<string, Point>
   ) {
     super(robot);
   }

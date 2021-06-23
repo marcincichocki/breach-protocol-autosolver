@@ -60,7 +60,7 @@ export class BreachProtocolAutosolver {
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
 
-    await this.getResolver().resolveAndExit(this.result);
+    await this.resolveBreachProtocol(this.result);
 
     return this.resolve();
   }
@@ -72,6 +72,19 @@ export class BreachProtocolAutosolver {
           this.robot,
           this.recognitionResult.positionSquareMap
         );
+  }
+
+  private async resolveBreachProtocol({
+    path,
+    exitStrategy,
+  }: BreachProtocolResult) {
+    const resolver = this.getResolver();
+
+    await resolver.resolve(path);
+
+    if (this.settings.autoExit) {
+      await resolver.handleExit(exitStrategy);
+    }
   }
 
   private toJSON(): HistoryEntry {
