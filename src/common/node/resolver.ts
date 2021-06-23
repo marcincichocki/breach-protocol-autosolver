@@ -58,18 +58,19 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
   }
 
   private async moveToPosition(from: string, to: string, done: string[]) {
+    // Path can start with "A1".
     if (from === to) {
       return;
     }
 
     const { offset, dir, orientation } = getGap(from, to);
-    // Static part of squares.
-    const x = orientation === 'horizontal' ? from[0] : from[1];
+    // Get row or column part of squares.
+    const serie = orientation === 'horizontal' ? from[0] : from[1];
     const key = this.dirs[dir];
     // Get amount of "blank" squares in a line to target.
     const { length } = done
       // Remove stuff that is not on the same row or column.
-      .filter((s) => s.includes(x))
+      .filter((s) => s.includes(serie))
       // Only leave items that are between.
       .filter((s) => isBetween(s, from, to));
 
