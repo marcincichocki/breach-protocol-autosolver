@@ -173,7 +173,7 @@ const AutoSolverSettings = () => {
         <Label>Auto exit</Label>
         <Switch />
       </Field>
-      <Field name="resolver">
+      <Field name="outputDevice">
         <Label>Output device</Label>
         <Select options={outputDeviceOptions} />
       </Field>
