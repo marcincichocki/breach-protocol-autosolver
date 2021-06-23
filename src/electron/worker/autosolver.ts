@@ -1,10 +1,11 @@
 import { BitMask } from '@/common';
-import { BreachProtocolRobot, SharpImageContainer } from '@/common/node';
 import {
   BreachProtocolKeyboardResolver,
   BreachProtocolMouseResolver,
   BreachProtocolResolver,
-} from '@/common/node/resolver';
+  BreachProtocolRobot,
+  SharpImageContainer,
+} from '@/common/node';
 import {
   BreachProtocol,
   breachProtocolOCR,
