@@ -175,6 +175,9 @@ function isBetweenDir(elements: string) {
   };
 }
 
+const isBetweenRow = isBetweenDir(COLS);
+const isBetweenCol = isBetweenDir(ROWS);
+
 /** Check if square is between 2 other squares. */
 export function isBetween(square: string, from: string, to: string) {
   const [fromRow, fromCol] = from;
@@ -182,11 +185,11 @@ export function isBetween(square: string, from: string, to: string) {
   const [squareRow, squareCol] = square;
 
   if (fromRow === toRow && squareRow === fromRow) {
-    return isBetweenDir(COLS)(fromCol, toCol, squareCol);
+    return isBetweenRow(fromCol, toCol, squareCol);
   }
 
   if (fromCol === toCol && fromCol === squareCol) {
-    return isBetweenDir(ROWS)(fromRow, toRow, squareRow);
+    return isBetweenCol(fromRow, toRow, squareRow);
   }
 
   return false;
