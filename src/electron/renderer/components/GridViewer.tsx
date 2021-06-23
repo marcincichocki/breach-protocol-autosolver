@@ -1,4 +1,12 @@
-import { COLS, cross, GridRawData, ROWS } from '@/core';
+import {
+  COLS,
+  cross,
+  GapDirection,
+  GapOrientation,
+  getGap,
+  GridRawData,
+  ROWS,
+} from '@/core';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -50,8 +58,8 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
     ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
 `;
 
-function getArrowBorderFor(d: LineDirection) {
-  const o: LineOrientation =
+function getArrowBorderFor(d: GapDirection) {
+  const o: GapOrientation =
     d === 'bottom' || d === 'top' ? 'horizontal' : 'vertical';
 
   return ({ dir, orientation }: LineProps) => {
@@ -74,7 +82,7 @@ function getArrowPosition({ dir, orientation }: LineProps) {
   `;
 }
 
-function getLineSizeFor(o: LineOrientation) {
+function getLineSizeFor(o: GapOrientation) {
   return ({ offset, orientation }: LineProps) => {
     const absOffset = Math.abs(offset);
     const squareSize = `var(--square) * ${absOffset - 1}`;
@@ -99,13 +107,10 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-type LineDirection = 'top' | 'right' | 'bottom' | 'left';
-type LineOrientation = 'horizontal' | 'vertical';
-
 interface LineProps {
   offset: number;
-  dir: LineDirection;
-  orientation: LineOrientation;
+  dir: GapDirection;
+  orientation: GapOrientation;
   ignore: boolean;
 }
 
@@ -132,34 +137,6 @@ const Line = styled.div<LineProps>`
     ${getArrowPosition}
   }
 `;
-
-function findOffset(a: string, b: string, list: string) {
-  const ia = list.indexOf(a);
-  const ib = list.indexOf(b);
-
-  return ia < ib ? ib - ia : ib - ia;
-}
-
-function getLineProps(from: string, to: string): Omit<LineProps, 'ignore'> {
-  const [startRow, startCol] = from;
-  const [endRow, endCol] = to;
-  const orientation = startRow === endRow ? 'horizontal' : 'vertical';
-  const isHorizontal = orientation === 'horizontal';
-  const a = isHorizontal ? startCol : startRow;
-  const b = isHorizontal ? endCol : endRow;
-  const offset = findOffset(a, b, isHorizontal ? COLS : ROWS);
-  const dir = isHorizontal
-    ? offset < 0
-      ? 'left'
-      : 'right'
-    : orientation === 'vertical'
-    ? offset < 0
-      ? 'top'
-      : 'bottom'
-    : null;
-
-  return { dir, offset, orientation };
-}
 
 interface GridViewerProps {
   grid: GridRawData;
@@ -189,7 +166,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
               <Line
-                {...getLineProps(path[index - 1], path[index])}
+                {...getGap(path[index - 1], path[index])}
                 ignore={shouldIgnoreHighlightArrow}
               />
             )}

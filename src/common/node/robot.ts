@@ -1,5 +1,3 @@
-import { Point } from '@/common';
-import { BreachProtocolResult } from '@/core';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
@@ -14,26 +12,43 @@ export interface RobotSettings {
   useScaling: boolean;
 }
 
-export abstract class Robot {
+export enum BreachProtocolRobotKeys {
+  Escape,
+  Enter,
+  Down,
+  Up,
+  Left,
+  Right,
+}
+
+export abstract class BreachProtocolRobot {
+  protected abstract readonly keys: Record<BreachProtocolRobotKeys, string>;
+
   constructor(
     protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
+  /** Click with left mouse button. */
   abstract click(): Promise<any>;
 
+  /** Move cursor to given coordinates. */
   abstract move(x: number, y: number, restart?: boolean): Promise<any>;
 
-  abstract movePointerAway(): Promise<any>;
+  /** Move cursor into top left corner. */
+  abstract moveAway(): Promise<any>;
 
-  abstract exit(): Promise<any>;
+  /** Press given key. */
+  abstract pressKey(key: BreachProtocolRobotKeys): Promise<any>;
 
+  /** Wait for given amount of miliseconds. */
   sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
 
+  /** Make screenshot of given screen and save it in screenshot dir. */
   async captureScreen(screen: string = this.settings.activeDisplayId) {
-    await this.movePointerAway();
+    await this.moveAway();
 
     const { format } = this.settings;
     const filename = this.getScreenShotPath(format);
@@ -50,43 +65,16 @@ export abstract class Robot {
   }
 }
 
-export abstract class BreachProtocolRobot extends Robot {
-  async resolveBreachProtocol(
-    { path, exitStrategy }: BreachProtocolResult,
-    squareMap: Map<string, Point>
-  ) {
-    await this.movePointerAway();
-
-    for (const square of path) {
-      const { x, y } = squareMap.get(square);
-
-      await this.move(x, y, false);
-      await this.click();
-      await this.sleep();
-    }
-
-    // Breach protocol exits on its own when sequence fill
-    // buffer completly.
-    if (!exitStrategy.willExit && this.settings.autoExit) {
-      // If buffer is not yet filled, but sequence is finished
-      // breach protocol will hang on exit screen. Pressing esc
-      // exits it.
-      await this.exit();
-
-      // Sometimes sequence does not use every daemon, and there might be
-      // a rare case in which sequence ended, but there is still enough space
-      // in a buffer to fit leftover daemons. However, since it is impossible
-      // to find correct squares, autosolver will stop.
-      // To hanlde such case we have to press esc twice: once to stop it, and
-      // second time to exit it.
-      if (exitStrategy.shouldForceClose) {
-        await this.exit();
-      }
-    }
-  }
-}
-
 export class WindowsRobot extends BreachProtocolRobot {
+  protected readonly keys = {
+    [BreachProtocolRobotKeys.Escape]: 'esc',
+    [BreachProtocolRobotKeys.Enter]: 'enter',
+    [BreachProtocolRobotKeys.Up]: 'up',
+    [BreachProtocolRobotKeys.Down]: 'down',
+    [BreachProtocolRobotKeys.Left]: 'left',
+    [BreachProtocolRobotKeys.Right]: 'right',
+  };
+
   private x = 0;
   private y = 0;
 
@@ -98,7 +86,7 @@ export class WindowsRobot extends BreachProtocolRobot {
 
   async move(x: number, y: number, restart = true) {
     if (restart) {
-      await this.movePointerAway();
+      await this.moveAway();
     }
 
     const scaling = this.settings.useScaling ? this.scaling : 1;
@@ -112,15 +100,15 @@ export class WindowsRobot extends BreachProtocolRobot {
     return r;
   }
 
-  movePointerAway() {
+  moveAway() {
     this.x = 0;
     this.y = 0;
 
     return this.moveRelative(-9999, -9999);
   }
 
-  exit() {
-    return this.nircmd('sendkeypress esc');
+  pressKey(key: BreachProtocolRobotKeys) {
+    return this.nircmd(`sendkeypress ${this.keys[key]}`);
   }
 
   private nircmd(command: string, options = {}) {

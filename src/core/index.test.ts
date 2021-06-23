@@ -7,8 +7,10 @@ import {
   DaemonRawData,
   DaemonsRawData,
   generateSquareMap,
+  getGap,
   getUnits,
   GridRawData,
+  isBetween,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
@@ -70,6 +72,47 @@ describe('utilities', () => {
     expect(result.get('b1')).toBe(2);
     expect(result.get('b2')).toBe(42);
     expect(result.size).toBe(squares.length);
+  });
+
+  it('should generate correct gap between squares', () => {
+    expect(getGap('A1', 'A7')).toEqual({
+      offset: 6,
+      orientation: 'horizontal',
+      dir: 'right',
+    });
+    expect(getGap('C6', 'C5')).toEqual({
+      offset: -1,
+      orientation: 'horizontal',
+      dir: 'left',
+    });
+    expect(getGap('A6', 'D6')).toEqual({
+      offset: 3,
+      orientation: 'vertical',
+      dir: 'bottom',
+    });
+    expect(getGap('G2', 'C2')).toEqual({
+      offset: -4,
+      orientation: 'vertical',
+      dir: 'top',
+    });
+    expect(getGap('A1', 'A1')).toEqual(null);
+  });
+
+  it('should correctly determine if square is between other squares', () => {
+    // horizontal
+    expect(isBetween('A3', 'A1', 'A7')).toBe(true);
+    // vertical
+    expect(isBetween('B4', 'A4', 'G4')).toBe(true);
+    // invalid from to
+    expect(isBetween('A3', 'A1', 'B2')).toBe(false);
+    // sqaure not in range
+    expect(isBetween('C3', 'A2', 'A4')).toBe(false);
+    // in range, backward vertical
+    expect(isBetween('E1', 'G1', 'B1')).toBe(true);
+    // square is start
+    expect(isBetween('A3', 'A3', 'C3')).toBe(false);
+    // square is end
+    expect(isBetween('C3', 'A3', 'C3')).toBe(false);
   });
 });
 

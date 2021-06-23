@@ -141,6 +141,12 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
 };
 
 const AutoSolverSettings = () => {
+  const { values } = useForm<AppSettings>();
+  const outputDeviceOptions = [
+    { name: 'Keyboard', value: 'keyboard' },
+    { name: 'Mouse', value: 'mouse' },
+  ];
+
   function changeKeyBind(accelerator: Accelerator) {
     ipc.send('renderer:key-bind-change', accelerator);
   }
@@ -167,10 +173,16 @@ const AutoSolverSettings = () => {
         <Label>Auto exit</Label>
         <Switch />
       </Field>
-      <Field name="useScaling">
-        <Label>Scaling</Label>
-        <Switch />
+      <Field name="outputDevice">
+        <Label>Output device</Label>
+        <Select options={outputDeviceOptions} />
       </Field>
+      {values.outputDevice === 'mouse' && (
+        <Field name="useScaling">
+          <Label>Scaling</Label>
+          <Switch />
+        </Field>
+      )}
     </Section>
   );
 };

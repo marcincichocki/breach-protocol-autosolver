@@ -57,6 +57,7 @@ export interface AppSettings extends RobotSettings {
   thresholdBufferSize: number;
   thresholdBufferSizeAuto: boolean;
   experimentalBufferSizeRecognition: boolean;
+  outputDevice: 'mouse' | 'keyboard';
 }
 
 export interface AppStats {

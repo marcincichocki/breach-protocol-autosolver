@@ -115,3 +115,82 @@ export const isBufferSizeFragment =
   isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
 export const isDaemonsFragment =
   isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
+
+function getOffset(a: string, b: string, list: string) {
+  const ia = list.indexOf(a);
+  const ib = list.indexOf(b);
+
+  return ia < ib ? ib - ia : ib - ia;
+}
+
+function getDir(orientation: GapOrientation, offset: number): GapDirection {
+  switch (orientation) {
+    case 'horizontal':
+      return offset < 0 ? 'left' : 'right';
+    case 'vertical':
+      return offset < 0 ? 'top' : 'bottom';
+  }
+}
+
+export type GapOrientation = 'horizontal' | 'vertical';
+export type GapDirection = 'top' | 'right' | 'bottom' | 'left';
+
+export interface Gap {
+  offset: number;
+  orientation: GapOrientation;
+  dir: GapDirection;
+}
+
+export function getGap(from: string, to: string): Gap {
+  if (from === to) {
+    return null;
+  }
+
+  const [startRow, startCol] = from;
+  const [endRow, endCol] = to;
+  const orientation: GapOrientation =
+    startRow === endRow ? 'horizontal' : 'vertical';
+  const isHorizontal = orientation === 'horizontal';
+  const a = isHorizontal ? startCol : startRow;
+  const b = isHorizontal ? endCol : endRow;
+  const offset = getOffset(a, b, isHorizontal ? COLS : ROWS);
+  const dir = getDir(orientation, offset);
+
+  return {
+    offset,
+    orientation,
+    dir,
+  };
+}
+
+function isBetweenDir(elements: string) {
+  return (a: string, b: string, s: string) => {
+    const ia = elements.indexOf(a);
+    const ib = elements.indexOf(b);
+    const is = elements.indexOf(s);
+    const min = Math.min(ia, ib);
+    const max = Math.max(ia, ib);
+
+    return is > min && is < max;
+  };
+}
+
+const isBetweenRow = isBetweenDir(COLS);
+const isBetweenCol = isBetweenDir(ROWS);
+
+/** Check if square is between 2 other squares. */
+export function isBetween(square: string, from: string, to: string) {
+  const [fromRow, fromCol] = from;
+  const [toRow, toCol] = to;
+  const [squareRow, squareCol] = square;
+
+  if (fromRow === toRow && squareRow === fromRow) {
+    return isBetweenRow(fromCol, toCol, squareCol);
+  }
+
+  if (fromCol === toCol && fromCol === squareCol) {
+    return isBetweenCol(fromRow, toRow, squareRow);
+  }
+
+  return false;
+}
