@@ -107,6 +107,10 @@ export class WindowsRobot extends BreachProtocolRobot {
     return this.moveRelative(-9999, -9999);
   }
 
+  pressKey(key: BreachProtocolRobotKeys) {
+    return this.nircmd(`sendkeypress ${this.keys[key]}`);
+  }
+
   private nircmd(command: string, options = {}) {
     const args = command.split(' ');
 
@@ -123,10 +127,6 @@ export class WindowsRobot extends BreachProtocolRobot {
 
   private moveRelative(x: number, y: number) {
     return this.nircmd(`sendmouse move ${x} ${y}`);
-  }
-
-  pressKey(key: BreachProtocolRobotKeys) {
-    return this.nircmd(`sendkeypress ${this.keys[key]}`);
   }
 }
 
