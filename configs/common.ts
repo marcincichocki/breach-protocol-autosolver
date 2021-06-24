@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import { DefinePlugin, RuleSetRule, WebpackPluginInstance } from 'webpack';
 
 function git(command: string) {
@@ -18,6 +19,7 @@ export const commonPlugins: WebpackPluginInstance[] = [
     BUGS_URL: JSON.stringify(pkg.bugs),
     PRODUCT_NAME: JSON.stringify(pkg.build.productName),
   }),
+  new LicenseWebpackPlugin() as any,
 ];
 
 export const commonRules: RuleSetRule[] = [
