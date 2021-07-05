@@ -41,9 +41,9 @@ export class Main {
     {
       label: 'Third-party licenses',
       click() {
-        const path = `${app.getAppPath()}/resources/THIRD_PATRY_LICENSES.txt`;
-
-        shell.showItemInFolder(path);
+        shell.showItemInFolder(
+          join(app.getAppPath(), 'resources/THIRD_PARTY_LICENSES.txt')
+        );
       },
     },
     { type: 'separator' },
