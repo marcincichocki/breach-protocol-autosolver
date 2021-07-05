@@ -20,7 +20,7 @@ export const commonPlugins: WebpackPluginInstance[] = [
     PRODUCT_NAME: JSON.stringify(pkg.build.productName),
   }),
   new LicenseWebpackPlugin({
-    outputFilename: '3RD_PARTY_LICENSES.txt',
+    outputFilename: 'THIRD_PARTY_LICENSES.txt',
   }) as any,
 ];
 

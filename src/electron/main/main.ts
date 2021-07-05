@@ -44,6 +44,14 @@ export class Main {
         shell.openExternal(BUGS_URL);
       },
     },
+    {
+      label: 'Third-party licenses',
+      click() {
+        const path = `${app.getAppPath()}/resources/THIRD_PATRY_LICENSES.txt`;
+
+        shell.showItemInFolder(path);
+      },
+    },
   ];
 
   private trayMenu: Electron.MenuItemConstructorOptions[] = [
