@@ -19,7 +19,8 @@
     ],
     "extraFiles": [
       "resources/**/*",
-      "!resources/icon.png"
+      "!resources/icon.png",
+      "dist/*.txt"
     ],
     "directories": {
       "buildResources": "resources",

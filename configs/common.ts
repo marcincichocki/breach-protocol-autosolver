@@ -19,7 +19,9 @@ export const commonPlugins: WebpackPluginInstance[] = [
     BUGS_URL: JSON.stringify(pkg.bugs),
     PRODUCT_NAME: JSON.stringify(pkg.build.productName),
   }),
-  new LicenseWebpackPlugin() as any,
+  new LicenseWebpackPlugin({
+    outputFilename: '3RD_PARTY_LICENSES.txt',
+  }) as any,
 ];
 
 export const commonRules: RuleSetRule[] = [
