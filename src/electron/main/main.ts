@@ -41,9 +41,13 @@ export class Main {
     {
       label: 'Third-party licenses',
       click() {
-        shell.showItemInFolder(
-          join(app.getAppPath(), 'resources/THIRD_PARTY_LICENSES.txt')
-        );
+        const licensesFileName = 'THIRD_PARTY_LICENSES.txt';
+        const licensesPath =
+          process.env.NODE_ENV === 'production'
+            ? join('resources', licensesFileName)
+            : licensesFileName;
+
+        shell.showItemInFolder(join(app.getAppPath(), licensesPath));
       },
     },
     { type: 'separator' },
