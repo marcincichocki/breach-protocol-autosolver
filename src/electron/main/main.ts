@@ -39,6 +39,19 @@ export class Main {
     },
     { type: 'separator' },
     {
+      label: 'Third-party licenses',
+      click() {
+        const licensesFileName = 'THIRD_PARTY_LICENSES.txt';
+        const licensesPath =
+          process.env.NODE_ENV === 'production'
+            ? join('..', licensesFileName)
+            : licensesFileName;
+
+        shell.showItemInFolder(join(app.getAppPath(), licensesPath));
+      },
+    },
+    { type: 'separator' },
+    {
       label: 'Report bug',
       click() {
         shell.openExternal(BUGS_URL);

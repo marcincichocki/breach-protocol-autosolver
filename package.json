@@ -19,7 +19,12 @@
     ],
     "extraFiles": [
       "resources/**/*",
-      "!resources/icon.png"
+      "!resources/icon.png",
+      {
+        "from": "dist",
+        "to": "resources",
+        "filter": "*.txt"
+      }
     ],
     "directories": {
       "buildResources": "resources",
@@ -71,6 +76,7 @@
     "fs-extra": "^9.1.0",
     "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
+    "license-webpack-plugin": "^2.3.19",
     "patch-package": "^6.4.7",
     "standard-version": "^9.3.0",
     "style-loader": "^2.0.0",
