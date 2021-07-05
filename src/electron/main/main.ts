@@ -44,7 +44,7 @@ export class Main {
         const licensesFileName = 'THIRD_PARTY_LICENSES.txt';
         const licensesPath =
           process.env.NODE_ENV === 'production'
-            ? join('resources', licensesFileName)
+            ? join('..', licensesFileName)
             : licensesFileName;
 
         shell.showItemInFolder(join(app.getAppPath(), licensesPath));

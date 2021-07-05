@@ -20,7 +20,11 @@
     "extraFiles": [
       "resources/**/*",
       "!resources/icon.png",
-      "dist/*.txt"
+      {
+        "from": "dist",
+        "to": "resources",
+        "filter": "*.txt"
+      }
     ],
     "directories": {
       "buildResources": "resources",
