@@ -39,17 +39,18 @@ export class Main {
     },
     { type: 'separator' },
     {
-      label: 'Report bug',
-      click() {
-        shell.openExternal(BUGS_URL);
-      },
-    },
-    {
       label: 'Third-party licenses',
       click() {
         const path = `${app.getAppPath()}/resources/THIRD_PATRY_LICENSES.txt`;
 
         shell.showItemInFolder(path);
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Report bug',
+      click() {
+        shell.openExternal(BUGS_URL);
       },
     },
   ];
