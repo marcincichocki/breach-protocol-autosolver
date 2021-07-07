@@ -47,17 +47,17 @@ const options = [
   new BreachProtocolOption(
     'historySize',
     'Amount of history entires saved.',
-    10
+    3
   ),
   new BreachProtocolOption(
     'keyBind',
     'Key bind which triggers autosolver. Press "Enter" to save new key bind, or "Escape" to cancel.',
-    'CommandOrControl+numdec'
+    'Alt+`'
   ),
   new BreachProtocolOption(
     'preserveSourceOnSuccess',
     'Preserve image source after successful breach protocol. This might take a lot of space depending on format and history size options.',
-    false
+    true
   ),
   new BreachProtocolOption(
     'checkForUpdates',
@@ -107,12 +107,12 @@ const options = [
   new BreachProtocolOption(
     'minimizeToTray',
     'Minimize app to system tray.',
-    true
+    false
   ),
   new BreachProtocolOption(
     'outputDevice',
     'Output device that will be used to solve breach protocol.',
-    'keyboard'
+    'mouse'
   ),
 ];
 
