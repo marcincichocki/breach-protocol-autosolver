@@ -227,6 +227,8 @@ const VisuallyHiddenInput = styled.input`
   white-space: nowrap;
   outline: 0;
   appearance: none;
+  top: 0;
+  left: 0;
 `;
 
 export const KeyCode = styled.kbd`
