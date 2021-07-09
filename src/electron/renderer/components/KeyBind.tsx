@@ -205,6 +205,7 @@ const KeyBindWrapper = styled.div`
   font-weight: 500;
   font-size: 24px;
   cursor: pointer;
+  box-sizing: border-box;
 
   &:hover:not(:focus-within) {
     background: var(--primary-darker);
@@ -292,27 +293,25 @@ export const KeyBind = () => {
   }
 
   return (
-    <>
-      <KeyBindWrapper onClick={() => ref.current.focus()}>
-        {!dirty && visited ? (
-          <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
-        ) : (
-          pressed.map((k, i) => (
-            <Fragment key={k.code}>
-              {!!i && ' + '}
-              <KeyCode>{k.electronCode}</KeyCode>
-            </Fragment>
-          ))
-        )}
-        <VisuallyHiddenInput
-          type="text"
-          ref={ref}
-          onKeyDown={onKeyDown}
-          onKeyUp={onKeyUp}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
-      </KeyBindWrapper>
-    </>
+    <KeyBindWrapper onClick={() => ref.current.focus()}>
+      {!dirty && visited ? (
+        <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
+      ) : (
+        pressed.map((k, i) => (
+          <Fragment key={k.code}>
+            {!!i && ' + '}
+            <KeyCode>{k.electronCode}</KeyCode>
+          </Fragment>
+        ))
+      )}
+      <VisuallyHiddenInput
+        type="text"
+        ref={ref}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+    </KeyBindWrapper>
   );
 };
