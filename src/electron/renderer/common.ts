@@ -99,6 +99,21 @@ export class NativeDialog {
     return !response;
   }
 
+  static async alert(options?: Electron.MessageBoxOptions) {
+    const defaultOptions: Partial<Electron.MessageBoxOptions> = {
+      noLink: true,
+      defaultId: 0,
+      title: 'Alert',
+      type: 'warning',
+      buttons: ['Ok'],
+    };
+
+    return NativeDialog.showMessageBox({
+      ...defaultOptions,
+      ...options,
+    });
+  }
+
   private static showMessageBox(
     options: Electron.MessageBoxOptions
   ): Promise<Electron.MessageBoxReturnValue> {

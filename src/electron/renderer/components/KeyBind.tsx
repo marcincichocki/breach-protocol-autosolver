@@ -1,3 +1,4 @@
+import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
   KeyboardEvent as ReactKeyboardEvent,
@@ -5,6 +6,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
+import { NativeDialog } from '../common';
 import { useField } from './Form';
 
 /**
@@ -256,7 +258,17 @@ export const KeyBind = () => {
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
-        setValue(pressed.map((p) => p.electronCode).join('+'));
+        const value = pressed.map((p) => p.electronCode).join('+');
+
+        if (!isAccelerator(value)) {
+          ref.current.blur();
+
+          return NativeDialog.alert({
+            message: `Key bind ${value} is invalid!`,
+          });
+        }
+
+        setValue(value);
         reset = false;
         ref.current.blur();
       },
