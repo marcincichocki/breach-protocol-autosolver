@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "lib": ["ES2019.Array", "DOM"],
+    "lib": ["ES2019", "DOM"],
     "resolveJsonModule": true,
     "importHelpers": true,
     "typeRoots": ["./node_modules/@types", "./types"],
