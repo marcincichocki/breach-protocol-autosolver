@@ -264,7 +264,8 @@ export const KeyBind = () => {
           ref.current.blur();
 
           return NativeDialog.alert({
-            message: `Key bind ${value} is invalid!`,
+            title: 'Invalid key bind',
+            message: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
           });
         }
 
