@@ -273,7 +273,6 @@ export const KeyBind = () => {
         ref.current.blur();
       },
       () => {
-        setPressed(keys);
         ref.current.blur();
       },
       keys
