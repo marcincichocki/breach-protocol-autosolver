@@ -51,7 +51,7 @@ const StyledSection = styled.section`
   gap: 1rem;
 
   &:not(:last-child) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
 `;
 

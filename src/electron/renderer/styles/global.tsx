@@ -23,7 +23,6 @@ export const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     background: linear-gradient(180deg, #3a1216 0%, var(--background) 82%);
-    overflow: hidden;
   }
 
   #root {
