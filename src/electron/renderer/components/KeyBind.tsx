@@ -1,3 +1,4 @@
+import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
   KeyboardEvent as ReactKeyboardEvent,
@@ -5,6 +6,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
+import { NativeDialog } from '../common';
 import { useField } from './Form';
 
 /**
@@ -203,6 +205,7 @@ const KeyBindWrapper = styled.div`
   font-weight: 500;
   font-size: 24px;
   cursor: pointer;
+  box-sizing: border-box;
 
   &:hover:not(:focus-within) {
     background: var(--primary-darker);
@@ -256,14 +259,22 @@ export const KeyBind = () => {
   const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
     useKeyPress(
       () => {
-        setValue(pressed.map((p) => p.electronCode).join('+'));
+        const value = pressed.map((p) => p.electronCode).join('+');
+
+        if (!isAccelerator(value)) {
+          ref.current.blur();
+
+          return NativeDialog.alert({
+            title: 'Invalid key bind',
+            message: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
+          });
+        }
+
+        setValue(value);
         reset = false;
         ref.current.blur();
       },
-      () => {
-        setPressed(keys);
-        ref.current.blur();
-      },
+      () => ref.current.blur(),
       keys
     );
 
@@ -282,27 +293,25 @@ export const KeyBind = () => {
   }
 
   return (
-    <>
-      <KeyBindWrapper onClick={() => ref.current.focus()}>
-        {!dirty && visited ? (
-          <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
-        ) : (
-          pressed.map((k, i) => (
-            <Fragment key={k.code}>
-              {!!i && ' + '}
-              <KeyCode>{k.electronCode}</KeyCode>
-            </Fragment>
-          ))
-        )}
-        <VisuallyHiddenInput
-          type="text"
-          ref={ref}
-          onKeyDown={onKeyDown}
-          onKeyUp={onKeyUp}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
-      </KeyBindWrapper>
-    </>
+    <KeyBindWrapper onClick={() => ref.current.focus()}>
+      {!dirty && visited ? (
+        <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
+      ) : (
+        pressed.map((k, i) => (
+          <Fragment key={k.code}>
+            {!!i && ' + '}
+            <KeyCode>{k.electronCode}</KeyCode>
+          </Fragment>
+        ))
+      )}
+      <VisuallyHiddenInput
+        type="text"
+        ref={ref}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+    </KeyBindWrapper>
   );
 };
