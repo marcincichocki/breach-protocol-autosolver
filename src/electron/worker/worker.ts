@@ -7,6 +7,7 @@ import {
 } from '@/core';
 import {
   Action,
+  ActionTypes,
   AddHistoryEntryAction,
   AppSettings,
   Request,
@@ -106,8 +107,12 @@ export class BreachProtocolWorker {
     e: IpcRendererEvent,
     { payload, type }: Action<State>
   ) {
-    if (type === 'UPDATE_SETTINGS') {
+    if (type === ActionTypes.UPDATE_SETTINGS) {
       this.settings = payload.settings;
+    }
+
+    if (type === ActionTypes.SET_STATUS) {
+      this.status = payload.status;
     }
   }
 
@@ -152,7 +157,6 @@ export class BreachProtocolWorker {
   }
 
   private updateStatus(status: WorkerStatus) {
-    this.status = status;
     this.dispatch(new SetStatusAction(status));
   }
 
