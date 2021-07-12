@@ -51,6 +51,10 @@ const StatusBarWrapper = styled.footer`
 
 function getWorkerStatusMessage(status: WorkerStatus) {
   switch (status) {
+    case WorkerStatus.Disconnected:
+      return 'Disconnected';
+    case WorkerStatus.Disabled:
+      return 'Disabled';
     case WorkerStatus.Bootstrap:
       return 'Loading...';
     case WorkerStatus.Ready:

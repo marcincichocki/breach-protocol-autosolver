@@ -1,12 +1,15 @@
+import { SetStatusAction, WorkerStatus } from '@/electron/common';
 import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
   KeyboardEvent as ReactKeyboardEvent,
+  useContext,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { NativeDialog } from '../common';
+import { dispatch, NativeDialog } from '../common';
+import { StateContext } from '../state';
 import { useField } from './Form';
 
 /**
@@ -250,9 +253,12 @@ function toKeyCodes(accelerator: Electron.Accelerator) {
     .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
 }
 
+let prevWorkerStatus = WorkerStatus.Ready;
+
 export const KeyBind = () => {
   const { value, setValue } = useField();
   const [visited, setVisited] = useState(false);
+  const { status } = useContext(StateContext);
   const keys = toKeyCodes(value as string);
   const ref = useRef<HTMLInputElement>();
   let reset = true;
@@ -279,6 +285,8 @@ export const KeyBind = () => {
     );
 
   function onBlur() {
+    dispatch(new SetStatusAction(prevWorkerStatus, 'renderer'));
+
     if (reset) {
       setPressed(keys);
     }
@@ -289,6 +297,8 @@ export const KeyBind = () => {
   }
 
   function onFocus() {
+    prevWorkerStatus = status;
+    dispatch(new SetStatusAction(WorkerStatus.Disabled, 'renderer'));
     setVisited(true);
   }
 

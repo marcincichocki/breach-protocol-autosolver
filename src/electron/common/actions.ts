@@ -18,9 +18,11 @@ export const ActionTypes = {
 
 export class SetStatusAction implements Action {
   readonly type = ActionTypes.SET_STATUS;
-  readonly origin = 'worker';
 
-  constructor(public readonly payload: WorkerStatus) {}
+  constructor(
+    public readonly payload: WorkerStatus,
+    public readonly origin: Origin = 'worker'
+  ) {}
 }
 
 export class SetDisplaysAction implements Action {

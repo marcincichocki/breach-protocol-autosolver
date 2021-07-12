@@ -10,6 +10,8 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
 export enum WorkerStatus {
+  Disconnected,
+  Disabled,
   Bootstrap,
   Ready,
   Working,
@@ -58,6 +60,8 @@ export interface AppSettings extends RobotSettings {
   thresholdBufferSizeAuto: boolean;
   experimentalBufferSizeRecognition: boolean;
   outputDevice: 'mouse' | 'keyboard';
+  engine: 'nircmd' | 'ahk';
+  robotBinPath: string;
 }
 
 export interface AppStats {
