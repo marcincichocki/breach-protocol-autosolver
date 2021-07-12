@@ -253,7 +253,7 @@ function toKeyCodes(accelerator: Electron.Accelerator) {
     .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
 }
 
-let prevWorkerStatus = WorkerStatus.Ready;
+let prevWorkerStatus: WorkerStatus = null;
 
 export const KeyBind = () => {
   const { value, setValue } = useField();
