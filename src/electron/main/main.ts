@@ -11,6 +11,7 @@ import {
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
 import icon from '../../../resources/icon.png';
+import { Action, ActionTypes, WorkerStatus } from '../common';
 import { Store } from './store/store';
 import { createBrowserWindows } from './windows';
 
@@ -79,7 +80,9 @@ export class Main {
 
   init() {
     const { worker, renderer } = createBrowserWindows();
-    this.store = new Store(worker.webContents, renderer.webContents);
+    this.store = new Store(worker.webContents, renderer.webContents, [
+      this.toggleKeyBind.bind(this),
+    ]);
 
     this.renderer = renderer;
     this.worker = worker;
@@ -272,6 +275,18 @@ export class Main {
 
     if (response === 1) {
       clipboard.writeText(detail);
+    }
+  }
+
+  private toggleKeyBind({ type, payload }: Action) {
+    if (type === ActionTypes.SET_STATUS) {
+      const { keyBind } = this.store.getState().settings;
+
+      if (payload === WorkerStatus.Disabled) {
+        globalShortcut.unregister(keyBind);
+      } else if (!globalShortcut.isRegistered(keyBind)) {
+        this.registerKeyBind(keyBind);
+      }
     }
   }
 }
