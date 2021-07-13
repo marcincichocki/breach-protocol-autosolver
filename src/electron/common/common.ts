@@ -60,8 +60,6 @@ export interface AppSettings extends RobotSettings {
   thresholdBufferSizeAuto: boolean;
   experimentalBufferSizeRecognition: boolean;
   outputDevice: 'mouse' | 'keyboard';
-  engine: 'nircmd' | 'ahk';
-  robotBinPath: string;
 }
 
 export interface AppStats {
