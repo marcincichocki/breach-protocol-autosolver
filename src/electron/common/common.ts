@@ -10,6 +10,8 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 
 export enum WorkerStatus {
+  Disconnected,
+  Disabled,
   Bootstrap,
   Ready,
   Working,

@@ -48,8 +48,12 @@ export class Store {
 
   private middlewares: Middleware[] = [];
 
-  constructor(private worker: WebContents, private renderer: WebContents) {
-    this.attachMiddlewares();
+  constructor(
+    private worker: WebContents,
+    private renderer: WebContents,
+    parentMiddlewares: Middleware[] = []
+  ) {
+    this.attachMiddlewares(parentMiddlewares);
     this.registerStoreListeners();
   }
 
@@ -77,12 +81,14 @@ export class Store {
     ipc.removeAllListeners('get-state');
   }
 
-  private attachMiddlewares() {
+  private attachMiddlewares(parentMiddlewares: Middleware[]) {
     this.middlewares.push(this.removeLastHistoryEntry.bind(this));
 
     if (process.env.NODE_ENV === 'production') {
       this.middlewares.push(this.removeHistoryEntriesSources.bind(this));
     }
+
+    this.middlewares.push(...parentMiddlewares);
   }
 
   private removeLastHistoryEntry(action: Action) {

@@ -250,7 +250,12 @@ function toKeyCodes(accelerator: Electron.Accelerator) {
     .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
 }
 
-export const KeyBind = () => {
+interface KeyBindProps {
+  onFocus?: () => void;
+  onBlur?: () => void;
+}
+
+export const KeyBind = ({ onFocus, onBlur }: KeyBindProps) => {
   const { value, setValue } = useField();
   const [visited, setVisited] = useState(false);
   const keys = toKeyCodes(value as string);
@@ -278,7 +283,11 @@ export const KeyBind = () => {
       keys
     );
 
-  function onBlur() {
+  function onInputBlur() {
+    if (onBlur) {
+      onBlur();
+    }
+
     if (reset) {
       setPressed(keys);
     }
@@ -288,7 +297,11 @@ export const KeyBind = () => {
     setVisited(false);
   }
 
-  function onFocus() {
+  function onInputFocus() {
+    if (onFocus) {
+      onFocus();
+    }
+
     setVisited(true);
   }
 
@@ -309,8 +322,8 @@ export const KeyBind = () => {
         ref={ref}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
-        onFocus={onFocus}
-        onBlur={onBlur}
+        onFocus={onInputFocus}
+        onBlur={onInputBlur}
       />
     </KeyBindWrapper>
   );
