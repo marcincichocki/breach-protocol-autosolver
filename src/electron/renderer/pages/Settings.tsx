@@ -2,6 +2,7 @@ import {
   AppSettings,
   optionsDescription,
   RemoveLastNHistoryEntriesAction,
+  SetStatusAction,
   UpdateSettingsAction,
   WorkerStatus,
 } from '@/electron/common';
@@ -140,7 +141,9 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
   );
 };
 
-const AutoSolverSettings = () => {
+let prevWorkerSatus: WorkerStatus = null;
+
+const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   const { values } = useForm<AppSettings>();
   const outputDeviceOptions = [
     { name: 'Keyboard', value: 'keyboard' },
@@ -151,11 +154,20 @@ const AutoSolverSettings = () => {
     ipc.send('renderer:key-bind-change', accelerator);
   }
 
+  function onFocus() {
+    prevWorkerSatus = status;
+    dispatch(new SetStatusAction(WorkerStatus.Disabled, 'renderer'));
+  }
+
+  function onBlur() {
+    dispatch(new SetStatusAction(prevWorkerSatus, 'renderer'));
+  }
+
   return (
     <Section title="AutoSolver">
       <Field name="keyBind" onValueChange={changeKeyBind}>
         <Label>Key bind</Label>
-        <KeyBind />
+        <KeyBind onFocus={onFocus} onBlur={onBlur} />
       </Field>
       <Field name="soundEnabled">
         <Label>Sound</Label>
@@ -323,7 +335,7 @@ export const Settings: FC = () => {
               onValuesChange={onValuesChange}
             >
               <GeneralSettings historySize={history.length} />
-              <AutoSolverSettings />
+              <AutoSolverSettings status={status} />
               <RecognitionSettings displays={displays} />
             </Form>
           </Col>
