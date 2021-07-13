@@ -9,13 +9,13 @@ const Spacer = styled.div`
   flex-grow: 1;
 `;
 
-const StatusBarItem = styled.div`
+const StatusBarItem = styled.div<{ warn?: boolean }>`
   height: 100%;
-  display: flex;
   align-items: center;
   display: inline-flex;
   padding: 0 8px;
   opacity: 1;
+  background: ${(p) => p.warn && 'var(--primary)'};
 
   &.enter {
     transition: opacity 0.1s ease-out;
@@ -98,6 +98,8 @@ export const StatusBar: FC = () => {
   const show = useSettingsChangeListener();
   const history = useHistory();
   const activeDisplay = displays.find((d) => d.id === activeDisplayId);
+  const isWorkerDetatch =
+    status === WorkerStatus.Disabled || status === WorkerStatus.Disconnected;
 
   function goToDisplaySetting() {
     history.push('/settings?goToDisplay=true');
@@ -109,7 +111,9 @@ export const StatusBar: FC = () => {
       <InteractiveStatusBarItem onClick={goToDisplaySetting}>
         {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
-      <StatusBarItem>{getWorkerStatusMessage(status)}</StatusBarItem>
+      <StatusBarItem warn={isWorkerDetatch}>
+        {getWorkerStatusMessage(status)}
+      </StatusBarItem>
       <Spacer />
       <StatusBarItem className={show ? 'enter' : 'leave'}>Saved</StatusBarItem>
     </StatusBarWrapper>
