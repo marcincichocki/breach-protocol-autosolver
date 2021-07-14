@@ -8,6 +8,7 @@ import {
   DaemonsRawData,
   generateSquareMap,
   getGap,
+  getOffsetWithWrap,
   getUnits,
   GridRawData,
   isBetween,
@@ -96,6 +97,11 @@ describe('utilities', () => {
       dir: 'top',
     });
     expect(getGap('A1', 'A1')).toEqual(null);
+  });
+
+  fit('should work with wrap', () => {
+    expect(getOffsetWithWrap(2, 6, 8)).toBe(-4);
+    expect(getOffsetWithWrap(4, 2, 7)).toBe(5);
   });
 
   it('should correctly determine if square is between other squares', () => {
