@@ -207,12 +207,13 @@ export function getShortestGapNew(
   const max = Math.max(ia, ib);
   const sign = Math.sign(ib - ia);
   // prettier-ignore
-  const regular = parts.filter((p, i) => i > min && i <= max && !empty.includes(p));
+  const regular = parts.filter((p, i) => i > min && i < max && !empty.includes(p));
   // prettier-ignore
-  const inverse = parts.filter((p, i) => (i < min || i >= max) && !empty.includes(p));
+  const inverse = parts.filter((p, i) => (i < min || i > max) && !empty.includes(p));
+
   const offset = getClosest(0, [
-    regular.length * sign,
-    inverse.length * (sign * -1),
+    (regular.length + 1) * sign,
+    (inverse.length + 1) * (sign * -1),
   ]);
   const dir = getDir(orientation, offset);
 
