@@ -1,8 +1,7 @@
 import {
   BreachProtocolExitStrategy,
   GapDirection,
-  getGap,
-  isBetween,
+  getShortestGap,
 } from '@/core';
 import { Point } from '../util';
 import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
@@ -43,13 +42,17 @@ export abstract class BreachProtocolResolver {
 }
 
 export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
+  constructor(robot: BreachProtocolRobot, private readonly size: number) {
+    super(robot);
+  }
+
   async resolve(path: string[]) {
     let from = await this.init();
 
     for (const to of path) {
-      const done = path.slice(0, path.indexOf(to));
+      const empty = this.getEmptySerie(from, to, path);
 
-      await this.moveToPosition(from, to, done);
+      await this.moveToPosition(from, to, empty);
       await this.robot.pressKey(BreachProtocolRobotKeys.Enter);
       await this.robot.sleep();
 
@@ -57,28 +60,26 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
     }
   }
 
-  private async moveToPosition(from: string, to: string, done: string[]) {
+  private getEmptySerie(from: string, to: string, path: string[]) {
+    const isHorizontal = from[0] === to[0];
+    const stable = isHorizontal ? from[0] : from[1];
+    const unstableIndex = isHorizontal ? 1 : 0;
+
+    return path
+      .slice(0, path.indexOf(to))
+      .filter((s) => s.includes(stable))
+      .map((s) => s[unstableIndex]);
+  }
+
+  private async moveToPosition(from: string, to: string, empty: string[]) {
     // Path can start with "A1".
-    if (from === to) {
-      return;
-    }
+    if (from === to) return;
 
-    const { offset, dir, orientation } = getGap(from, to);
-    // Get row or column part of squares.
-    const serie = orientation === 'horizontal' ? from[0] : from[1];
-    const key = this.dirs[dir];
-    // Get amount of "blank" squares in a line to target.
-    const { length } = done
-      // Remove stuff that is not on the same row or column.
-      .filter((s) => s.includes(serie))
-      // Only leave items that are between.
-      .filter((s) => isBetween(s, from, to));
-
-    // Remove "blank" squares from offset.
-    let i = Math.abs(offset) - length;
+    const { offset, dir } = getShortestGap(from, to, this.size, empty);
+    let i = Math.abs(offset);
 
     while (i--) {
-      await this.robot.pressKey(key);
+      await this.robot.pressKey(this.dirs[dir]);
       await this.robot.sleep();
     }
   }

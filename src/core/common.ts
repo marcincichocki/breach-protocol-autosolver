@@ -1,4 +1,4 @@
-import { uniqueBy } from '@/common';
+import { getClosest, uniqueBy } from '@/common';
 import {
   BreachProtocolBufferSizeFragmentResult,
   BreachProtocolDaemonsFragmentResult,
@@ -116,13 +116,6 @@ export const isBufferSizeFragment =
 export const isDaemonsFragment =
   isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
 
-function getOffset(a: string, b: string, list: string) {
-  const ia = list.indexOf(a);
-  const ib = list.indexOf(b);
-
-  return ia < ib ? ib - ia : ib - ia;
-}
-
 function getDir(orientation: GapOrientation, offset: number): GapDirection {
   switch (orientation) {
     case 'horizontal':
@@ -141,56 +134,58 @@ export interface Gap {
   dir: GapDirection;
 }
 
-export function getGap(from: string, to: string): Gap {
-  if (from === to) {
-    return null;
-  }
+function processTargets(from: string, to: string, size?: number) {
+  const [sr, sc] = from;
+  const [er, ec] = to;
+  const isHorizontal = sr === er;
+  const orientation: GapOrientation = isHorizontal ? 'horizontal' : 'vertical';
+  const parts = (isHorizontal ? COLS : ROWS).slice(0, size).split('');
+  const ia = parts.indexOf(isHorizontal ? sc : sr);
+  const ib = parts.indexOf(isHorizontal ? ec : er);
 
-  const [startRow, startCol] = from;
-  const [endRow, endCol] = to;
-  const orientation: GapOrientation =
-    startRow === endRow ? 'horizontal' : 'vertical';
-  const isHorizontal = orientation === 'horizontal';
-  const a = isHorizontal ? startCol : startRow;
-  const b = isHorizontal ? endCol : endRow;
-  const offset = getOffset(a, b, isHorizontal ? COLS : ROWS);
+  return { ia, ib, orientation, parts };
+}
+
+/**
+ * Returns shortest gap between two squares in a unit. Works
+ * with wrap and empty(used) squares.
+ *
+ * @param from Start square.
+ * @param to End square.
+ * @param size Length of a unit.
+ * @param empty List of rows or columns that are empty.
+ */
+export function getShortestGap(
+  from: string,
+  to: string,
+  size: number,
+  empty: string[] = []
+): Gap {
+  if (from === to) return null;
+
+  const { ia, ib, parts, orientation } = processTargets(from, to, size);
+  const min = Math.min(ia, ib);
+  const max = Math.max(ia, ib);
+  const { length: regular } = parts.filter(
+    (p, i) => i > min && i < max && !empty.includes(p)
+  );
+  const { length: inverse } = parts.filter(
+    (p, i) => (i < min || i > max) && !empty.includes(p)
+  );
+  const regularOffset = (regular + 1) * Math.sign(ib - ia);
+  const inverseOffset = (inverse + 1) * Math.sign(ia - ib);
+  const offset = getClosest(0, [regularOffset, inverseOffset]);
   const dir = getDir(orientation, offset);
 
-  return {
-    offset,
-    orientation,
-    dir,
-  };
+  return { offset, orientation, dir };
 }
 
-function isBetweenDir(elements: string) {
-  return (a: string, b: string, s: string) => {
-    const ia = elements.indexOf(a);
-    const ib = elements.indexOf(b);
-    const is = elements.indexOf(s);
-    const min = Math.min(ia, ib);
-    const max = Math.max(ia, ib);
+export function getRegularGap(from: string, to: string): Gap {
+  if (from === to) return null;
 
-    return is > min && is < max;
-  };
-}
+  const { ia, ib, orientation } = processTargets(from, to);
+  const offset = ib - ia;
+  const dir = getDir(orientation, offset);
 
-const isBetweenRow = isBetweenDir(COLS);
-const isBetweenCol = isBetweenDir(ROWS);
-
-/** Check if square is between 2 other squares. */
-export function isBetween(square: string, from: string, to: string) {
-  const [fromRow, fromCol] = from;
-  const [toRow, toCol] = to;
-  const [squareRow, squareCol] = square;
-
-  if (fromRow === toRow && squareRow === fromRow) {
-    return isBetweenRow(fromCol, toCol, squareCol);
-  }
-
-  if (fromCol === toCol && fromCol === squareCol) {
-    return isBetweenCol(fromRow, toRow, squareRow);
-  }
-
-  return false;
+  return { offset, orientation, dir };
 }

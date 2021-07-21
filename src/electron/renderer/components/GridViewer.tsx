@@ -1,9 +1,10 @@
 import {
   COLS,
   cross,
+  Gap,
   GapDirection,
   GapOrientation,
-  getGap,
+  getRegularGap,
   GridRawData,
   ROWS,
 } from '@/core';
@@ -107,10 +108,7 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-interface LineProps {
-  offset: number;
-  dir: GapDirection;
-  orientation: GapOrientation;
+interface LineProps extends Gap {
   ignore: boolean;
 }
 
@@ -166,7 +164,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
               <Line
-                {...getGap(path[index - 1], path[index])}
+                {...getRegularGap(path[index - 1], path[index])}
                 ignore={shouldIgnoreHighlightArrow}
               />
             )}

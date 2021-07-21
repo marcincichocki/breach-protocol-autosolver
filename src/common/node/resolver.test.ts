@@ -15,7 +15,7 @@ describe('resolvers', () => {
 
   beforeAll(() => {
     robot = new TestRobot({ delay: 0 } as RobotSettings);
-    keyboardResolver = new BreachProtocolKeyboardResolver(robot);
+    keyboardResolver = new BreachProtocolKeyboardResolver(robot, 7);
 
     spy = jest.spyOn(robot, 'pressKey');
   });
@@ -39,14 +39,14 @@ describe('resolvers', () => {
   it('should press keys correct ammount of times with when going backwards', async () => {
     // init     +2
     // A1 -> A1 +1
-    // A1 -> E1 +5
-    // E1 -> E6 +6
+    // A1 -> E1 +3
+    // E1 -> E6 +3
     // E6 -> G6 +3
-    // G6 -> G1 +6
-    // G1 -> B1 +5
+    // G6 -> G1 +3
+    // G1 -> B1 +3
     await keyboardResolver.resolve(['A1', 'E1', 'E6', 'G6', 'G1', 'B1']);
 
-    expect(robot.pressKey).toBeCalledTimes(28);
+    expect(robot.pressKey).toBeCalledTimes(18);
   });
 });
 
