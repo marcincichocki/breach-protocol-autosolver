@@ -103,7 +103,7 @@ export class BreachProtocolResult implements Serializable {
 
 export class BreachProtocol {
   // Grid is always a square.
-  private readonly size = Math.sqrt(this.rawData.grid.length);
+  readonly size = Math.sqrt(this.rawData.grid.length);
 
   // Rows and columns trimmed to right size.
   private readonly rows = ROWS.slice(0, this.size);

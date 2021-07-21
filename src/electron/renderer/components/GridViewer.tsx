@@ -1,6 +1,7 @@
 import {
   COLS,
   cross,
+  Gap,
   GapDirection,
   GapOrientation,
   getGap,
@@ -107,10 +108,7 @@ const arrowBorders = css`
   border-left: ${getArrowBorderFor('left')};
 `;
 
-interface LineProps {
-  offset: number;
-  dir: GapDirection;
-  orientation: GapOrientation;
+interface LineProps extends Gap {
   ignore: boolean;
 }
 
