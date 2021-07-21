@@ -4,7 +4,7 @@ import {
   Gap,
   GapDirection,
   GapOrientation,
-  getGap,
+  getRegularGap,
   GridRawData,
   ROWS,
 } from '@/core';
@@ -164,7 +164,7 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           <Square key={s} active={isActive} highlight={shouldHighlight}>
             {shouldRenderLine && (
               <Line
-                {...getGap(path[index - 1], path[index])}
+                {...getRegularGap(path[index - 1], path[index])}
                 ignore={shouldIgnoreHighlightArrow}
               />
             )}

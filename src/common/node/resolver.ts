@@ -1,7 +1,7 @@
 import {
   BreachProtocolExitStrategy,
   GapDirection,
-  getShortestGapNew,
+  getShortestGap,
 } from '@/core';
 import { Point } from '../util';
 import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
@@ -50,9 +50,9 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
     let from = await this.init();
 
     for (const to of path) {
-      const done = path.slice(0, path.indexOf(to));
+      const empty = this.getEmptySerie(from, to, path);
 
-      await this.moveToPosition(from, to, done);
+      await this.moveToPosition(from, to, empty);
       await this.robot.pressKey(BreachProtocolRobotKeys.Enter);
       await this.robot.sleep();
 
@@ -60,46 +60,26 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
     }
   }
 
-  // private getUnitFromSquare(square: string, orientation: GapOrientation) {
-  //   return orientation === 'horizontal'
-  //     ? cross(square[0], this.cols)
-  //     : cross(this.rows, square[1]);
-  // }
-
-  private async moveToPosition(from: string, to: string, done: string[]) {
-    // Path can start with "A1".
-    if (from === to) {
-      return;
-    }
-
+  private getEmptySerie(from: string, to: string, path: string[]) {
     const isHorizontal = from[0] === to[0];
-    const fixed = isHorizontal ? from[0] : from[1];
-    const mobile = isHorizontal ? 1 : 0;
+    const stable = isHorizontal ? from[0] : from[1];
+    const unstableIndex = isHorizontal ? 1 : 0;
 
-    const empty = done.filter((s) => s.includes(fixed)).map((s) => s[mobile]);
+    return path
+      .slice(0, path.indexOf(to))
+      .filter((s) => s.includes(stable))
+      .map((s) => s[unstableIndex]);
+  }
 
-    const { offset, dir } = getShortestGapNew(from, to, this.size, empty);
-    // // Get row or column part of squares.
-    // const serie = orientation === 'horizontal' ? from[0] : from[1];
-    const key = this.dirs[dir];
+  private async moveToPosition(from: string, to: string, empty: string[]) {
+    // Path can start with "A1".
+    if (from === to) return;
 
-    // list of every square in current unit.
-    // const unit = this.getUnitFromSquare(from, orientation);
-    // nodes that should be traversed over to get to target sqaure.
-    // const nodes = getNodes(from, to, unit, offset);
-
-    // Get amount of "blank" squares in a line to target.
-    // const { length } = done
-    //   // Remove stuff that is not on the same row or column.
-    //   .filter((s) => s.includes(serie))
-    //   // Only leave items that are on the path.
-    //   .filter((s) => nodes.includes(s));
-
-    // Remove "blank" squares from offset.
+    const { offset, dir } = getShortestGap(from, to, this.size, empty);
     let i = Math.abs(offset);
 
     while (i--) {
-      await this.robot.pressKey(key);
+      await this.robot.pressKey(this.dirs[dir]);
       await this.robot.sleep();
     }
   }

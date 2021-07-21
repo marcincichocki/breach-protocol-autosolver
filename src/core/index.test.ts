@@ -7,11 +7,10 @@ import {
   DaemonRawData,
   DaemonsRawData,
   generateSquareMap,
-  getGap,
-  getOffsetWithWrap,
+  getRegularGap,
+  getShortestGap,
   getUnits,
   GridRawData,
-  isBetween,
 } from './common';
 import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
@@ -76,49 +75,87 @@ describe('utilities', () => {
   });
 
   it('should generate correct gap between squares', () => {
-    expect(getGap('A1', 'A7')).toEqual({
+    expect(getRegularGap('A1', 'A7')).toEqual({
       offset: 6,
       orientation: 'horizontal',
       dir: 'right',
     });
-    expect(getGap('C6', 'C5')).toEqual({
+
+    expect(getRegularGap('C6', 'C5')).toEqual({
       offset: -1,
       orientation: 'horizontal',
       dir: 'left',
     });
-    expect(getGap('A6', 'D6')).toEqual({
+
+    expect(getRegularGap('A6', 'D6')).toEqual({
       offset: 3,
       orientation: 'vertical',
       dir: 'bottom',
     });
-    expect(getGap('G2', 'C2')).toEqual({
+
+    expect(getRegularGap('G2', 'C2')).toEqual({
       offset: -4,
       orientation: 'vertical',
       dir: 'top',
     });
-    expect(getGap('A1', 'A1')).toEqual(null);
+
+    expect(getRegularGap('A1', 'A1')).toEqual(null);
   });
 
-  fit('should work with wrap', () => {
-    expect(getOffsetWithWrap(2, 6, 8)).toBe(-4);
-    expect(getOffsetWithWrap(4, 2, 7)).toBe(5);
-  });
+  it('should find shortest gap', () => {
+    expect(getShortestGap('A1', 'E1', 7)).toEqual({
+      offset: -3,
+      orientation: 'vertical',
+      dir: 'top',
+    });
 
-  it('should correctly determine if square is between other squares', () => {
-    // horizontal
-    expect(isBetween('A3', 'A1', 'A7')).toBe(true);
-    // vertical
-    expect(isBetween('B4', 'A4', 'G4')).toBe(true);
-    // invalid from to
-    expect(isBetween('A3', 'A1', 'B2')).toBe(false);
-    // sqaure not in range
-    expect(isBetween('C3', 'A2', 'A4')).toBe(false);
-    // in range, backward vertical
-    expect(isBetween('E1', 'G1', 'B1')).toBe(true);
-    // square is start
-    expect(isBetween('A3', 'A3', 'C3')).toBe(false);
-    // square is end
-    expect(isBetween('C3', 'A3', 'C3')).toBe(false);
+    expect(getShortestGap('A1', 'A4', 4)).toEqual({
+      offset: -1,
+      orientation: 'horizontal',
+      dir: 'left',
+    });
+
+    expect(getShortestGap('C1', 'E1', 7)).toEqual({
+      offset: 2,
+      orientation: 'vertical',
+      dir: 'bottom',
+    });
+
+    expect(getShortestGap('E1', 'C1', 7)).toEqual({
+      offset: -2,
+      orientation: 'vertical',
+      dir: 'top',
+    });
+
+    expect(getShortestGap('E1', 'B1', 5)).toEqual({
+      offset: 2,
+      orientation: 'vertical',
+      dir: 'bottom',
+    });
+
+    expect(getShortestGap('B1', 'E1', 5)).toEqual({
+      offset: -2,
+      orientation: 'vertical',
+      dir: 'top',
+    });
+
+    expect(getShortestGap('A1', 'A5', 6, ['2', '3', '4'])).toEqual({
+      offset: 1,
+      orientation: 'horizontal',
+      dir: 'right',
+    });
+
+    expect(getShortestGap('G1', 'D1', 7, ['A', 'B'])).toEqual({
+      offset: 2,
+      orientation: 'vertical',
+      dir: 'bottom',
+    });
+
+    expect(getShortestGap('B4', 'B1', 5, ['4'])).toEqual({
+      offset: 2,
+      orientation: 'horizontal',
+      dir: 'right',
+    });
   });
 });
 
