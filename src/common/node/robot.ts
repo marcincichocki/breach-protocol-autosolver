@@ -166,7 +166,7 @@ export class AhkRobot extends BreachProtocolRobot {
   }
 
   moveAway() {
-    return this.bin('move -9999 -9999');
+    return this.bin('reset');
   }
 
   click() {
