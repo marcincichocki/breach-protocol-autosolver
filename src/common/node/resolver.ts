@@ -54,7 +54,6 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 
       await this.moveToPosition(from, to, empty);
       await this.robot.pressKey(BreachProtocolRobotKeys.Enter);
-      await this.robot.sleep();
 
       from = to;
     }
@@ -80,19 +79,15 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 
     while (i--) {
       await this.robot.pressKey(this.dirs[dir]);
-      await this.robot.sleep();
     }
   }
 
   private async init() {
     // If pointer is hovering over grid next commands can be uncertain.
     await this.robot.moveAway();
-    await this.robot.sleep();
     // Select "A1" square.
     await this.robot.pressKey(BreachProtocolRobotKeys.Left);
-    await this.robot.sleep();
     await this.robot.pressKey(BreachProtocolRobotKeys.Right);
-    await this.robot.sleep();
 
     return 'A1';
   }
@@ -114,7 +109,6 @@ export class BreachProtocolMouseResolver extends BreachProtocolResolver {
 
       await this.robot.move(x, y, false);
       await this.robot.click();
-      await this.robot.sleep();
     }
   }
 }
