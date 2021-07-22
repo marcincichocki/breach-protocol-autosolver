@@ -52,6 +52,7 @@ describe('resolvers', () => {
 
 class TestRobot extends BreachProtocolRobot {
   keys = {} as Record<BreachProtocolRobotKeys, string>;
+  binPath = '';
 
   async click() {}
   async move() {}

@@ -24,6 +24,8 @@ export enum BreachProtocolRobotKeys {
 export abstract class BreachProtocolRobot {
   protected abstract readonly keys: Record<BreachProtocolRobotKeys, string>;
 
+  protected abstract readonly binPath: string;
+
   constructor(
     protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
@@ -41,8 +43,30 @@ export abstract class BreachProtocolRobot {
   /** Press given key. */
   abstract pressKey(key: BreachProtocolRobotKeys): Promise<any>;
 
+  /** Execute robot command and wait. */
+  protected async bin(command: string) {
+    const args = command.split(' ');
+    const data = await this.execBin(this.binPath, args);
+    await this.sleep();
+
+    return data;
+  }
+
+  /** Execute command for given binary. */
+  protected execBin(path: string, args: string[], options = {}) {
+    return new Promise((resolve, reject) => {
+      execFile(path, args, options, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  }
+
   /** Wait for given amount of miliseconds. */
-  sleep(delay: number = this.settings.delay) {
+  private sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
 
@@ -78,10 +102,10 @@ export class WindowsRobot extends BreachProtocolRobot {
   private x = 0;
   private y = 0;
 
-  private readonly bin = './resources/win32/nircmd/nircmd.exe';
+  protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
 
   click() {
-    return this.nircmd('sendmouse left click');
+    return this.bin('sendmouse left click');
   }
 
   async move(x: number, y: number, restart = true) {
@@ -108,25 +132,11 @@ export class WindowsRobot extends BreachProtocolRobot {
   }
 
   pressKey(key: BreachProtocolRobotKeys) {
-    return this.nircmd(`sendkeypress ${this.keys[key]}`);
-  }
-
-  private nircmd(command: string, options = {}) {
-    const args = command.split(' ');
-
-    return new Promise((resolve, reject) => {
-      execFile(this.bin, args, options, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+    return this.bin(`sendkeypress ${this.keys[key]}`);
   }
 
   private moveRelative(x: number, y: number) {
-    return this.nircmd(`sendmouse move ${x} ${y}`);
+    return this.bin(`sendmouse move ${x} ${y}`);
   }
 }
 
