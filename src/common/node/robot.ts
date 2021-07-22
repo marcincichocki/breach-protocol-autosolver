@@ -43,19 +43,19 @@ export abstract class BreachProtocolRobot {
   /** Press given key. */
   abstract pressKey(key: BreachProtocolRobotKeys): Promise<any>;
 
-  /** Execute robot command and wait. */
+  /** Execute robot's engine command and wait. */
   protected async bin(command: string) {
     const args = command.split(' ');
-    const data = await this.execBin(this.binPath, args);
+    const data = await this.execBin(args);
     await this.sleep();
 
     return data;
   }
 
-  /** Execute command for given binary. */
-  protected execBin(path: string, args: string[], options = {}) {
+  /** Execute command for robot's engine. */
+  protected execBin(args: string[], options = {}) {
     return new Promise((resolve, reject) => {
-      execFile(path, args, options, (err, res) => {
+      execFile(this.binPath, args, options, (err, res) => {
         if (err) {
           reject(err);
         } else {
@@ -66,7 +66,7 @@ export abstract class BreachProtocolRobot {
   }
 
   /** Wait for given amount of miliseconds. */
-  private sleep(delay: number = this.settings.delay) {
+  protected sleep(delay: number = this.settings.delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
 
@@ -151,6 +151,15 @@ export class AhkRobot extends BreachProtocolRobot {
   };
 
   protected readonly binPath = 'C:/Program Files/AutoHotkey/AutoHotkey.exe';
+  private readonly scriptPath = './resources/win32/ahk/robot.ahk';
+
+  override async bin(command: string) {
+    const args = [this.scriptPath, ...command.split(' ')];
+    const data = await this.execBin(args);
+    await this.sleep();
+
+    return data;
+  }
 
   move(x: number, y: number) {
     return this.bin(`move ${x} ${y}`);
