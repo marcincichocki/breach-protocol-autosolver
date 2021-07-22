@@ -17,7 +17,7 @@ if (A_Args[1] = "click") {
 }
 
 if (A_Args[1] = "reset") {
-	DllCall("SetCursorPos", "int", 0, "int", 0)
+	MouseMove, -9999, -9999, 0
 }
 
 ExitApp
