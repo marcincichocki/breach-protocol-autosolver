@@ -140,6 +140,35 @@ export class WindowsRobot extends BreachProtocolRobot {
   }
 }
 
+export class AhkRobot extends BreachProtocolRobot {
+  protected readonly keys = {
+    [BreachProtocolRobotKeys.Escape]: 'Escape',
+    [BreachProtocolRobotKeys.Enter]: 'Enter',
+    [BreachProtocolRobotKeys.Up]: 'Up',
+    [BreachProtocolRobotKeys.Down]: 'Down',
+    [BreachProtocolRobotKeys.Left]: 'Left',
+    [BreachProtocolRobotKeys.Right]: 'Right',
+  };
+
+  protected readonly binPath = 'C:/Program Files/AutoHotkey/AutoHotkey.exe';
+
+  move(x: number, y: number) {
+    return this.bin(`move ${x} ${y}`);
+  }
+
+  moveAway() {
+    return this.bin('move -9999 -9999');
+  }
+
+  click() {
+    return this.bin('click');
+  }
+
+  pressKey(key: BreachProtocolRobotKeys) {
+    return this.bin(`send ${this.keys[key]}`);
+  }
+}
+
 // TODO: Add linux and macos robots
 function getPlatformRobot(platform = process.platform) {
   switch (platform) {
