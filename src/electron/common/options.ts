@@ -1,7 +1,7 @@
 import { AppSettings } from './common';
 
 interface BreachProtocolOption {
-  id: string;
+  id: keyof AppSettings;
   description: string;
   defaultValue: boolean | string | number;
 }
@@ -115,6 +115,16 @@ const options: BreachProtocolOption[] = [
     id: 'outputDevice',
     description: 'Output device that will be used to solve breach protocol.',
     defaultValue: 'mouse',
+  },
+  {
+    id: 'engine',
+    description: 'Program that will send mouse clicks or key strokes to OS.',
+    defaultValue: 'nircmd',
+  },
+  {
+    id: 'ahkBinPath',
+    description: 'Path to AutoHotkey executable.',
+    defaultValue: '',
   },
 ];
 
