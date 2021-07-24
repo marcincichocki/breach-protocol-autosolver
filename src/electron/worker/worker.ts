@@ -1,4 +1,9 @@
-import { PlatformRobot, SharpImageContainer } from '@/common/node';
+import {
+  AhkRobot,
+  BreachProtocolRobot,
+  NirCmdRobot,
+  SharpImageContainer,
+} from '@/common/node';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
@@ -116,11 +121,18 @@ export class BreachProtocolWorker {
     }
   }
 
-  private getRobot() {
-    const { activeDisplayId } = this.settings;
-    const { dpiScale } = this.displays.find((d) => d.id === activeDisplayId);
+  private getRobot(): BreachProtocolRobot {
+    switch (this.settings.engine) {
+      case 'ahk':
+        return new AhkRobot(this.settings);
+      case 'nircmd':
+        const { activeDisplayId } = this.settings;
+        const { dpiScale } = this.displays.find(
+          (d) => d.id === activeDisplayId
+        );
 
-    return new PlatformRobot(this.settings, dpiScale);
+        return new NirCmdRobot(this.settings, dpiScale);
+    }
   }
 
   private async handleAsyncRequest(req: Request) {

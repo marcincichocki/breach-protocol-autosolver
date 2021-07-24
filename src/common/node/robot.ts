@@ -89,7 +89,7 @@ export abstract class BreachProtocolRobot {
   }
 }
 
-export class WindowsRobot extends BreachProtocolRobot {
+export class NirCmdRobot extends BreachProtocolRobot {
   protected readonly keys = {
     [BreachProtocolRobotKeys.Escape]: 'esc',
     [BreachProtocolRobotKeys.Enter]: 'enter',
@@ -177,15 +177,3 @@ export class AhkRobot extends BreachProtocolRobot {
     return this.bin(`send ${this.keys[key]}`);
   }
 }
-
-// TODO: Add linux and macos robots
-function getPlatformRobot(platform = process.platform) {
-  switch (platform) {
-    case 'win32':
-      return WindowsRobot;
-    default:
-      return WindowsRobot;
-  }
-}
-
-export const PlatformRobot = getPlatformRobot();
