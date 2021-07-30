@@ -132,6 +132,8 @@ export class BreachProtocolWorker {
         );
 
         return new NirCmdRobot(this.settings, dpiScale);
+      default:
+        throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
     }
   }
 
