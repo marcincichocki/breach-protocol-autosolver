@@ -112,9 +112,6 @@ export class Main {
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.handle('renderer:show-message-box', this.onShowMessageBox);
 
-    // Start listening on keybind when worker is fully loaded.
-    ipc.once('worker:ready', this.onWorkerReady.bind(this));
-
     this.renderer.once('ready-to-show', () => this.renderer.show());
     this.renderer.once('closed', this.onRendererClosed.bind(this));
     this.renderer.on('minimize', this.onRendererMinimize.bind(this));
@@ -156,12 +153,6 @@ export class Main {
 
   private registerKeyBind(keyBind: Electron.Accelerator) {
     globalShortcut.register(keyBind, this.onWorkerSolve.bind(this));
-  }
-
-  private onWorkerReady() {
-    const { keyBind } = this.getSettings();
-
-    this.registerKeyBind(keyBind);
   }
 
   private onWorkerSolve() {

@@ -70,8 +70,19 @@ export class BreachProtocolWorker {
     await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
 
-    this.updateStatus(WorkerStatus.Ready);
-    ipc.send('worker:ready');
+    const status = this.isEngineBinPresent()
+      ? WorkerStatus.Ready
+      : WorkerStatus.Disabled;
+
+    this.updateStatus(status);
+  }
+
+  private isEngineBinPresent() {
+    if (this.settings.engine === 'ahk' && !this.settings.ahkBinPath) {
+      return false;
+    }
+
+    return true;
   }
 
   async dispose() {
