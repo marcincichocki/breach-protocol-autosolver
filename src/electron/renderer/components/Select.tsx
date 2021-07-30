@@ -6,7 +6,7 @@ import {
   ArrowRight,
   ArrowRightOutline,
 } from './Arrows';
-import { useField } from './Form';
+import { OnBeforeValueChange, useField } from './Form';
 
 const SelectWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -106,9 +106,14 @@ const SelectViewer = ({ options, index }: SelectViewerProps) => (
 interface SelectProps {
   options: SelectOption[];
   disabled?: boolean;
+  onBeforeValueChange?: OnBeforeValueChange<string>;
 }
 
-export const Select = ({ options, disabled }: SelectProps) => {
+export const Select = ({
+  options,
+  disabled,
+  onBeforeValueChange,
+}: SelectProps) => {
   const { value, setValue, onChange } = useField<string>();
 
   // NOTE: this might cause error.
@@ -116,18 +121,30 @@ export const Select = ({ options, disabled }: SelectProps) => {
     value ? options.findIndex((o) => o.value === value) : 0
   );
 
+  function update(dir: -1 | 1) {
+    const nextIndex = index + dir;
+    const next = () => {
+      setValue(options[nextIndex].value);
+      setIndex(nextIndex);
+    };
+
+    if (onBeforeValueChange) {
+      onBeforeValueChange(options[nextIndex].value, next);
+    } else {
+      next();
+    }
+  }
+
   const prev = () => {
     if (!index) return;
 
-    setIndex(index - 1);
-    setValue(options[index - 1].value);
+    update(-1);
   };
 
   const next = () => {
     if (index === options.length - 1) return;
 
-    setIndex(index + 1);
-    setValue(options[index + 1].value);
+    update(1);
   };
 
   return (

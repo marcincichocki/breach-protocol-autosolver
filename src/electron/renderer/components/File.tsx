@@ -1,11 +1,52 @@
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-import { FlatButton } from './Buttons';
 import { useField } from './Form';
 
-const Path = styled.output`
-  font-size: 1.2rem;
+const FileOutput = styled.output`
+  flex-grow: 1;
+  font-size: 1.5rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-dark);
+  border-right: none;
+  box-sizing: border-box;
+  height: 100%;
+`;
+
+const FilePath = styled(FileOutput)`
+  color: var(--accent);
+`;
+
+const FilePathEmpty = styled(FileOutput)`
+  color: var(--primary);
+  text-transform: uppercase;
+`;
+
+const FileWrapper = styled.div`
+  width: 510px;
+  height: 50px;
+  background: var(--background);
+  display: flex;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const FileLabel = styled.label`
+  background: var(--accent);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Rajdhani;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0 2rem;
+  height: 100%;
+  cursor: pointer;
 `;
 
 interface FileProps {
@@ -28,12 +69,14 @@ export const File = ({ accept }: FileProps) => {
   }
 
   return (
-    <>
-      <Path>{displayName}</Path>
-      <FlatButton as="label" htmlFor={name} color="accent">
-        Change sound path
-      </FlatButton>
+    <FileWrapper>
+      {value ? (
+        <FilePath>{displayName}</FilePath>
+      ) : (
+        <FilePathEmpty>No file selected</FilePathEmpty>
+      )}
+      <FileLabel htmlFor={name}>Change</FileLabel>
       <input type="file" accept={accept} id={name} onChange={onChange} hidden />
-    </>
+    </FileWrapper>
   );
 };

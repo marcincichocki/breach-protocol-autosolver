@@ -165,3 +165,8 @@ export const Label = ({ children }: PropsWithChildren<{}>) => {
 
   return <StyledLabel htmlFor={name}>{children}</StyledLabel>;
 };
+
+export type OnBeforeValueChange<T> = (
+  newValue: T,
+  next: (restart?: boolean) => void
+) => void;
