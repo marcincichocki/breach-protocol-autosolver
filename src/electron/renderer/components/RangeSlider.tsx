@@ -1,14 +1,9 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useField } from './Form';
-
-export type BeforeValueChange = (
-  newValue: number,
-  next: (restart?: boolean) => void
-) => void;
+import { OnBeforeValueChange, useField } from './Form';
 
 interface RangeSliderProps {
-  beforeValueChange?: BeforeValueChange;
+  onBeforeValueChange?: OnBeforeValueChange<number>;
   disabled?: boolean;
   min?: number;
   max?: number;
@@ -67,7 +62,10 @@ function coerceInputValue(e: ChangeEvent<HTMLInputElement>) {
   return parseInt(e.target.value, 10);
 }
 
-export function RangeSlider({ beforeValueChange, ...props }: RangeSliderProps) {
+export function RangeSlider({
+  onBeforeValueChange,
+  ...props
+}: RangeSliderProps) {
   const { value, setValue } = useField<number>();
   const [displayValue, setDisplayValue] = useState(value);
 
@@ -80,8 +78,8 @@ export function RangeSlider({ beforeValueChange, ...props }: RangeSliderProps) {
     const next = (restart?: boolean) =>
       restart ? setDisplayValue(value) : setValue(newValue);
 
-    if (beforeValueChange) {
-      beforeValueChange(newValue, next);
+    if (onBeforeValueChange) {
+      onBeforeValueChange(newValue, next);
     } else {
       next();
     }
