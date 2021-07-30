@@ -20,12 +20,12 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
 import { dispatch, getDisplayName, NativeDialog } from '../common';
 import {
-  BeforeValueChange,
   Col,
   Field,
   File,
   Form,
   Label,
+  OnBeforeValueChange,
   RangeSlider,
   Select,
   Spinner,
@@ -88,7 +88,10 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
     { name: 'png', value: 'png' },
   ];
 
-  const onBeforeHistorySizeChange: BeforeValueChange = async (value, next) => {
+  const onBeforeHistorySizeChange: OnBeforeValueChange<number> = async (
+    value,
+    next
+  ) => {
     if (value < historySize) {
       const count = historySize - value;
       const entryText = count > 1 ? 'entries' : 'entry';
@@ -118,7 +121,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         <RangeSlider
           min={1}
           max={25}
-          beforeValueChange={onBeforeHistorySizeChange}
+          onBeforeValueChange={onBeforeHistorySizeChange}
         />
       </Field>
       <Field name="preserveSourceOnSuccess">
@@ -143,24 +146,73 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
 
 let prevWorkerSatus: WorkerStatus = null;
 
+function updateWorkerStatus(status: WorkerStatus) {
+  dispatch(new SetStatusAction(status, 'renderer'));
+}
+
 const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   const { values } = useForm<AppSettings>();
   const outputDeviceOptions = [
-    { name: 'Keyboard', value: 'keyboard' },
+    { name: 'Keyboard(recommended)', value: 'keyboard' },
     { name: 'Mouse', value: 'mouse' },
+  ];
+  const engineOptions = [
+    { name: 'NirCmd', value: 'nircmd' },
+    { name: 'AutoHotKey', value: 'ahk' },
   ];
 
   function changeKeyBind(accelerator: Accelerator) {
     ipc.send('renderer:key-bind-change', accelerator);
   }
 
+  function changeEngine(engine: string) {
+    if (engine === 'ahk') {
+      if (!values.ahkBinPath) {
+        updateWorkerStatus(WorkerStatus.Disabled);
+      }
+    } else {
+      // NOTE: this will line will always change worker status to ready, even if
+      // status was not ready before engine value was changed.
+      updateWorkerStatus(WorkerStatus.Ready);
+    }
+  }
+
+  function changeAhkBinPath() {
+    if (values.engine === 'ahk') {
+      // NOTE: same as above.
+      updateWorkerStatus(WorkerStatus.Ready);
+    }
+  }
+
   function onFocus() {
     prevWorkerSatus = status;
-    dispatch(new SetStatusAction(WorkerStatus.Disabled, 'renderer'));
+    updateWorkerStatus(WorkerStatus.Disabled);
   }
 
   function onBlur() {
-    dispatch(new SetStatusAction(prevWorkerSatus, 'renderer'));
+    updateWorkerStatus(prevWorkerSatus);
+  }
+
+  async function notifyAboutEngine(value: string, next: () => void) {
+    if (value === 'ahk' && !values.ahkBinPath) {
+      const message =
+        'This option requires AutoHotkey to be installed on the system.';
+      await NativeDialog.alert({ message });
+    }
+
+    next();
+  }
+
+  async function notifyAboutOutputDevice(value: string, next: () => void) {
+    if (value === 'mouse') {
+      const message =
+        'Mouse output device is experimental feature and might not work correctly. Do you still want to use it?';
+      const result = await NativeDialog.confirm({ message });
+
+      if (!result) return;
+    }
+
+    next();
   }
 
   return (
@@ -185,9 +237,25 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Auto exit</Label>
         <Switch />
       </Field>
+      <Field name="engine" onValueChange={changeEngine}>
+        <Label>Engine</Label>
+        <Select
+          options={engineOptions}
+          onBeforeValueChange={notifyAboutEngine}
+        />
+      </Field>
+      {values.engine === 'ahk' && (
+        <Field name="ahkBinPath" onValueChange={changeAhkBinPath}>
+          <Label>AutoHotkey path</Label>
+          <File accept=".exe"></File>
+        </Field>
+      )}
       <Field name="outputDevice">
         <Label>Output device</Label>
-        <Select options={outputDeviceOptions} />
+        <Select
+          options={outputDeviceOptions}
+          onBeforeValueChange={notifyAboutOutputDevice}
+        />
       </Field>
       {values.outputDevice === 'mouse' && (
         <Field name="useScaling">
