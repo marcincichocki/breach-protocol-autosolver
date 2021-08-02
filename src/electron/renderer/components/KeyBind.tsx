@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { NativeDialog } from '../common';
+import { NativeDialog } from '../../common';
 import { useField } from './Form';
 
 /**
