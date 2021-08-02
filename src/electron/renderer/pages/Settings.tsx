@@ -246,6 +246,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Engine</Label>
         <Select
           options={engineOptions}
+          disabled={engineOptions.length === 1}
           onBeforeValueChange={notifyAboutEngine}
         />
       </Field>
