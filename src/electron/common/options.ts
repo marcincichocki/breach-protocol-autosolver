@@ -30,7 +30,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'soundEnabled',
     description: 'Disable/enable sound effects.',
-    defaultValue: true,
+    defaultValue: BUILD_PLATFORM === 'win32',
   },
   {
     id: 'experimentalBufferSizeRecognition',
@@ -69,7 +69,10 @@ const options: BreachProtocolOption[] = [
   {
     id: 'errorSoundPath',
     description: 'Path to error sound.',
-    defaultValue: 'C:/Windows/Media/Windows Foreground.wav',
+    defaultValue:
+      BUILD_PLATFORM === 'win32'
+        ? 'C:/Windows/Media/Windows Foreground.wav'
+        : '',
   },
   {
     id: 'thresholdBufferSize',
