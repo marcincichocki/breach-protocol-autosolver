@@ -36,6 +36,11 @@
     "win": {
       "target": "nsis"
     },
+    "linux": {
+      "asarUnpack": [
+        "node_modules/sharp"
+      ]
+    },
     "extraMetadata": {
       "main": "dist/main.js"
     }
