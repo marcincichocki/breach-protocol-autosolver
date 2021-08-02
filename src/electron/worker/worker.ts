@@ -24,6 +24,7 @@ import {
   workerAsyncRequestListener,
   WorkerStatus,
 } from '@/electron/common';
+import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
@@ -70,19 +71,45 @@ export class BreachProtocolWorker {
     await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
 
-    const status = this.isEngineBinPresent()
+    const status = this.validateExternalDependencies()
       ? WorkerStatus.Ready
       : WorkerStatus.Disabled;
 
     this.updateStatus(status);
   }
 
-  private isEngineBinPresent() {
-    if (this.settings.engine === 'ahk' && !this.settings.ahkBinPath) {
-      return false;
+  private validateExternalDependencies() {
+    if (BUILD_PLATFORM === 'win32') {
+      if (this.settings.engine === 'ahk' && !this.settings.ahkBinPath) {
+        return false;
+      }
+    }
+
+    if (BUILD_PLATFORM === 'linux') {
+      console.log('testing linux deps...');
+
+      if (this.isInstalled('import')) {
+        console.log('imagemagick not installed!');
+
+        // notify user that imagemagick is not installed.
+        return false;
+      }
+
+      if (this.isInstalled('xdotool')) {
+        console.log('xdotool not installed!');
+        // notify user that xdotool is not installed.
+        return false;
+      }
     }
 
     return true;
+  }
+
+  private isInstalled(bin: string) {
+    const command = `command -v ${bin}`;
+    const output = execSync(command, { encoding: 'utf-8' }).trim();
+
+    return !!output;
   }
 
   async dispose() {
