@@ -119,7 +119,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'engine',
     description: 'Program that will send mouse clicks or key strokes to OS.',
-    defaultValue: 'nircmd',
+    defaultValue: BUILD_PLATFORM === 'win32' ? 'nircmd' : 'xdotool',
   },
   {
     id: 'ahkBinPath',

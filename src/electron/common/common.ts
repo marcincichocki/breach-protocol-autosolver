@@ -60,7 +60,7 @@ export interface AppSettings extends RobotSettings {
   thresholdBufferSizeAuto: boolean;
   experimentalBufferSizeRecognition: boolean;
   outputDevice: 'mouse' | 'keyboard';
-  engine: 'nircmd' | 'ahk';
+  engine: 'nircmd' | 'ahk' | 'xdotool';
   ahkBinPath: string;
 }
 
@@ -160,4 +160,44 @@ export interface TestThresholdData {
   fileName: string;
   threshold: number;
   fragmentId: FragmentId;
+}
+
+export class NativeDialog {
+  static async confirm(options: Electron.MessageBoxOptions) {
+    const defaultOptions: Partial<Electron.MessageBoxOptions> = {
+      title: 'Confirm',
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true,
+      type: 'warning',
+      buttons: ['Ok', 'Cancel'],
+    };
+    const { response } = await NativeDialog.showMessageBox({
+      ...defaultOptions,
+      ...options,
+    });
+
+    return !response;
+  }
+
+  static async alert(options?: Electron.MessageBoxOptions) {
+    const defaultOptions: Partial<Electron.MessageBoxOptions> = {
+      noLink: true,
+      defaultId: 0,
+      title: 'Alert',
+      type: 'warning',
+      buttons: ['Ok'],
+    };
+
+    return NativeDialog.showMessageBox({
+      ...defaultOptions,
+      ...options,
+    });
+  }
+
+  private static showMessageBox(
+    options: Electron.MessageBoxOptions
+  ): Promise<Electron.MessageBoxReturnValue> {
+    return ipc.invoke('renderer:show-message-box', options);
+  }
 }
