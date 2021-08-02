@@ -177,3 +177,32 @@ export class AhkRobot extends BreachProtocolRobot {
     return this.bin(`send ${this.keys[key]}`);
   }
 }
+
+export class XDoToolsRobot extends BreachProtocolRobot {
+  protected readonly keys = {
+    [BreachProtocolRobotKeys.Escape]: 'Escape',
+    [BreachProtocolRobotKeys.Enter]: 'Enter',
+    [BreachProtocolRobotKeys.Up]: 'Up',
+    [BreachProtocolRobotKeys.Down]: 'Down',
+    [BreachProtocolRobotKeys.Left]: 'Left',
+    [BreachProtocolRobotKeys.Right]: 'Right',
+  };
+
+  protected readonly binPath = 'xdotool';
+
+  move(x: number, y: number) {
+    return this.bin(`mousemove ${x} ${y}`);
+  }
+
+  moveAway() {
+    return this.move(0, 0);
+  }
+
+  click() {
+    return this.bin('click 1');
+  }
+
+  pressKey(key: BreachProtocolRobotKeys) {
+    return this.bin(`key ${this.keys[key]}`);
+  }
+}
