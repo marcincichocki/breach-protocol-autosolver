@@ -3,6 +3,7 @@ import {
   BreachProtocolRobot,
   NirCmdRobot,
   SharpImageContainer,
+  XDoToolsRobot,
 } from '@/common/node';
 import {
   BreachProtocolBufferSizeFragment,
@@ -28,6 +29,7 @@ import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
+import { NativeDialog } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
 
 export class BreachProtocolWorker {
@@ -86,18 +88,14 @@ export class BreachProtocolWorker {
     }
 
     if (BUILD_PLATFORM === 'linux') {
-      console.log('testing linux deps...');
+      const isImageMagickInstalled = this.isInstalled('import');
+      const isXDoToolInstalled = this.isInstalled('xdotool');
 
-      if (this.isInstalled('import')) {
-        console.log('imagemagick not installed!');
+      if (!isImageMagickInstalled || !isXDoToolInstalled) {
+        const message = 'imagemagick and xdotool packages are required!';
 
-        // notify user that imagemagick is not installed.
-        return false;
-      }
+        NativeDialog.alert({ message });
 
-      if (this.isInstalled('xdotool')) {
-        console.log('xdotool not installed!');
-        // notify user that xdotool is not installed.
         return false;
       }
     }
@@ -170,6 +168,8 @@ export class BreachProtocolWorker {
         );
 
         return new NirCmdRobot(this.settings, dpiScale);
+      case 'xdotool':
+        return new XDoToolsRobot(this.settings);
       default:
         throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
     }
