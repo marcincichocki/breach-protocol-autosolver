@@ -117,7 +117,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'outputDevice',
     description: 'Output device that will be used to solve breach protocol.',
-    defaultValue: 'mouse',
+    defaultValue: 'keyboard',
   },
   {
     id: 'engine',
