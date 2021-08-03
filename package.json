@@ -53,7 +53,7 @@
     "webpack:watch": "webpack --config configs/webpack.config.ts --watch",
     "webpack:build": "webpack --config configs/webpack.config.ts --mode production",
     "electron:run": "electron dist/main.js",
-    "electron:build": "npm run webpack:build && electron-builder build --win"
+    "electron:build": "npm run webpack:build && electron-builder build"
   },
   "author": "Marcin Cichocki <marcincichocki1993@gmail.com>",
   "homepage": "https://github.com/marcincichocki/breach-protocol-autosolver#readme",
