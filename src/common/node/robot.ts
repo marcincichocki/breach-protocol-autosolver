@@ -178,7 +178,7 @@ export class AhkRobot extends BreachProtocolRobot {
   }
 }
 
-export class XDoToolsRobot extends BreachProtocolRobot {
+export class XDoToolRobot extends BreachProtocolRobot {
   protected readonly keys = {
     [BreachProtocolRobotKeys.Escape]: 'Escape',
     [BreachProtocolRobotKeys.Enter]: 'Enter',

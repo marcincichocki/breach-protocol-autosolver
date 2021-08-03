@@ -3,7 +3,7 @@ import {
   BreachProtocolRobot,
   NirCmdRobot,
   SharpImageContainer,
-  XDoToolsRobot,
+  XDoToolRobot,
 } from '@/common/node';
 import {
   BreachProtocolBufferSizeFragment,
@@ -169,7 +169,7 @@ export class BreachProtocolWorker {
 
         return new NirCmdRobot(this.settings, dpiScale);
       case 'xdotool':
-        return new XDoToolsRobot(this.settings);
+        return new XDoToolRobot(this.settings);
       default:
         throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
     }
