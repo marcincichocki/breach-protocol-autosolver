@@ -15,3 +15,6 @@ declare const BUGS_URL: string;
 
 /** Product name from npm config. */
 declare const PRODUCT_NAME: string;
+
+/** Platform code from builded on. */
+declare const BUILD_PLATFORM: NodeJS.Platform;

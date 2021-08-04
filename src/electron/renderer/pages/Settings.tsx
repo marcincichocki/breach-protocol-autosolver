@@ -1,5 +1,6 @@
 import {
   AppSettings,
+  NativeDialog,
   optionsDescription,
   RemoveLastNHistoryEntriesAction,
   SetStatusAction,
@@ -18,7 +19,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { dispatch, getDisplayName, NativeDialog } from '../common';
+import { dispatch, getDisplayName } from '../common';
 import {
   Col,
   Field,
@@ -150,16 +151,20 @@ function updateWorkerStatus(status: WorkerStatus) {
   dispatch(new SetStatusAction(status, 'renderer'));
 }
 
+const outputDeviceOptions = [
+  { name: 'Keyboard(recommended)', value: 'keyboard' },
+  { name: 'Mouse', value: 'mouse' },
+];
+const engineOptions =
+  BUILD_PLATFORM === 'win32'
+    ? [
+        { name: 'NirCmd', value: 'nircmd' },
+        { name: 'AutoHotkey', value: 'ahk' },
+      ]
+    : [{ name: 'xdotool', value: 'xdotool' }];
+
 const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   const { values } = useForm<AppSettings>();
-  const outputDeviceOptions = [
-    { name: 'Keyboard(recommended)', value: 'keyboard' },
-    { name: 'Mouse', value: 'mouse' },
-  ];
-  const engineOptions = [
-    { name: 'NirCmd', value: 'nircmd' },
-    { name: 'AutoHotKey', value: 'ahk' },
-  ];
 
   function changeKeyBind(accelerator: Accelerator) {
     ipc.send('renderer:key-bind-change', accelerator);
@@ -241,6 +246,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Engine</Label>
         <Select
           options={engineOptions}
+          disabled={engineOptions.length === 1}
           onBeforeValueChange={notifyAboutEngine}
         />
       </Field>

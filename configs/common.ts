@@ -18,6 +18,7 @@ export const commonPlugins: WebpackPluginInstance[] = [
     HOMEPAGE_URL: JSON.stringify(pkg.homepage),
     BUGS_URL: JSON.stringify(pkg.bugs),
     PRODUCT_NAME: JSON.stringify(pkg.build.productName),
+    BUILD_PLATFORM: JSON.stringify(process.platform),
   }),
   new LicenseWebpackPlugin({
     outputFilename: 'THIRD_PARTY_LICENSES.txt',

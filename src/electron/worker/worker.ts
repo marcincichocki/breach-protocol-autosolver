@@ -3,6 +3,7 @@ import {
   BreachProtocolRobot,
   NirCmdRobot,
   SharpImageContainer,
+  XDoToolRobot,
 } from '@/common/node';
 import {
   BreachProtocolBufferSizeFragment,
@@ -24,9 +25,11 @@ import {
   workerAsyncRequestListener,
   WorkerStatus,
 } from '@/electron/common';
+import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
+import { NativeDialog } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
 
 export class BreachProtocolWorker {
@@ -70,19 +73,42 @@ export class BreachProtocolWorker {
     await this.loadAndSetActiveDisplay();
     await BreachProtocolOCRFragment.initScheduler();
 
-    const status = this.isEngineBinPresent()
+    const status = this.validateExternalDependencies()
       ? WorkerStatus.Ready
       : WorkerStatus.Disabled;
 
     this.updateStatus(status);
   }
 
-  private isEngineBinPresent() {
-    if (this.settings.engine === 'ahk' && !this.settings.ahkBinPath) {
-      return false;
+  private validateExternalDependencies() {
+    if (BUILD_PLATFORM === 'win32') {
+      if (this.settings.engine === 'ahk' && !this.settings.ahkBinPath) {
+        return false;
+      }
+    }
+
+    if (BUILD_PLATFORM === 'linux') {
+      const isImageMagickInstalled = this.isInstalled('import');
+      const isXDoToolInstalled = this.isInstalled('xdotool');
+
+      if (!isImageMagickInstalled || !isXDoToolInstalled) {
+        const message = 'imagemagick and xdotool packages are required!';
+
+        NativeDialog.alert({ message });
+
+        return false;
+      }
     }
 
     return true;
+  }
+
+  /** NOTE: This will only work on linux. */
+  private isInstalled(bin: string) {
+    const command = `command -v ${bin}`;
+    const output = execSync(command, { encoding: 'utf-8' }).trim();
+
+    return !!output;
   }
 
   async dispose() {
@@ -143,6 +169,8 @@ export class BreachProtocolWorker {
         );
 
         return new NirCmdRobot(this.settings, dpiScale);
+      case 'xdotool':
+        return new XDoToolRobot(this.settings);
       default:
         throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
     }
