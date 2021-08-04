@@ -1,3 +1,4 @@
+import { NativeDialog } from '@/electron/common';
 import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
@@ -6,7 +7,6 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { NativeDialog } from '../../common';
 import { useField } from './Form';
 
 /**
