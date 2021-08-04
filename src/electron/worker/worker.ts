@@ -105,10 +105,13 @@ export class BreachProtocolWorker {
 
   /** NOTE: This will only work on linux. */
   private isInstalled(bin: string) {
-    const command = `command -v ${bin}`;
-    const output = execSync(command, { encoding: 'utf-8' }).trim();
+    try {
+      execSync(`command -v ${bin}`);
+    } catch (e) {
+      return false;
+    }
 
-    return !!output;
+    return true;
   }
 
   async dispose() {
