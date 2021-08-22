@@ -1,5 +1,6 @@
-import { WorkerStatus } from '@/electron/common';
-import { FC, useContext, useState } from 'react';
+import { UpdateStatus, WorkerStatus } from '@/electron/common';
+import { ProgressInfo } from 'electron-updater';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { getDisplayName, useIpcEvent } from '../common';
@@ -47,6 +48,7 @@ const StatusBarWrapper = styled.footer`
   gap: 0.5rem;
   display: flex;
   flex-shrink: 0;
+  position: relative;
 `;
 
 function getWorkerStatusMessage(status: WorkerStatus) {
@@ -89,13 +91,62 @@ function useSettingsChangeListener(delay = 2000) {
   return show;
 }
 
+function useDownloadProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useIpcEvent(['download-progress'], (e, info: ProgressInfo) => {
+    setProgress(info.percent);
+  });
+
+  return progress;
+}
+
+function useShowUpdateStatus(status: UpdateStatus, delay = 3000) {
+  const [showUpdateStatus, setShowUpdateStatus] = useState(false);
+  let id: any = null;
+
+  useEffect(() => {
+    clearTimeout(id);
+    setShowUpdateStatus(true);
+
+    id = setTimeout(() => {
+      setShowUpdateStatus(false);
+    }, delay);
+  }, [status]);
+
+  return showUpdateStatus;
+}
+
+const updateStatusMessage = {
+  [UpdateStatus.Error]: 'Error occurred',
+  [UpdateStatus.CheckingForUpdate]: 'Checking for updates..',
+  [UpdateStatus.UpdateNotAvailable]: 'Up to date',
+  [UpdateStatus.UpdateAvailable]: 'Update available',
+  [UpdateStatus.Downloading]: 'Downloading..',
+  [UpdateStatus.UpdateDownloaded]: 'Update downloaded',
+};
+
+const DownloadProgressBar = styled.div<{ value: number }>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  height: 2px;
+  width: ${(p) => p.value}%;
+  transition: width 0.5s;
+`;
+
 export const StatusBar: FC = () => {
   const {
     displays,
     status,
+    updateStatus,
     settings: { activeDisplayId },
   } = useContext(StateContext);
   const show = useSettingsChangeListener();
+  const showUpdateStatus = useShowUpdateStatus(updateStatus);
+  const progress = useDownloadProgress();
   const history = useHistory();
   const activeDisplay = displays.find((d) => d.id === activeDisplayId);
   const isWorkerDetatch =
@@ -116,6 +167,10 @@ export const StatusBar: FC = () => {
       </StatusBarItem>
       <Spacer />
       <StatusBarItem className={show ? 'enter' : 'leave'}>Saved</StatusBarItem>
+      {showUpdateStatus && (
+        <StatusBarItem>{updateStatusMessage[updateStatus]}</StatusBarItem>
+      )}
+      <DownloadProgressBar value={progress} />
     </StatusBarWrapper>
   );
 };
