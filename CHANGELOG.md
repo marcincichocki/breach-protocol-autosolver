@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.8.0...v2.0.0-beta.0) (2021-08-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* update keybind from CommandOrControl+numdel to Alt+`
+* nodejs client has been removed in favor of electron client.
+
+All flags has been removed, use electron client settings instead.
+
+### Features
+
+* **client-electron:** add ability to remove history entry ([13ea451](https://github.com/marcincichocki/breach-protocol-autosolver/commit/13ea451f477002abca3250e14365fa7e17dbbf23)), closes [#115](https://github.com/marcincichocki/breach-protocol-autosolver/issues/115)
+* **client-electron:** add ability to save snapshots ([611e7cc](https://github.com/marcincichocki/breach-protocol-autosolver/commit/611e7cc13a0266531f10feca7473011d855f2e92))
+* **client-electron:** add auto update ([00d0bca](https://github.com/marcincichocki/breach-protocol-autosolver/commit/00d0bca1d0f395bee6200d9d358b44f31aeb938e)), closes [#110](https://github.com/marcincichocki/breach-protocol-autosolver/issues/110) [#128](https://github.com/marcincichocki/breach-protocol-autosolver/issues/128)
+* **client-electron:** add AutoHotkey support ([0076154](https://github.com/marcincichocki/breach-protocol-autosolver/commit/0076154bb73605a3ad5a4d81dd65e3233745975f)), closes [#157](https://github.com/marcincichocki/breach-protocol-autosolver/issues/157) [#134](https://github.com/marcincichocki/breach-protocol-autosolver/issues/134) [#132](https://github.com/marcincichocki/breach-protocol-autosolver/issues/132)
+* **client-electron:** add calibration page ([2f0edba](https://github.com/marcincichocki/breach-protocol-autosolver/commit/2f0edba0eb01109aa0251c2f1d4f237aeca5e291))
+* **client-electron:** add custom title bar ([500edee](https://github.com/marcincichocki/breach-protocol-autosolver/commit/500edeefe22eb609ae0140dae2f569ed15c05cac))
+* **client-electron:** add dashboard page ([2578eb8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/2578eb82fd0351b12763c43e63e4dafee189b374))
+* **client-electron:** add form controls ([aee4df1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/aee4df15b952a23bd0bd308b5bc0a21e4fe49af6)), closes [#69](https://github.com/marcincichocki/breach-protocol-autosolver/issues/69)
+* **client-electron:** add help menu ([a89355a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a89355a5edb2d5e134a6c18c6d572fc32ad5892c))
+* **client-electron:** add history page ([d8cbe40](https://github.com/marcincichocki/breach-protocol-autosolver/commit/d8cbe401803b10059c445295e2d4e3c67fe3bdac)), closes [#74](https://github.com/marcincichocki/breach-protocol-autosolver/issues/74)
+* **client-electron:** add keybind component ([29b86b1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/29b86b1109661c843d08b6714d46ce354d32dcfa))
+* **client-electron:** add keyboard resolver ([ab7d66f](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ab7d66f962f5bd74b72e72ee63bd4566841cac78)), closes [#130](https://github.com/marcincichocki/breach-protocol-autosolver/issues/130)
+* **client-electron:** add linux build ([56cbfc1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/56cbfc1400c6dd378f3b5ee2a73729ed3fb0d4a2)), closes [#138](https://github.com/marcincichocki/breach-protocol-autosolver/issues/138)
+* **client-electron:** add oss attributions ([61d153c](https://github.com/marcincichocki/breach-protocol-autosolver/commit/61d153c602e8a2b3fb88ac0a2e661e9fab995ad0)), closes [#133](https://github.com/marcincichocki/breach-protocol-autosolver/issues/133) [#143](https://github.com/marcincichocki/breach-protocol-autosolver/issues/143)
+* **client-electron:** add settings page ([f0fc78b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f0fc78b0b515a5161494d7f0d9e26a63823be5a1)), closes [#68](https://github.com/marcincichocki/breach-protocol-autosolver/issues/68)
+* **client-electron:** add status bar ([afb1173](https://github.com/marcincichocki/breach-protocol-autosolver/commit/afb1173966dfeac98f44f1a686297d94ea42a1a2))
+* **client-electron:** add status to fragment result ([3f6a9bb](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3f6a9bb2c4f882f962da113654719b8022cde876))
+* **client-electron:** add svg arrows ([990bacf](https://github.com/marcincichocki/breach-protocol-autosolver/commit/990bacf5a8c81eba87d8d6aa42ea2f731b17ff23))
+* **client-electron:** add tray icon ([68d265e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/68d265e5f9f6ca0c3d86414dafcd23d681632287)), closes [#80](https://github.com/marcincichocki/breach-protocol-autosolver/issues/80)
+* **client-electron:** cache fragments during calibration ([3a6882a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3a6882a6930934b93be050c5bf2103c6fb89bc7c)), closes [#81](https://github.com/marcincichocki/breach-protocol-autosolver/issues/81)
+* **client-electron:** confirm history size change ([7332f6c](https://github.com/marcincichocki/breach-protocol-autosolver/commit/7332f6c1566ec18e6489f65fd8e943061cf6dd68)), closes [#121](https://github.com/marcincichocki/breach-protocol-autosolver/issues/121)
+* **client-electron:** save history entires to store ([9a860c2](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9a860c28faf17ed5c36b467ee351d0f331aca7ab)), closes [#71](https://github.com/marcincichocki/breach-protocol-autosolver/issues/71)
+* **client-electron:** validate electron accelerator ([14d7efe](https://github.com/marcincichocki/breach-protocol-autosolver/commit/14d7efe46a14977c340ad0b8031a384e93a1a86d)), closes [#150](https://github.com/marcincichocki/breach-protocol-autosolver/issues/150)
+* **core:** update correction map ([b7645ec](https://github.com/marcincichocki/breach-protocol-autosolver/commit/b7645ec860e8aab3b5175b81f9b12e30af2091c1)), closes [#54](https://github.com/marcincichocki/breach-protocol-autosolver/issues/54)
+
+
+### Bug Fixes
+
+* **client-electron:** change renderer title ([289a02b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/289a02b3503ea0fb38f2afb2ffd23b76e96f5fee))
+* **client-electron:** correct default settings ([16cb195](https://github.com/marcincichocki/breach-protocol-autosolver/commit/16cb195f24efbdb50c5fc1aefc0e2ea01b9b94be))
+* **client-electron:** disable button while loading ([76629cd](https://github.com/marcincichocki/breach-protocol-autosolver/commit/76629cded45c915b65a4ac39b767af943c6a97d2))
+* **client-electron:** disable worker on focus ([6ab7021](https://github.com/marcincichocki/breach-protocol-autosolver/commit/6ab70218ac9ac122e4e31eb4062d5f832a7df2cf)), closes [#144](https://github.com/marcincichocki/breach-protocol-autosolver/issues/144) [#149](https://github.com/marcincichocki/breach-protocol-autosolver/issues/149)
+* **client-electron:** handle stderr ([568c7f3](https://github.com/marcincichocki/breach-protocol-autosolver/commit/568c7f36ed9d554a420b99cdf8cb5682aff5195e))
+* **client-electron:** move visually hidden input away ([ce1c795](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ce1c7955fbd88f8f1157042ace99c98c8415950a)), closes [#137](https://github.com/marcincichocki/breach-protocol-autosolver/issues/137)
+* **client-electron:** remove secondary scroll ([467ff9d](https://github.com/marcincichocki/breach-protocol-autosolver/commit/467ff9d8e9069d5140e59dc8846fff967e241ba2)), closes [#122](https://github.com/marcincichocki/breach-protocol-autosolver/issues/122)
+* **client-electron:** remove source with history entry ([95cb19a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/95cb19a5cd195f856f7088b4d4b10655fa26e546))
+* **client-electron:** resolve hook issue in history page ([9adec4e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9adec4e99f9ecffd9ed464c5ecfddaf2fa82cb5d))
+* **client-electron:** resolve ui issues in history page ([85d1048](https://github.com/marcincichocki/breach-protocol-autosolver/commit/85d10481a2cc3bc4109cc0876b8ee65b25de0f6c)), closes [#82](https://github.com/marcincichocki/breach-protocol-autosolver/issues/82)
+* **client-electron:** restore key bind on blur ([c619552](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c61955255677a14fbe9115188602e270c66db3a1)), closes [#98](https://github.com/marcincichocki/breach-protocol-autosolver/issues/98)
+* **client-electron:** show spinner in settings page ([b544cde](https://github.com/marcincichocki/breach-protocol-autosolver/commit/b544cde7bed8c23dc1b6c24c404314c74ccb7ba6))
+* **client-electron:** show spinner on bootstrap ([61f428b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/61f428ba93e86399810dfeaddda841e25a0e8ca4))
+* **client-electron:** show window on ready event ([9efed75](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9efed75fb73286ba3771964f98e5231fc7da3c49))
+* **client-electron:** skip first arrow on highlight ([f05e64b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f05e64bc87a058f00b4a4d905b8063f59886862e)), closes [#91](https://github.com/marcincichocki/breach-protocol-autosolver/issues/91)
+* **client-electron:** use correct mime type ([4ba22c8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4ba22c86e74cf386a294349bbd3718d77199b4e3))
+
+
+* refactor!(client-electron): update default settings ([759d951](https://github.com/marcincichocki/breach-protocol-autosolver/commit/759d9515d94412e95c78498cee3451f608a7d830))
+* remove node client  ([4403944](https://github.com/marcincichocki/breach-protocol-autosolver/commit/440394423949b63b5fed9bf5a8d0799d8276356b)), closes [#117](https://github.com/marcincichocki/breach-protocol-autosolver/issues/117) [#112](https://github.com/marcincichocki/breach-protocol-autosolver/issues/112) [#76](https://github.com/marcincichocki/breach-protocol-autosolver/issues/76) [#43](https://github.com/marcincichocki/breach-protocol-autosolver/issues/43) [#24](https://github.com/marcincichocki/breach-protocol-autosolver/issues/24)
+
 ## [1.8.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.7.0...v1.8.0) (2021-04-27)
 
 
