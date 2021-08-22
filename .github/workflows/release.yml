@@ -5,7 +5,10 @@ on:
       - 'v*.*.*'
 jobs:
   build:
-    runs-on: windows-2019
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-2019]
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -13,3 +16,9 @@ jobs:
           node-version: '14'
       - run: npm ci
       - run: npm test
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          release: true
+          build_script_name: webpack:build
