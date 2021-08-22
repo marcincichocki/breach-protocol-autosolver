@@ -87,11 +87,21 @@ export interface AppStats {
   daemonsSolvedCount: number;
 }
 
+export enum UpdateStatus {
+  Error,
+  CheckingForUpdate,
+  UpdateNotAvailable,
+  UpdateAvailable,
+  Downloading,
+  UpdateDownloaded,
+}
+
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
   settings: AppSettings;
   status: WorkerStatus;
+  updateStatus: UpdateStatus;
   stats: AppStats;
 }
 
@@ -198,6 +208,12 @@ export class NativeDialog {
   private static showMessageBox(
     options: Electron.MessageBoxOptions
   ): Promise<Electron.MessageBoxReturnValue> {
-    return ipc.invoke('renderer:show-message-box', options);
+    if (require('is-electron-renderer')) {
+      return ipc.invoke('renderer:show-message-box', options);
+    } else {
+      const { dialog } = require('electron');
+
+      return dialog.showMessageBox(options);
+    }
   }
 }

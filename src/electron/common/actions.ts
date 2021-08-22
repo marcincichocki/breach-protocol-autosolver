@@ -4,6 +4,7 @@ import {
   AppSettings,
   HistoryEntry,
   Origin,
+  UpdateStatus,
   WorkerStatus,
 } from './common';
 
@@ -14,6 +15,7 @@ export const ActionTypes = {
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
   REMOVE_LAST_N_HISTORY_ENTRIES: 'REMOVE_LAST_N_HISTORY_ENTRIES',
   REMOVE_HISTORY_ENTRY: 'REMOVE_HISTORY_ENTRY',
+  SET_UPDATE_STATUS: 'SET_UPDATE_STATUS',
 } as const;
 
 export class SetStatusAction implements Action {
@@ -63,4 +65,11 @@ export class RemoveHistoryEntryAction implements Action {
   readonly origin = 'renderer';
 
   constructor(public readonly payload: string) {}
+}
+
+export class SetUpdateStatusAction implements Action {
+  readonly type = ActionTypes.SET_UPDATE_STATUS;
+  readonly origin: Origin = null;
+
+  constructor(public readonly payload: UpdateStatus) {}
 }

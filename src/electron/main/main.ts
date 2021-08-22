@@ -13,6 +13,7 @@ import { extname, join } from 'path';
 import icon from '../../../resources/icon.png';
 import { Action, ActionTypes, WorkerStatus } from '../common';
 import { Store } from './store/store';
+import { BreachProtocolAutosolverUpdater } from './updater';
 import { createBrowserWindows } from './windows';
 
 export class Main {
@@ -24,6 +25,8 @@ export class Main {
 
   /** Hidden "worker" window, does all the heavy lifting(ocr, solving). */
   private worker: Electron.BrowserWindow = null;
+
+  private updater: BreachProtocolAutosolverUpdater = null;
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
@@ -58,6 +61,12 @@ export class Main {
         shell.openExternal(BUGS_URL);
       },
     },
+    {
+      label: 'Check for updates',
+      click: () => {
+        this.updater.checkForUpdates();
+      },
+    },
   ];
 
   private trayMenu: Electron.MenuItemConstructorOptions[] = [
@@ -79,6 +88,10 @@ export class Main {
   tray: Electron.Tray;
 
   init() {
+    if (BUILD_PLATFORM === 'win32') {
+      app.setAppUserModelId(APP_ID);
+    }
+
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents, [
       this.toggleKeyBind.bind(this),
@@ -88,6 +101,19 @@ export class Main {
     this.worker = worker;
 
     this.registerListeners();
+    this.updateApp();
+  }
+
+  private async updateApp() {
+    const { checkForUpdates } = this.getSettings();
+    this.updater = new BreachProtocolAutosolverUpdater(
+      this.store,
+      this.renderer.webContents
+    );
+
+    if (checkForUpdates) {
+      this.updater.checkForUpdates();
+    }
   }
 
   private createTray() {
@@ -213,6 +239,7 @@ export class Main {
   }
 
   private onRendererClosed() {
+    this.updater.dispose();
     this.store.dispose();
     this.store = null;
 

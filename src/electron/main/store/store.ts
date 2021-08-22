@@ -57,9 +57,13 @@ export class Store {
     this.registerStoreListeners();
   }
 
-  dispatch(action: Action) {
+  dispatch(action: Action, notify = false) {
     this.applyMiddleware(action);
     this.state = appReducer(this.state, action);
+
+    if (notify) {
+      this.notify(action);
+    }
   }
 
   getState() {
@@ -138,6 +142,7 @@ export class Store {
       displays: [],
       settings: { ...this.settings.store, screenshotDir },
       status: null,
+      updateStatus: null,
       stats: this.stats.store,
     };
   }
@@ -155,16 +160,17 @@ export class Store {
   }
 
   private onState(event: IpcMainEvent, action: Action) {
-    this.dispatch(action);
+    this.dispatch(action, true);
+  }
 
-    const dest = this.getDest(action);
-    const returnAction = { payload: this.state, type: action.type };
+  private notify(action: Action) {
+    const stateAction = { payload: this.state, type: action.type };
 
-    dest.send('state', returnAction);
-    event.sender.send('state', returnAction);
+    this.worker.send('state', stateAction);
+    this.renderer.send('state', stateAction);
 
-    event.sender.send(action.type, action);
-    dest.send(action.type, action);
+    this.worker.send(action.type, stateAction);
+    this.renderer.send(action.type, stateAction);
   }
 
   private onGetState(event: IpcMainEvent) {

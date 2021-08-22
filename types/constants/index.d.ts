@@ -18,3 +18,6 @@ declare const PRODUCT_NAME: string;
 
 /** Platform code from builded on. */
 declare const BUILD_PLATFORM: NodeJS.Platform;
+
+/** Application ID, Windows only. */
+declare const APP_ID: string;

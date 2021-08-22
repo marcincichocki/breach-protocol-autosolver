@@ -7,6 +7,7 @@ import {
   BreachProtocolStatus,
   HistoryEntry,
   State,
+  UpdateStatus,
   WorkerStatus,
 } from '@/electron/common';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
@@ -104,6 +105,11 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
   history: state.history.filter((e) => e.uuid !== payload),
 });
 
+const setUpdateStatus: Handler<UpdateStatus> = (state, { payload }) => ({
+  ...state,
+  updateStatus: payload,
+});
+
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
   [ActionTypes.SET_STATUS]: setStatus,
@@ -111,4 +117,5 @@ export const appReducer = createReducer<State>({
   [ActionTypes.UPDATE_SETTINGS]: updateSettings,
   [ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES]: removeLastNHistoryEntries,
   [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
+  [ActionTypes.SET_UPDATE_STATUS]: setUpdateStatus,
 });

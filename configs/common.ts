@@ -18,6 +18,7 @@ export const commonPlugins: WebpackPluginInstance[] = [
     HOMEPAGE_URL: JSON.stringify(pkg.homepage),
     BUGS_URL: JSON.stringify(pkg.bugs),
     PRODUCT_NAME: JSON.stringify(pkg.build.productName),
+    APP_ID: JSON.stringify(pkg.build.appId),
     BUILD_PLATFORM: JSON.stringify(process.platform),
   }),
   new LicenseWebpackPlugin({
