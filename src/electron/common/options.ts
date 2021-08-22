@@ -15,7 +15,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'autoUpdate',
     description: 'Update autosolver automatically.',
-    defaultValue: true,
+    defaultValue: false,
   },
   {
     id: 'delay',
