@@ -88,6 +88,10 @@ export class Main {
   tray: Electron.Tray;
 
   init() {
+    if (BUILD_PLATFORM === 'win32') {
+      app.setAppUserModelId(APP_ID);
+    }
+
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents, [
       this.toggleKeyBind.bind(this),
