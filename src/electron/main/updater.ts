@@ -9,7 +9,7 @@ import {
 import { Store } from './store/store';
 
 export class BreachProtocolAutosolverUpdater {
-  autoUpdate: boolean = null;
+  private autoUpdate: boolean = null;
 
   constructor(private store: Store, private renderer: Electron.webContents) {
     this.registerListeners();
@@ -46,7 +46,7 @@ export class BreachProtocolAutosolverUpdater {
 
     if (!this.autoUpdate) {
       const result = await NativeDialog.confirm({
-        message: `New version ${version} available.`,
+        message: `New version ${version} is available.`,
         buttons: ['Download and install', 'Cancel'],
         type: 'info',
       });
@@ -56,7 +56,7 @@ export class BreachProtocolAutosolverUpdater {
       autoUpdater.downloadUpdate();
     }
 
-    this.store.dispatch(new SetStatusAction(WorkerStatus.Disabled), true);
+    this.disableWorker();
     this.setUpdateStatus(UpdateStatus.Downloading);
   }
 
@@ -72,6 +72,12 @@ export class BreachProtocolAutosolverUpdater {
 
   private onDownloadProgress(info: ProgressInfo) {
     this.renderer.send('download-progress', info);
+  }
+
+  private disableWorker() {
+    const action = new SetStatusAction(WorkerStatus.Disabled);
+
+    return this.store.dispatch(action, true);
   }
 
   private setUpdateStatus(status: UpdateStatus) {
