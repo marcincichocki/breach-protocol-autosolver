@@ -4,7 +4,7 @@ Automatically solve any breach protocol.
 
 ## Video showcase:
 
-[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://user-images.githubusercontent.com/10232391/111820491-dd7e6780-88e1-11eb-9fad-93cf1a07c82a.mp4)
+[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://www.youtube.com/watch?v=3ZoSwRvh4s0)
 
 ## Installation and usage
 
@@ -24,7 +24,7 @@ Please note that FidelityFX resolution scaling does not seem to impact resolutio
 
 2. gamma
 
-Values higher than 1.50 are will negatively impact ocr.
+Values higher than 1.50 will negatively impact ocr.
 
 `--experimental-buffer-size-recognition` flag can be used to improve buffer size recognition at very high gamma levels.
 
@@ -46,22 +46,22 @@ Check [list of available flags](https://github.com/marcincichocki/breach-protoco
 
 ```bash
 npm install
-npm run tsc
-node dist/index.js
+npm run webpack:watch
+npm run electron:run
 ```
 
 ### Build
 
 ```bash
 npm install
-npm run build
+npm run electron:build
 ```
 
 ### Tests
 
 ```bash
 npm test # single run
-npm run watch-test # watch mode
+npm run test:watch # watch mode
 ```
 
 ---
