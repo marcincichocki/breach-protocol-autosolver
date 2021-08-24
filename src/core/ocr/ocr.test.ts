@@ -177,7 +177,7 @@ describe('raw data validation', () => {
 
 describe('ocr', () => {
   beforeAll(async () => {
-    await BreachProtocolOCRFragment.initScheduler();
+    await BreachProtocolOCRFragment.initScheduler('./resources');
   }, 30000);
 
   afterAll(async () => {

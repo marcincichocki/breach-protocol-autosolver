@@ -264,13 +264,21 @@ export abstract class BreachProtocolOCRFragment<
     return w;
   }
 
-  static async initScheduler(
-    options: Partial<Tesseract.WorkerOptions> = { cachePath: './resources' }
-  ) {
+  /**
+   * Initialize tesseract.js scheduler.
+   *
+   * @param langPath Path to folder where BreachProtocol.traineddata can be found. Relative to process.cwd() or absolute.
+   */
+  static async initScheduler(langPath: string) {
     if (BreachProtocolOCRFragment.scheduler) {
       throw new Error('Scheduler is alredy initialized.');
     }
 
+    const options: Partial<Tesseract.WorkerOptions> = {
+      cacheMethod: 'none',
+      gzip: false,
+      langPath,
+    };
     const w1 = await BreachProtocolOCRFragment.initWorker(options);
     const w2 = await BreachProtocolOCRFragment.initWorker(options);
 
@@ -282,6 +290,9 @@ export abstract class BreachProtocolOCRFragment<
     BreachProtocolOCRFragment.scheduler = scheduler;
   }
 
+  /**
+   * Terminate tesseract.js scheduler.
+   */
   static terminateScheduler() {
     if (!BreachProtocolOCRFragment.scheduler) {
       throw new Error('Scheduler is not initialized.');

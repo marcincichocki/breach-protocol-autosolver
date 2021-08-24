@@ -27,6 +27,7 @@ import {
 } from '@/electron/common';
 import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { join } from 'path';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import { NativeDialog } from '../common';
@@ -71,13 +72,22 @@ export class BreachProtocolWorker {
     this.registerListeners();
 
     await this.loadAndSetActiveDisplay();
-    await BreachProtocolOCRFragment.initScheduler();
+    await this.initTesseractScheduler();
 
     const status = this.validateExternalDependencies()
       ? WorkerStatus.Ready
       : WorkerStatus.Disabled;
 
     this.updateStatus(status);
+  }
+
+  private async initTesseractScheduler() {
+    const langPath =
+      BUILD_PLATFORM === 'linux' && process.env.NODE_ENV === 'production'
+        ? join(__dirname, '../..')
+        : './resources';
+
+    await BreachProtocolOCRFragment.initScheduler(langPath);
   }
 
   private validateExternalDependencies() {
