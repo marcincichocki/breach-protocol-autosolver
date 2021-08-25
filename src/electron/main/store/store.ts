@@ -164,7 +164,7 @@ export class Store {
   }
 
   private notify(action: Action) {
-    const stateAction = { payload: this.state, type: action.type };
+    const stateAction = { ...action, payload: this.state };
 
     this.worker.send('state', stateAction);
     this.renderer.send('state', stateAction);
