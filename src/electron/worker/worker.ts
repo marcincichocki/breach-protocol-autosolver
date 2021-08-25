@@ -46,7 +46,7 @@ export class BreachProtocolWorker {
 
   private settings: AppSettings = ipc.sendSync('get-state').settings;
 
-  private status: WorkerStatus;
+  private status: WorkerStatus = WorkerStatus.Bootstrap;
 
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
@@ -67,8 +67,6 @@ export class BreachProtocolWorker {
   }
 
   async bootstrap() {
-    this.updateStatus(WorkerStatus.Bootstrap);
-
     this.registerListeners();
 
     await this.loadAndSetActiveDisplay();

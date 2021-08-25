@@ -9,6 +9,7 @@ import {
   Request,
   Response,
   State,
+  WorkerStatus,
 } from '@/electron/common';
 import { app, ipcMain as ipc, IpcMainEvent, WebContents } from 'electron';
 import ElectronStore from 'electron-store';
@@ -141,7 +142,7 @@ export class Store {
       history: this.history.get('data'),
       displays: [],
       settings: { ...this.settings.store, screenshotDir },
-      status: null,
+      status: WorkerStatus.Bootstrap,
       updateStatus: null,
       stats: this.stats.store,
     };
