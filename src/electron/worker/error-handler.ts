@@ -1,12 +1,18 @@
 import { NativeDialog } from '../common';
 
-export function globalErrorHandler(event: ErrorEvent | PromiseRejectionEvent) {
+function globalErrorHandler(event: ErrorEvent | PromiseRejectionEvent) {
   event.preventDefault();
+
+  const detail =
+    event instanceof ErrorEvent ? event.message : event.reason.toString();
 
   NativeDialog.alert({
     title: 'Error',
     type: 'error',
     message: 'Error occurred in worker process.',
-    detail: event instanceof ErrorEvent ? event.message : event.reason,
+    detail,
   });
 }
+
+window.addEventListener('error', globalErrorHandler);
+window.addEventListener('unhandledrejection', globalErrorHandler);
