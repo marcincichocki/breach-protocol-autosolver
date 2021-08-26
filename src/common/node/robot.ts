@@ -143,7 +143,7 @@ export class NirCmdRobot extends BreachProtocolRobot {
 export class AhkRobot extends BreachProtocolRobot {
   protected readonly keys = {
     [BreachProtocolRobotKeys.Escape]: 'Escape',
-    [BreachProtocolRobotKeys.Enter]: 'Enter',
+    [BreachProtocolRobotKeys.Enter]: 'Return',
     [BreachProtocolRobotKeys.Up]: 'Up',
     [BreachProtocolRobotKeys.Down]: 'Down',
     [BreachProtocolRobotKeys.Left]: 'Left',
