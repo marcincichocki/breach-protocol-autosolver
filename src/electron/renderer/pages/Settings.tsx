@@ -182,10 +182,14 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     }
   }
 
-  function changeAhkBinPath() {
+  function changeAhkBinPath(path: string) {
     if (values.engine === 'ahk') {
-      // NOTE: same as above.
-      updateWorkerStatus(WorkerStatus.Ready);
+      if (path) {
+        // NOTE: same as above.
+        updateWorkerStatus(WorkerStatus.Ready);
+      } else {
+        updateWorkerStatus(WorkerStatus.Disabled);
+      }
     }
   }
 
