@@ -9,7 +9,7 @@ window.addEventListener('error', (event) => {
   NativeDialog.alert({
     title: 'Error',
     type: 'error',
-    message: 'Error occured in worker process.',
+    message: 'Error occurred in worker process.',
     detail: event.message,
   });
 });
