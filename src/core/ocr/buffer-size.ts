@@ -82,7 +82,7 @@ export class BreachProtocolBufferSizeFragment<
         // Second control group has some white pixels, threshold is too low.
         start = m + 1;
       }
-    } while (i++ < Math.log2(base) + 1);
+    } while (++i < Math.log2(base));
 
     // No threshold found.
     return base;
