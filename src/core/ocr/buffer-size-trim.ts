@@ -5,16 +5,28 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 export class BreachProtocolBufferSizeTrimFragment<
   TImage
 > extends BreachProtocolBufferSizeBase<TImage> {
-  override readonly fragment = this.container.processBufferSizeFragment(this.boundingBox);
+  override readonly fragment = this.container.processBufferSizeFragment(
+    this.boundingBox
+  );
 
   // Ensure compatibility with current api.
   async recognize(
     threshold?: number
   ): Promise<BreachProtocolBufferSizeFragmentResult> {
-    const { buffer, width } = await this.container.trim(this.fragment);
+    const { buffer, width } = await this.trimFragment();
     const bufferSize = await this.getBufferSizeFromPixels(width);
 
     return this.getFragmentResult(null, bufferSize, buffer, null);
+  }
+
+  private async trimFragment() {
+    try {
+      return await this.container.trim(this.fragment);
+    } catch (e) {
+      const buffer = await this.container.toBuffer(this.fragment);
+
+      return { buffer, width: 0 };
+    }
   }
 
   private async getBufferSizeFromPixels(width: number) {
