@@ -234,6 +234,10 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Error sound path</Label>
         <File accept=".mp3,.wav" />
       </Field>
+      <Field name="jobStartedSoundPath">
+        <Label>Job started sound path</Label>
+        <File accept=".mp3,.wav" />
+      </Field>
       <Field name="delay">
         <Label>Delay</Label>
         <RangeSlider />

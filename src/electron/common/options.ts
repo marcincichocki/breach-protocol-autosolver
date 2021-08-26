@@ -75,6 +75,11 @@ const options: BreachProtocolOption[] = [
         : '',
   },
   {
+    id: 'jobStartedSoundPath',
+    description: 'Path to sound played at the start of the job.',
+    defaultValue: '',
+  },
+  {
     id: 'thresholdBufferSize',
     description: 'Fixed threshold value for buffer size fragment.',
     defaultValue: 127,
