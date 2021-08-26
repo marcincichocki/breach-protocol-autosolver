@@ -49,6 +49,7 @@ export interface AppSettings extends RobotSettings {
   preserveSourceOnSuccess: boolean;
   soundEnabled: boolean;
   errorSoundPath: string;
+  startSoundPath: string;
   checkForUpdates: boolean;
   autoUpdate: boolean;
   minimizeToTray: boolean;

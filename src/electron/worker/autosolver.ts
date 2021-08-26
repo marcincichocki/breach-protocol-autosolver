@@ -44,6 +44,8 @@ export class BreachProtocolAutosolver {
   ) {}
 
   async solve() {
+    this.notifyUser('start');
+
     this.fileName = await this.robot.captureScreen();
     this.recognitionResult = await this.recognize();
 
@@ -127,7 +129,7 @@ export class BreachProtocolAutosolver {
   }
 
   private reject() {
-    this.notifyUser();
+    this.notifyUser('error');
 
     return this.finishWithStatus(BreachProtocolStatus.Rejected);
   }
@@ -147,9 +149,13 @@ export class BreachProtocolAutosolver {
     return this.toJSON();
   }
 
-  private notifyUser() {
+  private notifyUser(type: 'start' | 'error') {
     if (this.settings.soundEnabled) {
-      new Audio(this.settings.errorSoundPath).play();
+      const source =
+        type === 'start'
+          ? this.settings.startSoundPath
+          : this.settings.errorSoundPath;
+      new Audio(source).play();
     }
   }
 

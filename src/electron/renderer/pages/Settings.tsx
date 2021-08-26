@@ -182,10 +182,14 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     }
   }
 
-  function changeAhkBinPath() {
+  function changeAhkBinPath(path: string) {
     if (values.engine === 'ahk') {
-      // NOTE: same as above.
-      updateWorkerStatus(WorkerStatus.Ready);
+      if (path) {
+        // NOTE: same as above.
+        updateWorkerStatus(WorkerStatus.Ready);
+      } else {
+        updateWorkerStatus(WorkerStatus.Disabled);
+      }
     }
   }
 
@@ -232,6 +236,10 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
       </Field>
       <Field name="errorSoundPath">
         <Label>Error sound path</Label>
+        <File accept=".mp3,.wav" />
+      </Field>
+      <Field name="startSoundPath">
+        <Label>Start sound</Label>
         <File accept=".mp3,.wav" />
       </Field>
       <Field name="delay">
