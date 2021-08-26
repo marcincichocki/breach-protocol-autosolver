@@ -1,5 +1,6 @@
 import { basename } from 'path';
 import { ChangeEvent, useState } from 'react';
+import { MdClose } from 'react-icons/md';
 import styled from 'styled-components';
 import { useField } from './Form';
 
@@ -50,6 +51,15 @@ const FileLabel = styled.label`
   cursor: pointer;
 `;
 
+const ClearButton = styled.button`
+  height: 50px;
+  width: 50px;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: #942f2f;
+  cursor: pointer;
+`;
+
 interface FileProps {
   accept?: string;
 }
@@ -76,8 +86,10 @@ export const File = ({ accept }: FileProps) => {
     <FileWrapper>
       {value ? (
         <>
+          <ClearButton onClick={onClear}>
+            <MdClose size="24px" />
+          </ClearButton>
           <FilePath>{displayName}</FilePath>
-          <button onClick={onClear}>clear</button>
         </>
       ) : (
         <FilePathEmpty>No file selected</FilePathEmpty>
