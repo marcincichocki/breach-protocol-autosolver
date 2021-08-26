@@ -1,3 +1,4 @@
+import { basename } from 'path';
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
@@ -55,9 +56,7 @@ interface FileProps {
 
 export const File = ({ accept }: FileProps) => {
   const { setValue, value, name } = useField<string>();
-  const [displayName, setDisplayName] = useState<string>(
-    value.slice(value.lastIndexOf('/') + 1)
-  );
+  const [displayName, setDisplayName] = useState<string>(basename(value));
 
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files[0];
@@ -68,10 +67,18 @@ export const File = ({ accept }: FileProps) => {
     setValue(file.path);
   }
 
+  function onClear() {
+    setDisplayName(null);
+    setValue('');
+  }
+
   return (
     <FileWrapper>
       {value ? (
-        <FilePath>{displayName}</FilePath>
+        <>
+          <FilePath>{displayName}</FilePath>
+          <button onClick={onClear}>clear</button>
+        </>
       ) : (
         <FilePathEmpty>No file selected</FilePathEmpty>
       )}
