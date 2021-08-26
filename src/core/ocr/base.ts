@@ -128,12 +128,12 @@ export abstract class BreachProtocolFragment<
     const { width, height, left, top } = this.container.getCroppedBoundingBox();
 
     return {
-      left: left + Math.round(p1.x * width),
-      top: top + Math.round(p1.y * height),
+      left: Math.round(p1.x * width + left),
+      top: Math.round(p1.y * height + top),
       width: Math.round((p2.x - p1.x) * width),
       height: Math.round((p2.y - p1.y) * height),
-      outerWidth: width + 2 * left,
-      outerHeight: height + 2 * top,
+      outerWidth: Math.round(2 * left + width),
+      outerHeight: Math.round(2 * top + height),
       innerWidth: width,
       innerHeight: height,
     } as BreachProtocolFragmentBoundingBox;
