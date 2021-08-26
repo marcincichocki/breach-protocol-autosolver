@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2021-08-26)
+
+
+### Bug Fixes
+
+* **common:** update ahk and xdotool robots ([bcf3301](https://github.com/marcincichocki/breach-protocol-autosolver/commit/bcf3301d8cdcae8b38fa8c05db1af4411a04a335))
+
 ## [2.0.0-beta.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.0...v2.0.0-beta.1) (2021-08-26)
 
 
