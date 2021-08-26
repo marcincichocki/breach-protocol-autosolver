@@ -1,9 +1,18 @@
+import { NativeDialog } from '../common';
 import { BreachProtocolWorker } from './worker';
 
 const worker = new BreachProtocolWorker();
 
-// TODO: error handling in worker.
 worker.bootstrap();
+
+window.addEventListener('error', (event) => {
+  NativeDialog.alert({
+    title: 'Error',
+    type: 'error',
+    message: 'Error occured in worker process.',
+    detail: event.message,
+  });
+});
 
 window.addEventListener('unload', () => {
   worker.dispose();
