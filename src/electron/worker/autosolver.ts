@@ -153,7 +153,7 @@ export class BreachProtocolAutosolver {
     if (this.settings.soundEnabled) {
       const source =
         type === 'start'
-          ? this.settings.jobStartedSoundPath
+          ? this.settings.startSoundPath
           : this.settings.errorSoundPath;
       new Audio(source).play();
     }

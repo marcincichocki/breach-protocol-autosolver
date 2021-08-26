@@ -75,9 +75,10 @@ const options: BreachProtocolOption[] = [
         : '',
   },
   {
-    id: 'jobStartedSoundPath',
-    description: 'Path to sound played at the start of the job.',
-    defaultValue: '',
+    id: 'startSoundPath',
+    description: 'Sound played at the start of the job.',
+    defaultValue:
+      BUILD_PLATFORM === 'win32' ? 'C:\\Windows\\Media\\Windows Ding.wav' : '',
   },
   {
     id: 'thresholdBufferSize',

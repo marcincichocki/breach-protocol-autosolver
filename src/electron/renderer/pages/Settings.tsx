@@ -234,8 +234,8 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Error sound path</Label>
         <File accept=".mp3,.wav" />
       </Field>
-      <Field name="jobStartedSoundPath">
-        <Label>Job started sound path</Label>
+      <Field name="startSoundPath">
+        <Label>Start sound</Label>
         <File accept=".mp3,.wav" />
       </Field>
       <Field name="delay">
