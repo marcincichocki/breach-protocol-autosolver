@@ -23,6 +23,7 @@ interface RegistryEntry {
 }
 
 type Resolution =
+  | 'custom'
   | '1024x768'
   | '1920x1080'
   | '2560x1440'
@@ -183,6 +184,13 @@ describe('ocr', () => {
   afterAll(async () => {
     await BreachProtocolOCRFragment.terminateScheduler();
   });
+
+  it.each(getRegistryFor('custom'))(
+    'should correctly ocr custom resolution/%s',
+    async (f: string, entry: RegistryEntry) => {
+      await compareOcrToJson(entry, 'custom');
+    }
+  );
 
   it.each(getRegistryFor('1024x768'))(
     'should correctly ocr 1024x768/%s',
