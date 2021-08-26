@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.0...v2.0.0-beta.1) (2021-08-26)
+
+
+### Features
+
+* **client-electron:** add ability to play sound on breach start ([909e7ac](https://github.com/marcincichocki/breach-protocol-autosolver/commit/909e7ac17334e9e4579ea5ca776ef0d54ed6f0cf)), closes [#172](https://github.com/marcincichocki/breach-protocol-autosolver/issues/172) [#164](https://github.com/marcincichocki/breach-protocol-autosolver/issues/164)
+* **client-electron:** add error handler to worker ([cce0da1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/cce0da18217fbf1a0ddd097d51daa7ff98b91111))
+
+
+### Bug Fixes
+
+* **client-electron:** catch unhandled promises ([d455198](https://github.com/marcincichocki/breach-protocol-autosolver/commit/d455198393ad423b5e27d4418cc2ec74c64a9912))
+* **client-electron:** preserve metadata in action ([497601b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/497601ba1516e3ea4bd8671663747257cea4d332))
+* **client-electron:** resolve race condition ([0927d44](https://github.com/marcincichocki/breach-protocol-autosolver/commit/0927d4416b71fba01f9cbdfaf967ed350c5d11c8))
+* **core:** catch unhandled errors during ocr ([a32c7a6](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a32c7a6c488fa8f02b4f69dfd88b208c08a79b30)), closes [#166](https://github.com/marcincichocki/breach-protocol-autosolver/issues/166)
+* **core:** handle custom resolutions ([d437366](https://github.com/marcincichocki/breach-protocol-autosolver/commit/d4373665915fbfb37a2d6f1c75e0ccd5089231ec))
+* **core:** load traindeddata with new strategy ([f5c016e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f5c016ea652dea3aefdf2875cf7a34338c0cfda4)), closes [#162](https://github.com/marcincichocki/breach-protocol-autosolver/issues/162)
+* **linux:** send correct keystroke ([b20f91a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/b20f91a2a0904e48165e6859aa945f1aaf71c2a1))
+
 ## [2.0.0-beta.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v1.8.0...v2.0.0-beta.0) (2021-08-22)
 
 
