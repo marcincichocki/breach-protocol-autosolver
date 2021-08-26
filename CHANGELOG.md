@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.3](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2021-08-26)
+
+
+### Bug Fixes
+
+* **client-electron:** check if path to audio file is defined ([6e6bef4](https://github.com/marcincichocki/breach-protocol-autosolver/commit/6e6bef4538d66fd7940d2ece7705f01757fc91b6))
+
 ## [2.0.0-beta.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2021-08-26)
 
 
