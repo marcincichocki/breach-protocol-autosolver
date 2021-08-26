@@ -61,7 +61,7 @@ export class BreachProtocolBufferSizeFragment<
   // values below 128 are exluded to speed up search(lowest
   // gamma 0.5 require ~160 threshold).
   private async findThreshold() {
-    const base = 127;
+    const base = 128;
     let start = 0;
     let end = base - 1;
     let i = 0;
@@ -82,7 +82,7 @@ export class BreachProtocolBufferSizeFragment<
         // Second control group has some white pixels, threshold is too low.
         start = m + 1;
       }
-    } while (i++ < Math.log2(base) + 1);
+    } while (++i < Math.log2(base));
 
     // No threshold found.
     return base;
