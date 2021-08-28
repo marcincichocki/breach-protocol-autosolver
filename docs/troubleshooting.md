@@ -33,3 +33,9 @@ This is caused mostly by selecting incorrect engine/output device to the platfor
 ### Mouse clicks are all over the place!
 
 Use keyboard as output device, mouse output is discouraged, as it's tricky to work around system scaling, multiple monitors, diffrent platforms and how they handle mouse events.
+
+---
+
+### Simulated sequence is not correct!
+
+Don't use your peripherals(mouse, keyboard, gamepad) while _BPA_ is working.
