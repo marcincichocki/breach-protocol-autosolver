@@ -23,8 +23,8 @@ This can be quite common behavior, and may depend on variety of factors:
 
 This is caused mostly by selecting incorrect engine/output device to the platform you are running Cyberpunk 2077 on.
 
-- If playing through streaming service on Windows, use AutoHotkey as the engine, with keyboard as output device.
-- Setting AutoHotkey or NirCmd to "run as administrator" might help. There is know issue were AutoHotkey can't send input to elevated windows, until itself is elevated.
+- If playing through streaming service on _Windows_, use _AutoHotkey_ as the engine, with keyboard as output device.
+- Setting _AutoHotkey_ or _NirCmd_ to "run as administrator" might help. There is know issue were _AutoHotkey_ can't send input to elevated windows, until itself is elevated.
 
 > _NirCmd_ comes bundled with _BPA_, default path is: `C:\Users\<User>\AppData\Local\Programs\breach-protocol-autosolver\resources\win32\nircmd\nircmd.exe`.
 

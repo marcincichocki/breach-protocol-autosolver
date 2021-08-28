@@ -10,7 +10,7 @@ Shorthand for _Breach Protocol Autosolver_.
 
 ### Worker
 
-Hidden window, it does all the heavy lifting. BPA will **not** work without it!
+Hidden window, it does all the heavy lifting. _BPA_ will **not** work without it!
 
 ### Fragment
 

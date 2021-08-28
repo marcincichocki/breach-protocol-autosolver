@@ -1,6 +1,6 @@
 ## Why?
 
-Breach protocol is nice, but tedious minigame in Cyberpunk 2077. It can appear a lot, and can get quickly annoying. BPA was created to skip it if player so wish.
+Breach protocol is nice, but tedious minigame in Cyberpunk 2077. It can appear a lot, and can get quickly annoying. _BPA_ was created to skip it if player so wish.
 
 ## How it works?
 
