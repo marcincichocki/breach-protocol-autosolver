@@ -8,7 +8,7 @@ Solve breach protocol minigame in second(s). _Windows_/_Linux_/_GeForce Now_/_Go
 
 ## Features
 
-- client for _Windows 10_ and _Linux_
+- client for _Windows_ and _Linux_
 - support for _GeForce Now_ and _Google Stadia_
 - support for every language in _Cyberpunk 2077_
 - support for every aspect ratio

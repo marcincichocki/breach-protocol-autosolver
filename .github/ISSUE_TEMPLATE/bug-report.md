@@ -12,7 +12,7 @@ assignees: ''
 
 **To Reproduce**
 
-<!-- Steps to reproduce the behavior: -->
+<!-- Steps to reproduce the behavior. -->
 
 **Expected behavior**
 
@@ -20,19 +20,11 @@ assignees: ''
 
 **Software information**
 
-- OS:
-- autosolver version:
-- autosolver flags(if applicable):
-- monitor resolution:
-- gamma(if applicable):
+- Operating System:
+- _Cyberpunk 2077_ platform: <!-- native/Proton/Google Stadia/GeForce Now -->
+- _BPA_ version:
+- relevant _BPA_ settings:
 
-**Cyberpunk 2077 information**
+**Additional files**
 
-- version:
-- resolution:
-- language:
-- gamma(if applicable):
-
-**Additional context**
-
-<!-- If applicable attach appropriate files from `debug` folder or anything else here: -->
+<!-- If applicable attach appropriate files like history entry snapshot or screenshots. -->
