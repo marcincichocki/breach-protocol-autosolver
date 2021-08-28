@@ -4,7 +4,7 @@ Solve breach protocol minigame in second(s). _Windows_/_Linux_/_GeForce Now_/_Go
 
 ## Video showcase:
 
-[![Video](https://user-images.githubusercontent.com/10232391/111822212-d0fb0e80-88e3-11eb-82de-59fd4d8fd44b.png)](https://www.youtube.com/watch?v=3ZoSwRvh4s0)
+[Breach Protocol Autosolver v2 preview](https://www.youtube.com/watch?v=3ZoSwRvh4s0)
 
 ## Features
 
