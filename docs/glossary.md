@@ -14,4 +14,4 @@ Hidden window, it does all the heavy lifting. _BPA_ will **not** work without it
 
 ### Fragment
 
-This is literally part of BP screenshot, which represents either grid, daemons or buffer size.
+This is literally part of _BP_ screenshot, which represents either grid, daemons or buffer size.
