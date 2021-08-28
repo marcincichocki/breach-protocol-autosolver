@@ -40,7 +40,7 @@ Report it on [NexusMods](https://www.nexusmods.com/cyberpunk2077/mods/3071) page
 > - _BPA_ version;
 > - relevant _BPA_ settings.
 >
-> **Attaching failed _BP_ snapshot is recommended if applicable**. [Learn how to do it](ui-overview#snapshots).
+> **Attaching failed _BP_ snapshot is recommended if applicable**.
 
 ---
 
