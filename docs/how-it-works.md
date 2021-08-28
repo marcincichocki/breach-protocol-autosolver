@@ -6,4 +6,4 @@ Breach protocol is nice, but tedious minigame in Cyberpunk 2077. It can appear a
 
 _BPA_ takes screenshot, read data through optical character recognition, and simulate mouse or keyboard input.
 
-> If you encountered problem with any of the steps above consult [troubleshooting page](trobleshooting.md)
+> If you encountered problem with any of the steps above consult [troubleshooting page](troubleshooting.md)
