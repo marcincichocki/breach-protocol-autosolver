@@ -22,7 +22,7 @@ This can be quite common behavior, and may depend on variety of factors:
 
 ### Recognition works, but there is no output in the game!
 
-This is caused mostly by selecting incorrect engine/output device to the platform you are running Cyberpunk 2077 on.
+This is caused most likely by selecting incorrect engine/output device to the platform you are running Cyberpunk 2077 on.
 
 - If playing through streaming service on _Windows_, use _AutoHotkey_ as the engine, with keyboard as output device.
 - Setting _AutoHotkey_ or _NirCmd_ to "run as administrator" might help. There is know issue were _AutoHotkey_ can't send input to elevated windows, until itself is elevated.
