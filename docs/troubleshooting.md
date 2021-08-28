@@ -15,6 +15,7 @@ This can be quite common behavior, and may depend on variety of factors:
 - Selected display is **not** the one Cyberpunk 2077 is running on. This only applies to users with multiple monitors.
 - Your "visual" settings(resolution, gamma, reshades, mods, language in some cases and other things) might cause invalid characters to be recognized. Set fixed threshold for invalid fragments to resolve that issue.
 - You hovered mouse over vital fragments, causing invalid characters to be recognized. Move cursor out of the way(to the corner) before pressing key bind. Depending on platform and engine moving mouse away might be automatic.
+- _BP_ you are trying to solve has already started.
 - You are trying to solve something that isn't a _BP_.
 
 ---
