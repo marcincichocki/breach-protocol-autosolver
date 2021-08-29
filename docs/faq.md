@@ -19,7 +19,7 @@ It's [open source](https://github.com/marcincichocki/breach-protocol-autosolver)
 
 Yes, although not directly. You must use external tool like [AntiMicro](https://github.com/AntiMicro/antimicro) for gamepad, or [X-Mouse Button Control](https://www.highrez.co.uk/downloads/XMouseButtonControl.htm) for mouse. Simply bind gamepad/mouse to output _BPA_'s key bind. **Just make sure that selected gamepad/mouse bind does not interfere with Breach Protocol!**
 
-### I have found a bug! How to report it?
+### I have found a bug! How do I report it?
 
 Report it on [NexusMods](https://www.nexusmods.com/cyberpunk2077/mods/3071) page, or in [github repository](https://github.com/marcincichocki/breach-protocol-autosolver).
 
@@ -48,6 +48,6 @@ _macOS_ version is theoretically possible, but I can't commit to it because I do
 
 > If you are interested in creating macOS distribution, open new issue in [github repository](https://github.com/marcincichocki/breach-protocol-autosolver).
 
-### I would like to propose a feature request!
+### I would like to propose a new feature!
 
 Post it on [NexusMods](https://www.nexusmods.com/cyberpunk2077/mods/3071) page, or in [github repository](https://github.com/marcincichocki/breach-protocol-autosolver) with relavant information.
