@@ -21,6 +21,7 @@ This can be quite common behavior, and may depend on variety of factors:
 This is caused most likely by selecting incorrect engine/output device to the platform you are running Cyberpunk 2077 on.
 
 - If playing through streaming service on _Windows_, use _AutoHotkey_ as the engine, with keyboard as output device.
+- When using 1360x768 resolution, there is a bizzare bug in _BP_ where keyboard doesn't work while cursor is at the top of the screen. To fix it, change resolution to **1366**x768.
 - Setting _AutoHotkey_ or _NirCmd_ to "run as administrator" might help. There is know issue were _AutoHotkey_ can't send input to elevated windows, until itself is elevated.
 
 > _NirCmd_ comes bundled with _BPA_, default path is: `%LocalAppData%\Programs\breach-protocol-autosolver\resources\win32\nircmd\nircmd.exe`.
