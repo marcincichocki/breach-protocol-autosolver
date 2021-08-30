@@ -10,6 +10,7 @@ export * from './HistoryViewer';
 export * from './Navigation';
 export * from './RangeSlider';
 export * from './RawDataPreview';
+export * from './ReleaseNotesDialog';
 export * from './Select';
 export * from './Spinner';
 export * from './StatusBar';

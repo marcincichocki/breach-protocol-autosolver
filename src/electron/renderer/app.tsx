@@ -2,7 +2,12 @@ import { ActionTypes } from '@/electron/common';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryRedirect, useIpcState } from './common';
-import { Navigation, StatusBar, TitleBar } from './components';
+import {
+  Navigation,
+  ReleaseNotesDialog,
+  StatusBar,
+  TitleBar,
+} from './components';
 import { Calibrate, Dashboard, History, Settings } from './pages';
 import { StateContext } from './state';
 
@@ -35,6 +40,7 @@ export const App = () => {
           <Route path="/" component={Dashboard} />
         </Switch>
       </Main>
+      <ReleaseNotesDialog />
       <StatusBar />
     </StateContext.Provider>
   );
