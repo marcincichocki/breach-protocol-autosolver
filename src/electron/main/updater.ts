@@ -1,3 +1,4 @@
+import { clear } from 'electron-first-run';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 import {
   NativeDialog,
@@ -11,7 +12,11 @@ import { Store } from './store/store';
 export class BreachProtocolAutosolverUpdater {
   private autoUpdate: boolean = null;
 
-  constructor(private store: Store, private renderer: Electron.webContents) {
+  constructor(
+    private store: Store,
+    private renderer: Electron.webContents,
+    private readonly isFirstRun: boolean
+  ) {
     this.registerListeners();
   }
 
@@ -61,8 +66,9 @@ export class BreachProtocolAutosolverUpdater {
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {
-    // TODO: If firstRun is true, take info object and emit an event to renderer.
-    this.renderer.send('release-notes', info);
+    if (this.isFirstRun) {
+      this.renderer.send('release-notes', info);
+    }
 
     this.setUpdateStatus(UpdateStatus.UpdateNotAvailable);
   }
@@ -70,9 +76,7 @@ export class BreachProtocolAutosolverUpdater {
   private onUpdateDownloaded() {
     this.setUpdateStatus(UpdateStatus.UpdateDownloaded);
 
-    // TODO: Clear first run so it launches every time update happens.
-    // firstRun.clear();
-
+    clear();
     autoUpdater.quitAndInstall();
   }
 

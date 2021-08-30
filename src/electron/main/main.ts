@@ -8,6 +8,7 @@ import {
   shell,
   Tray,
 } from 'electron';
+import firstRun from 'electron-first-run';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
 import icon from '../../../resources/icon.png';
@@ -27,6 +28,8 @@ export class Main {
   private worker: Electron.BrowserWindow = null;
 
   private updater: BreachProtocolAutosolverUpdater = null;
+
+  private readonly isFirstRun = firstRun();
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
@@ -108,7 +111,8 @@ export class Main {
     const { checkForUpdates } = this.getSettings();
     this.updater = new BreachProtocolAutosolverUpdater(
       this.store,
-      this.renderer.webContents
+      this.renderer.webContents,
+      this.isFirstRun
     );
 
     if (checkForUpdates) {

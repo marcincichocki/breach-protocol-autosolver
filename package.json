@@ -97,6 +97,7 @@
   },
   "dependencies": {
     "date-fns": "^2.22.1",
+    "electron-first-run": "^3.0.0",
     "electron-is-accelerator": "^0.2.0",
     "electron-store": "^8.0.0",
     "electron-updater": "^4.3.9",
