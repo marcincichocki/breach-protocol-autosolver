@@ -1,23 +1,16 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
+import { createRootElement } from '../common';
 
 interface DialogProps {
   isOpen?: boolean;
 }
 
-function createDialogRootElement(id: string) {
-  const root = document.createElement('div');
-  root.id = id;
-  document.body.appendChild(root);
-
-  return root;
-}
-
 export class Dialog extends Component<DialogProps> {
   private el = document.createElement('div');
 
-  static root = createDialogRootElement('dialog-root');
+  static root = createRootElement('dialog-root');
 
   override componentDidMount() {
     Dialog.root.appendChild(this.el);
