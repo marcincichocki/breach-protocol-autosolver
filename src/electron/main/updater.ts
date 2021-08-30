@@ -60,12 +60,18 @@ export class BreachProtocolAutosolverUpdater {
     this.setUpdateStatus(UpdateStatus.Downloading);
   }
 
-  private onUpdateNotAvailable() {
+  private onUpdateNotAvailable(info: UpdateInfo) {
+    // TODO: If firstRun is true, take info object and emit an event to renderer.
+    this.renderer.send('release-notes', info);
+
     this.setUpdateStatus(UpdateStatus.UpdateNotAvailable);
   }
 
   private onUpdateDownloaded() {
     this.setUpdateStatus(UpdateStatus.UpdateDownloaded);
+
+    // TODO: Clear first run so it launches every time update happens.
+    // firstRun.clear();
 
     autoUpdater.quitAndInstall();
   }
