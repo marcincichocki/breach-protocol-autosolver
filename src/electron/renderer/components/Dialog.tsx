@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { createRootElement } from '../common';
+import { Col } from './Flex';
 
 interface DialogProps {
   isOpen?: boolean;
@@ -32,12 +33,13 @@ export class Dialog extends Component<DialogProps> {
   }
 }
 
-const DialogWrapper = styled.div`
+const DialogWrapper = styled(Col)`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  min-width: 300px;
+  max-width: 50%;
+  max-height: 50%;
   background: var(--background);
   border: 1px solid var(--primary);
   padding: 1rem;
