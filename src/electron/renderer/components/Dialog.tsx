@@ -37,8 +37,7 @@ const DialogWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px;
-  height: 300px;
+  min-width: 300px;
   background: var(--background);
   border: 1px solid var(--primary);
   padding: 1rem;
