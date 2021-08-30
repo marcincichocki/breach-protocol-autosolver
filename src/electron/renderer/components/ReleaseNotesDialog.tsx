@@ -1,5 +1,5 @@
+import { shell } from 'electron';
 import type { UpdateInfo } from 'electron-updater';
-import { shell } from 'electron/common';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useIpcEvent } from '../common';
@@ -22,8 +22,9 @@ function useReleaseNotes() {
 const ReleaseNotes = styled.article`
   overflow-y: auto;
   margin: 1rem 0;
+  padding-right: 1rem;
 
-  > a {
+  a {
     color: var(--accent);
   }
 
