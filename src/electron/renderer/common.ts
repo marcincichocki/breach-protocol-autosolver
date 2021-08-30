@@ -80,3 +80,11 @@ export function useHistoryRedirect(channels: string[]) {
 
   useIpcEvent(channels, () => history.replace('/history'));
 }
+
+export function createRootElement(id: string) {
+  const root = document.createElement('div');
+  root.id = id;
+  document.body.appendChild(root);
+
+  return root;
+}
