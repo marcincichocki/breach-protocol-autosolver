@@ -104,7 +104,6 @@ export class Main {
     this.worker = worker;
 
     this.registerListeners();
-    this.updateApp();
   }
 
   private async updateApp() {
@@ -142,10 +141,15 @@ export class Main {
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.handle('renderer:show-message-box', this.onShowMessageBox);
 
-    this.renderer.once('ready-to-show', () => this.renderer.show());
+    this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
     this.renderer.on('minimize', this.onRendererMinimize.bind(this));
     this.renderer.on('restore', this.onRendererRestore.bind(this));
+  }
+
+  private onRendererReadyToShow() {
+    this.renderer.show();
+    this.updateApp();
   }
 
   private onRendererMinimize(event: Electron.Event) {

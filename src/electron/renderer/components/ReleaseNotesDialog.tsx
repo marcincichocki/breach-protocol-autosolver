@@ -8,7 +8,7 @@ function useReleaseNotes() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo>(null);
   const close = () => setIsOpen(false);
 
-  useIpcEvent(['release-notes'], (e, info: UpdateInfo) => {
+  useIpcEvent(['main:show-release-notes'], (e, info: UpdateInfo) => {
     setUpdateInfo(info);
     setIsOpen(true);
   });
@@ -18,6 +18,10 @@ function useReleaseNotes() {
 
 export const ReleaseNotesDialog = () => {
   const { isOpen, close, updateInfo } = useReleaseNotes();
+
+  if (!updateInfo) {
+    return null;
+  }
 
   return (
     <Dialog isOpen={isOpen}>

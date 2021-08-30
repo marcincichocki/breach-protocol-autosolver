@@ -67,7 +67,7 @@ export class BreachProtocolAutosolverUpdater {
 
   private onUpdateNotAvailable(info: UpdateInfo) {
     if (this.isFirstRun) {
-      this.renderer.send('release-notes', info);
+      this.renderer.send('main:show-release-notes', info);
     }
 
     this.setUpdateStatus(UpdateStatus.UpdateNotAvailable);
@@ -81,7 +81,7 @@ export class BreachProtocolAutosolverUpdater {
   }
 
   private onDownloadProgress(info: ProgressInfo) {
-    this.renderer.send('download-progress', info);
+    this.renderer.send('main:download-progress', info);
   }
 
   private disableWorker() {
