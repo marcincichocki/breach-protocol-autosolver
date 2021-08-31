@@ -118,6 +118,7 @@ function useShowUpdateStatus(status: UpdateStatus, delay = 3000) {
 
 const updateStatusMessage = {
   [UpdateStatus.Error]: 'Error occurred',
+  [UpdateStatus.NetworkError]: 'Offline',
   [UpdateStatus.CheckingForUpdate]: 'Checking for updates..',
   [UpdateStatus.UpdateNotAvailable]: 'Up to date',
   [UpdateStatus.UpdateAvailable]: 'Update available',

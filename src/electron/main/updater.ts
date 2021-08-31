@@ -40,6 +40,15 @@ export class BreachProtocolAutosolverUpdater {
     );
     autoUpdater.on('update-downloaded', this.onUpdateDownloaded.bind(this));
     autoUpdater.on('download-progress', this.onDownloadProgress.bind(this));
+    autoUpdater.on('error', this.onError.bind(this));
+  }
+
+  private onError(error: Error) {
+    if (error.message === 'net::ERR_INTERNET_DISCONNECTED') {
+      this.setUpdateStatus(UpdateStatus.NetworkError);
+    } else {
+      this.setUpdateStatus(UpdateStatus.Error);
+    }
   }
 
   private onCheckingForUpdates() {
