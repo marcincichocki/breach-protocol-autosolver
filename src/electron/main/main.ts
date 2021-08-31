@@ -29,7 +29,7 @@ export class Main {
 
   private updater: BreachProtocolAutosolverUpdater = null;
 
-  private readonly isFirstRun = firstRun();
+  private readonly isFirstRun = firstRun({ name: 'update' });
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {

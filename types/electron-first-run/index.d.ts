@@ -1,8 +1,12 @@
 declare module 'electron-first-run' {
-  function firstRun(): boolean;
+  interface FirstRunOptions {
+    name: string;
+  }
+
+  function firstRun(options?: FirstRunOptions): boolean;
 
   namespace firstRun {
-    function clear(): void;
+    function clear(options?: FirstRunOptions): void;
   }
 
   export = firstRun;
