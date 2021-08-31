@@ -20,11 +20,19 @@ export class BreachProtocolAutosolverUpdater {
     this.registerListeners();
   }
 
-  checkForUpdates() {
+  async checkForUpdates() {
     this.autoUpdate = this.store.getState().settings.autoUpdate;
     autoUpdater.autoDownload = this.autoUpdate;
 
-    autoUpdater.checkForUpdates();
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.onError(error);
+      } else {
+        throw error;
+      }
+    }
   }
 
   dispose() {
@@ -40,7 +48,6 @@ export class BreachProtocolAutosolverUpdater {
     );
     autoUpdater.on('update-downloaded', this.onUpdateDownloaded.bind(this));
     autoUpdater.on('download-progress', this.onDownloadProgress.bind(this));
-    autoUpdater.on('error', this.onError.bind(this));
   }
 
   private onError(error: Error) {
