@@ -34,6 +34,12 @@ const ReleaseNotes = styled.article`
   }
 `;
 
+const ReleaseNotesTitle = styled.h1`
+  margin: 0;
+  color: var(--accent);
+  text-transform: uppercase;
+`;
+
 export const ReleaseNotesDialog = () => {
   const { isOpen, close, updateInfo } = useReleaseNotes();
 
@@ -51,7 +57,8 @@ export const ReleaseNotesDialog = () => {
 
   return (
     <Dialog isOpen={isOpen}>
-      <h1>{updateInfo.version}</h1>
+      <ReleaseNotesTitle>Release notes</ReleaseNotesTitle>
+      <span>{updateInfo.version}</span>
       <ReleaseNotes
         onClick={catchLink}
         onKeyDown={catchLink}

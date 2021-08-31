@@ -76,7 +76,7 @@ export class BreachProtocolAutosolverUpdater {
   private onUpdateDownloaded() {
     this.setUpdateStatus(UpdateStatus.UpdateDownloaded);
 
-    clear();
+    clear({ name: 'update' });
     autoUpdater.quitAndInstall();
   }
 
