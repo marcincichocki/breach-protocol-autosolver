@@ -90,6 +90,7 @@ export interface AppStats {
 
 export enum UpdateStatus {
   Error,
+  NetworkError,
   CheckingForUpdate,
   UpdateNotAvailable,
   UpdateAvailable,
