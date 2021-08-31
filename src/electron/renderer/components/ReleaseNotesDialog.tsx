@@ -1,3 +1,4 @@
+import { sanitize } from 'dompurify';
 import { shell } from 'electron';
 import type { UpdateInfo } from 'electron-updater';
 import React, { useState } from 'react';
@@ -54,7 +55,9 @@ export const ReleaseNotesDialog = () => {
       <ReleaseNotes
         onClick={catchLink}
         onKeyDown={catchLink}
-        dangerouslySetInnerHTML={{ __html: updateInfo.releaseNotes as string }}
+        dangerouslySetInnerHTML={{
+          __html: sanitize(updateInfo.releaseNotes as string),
+        }}
       />
       <FlatButton
         onClick={close}
