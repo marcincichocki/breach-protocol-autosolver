@@ -14,12 +14,12 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'autoUpdate',
-    description: 'Update autosolver automatically.',
+    description: 'Update app automatically when new version is found.',
     defaultValue: false,
   },
   {
     id: 'delay',
-    description: 'Delay in milliseconds between output clicks.',
+    description: 'Delay in milliseconds between output commands.',
     defaultValue: 75,
   },
   {
@@ -41,12 +41,12 @@ const options: BreachProtocolOption[] = [
   {
     id: 'format',
     description:
-      'Format in which save source images. "png" offers better quality, but takes more space on disk.',
+      'Source image format. Use "png" for better performance, or "jpg" for smaller files.',
     defaultValue: 'png',
   },
   {
     id: 'historySize',
-    description: 'Amount of history entires saved.',
+    description: 'Amount of entries in history.',
     defaultValue: 3,
   },
   {
@@ -57,8 +57,7 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'preserveSourceOnSuccess',
-    description:
-      'Preserve image source after successful breach protocol. This might take a lot of space depending on format and history size options.',
+    description: 'Preserve source image after successful breach protocol.',
     defaultValue: true,
   },
   {
@@ -68,7 +67,7 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'errorSoundPath',
-    description: 'Path to error sound.',
+    description: 'Sound played when error occured during recognition.',
     defaultValue:
       BUILD_PLATFORM === 'win32'
         ? 'C:/Windows/Media/Windows Foreground.wav'
@@ -111,7 +110,8 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'useScaling',
-    description: 'Use Windows scaling to calculate coordinates of squares.',
+    description:
+      'Take display scaling into account when calculating coordinates of squares. Applies only to mouse output.',
     defaultValue: false,
   },
   {
@@ -126,7 +126,7 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'engine',
-    description: 'Program that will send mouse clicks or key strokes to OS.',
+    description: 'Program that will send output commands to Cyberpunk 2077.',
     defaultValue: BUILD_PLATFORM === 'win32' ? 'nircmd' : 'xdotool',
   },
   {

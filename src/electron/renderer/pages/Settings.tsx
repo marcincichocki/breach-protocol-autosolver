@@ -138,7 +138,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         <Switch />
       </Field>
       <Field name="format">
-        <Label>Format</Label>
+        <Label>Source format</Label>
         <Select options={formatOptions} />
       </Field>
     </Section>
@@ -235,7 +235,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Switch />
       </Field>
       <Field name="errorSoundPath">
-        <Label>Error sound path</Label>
+        <Label>Recognition error sound</Label>
         <File accept=".mp3,.wav" />
       </Field>
       <Field name="startSoundPath">
@@ -243,7 +243,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <File accept=".mp3,.wav" />
       </Field>
       <Field name="delay">
-        <Label>Delay</Label>
+        <Label>Delay(ms)</Label>
         <RangeSlider />
       </Field>
       <Field name="autoExit">
@@ -273,7 +273,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
       </Field>
       {values.outputDevice === 'mouse' && (
         <Field name="useScaling">
-          <Label>Scaling</Label>
+          <Label>Use display scaling</Label>
           <Switch />
         </Field>
       )}
