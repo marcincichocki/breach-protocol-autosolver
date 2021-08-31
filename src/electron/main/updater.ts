@@ -1,3 +1,4 @@
+import { clear } from 'electron-first-run';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 import {
   NativeDialog,
@@ -11,7 +12,11 @@ import { Store } from './store/store';
 export class BreachProtocolAutosolverUpdater {
   private autoUpdate: boolean = null;
 
-  constructor(private store: Store, private renderer: Electron.webContents) {
+  constructor(
+    private store: Store,
+    private renderer: Electron.webContents,
+    private readonly isFirstRun: boolean
+  ) {
     this.registerListeners();
   }
 
@@ -60,18 +65,23 @@ export class BreachProtocolAutosolverUpdater {
     this.setUpdateStatus(UpdateStatus.Downloading);
   }
 
-  private onUpdateNotAvailable() {
+  private onUpdateNotAvailable(info: UpdateInfo) {
+    if (this.isFirstRun) {
+      this.renderer.send('main:show-release-notes', info);
+    }
+
     this.setUpdateStatus(UpdateStatus.UpdateNotAvailable);
   }
 
   private onUpdateDownloaded() {
     this.setUpdateStatus(UpdateStatus.UpdateDownloaded);
 
+    clear({ name: 'update' });
     autoUpdater.quitAndInstall();
   }
 
   private onDownloadProgress(info: ProgressInfo) {
-    this.renderer.send('download-progress', info);
+    this.renderer.send('main:download-progress', info);
   }
 
   private disableWorker() {

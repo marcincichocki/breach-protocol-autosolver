@@ -8,6 +8,7 @@ import {
   shell,
   Tray,
 } from 'electron';
+import firstRun from 'electron-first-run';
 import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
 import { extname, join } from 'path';
 import icon from '../../../resources/icon.png';
@@ -27,6 +28,8 @@ export class Main {
   private worker: Electron.BrowserWindow = null;
 
   private updater: BreachProtocolAutosolverUpdater = null;
+
+  private readonly isFirstRun = firstRun({ name: 'update' });
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
@@ -101,14 +104,14 @@ export class Main {
     this.worker = worker;
 
     this.registerListeners();
-    this.updateApp();
   }
 
   private async updateApp() {
     const { checkForUpdates } = this.getSettings();
     this.updater = new BreachProtocolAutosolverUpdater(
       this.store,
-      this.renderer.webContents
+      this.renderer.webContents,
+      this.isFirstRun
     );
 
     if (checkForUpdates) {
@@ -138,10 +141,15 @@ export class Main {
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.handle('renderer:show-message-box', this.onShowMessageBox);
 
-    this.renderer.once('ready-to-show', () => this.renderer.show());
+    this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
     this.renderer.on('minimize', this.onRendererMinimize.bind(this));
     this.renderer.on('restore', this.onRendererRestore.bind(this));
+  }
+
+  private onRendererReadyToShow() {
+    this.renderer.show();
+    this.updateApp();
   }
 
   private onRendererMinimize(event: Electron.Event) {

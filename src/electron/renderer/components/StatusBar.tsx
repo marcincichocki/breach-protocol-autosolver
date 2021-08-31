@@ -93,7 +93,7 @@ function useSettingsChangeListener(delay = 2000) {
 function useDownloadProgress() {
   const [progress, setProgress] = useState(0);
 
-  useIpcEvent(['download-progress'], (e, info: ProgressInfo) => {
+  useIpcEvent(['main:download-progress'], (e, info: ProgressInfo) => {
     setProgress(info.percent);
   });
 
