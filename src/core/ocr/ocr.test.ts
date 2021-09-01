@@ -1,7 +1,6 @@
 import { SharpImageContainer } from '@/common/node';
-import { NativeBreachProtocolRecognizer } from '@/common/node/recognizer-native';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
-import path from 'path';
+import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
@@ -259,11 +258,11 @@ async function recognizeRegistryEntry(
   resolution: Resolution,
   thresholds?: Partial<Record<FragmentId, number>>
 ) {
-  const file = path.join('./src/core/bp-registry', resolution, entry.fileName);
+  const file = join('./src/core/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
   const container = await SharpImageContainer.create(image);
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
-  const recognizer = new NativeBreachProtocolRecognizer();
+  const recognizer = new WasmBreachProtocolRecognizer();
 
   return Promise.all([
     breachProtocolOCR(container, recognizer, thresholds),
