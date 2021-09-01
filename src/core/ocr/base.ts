@@ -1,5 +1,4 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import { createScheduler, createWorker } from 'tesseract.js';
 import {
   BreachProtocolRawData,
   BufferSize,
@@ -12,6 +11,7 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
 import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
+import { BreachProtocolRecognizer } from './recognizer';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -161,30 +161,14 @@ export abstract class BreachProtocolOCRFragment<
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
-  constructor(container: ImageContainer<TImage>) {
+  constructor(
+    container: ImageContainer<TImage>,
+    private recognizer: BreachProtocolRecognizer
+  ) {
     super(container);
-
-    /**
-     * Initializing workers takes a lot of time. Loading them every time
-     * when class is instantiated is a big performance bottleneck.
-     * Instead call {@link BreachProtocolOCRFragment.initScheduler}
-     * during bootstrap to init tesseract workers and
-     * {@link BreachProtocolOCRFragment.terminateScheduler} during exit
-     * to terminated them.
-     */
-    if (!BreachProtocolOCRFragment.scheduler) {
-      throw new Error('Scheduler is not initialized!');
-    }
   }
 
   protected abstract getRawData(lines: string[]): TData;
-
-  private recognizeFragment(buffer: Buffer) {
-    return BreachProtocolOCRFragment.scheduler.addJob(
-      'recognize',
-      buffer
-    ) as Promise<Tesseract.RecognizeResult>;
-  }
 
   async recognize(
     fixedThreshold?: number
@@ -200,9 +184,7 @@ export abstract class BreachProtocolOCRFragment<
   async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
-    const { data } = await this.recognizeFragment(buffer);
-    const boxes = data.words.map((w) => w.bbox);
-    const source = { boxes, text: data.text };
+    const source = await this.recognizer.recognize(buffer);
 
     return { buffer, source };
   }
@@ -249,59 +231,6 @@ export abstract class BreachProtocolOCRFragment<
 
     return this.thresholds.get(value);
   }
-
-  private static async initWorker(options: Partial<Tesseract.WorkerOptions>) {
-    const lang = 'BreachProtocol';
-    const w = createWorker(options);
-
-    await w.load();
-    await w.loadLanguage(lang);
-    await w.initialize(lang);
-    await w.setParameters({
-      tessedit_char_whitelist: HEX_NUMBERS.join(''),
-    });
-
-    return w;
-  }
-
-  /**
-   * Initialize tesseract.js scheduler.
-   *
-   * @param langPath Path to folder where BreachProtocol.traineddata can be found. Relative to process.cwd() or absolute.
-   */
-  static async initScheduler(langPath: string) {
-    if (BreachProtocolOCRFragment.scheduler) {
-      throw new Error('Scheduler is alredy initialized.');
-    }
-
-    const options: Partial<Tesseract.WorkerOptions> = {
-      cacheMethod: 'none',
-      gzip: false,
-      langPath,
-    };
-    const w1 = await BreachProtocolOCRFragment.initWorker(options);
-    const w2 = await BreachProtocolOCRFragment.initWorker(options);
-
-    const scheduler = createScheduler();
-
-    scheduler.addWorker(w1);
-    scheduler.addWorker(w2);
-
-    BreachProtocolOCRFragment.scheduler = scheduler;
-  }
-
-  /**
-   * Terminate tesseract.js scheduler.
-   */
-  static terminateScheduler() {
-    if (!BreachProtocolOCRFragment.scheduler) {
-      throw new Error('Scheduler is not initialized.');
-    }
-
-    return BreachProtocolOCRFragment.scheduler.terminate();
-  }
-
-  static scheduler: Tesseract.Scheduler;
 }
 
 export abstract class BreachProtocolBufferSizeBase<
