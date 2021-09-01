@@ -7,6 +7,8 @@ export class NativeBreachProtocolRecognizer extends BreachProtocolRecognizer {
     'tessdata-dir': './resources',
     lang: 'BreachProtocol',
     tessedit_char_whitelist: HEX_NUMBERS.join(''),
+    psm: 6,
+    page_separator: '',
   };
 
   async recognize(image: Buffer) {
