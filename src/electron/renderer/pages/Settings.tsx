@@ -281,6 +281,17 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   );
 };
 
+const PerformanceSettings = () => {
+  return (
+    <Section title="Performance">
+      <Field name="downscaleSource">
+        <Label>Downscale source image</Label>
+        <Switch />
+      </Field>
+    </Section>
+  );
+};
+
 function useDisplayOptionScrollTo<T extends HTMLDivElement>() {
   const ref = useRef<T>();
   const location = useLocation();
@@ -418,6 +429,7 @@ export const Settings: FC = () => {
             >
               <GeneralSettings historySize={history.length} />
               <AutoSolverSettings status={status} />
+              <PerformanceSettings />
               <RecognitionSettings displays={displays} />
             </Form>
           </Col>

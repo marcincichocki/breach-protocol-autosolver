@@ -63,6 +63,7 @@ export interface AppSettings extends RobotSettings {
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
   ahkBinPath: string;
+  downscaleSource: boolean;
 }
 
 export interface AppStats {
