@@ -35,7 +35,8 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .removeAlpha()
       .extract(fragmentBoundingBox)
       .negate()
-      .toColorspace('b-w');
+      .toColorspace('b-w')
+      .png({ colors: 2 });
   }
 
   processGridFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
