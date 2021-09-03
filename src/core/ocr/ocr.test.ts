@@ -266,7 +266,9 @@ async function recognizeRegistryEntry(
 ) {
   const file = join('./src/core/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
-  const container = await SharpImageContainer.create(image);
+  const container = await SharpImageContainer.create(image, {
+    downscale: true,
+  });
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
   const recognizer = new WasmBreachProtocolRecognizer();
 
