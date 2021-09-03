@@ -3,11 +3,18 @@ import sharp from 'sharp';
 
 const SHARP_TOKEN = Symbol('SharpImageContainer');
 
+interface SharpImageContainerConfig {
+  downscale: boolean;
+}
+
+const MIN_DOWNSCALE_HEIGHT = 2160;
+
 // NOTE: this class will not work in web environments!
 export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   constructor(
     public readonly instance: sharp.Sharp,
     public readonly dimensions: { x: number; y: number },
+    private config: SharpImageContainerConfig,
     token?: Symbol
   ) {
     super();
@@ -19,12 +26,16 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     }
   }
 
-  static async create(instance: sharp.Sharp) {
+  static async create(
+    instance: sharp.Sharp,
+    config: SharpImageContainerConfig
+  ) {
     const { width, height } = await instance.metadata();
 
     return new SharpImageContainer(
       instance,
       { x: width, y: height },
+      config,
       SHARP_TOKEN
     );
   }
@@ -34,18 +45,38 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .clone()
       .removeAlpha()
       .extract(fragmentBoundingBox)
-      .negate()
+      .negate({ alpha: false } as any) // TODO: update typings.
       .toColorspace('b-w')
       .png({ colors: 2 });
   }
 
+  private shouldDownscale({ innerHeight }: BreachProtocolFragmentBoundingBox) {
+    const isHighResolution = innerHeight > MIN_DOWNSCALE_HEIGHT;
+
+    return this.config.downscale && isHighResolution;
+  }
+
   processGridFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+    if (this.shouldDownscale(fragmentBoundingBox)) {
+      return this.process(fragmentBoundingBox).resize({
+        width: 600, // TODO: adjust
+        withoutEnlargement: true,
+      });
+    }
+
     return this.process(fragmentBoundingBox);
   }
 
   processDaemonsFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ) {
+    if (this.shouldDownscale(fragmentBoundingBox)) {
+      return this.process(fragmentBoundingBox).resize({
+        width: 600, // TODO: adjust
+        withoutEnlargement: true,
+      });
+    }
+
     return this.process(fragmentBoundingBox);
   }
 
