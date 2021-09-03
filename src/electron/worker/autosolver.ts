@@ -188,7 +188,6 @@ export class BreachProtocolAutosolver {
   async recognize() {
     const image = sharp(this.fileName);
     const container = await SharpImageContainer.create(image);
-    // TODO: add setting to choose recognizer.
     const recognizer = new WasmBreachProtocolRecognizer();
 
     return breachProtocolOCR(

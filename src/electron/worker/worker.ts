@@ -202,7 +202,6 @@ export class BreachProtocolWorker {
   private async initTestThreshold(req: Request<string>) {
     const instance = sharp(req.data);
     const container = await SharpImageContainer.create(instance);
-    // TODO: same as in autosolver.
     const recognizer = new WasmBreachProtocolRecognizer();
 
     this.fragments = {

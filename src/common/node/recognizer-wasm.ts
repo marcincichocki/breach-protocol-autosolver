@@ -1,11 +1,8 @@
-import { HEX_NUMBERS } from '@/core';
-import { BreachProtocolRecognizer } from '@/core/ocr/recognizer';
+import { BreachProtocolRecognizer, HEX_NUMBERS } from '@/core';
 import Tesseract, { createScheduler, createWorker } from 'tesseract.js';
 
-export class WasmBreachProtocolRecognizer extends BreachProtocolRecognizer {
+export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
   constructor() {
-    super();
-
     /**
      * Initializing workers takes a lot of time. Loading them every time
      * when class is instantiated is a big performance bottleneck.
@@ -20,14 +17,19 @@ export class WasmBreachProtocolRecognizer extends BreachProtocolRecognizer {
   }
 
   async recognize(image: Buffer) {
-    const { data } = await (WasmBreachProtocolRecognizer.scheduler.addJob(
+    const {
+      data: { text, words },
+    } = await this.scheduleRecognizeJob(image);
+    const boxes = words.map((w) => w.bbox);
+
+    return { text, boxes };
+  }
+
+  private scheduleRecognizeJob(image: Buffer) {
+    return WasmBreachProtocolRecognizer.scheduler.addJob(
       'recognize',
       image
-    ) as Promise<Tesseract.RecognizeResult>);
-
-    const boxes = data.words.map((w) => w.bbox);
-
-    return { text: data.text, boxes };
+    ) as Promise<Tesseract.RecognizeResult>;
   }
 
   private static async initWorker(options: Partial<Tesseract.WorkerOptions>) {

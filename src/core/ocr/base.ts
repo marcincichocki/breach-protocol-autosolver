@@ -11,7 +11,6 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
 import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
-import { BreachProtocolRecognizer } from './recognizer';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -29,6 +28,10 @@ export interface BreachProtocolFragmentBoundingBox {
 export interface BreachProtocolSource {
   text: string;
   boxes: Tesseract.Bbox[];
+}
+
+export interface BreachProtocolRecognizer {
+  recognize(image: Buffer): Promise<BreachProtocolSource>;
 }
 
 export enum BreachProtocolFragmentStatus {
