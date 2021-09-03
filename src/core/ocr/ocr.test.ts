@@ -250,6 +250,9 @@ async function compareOcrToJson(
     thresholds
   );
 
+  expect(ocr.isValid).toBe(true);
+  expect(trim.isValid).toBe(true);
+
   expect(ocr.rawData.grid).toEqual(entry.grid);
   expect(ocr.rawData.daemons).toEqual(entry.daemons);
   expect(ocr.rawData.bufferSize).toBe(entry.bufferSize);
