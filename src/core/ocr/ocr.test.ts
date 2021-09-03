@@ -4,14 +4,17 @@ import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
-import { BreachProtocolFragmentStatus, FragmentId } from './base';
+import {
+  BreachProtocolFragmentStatus,
+  BreachProtocolRecognizer,
+  FragmentId,
+} from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
-import { BreachProtocolRecognizer } from './recognizer';
 
 interface RegistryEntry {
   fileName: string;
@@ -285,7 +288,7 @@ class NoopImageContainer extends ImageContainer<any> {
   processBufferSizeFragment() {}
 }
 
-class TestBreachProtocolRecognizer extends BreachProtocolRecognizer {
+class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
   // @ts-ignore
   async recognize(): any {}
 }
