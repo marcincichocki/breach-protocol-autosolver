@@ -41,7 +41,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'format',
     description:
-      'Source image format. Use "png" for better performance, or "jpg" for smaller files.',
+      'Source image format. Use png for better quality, or jpg for better performance.',
     defaultValue: 'png',
   },
   {
