@@ -5,11 +5,11 @@ import {
   SharpImageContainer,
   XDoToolRobot,
 } from '@/common/node';
+import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
-  BreachProtocolOCRFragment,
 } from '@/core';
 import {
   Action,
@@ -85,7 +85,7 @@ export class BreachProtocolWorker {
         ? join(__dirname, '../..')
         : './resources';
 
-    await BreachProtocolOCRFragment.initScheduler(langPath);
+    await WasmBreachProtocolRecognizer.initScheduler(langPath);
   }
 
   private validateExternalDependencies() {
@@ -129,7 +129,7 @@ export class BreachProtocolWorker {
     this.disposeAsyncRequestListener();
     this.disposeTestThreshold();
 
-    await BreachProtocolOCRFragment.terminateScheduler();
+    await WasmBreachProtocolRecognizer.terminateScheduler();
   }
 
   private registerListeners() {
@@ -202,10 +202,11 @@ export class BreachProtocolWorker {
   private async initTestThreshold(req: Request<string>) {
     const instance = sharp(req.data);
     const container = await SharpImageContainer.create(instance);
+    const recognizer = new WasmBreachProtocolRecognizer();
 
     this.fragments = {
-      grid: new BreachProtocolGridFragment(container),
-      daemons: new BreachProtocolDaemonsFragment(container),
+      grid: new BreachProtocolGridFragment(container, recognizer),
+      daemons: new BreachProtocolDaemonsFragment(container, recognizer),
       bufferSize: new BreachProtocolBufferSizeFragment(container),
     };
   }

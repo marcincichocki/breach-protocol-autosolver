@@ -7,7 +7,11 @@ import {
   isGridFragment,
   ROWS,
 } from '../common';
-import { BreachProtocolFragmentResults, FragmentId } from './base';
+import {
+  BreachProtocolFragmentResults,
+  BreachProtocolRecognizer,
+  FragmentId,
+} from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
@@ -63,11 +67,15 @@ export class BreachProtocolRecognitionResult {
 
 export async function breachProtocolOCR<TImage>(
   container: ImageContainer<TImage>,
+  recognizer: BreachProtocolRecognizer,
   thresholds?: Partial<Record<FragmentId, number>>,
   experimentalBufferSizeRecognition?: boolean
 ) {
-  const gridFragment = new BreachProtocolGridFragment(container);
-  const daemonsFragment = new BreachProtocolDaemonsFragment(container);
+  const gridFragment = new BreachProtocolGridFragment(container, recognizer);
+  const daemonsFragment = new BreachProtocolDaemonsFragment(
+    container,
+    recognizer
+  );
   const bufferSizeFragment = experimentalBufferSizeRecognition
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);

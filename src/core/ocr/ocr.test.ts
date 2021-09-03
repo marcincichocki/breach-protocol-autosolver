@@ -1,11 +1,12 @@
 import { SharpImageContainer } from '@/common/node';
-import path from 'path';
+import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
+import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';
 import { BufferSize, DaemonsRawData, GridRawData } from '../common';
 import {
   BreachProtocolFragmentStatus,
-  BreachProtocolOCRFragment,
+  BreachProtocolRecognizer,
   FragmentId,
 } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
@@ -98,16 +99,18 @@ describe('image container', () => {
 });
 
 describe('raw data validation', () => {
-  let testContainer: NoopImageContainer;
+  let recognizer: TestBreachProtocolRecognizer;
+  let container: NoopImageContainer;
 
   beforeAll(() => {
-    testContainer = new NoopImageContainer({ x: 1920, y: 1080 });
+    recognizer = new TestBreachProtocolRecognizer();
+    container = new NoopImageContainer({ x: 1920, y: 1080 });
     // @ts-ignore
-    BreachProtocolOCRFragment.scheduler = true;
+    WasmBreachProtocolRecognizer.scheduler = true;
   });
 
   afterAll(() => {
-    BreachProtocolOCRFragment.scheduler = undefined;
+    WasmBreachProtocolRecognizer['scheduler'] = undefined;
   });
 
   // prettier-ignore
@@ -126,11 +129,12 @@ describe('raw data validation', () => {
   const valid = BreachProtocolFragmentStatus.Valid;
 
   it('should pass it if data is valid', () => {
-    const gridFragment = new BreachProtocolGridFragment(testContainer);
-    const daemonsFragment = new BreachProtocolDaemonsFragment(testContainer);
-    const bufferSizeFragment = new BreachProtocolBufferSizeFragment(
-      testContainer
+    const gridFragment = new BreachProtocolGridFragment(container, recognizer);
+    const daemonsFragment = new BreachProtocolDaemonsFragment(
+      container,
+      recognizer
     );
+    const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container);
 
     expect(gridFragment.getStatus(grid)).toBe(valid);
     expect(daemonsFragment.getStatus(daemons)).toBe(valid);
@@ -138,7 +142,7 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if grid is invalid', () => {
-    const fragment = new BreachProtocolGridFragment(testContainer);
+    const fragment = new BreachProtocolGridFragment(container, recognizer);
     const invalidGrids = [
       grid.map((s, i) => (i === 5 ? '57' : s)),
       grid.map((s, i) => (i === 9 ? 'asd' : s)),
@@ -153,7 +157,7 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if daemons are invalid', () => {
-    const fragment = new BreachProtocolDaemonsFragment(testContainer);
+    const fragment = new BreachProtocolDaemonsFragment(container, recognizer);
     const invalidDaemons = [
       daemons.map(() => ['B7']),
       daemons.map(() => ['asd']),
@@ -167,7 +171,7 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if buffer size is invalid', () => {
-    const fragment = new BreachProtocolBufferSizeFragment(testContainer);
+    const fragment = new BreachProtocolBufferSizeFragment(container);
     const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
 
     invalidBufferSizes.forEach((bufferSize) => {
@@ -178,11 +182,11 @@ describe('raw data validation', () => {
 
 describe('ocr', () => {
   beforeAll(async () => {
-    await BreachProtocolOCRFragment.initScheduler('./resources');
+    await WasmBreachProtocolRecognizer.initScheduler('./resources');
   }, 30000);
 
   afterAll(async () => {
-    await BreachProtocolOCRFragment.terminateScheduler();
+    await WasmBreachProtocolRecognizer.terminateScheduler();
   });
 
   it.each(getRegistryFor('custom'))(
@@ -257,13 +261,14 @@ async function recognizeRegistryEntry(
   resolution: Resolution,
   thresholds?: Partial<Record<FragmentId, number>>
 ) {
-  const file = path.join('./src/core/bp-registry', resolution, entry.fileName);
+  const file = join('./src/core/bp-registry', resolution, entry.fileName);
   const image = sharp(file);
   const container = await SharpImageContainer.create(image);
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
+  const recognizer = new WasmBreachProtocolRecognizer();
 
   return Promise.all([
-    breachProtocolOCR(container, thresholds),
+    breachProtocolOCR(container, recognizer, thresholds),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
@@ -281,4 +286,9 @@ class NoopImageContainer extends ImageContainer<any> {
   processGridFragment() {}
   processDaemonsFragment() {}
   processBufferSizeFragment() {}
+}
+
+class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
+  // @ts-ignore
+  async recognize(): any {}
 }
