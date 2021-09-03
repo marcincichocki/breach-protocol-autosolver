@@ -18,8 +18,7 @@
       "dist/**/*"
     ],
     "extraFiles": [
-      "resources/**/*",
-      "!resources/icon.png",
+      "resources/BreachProtocol.traineddata",
       {
         "from": "dist",
         "to": "resources",
@@ -30,14 +29,18 @@
       "buildResources": "resources",
       "output": "./out/"
     },
-    "asarUnpack": [
-      "node_modules/screenshot-desktop/lib/win32"
-    ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "extraFiles": [
+        "resources/win32/**/*"
+      ],
+      "asarUnpack": [
+        "node_modules/screenshot-desktop/lib/win32"
+      ]
     },
     "linux": {
       "target": "AppImage",
+      "category": "Utility",
       "asarUnpack": [
         "node_modules/sharp"
       ]
