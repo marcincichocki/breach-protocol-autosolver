@@ -1,5 +1,5 @@
 import { BreachProtocolRecognizer, HEX_NUMBERS } from '@/core';
-import Tesseract, { createScheduler, createWorker } from 'tesseract.js';
+import { createScheduler, createWorker } from 'tesseract.js';
 
 export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
   constructor() {
