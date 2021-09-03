@@ -7,13 +7,16 @@ import {
   isGridFragment,
   ROWS,
 } from '../common';
-import { BreachProtocolFragmentResults, FragmentId } from './base';
+import {
+  BreachProtocolFragmentResults,
+  BreachProtocolRecognizer,
+  FragmentId,
+} from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
-import { BreachProtocolRecognizer } from './recognizer';
 
 export class BreachProtocolRecognitionResult {
   readonly positionSquareMap = this.getPositionSquareMap();
