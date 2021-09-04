@@ -23,7 +23,7 @@ import {
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
-import { SoundPlayer } from './sound-player';
+import { BreachProtocolSoundPlayer } from './sound-player';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
@@ -43,7 +43,7 @@ export class BreachProtocolAutosolver {
   constructor(
     private readonly settings: AppSettings,
     private readonly robot: BreachProtocolRobot,
-    private readonly player: SoundPlayer
+    private readonly player: BreachProtocolSoundPlayer
   ) {}
 
   async solve() {

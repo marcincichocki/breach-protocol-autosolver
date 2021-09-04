@@ -32,7 +32,7 @@ import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import { NativeDialog } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
-import { SoundPlayer } from './sound-player';
+import { BreachProtocolSoundPlayer } from './sound-player';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
@@ -47,7 +47,7 @@ export class BreachProtocolWorker {
 
   private settings: AppSettings = ipc.sendSync('get-state').settings;
 
-  private player = new SoundPlayer(this.settings);
+  private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
 
