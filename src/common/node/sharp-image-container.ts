@@ -4,7 +4,7 @@ import sharp from 'sharp';
 const SHARP_TOKEN = Symbol('SharpImageContainer');
 
 export interface SharpImageContainerConfig {
-  downscaleSource: boolean;
+  downscaleSource?: boolean;
 }
 
 // NOTE: this class will not work in web environments!
@@ -29,7 +29,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
 
   static async create(
     instance: sharp.Sharp,
-    config: SharpImageContainerConfig
+    config: SharpImageContainerConfig = {}
   ) {
     const { width, height } = await instance.metadata();
 

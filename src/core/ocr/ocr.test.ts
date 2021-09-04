@@ -26,7 +26,7 @@ interface RegistryEntry extends BreachProtocolRawData {
   path: string;
 }
 
-interface RegistryConfig extends Partial<SharpImageContainerConfig> {
+interface RegistryConfig extends SharpImageContainerConfig {
   thresholds?: Partial<Record<FragmentId, number>>;
 }
 
