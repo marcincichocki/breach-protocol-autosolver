@@ -28,7 +28,7 @@ export class BreachProtocolSoundPlayer implements SoundPlayer {
     }
 
     if (this.config.soundEnabled !== soundEnabled) {
-      this.config.soundEnabled === soundEnabled;
+      this.config.soundEnabled = soundEnabled;
     }
   }
 
