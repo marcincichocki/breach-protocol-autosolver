@@ -43,7 +43,9 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
-export interface AppSettings extends RobotSettings, SharpImageContainerConfig {
+export interface AppSettings
+  extends RobotSettings,
+    Required<SharpImageContainerConfig> {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
