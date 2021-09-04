@@ -32,6 +32,7 @@ import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import { NativeDialog } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
+import { SoundPlayer } from './sound-player';
 
 export class BreachProtocolWorker {
   private disposeAsyncRequestListener: () => void = null;
@@ -45,6 +46,8 @@ export class BreachProtocolWorker {
   } = null;
 
   private settings: AppSettings = ipc.sendSync('get-state').settings;
+
+  private player = new SoundPlayer(this.settings);
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
 
@@ -149,7 +152,7 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Working);
 
     const robot = this.getRobot();
-    const bpa = new BreachProtocolAutosolver(this.settings, robot);
+    const bpa = new BreachProtocolAutosolver(this.settings, robot, this.player);
     const entry = await bpa.solve();
 
     this.dispatch(new AddHistoryEntryAction(entry));
@@ -162,6 +165,8 @@ export class BreachProtocolWorker {
   ) {
     if (type === ActionTypes.UPDATE_SETTINGS) {
       this.settings = payload.settings;
+
+      this.player.update(payload.settings);
     }
 
     if (type === ActionTypes.SET_STATUS) {
