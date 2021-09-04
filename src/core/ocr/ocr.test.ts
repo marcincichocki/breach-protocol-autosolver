@@ -3,7 +3,12 @@ import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';
-import { BufferSize, DaemonsRawData, GridRawData } from '../common';
+import {
+  BreachProtocolRawData,
+  BufferSize,
+  DaemonsRawData,
+  GridRawData,
+} from '../common';
 import {
   BreachProtocolFragmentStatus,
   BreachProtocolRecognizer,
@@ -16,11 +21,14 @@ import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
 
-interface RegistryEntry {
-  fileName: string;
-  daemons: string[][];
-  grid: string[];
-  bufferSize: BufferSize;
+interface RegistryEntry extends BreachProtocolRawData {
+  /** Source path relative to registry.json */
+  path: string;
+}
+
+interface RegistryConfig {
+  downscale?: boolean;
+  thresholds?: Partial<Record<FragmentId, number>>;
 }
 
 type Resolution =
@@ -190,85 +198,91 @@ describe('ocr', () => {
   });
 
   it.each(getRegistryFor('custom'))(
-    'should correctly ocr custom resolution/%s',
-    async (f: string, entry: RegistryEntry) => {
-      await compareOcrToJson(entry, 'custom');
+    'should correctly ocr %s',
+    async (p: string, entry: RegistryEntry) => {
+      await expectRegistryEntryToEqualRawData(entry);
     }
   );
 
   it.each(getRegistryFor('1024x768'))(
-    'should correctly ocr 1024x768/%s',
-    async (f: string, entry: RegistryEntry) => {
+    'should correctly ocr %s',
+    async (p: string, entry: RegistryEntry) => {
       // This resolution requires fixed thresholds.
-      await compareOcrToJson(entry, '1024x768', { grid: 155, daemons: 140 });
+      const thresholds = { grid: 155, daemons: 140 };
+
+      await expectRegistryEntryToEqualRawData(entry, { thresholds });
     }
   );
 
   it.each(getRegistryFor('1920x1080'))(
-    'should correctly ocr 1920x1080/%s',
-    async (f: string, entry: RegistryEntry) => {
-      await compareOcrToJson(entry, '1920x1080');
+    'should correctly ocr %s',
+    async (p: string, entry: RegistryEntry) => {
+      await expectRegistryEntryToEqualRawData(entry);
     }
   );
 
   it.each(getRegistryFor('2560x1440'))(
-    'should correctly ocr 2560x1440/%s',
-    async (f: string, entry: RegistryEntry) => {
-      await compareOcrToJson(entry, '2560x1440');
+    'should correctly ocr %s',
+    async (p: string, entry: RegistryEntry) => {
+      await expectRegistryEntryToEqualRawData(entry);
     }
   );
 
   it.each(getRegistryFor('3440x1440'))(
     'should correctly ocr 3440x1440/%s',
-    async (f: string, entry: RegistryEntry) => {
-      await compareOcrToJson(entry, '3440x1440');
+    async (p: string, entry: RegistryEntry) => {
+      await expectRegistryEntryToEqualRawData(entry);
     }
   );
 
   it.each(getRegistryFor('3840x2160'))(
-    'should correctly ocr 3840x2160/%s',
-    async (f: string, entry: RegistryEntry) => {
-      await compareOcrToJson(entry, '3840x2160');
+    'should correctly ocr %s',
+    async (p: string, entry: RegistryEntry) => {
+      await expectRegistryEntryToEqualRawData(entry);
+    }
+  );
+
+  it.each(getRegistryFor('3840x2160'))(
+    'should correctly ocr %s with downscaling',
+    async (p: string, entry: RegistryEntry) => {
+      const thresholds = { daemons: 45 };
+
+      await expectRegistryEntryToEqualRawData(entry, {
+        downscale: true,
+        thresholds,
+      });
     }
   );
 });
 
 function getRegistryFor(resolution: Resolution) {
   return registry[resolution].map(
-    (e) => [e.fileName, e] as [string, RegistryEntry]
+    (e) => [e.path, e] as [string, RegistryEntry]
   );
 }
 
-async function compareOcrToJson(
+async function expectRegistryEntryToEqualRawData(
   entry: RegistryEntry,
-  resolution: Resolution,
-  thresholds?: Partial<Record<FragmentId, number>>
+  config: RegistryConfig = {}
 ) {
-  const [ocr, trim] = await recognizeRegistryEntry(
-    entry,
-    resolution,
-    thresholds
-  );
+  const [ocr, trim] = await recognizeRegistryEntry(entry, config);
+
+  expect(entry.grid).toEqual(ocr.rawData.grid);
+  expect(entry.daemons).toEqual(ocr.rawData.daemons);
+  expect(entry.bufferSize).toBe(ocr.rawData.bufferSize);
+  expect(entry.bufferSize).toBe(trim.rawData);
 
   expect(ocr.isValid).toBe(true);
   expect(trim.isValid).toBe(true);
-
-  expect(ocr.rawData.grid).toEqual(entry.grid);
-  expect(ocr.rawData.daemons).toEqual(entry.daemons);
-  expect(ocr.rawData.bufferSize).toBe(entry.bufferSize);
-  expect(trim.rawData).toBe(entry.bufferSize);
 }
 
 async function recognizeRegistryEntry(
   entry: RegistryEntry,
-  resolution: Resolution,
-  thresholds?: Partial<Record<FragmentId, number>>
+  { downscale, thresholds }: RegistryConfig
 ) {
-  const file = join('./src/core/bp-registry', resolution, entry.fileName);
+  const file = join('./src/core/bp-registry', entry.path);
   const image = sharp(file);
-  const container = await SharpImageContainer.create(image, {
-    downscale: true,
-  });
+  const container = await SharpImageContainer.create(image, { downscale });
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
   const recognizer = new WasmBreachProtocolRecognizer();
 
