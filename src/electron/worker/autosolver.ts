@@ -187,8 +187,9 @@ export class BreachProtocolAutosolver {
 
   async recognize() {
     const image = sharp(this.fileName);
+    const { downscaleSource } = this.settings;
     const container = await SharpImageContainer.create(image, {
-      downscale: this.settings.downscaleSource,
+      downscaleSource,
     });
     const recognizer = new WasmBreachProtocolRecognizer();
 

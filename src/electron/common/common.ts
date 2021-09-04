@@ -1,4 +1,4 @@
-import { RobotSettings } from '@/common/node';
+import { RobotSettings, SharpImageContainerConfig } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
@@ -43,7 +43,7 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
-export interface AppSettings extends RobotSettings {
+export interface AppSettings extends RobotSettings, SharpImageContainerConfig {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
@@ -63,7 +63,6 @@ export interface AppSettings extends RobotSettings {
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
   ahkBinPath: string;
-  downscaleSource: boolean;
 }
 
 export interface AppStats {

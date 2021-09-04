@@ -3,9 +3,8 @@ import sharp from 'sharp';
 
 const SHARP_TOKEN = Symbol('SharpImageContainer');
 
-interface SharpImageContainerConfig {
-  /** Whether to downscale 4k or higher resolution source image. */
-  downscale: boolean;
+export interface SharpImageContainerConfig {
+  downscaleSource: boolean;
 }
 
 // NOTE: this class will not work in web environments!
@@ -105,7 +104,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     const isHighResolution =
       fragmentBoundingBox.innerWidth >= SharpImageContainer.MIN_DOWNSCALE_WIDTH;
 
-    if (this.config.downscale && isHighResolution) {
+    if (this.config.downscaleSource && isHighResolution) {
       return instance.resize({
         width,
         withoutEnlargement: true,

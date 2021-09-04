@@ -1,4 +1,4 @@
-import { SharpImageContainer } from '@/common/node';
+import { SharpImageContainer, SharpImageContainerConfig } from '@/common/node';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import { join } from 'path';
 import sharp from 'sharp';
@@ -26,8 +26,7 @@ interface RegistryEntry extends BreachProtocolRawData {
   path: string;
 }
 
-interface RegistryConfig {
-  downscale?: boolean;
+interface RegistryConfig extends Partial<SharpImageContainerConfig> {
   thresholds?: Partial<Record<FragmentId, number>>;
 }
 
@@ -248,7 +247,7 @@ describe('ocr', () => {
       const thresholds = { daemons: 45 };
 
       await expectRegistryEntryToEqualRawData(entry, {
-        downscale: true,
+        downscaleSource: true,
         thresholds,
       });
     }
@@ -278,11 +277,13 @@ async function expectRegistryEntryToEqualRawData(
 
 async function recognizeRegistryEntry(
   entry: RegistryEntry,
-  { downscale, thresholds }: RegistryConfig
+  { downscaleSource, thresholds }: RegistryConfig
 ) {
   const file = join('./src/core/bp-registry', entry.path);
   const image = sharp(file);
-  const container = await SharpImageContainer.create(image, { downscale });
+  const container = await SharpImageContainer.create(image, {
+    downscaleSource,
+  });
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
   const recognizer = new WasmBreachProtocolRecognizer();
 
