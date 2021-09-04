@@ -114,7 +114,7 @@
     "react-router-dom": "^5.2.0",
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.5",
-    "sharp": "^0.28.1",
+    "sharp": "^0.29.0",
     "styled-components": "^5.2.3",
     "tar": "^6.1.0",
     "tesseract.js": "^2.1.4",

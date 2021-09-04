@@ -1,7 +1,7 @@
 {
   "custom": [
     {
-      "fileName": "1.png",
+      "path": "custom/1.png",
       "daemons": [
         ["55", "1C", "1C"],
         ["1C", "1C"],
@@ -19,7 +19,7 @@
   ],
   "1024x768": [
     {
-      "fileName": "1.png",
+      "path": "1024x768/1.png",
       "daemons": [
         ["7A", "55", "7A"],
         ["7A", "1C"]
@@ -38,7 +38,7 @@
   ],
   "1920x1080": [
     {
-      "fileName": "1.png",
+      "path": "1920x1080/1.png",
       "daemons": [
         ["55", "1C", "BD", "55"],
         ["1C", "FF", "55"],
@@ -56,7 +56,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "2.png",
+      "path": "1920x1080/2.png",
       "daemons": [
         ["E9", "1C", "55"],
         ["7A", "1C", "E9"],
@@ -74,7 +74,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "3.png",
+      "path": "1920x1080/3.png",
       "daemons": [
         ["E9", "55"],
         ["E9", "1C", "E9"],
@@ -90,7 +90,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "4.png",
+      "path": "1920x1080/4.png",
       "daemons": [
         ["1C", "E9", "55", "1C"],
         ["BD", "1C", "1C"]
@@ -105,7 +105,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "5.png",
+      "path": "1920x1080/5.png",
       "daemons": [
         ["BD", "BD"],
         ["1C", "1C", "E9"],
@@ -121,7 +121,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "ar.png",
+      "path": "1920x1080/ar.png",
       "daemons": [
         ["1C", "1C", "E9"],
         ["E9", "1C"],
@@ -137,7 +137,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "th.png",
+      "path": "1920x1080/th.png",
       "daemons": [
         ["E9", "BD", "1C"],
         ["BD", "FF", "BD", "E9"],
@@ -155,7 +155,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "ja.png",
+      "path": "1920x1080/ja.png",
       "daemons": [
         ["1C", "E9"],
         ["55", "BD", "E9"],
@@ -171,7 +171,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "ko.png",
+      "path": "1920x1080/ko.png",
       "daemons": [
         ["1C", "55", "BD"],
         ["55", "E9", "55"],
@@ -187,7 +187,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "zh-CN.png",
+      "path": "1920x1080/zh-CN.png",
       "daemons": [
         ["1C", "55"],
         ["1C", "1C"],
@@ -205,7 +205,7 @@
   ],
   "2560x1440": [
     {
-      "fileName": "1.png",
+      "path": "2560x1440/1.png",
       "daemons": [
         ["1C", "55"]
       ],
@@ -218,7 +218,7 @@
       "bufferSize": 5
     },
     {
-      "fileName": "2.png",
+      "path": "2560x1440/2.png",
       "daemons": [
         ["55", "1C", "E9"],
         ["BD", "BD", "FF", "55"]
@@ -234,7 +234,7 @@
       "bufferSize": 6
     },
     {
-      "fileName": "3.png",
+      "path": "2560x1440/3.png",
       "daemons": [
         ["55", "55"],
         ["BD", "BD"] 
@@ -249,7 +249,7 @@
       "bufferSize": 4
     },
     {
-      "fileName": "4.png",
+      "path": "2560x1440/4.png",
       "daemons": [
         ["1C", "E9", "1C"],
         ["E9", "55", "1C"],
@@ -266,7 +266,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "5.png",
+      "path": "2560x1440/5.png",
       "daemons": [
         ["55", "7A"],
         ["7A", "1C"],
@@ -283,7 +283,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "6.png",
+      "path": "2560x1440/6.png",
       "daemons": [
         ["1C", "E9", "1C", "1C", "1C", "BD"]
       ],
@@ -298,7 +298,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "ar.png",
+      "path": "2560x1440/ar.png",
       "daemons": [
         ["1C", "55", "1C"],
         ["55", "1C", "55"],
@@ -316,7 +316,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "ja.png",
+      "path": "2560x1440/ja.png",
       "daemons": [
         ["7A", "7A", "1C"],
         ["7A", "1C", "E9", "1C"],
@@ -334,7 +334,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "ko.png",
+      "path": "2560x1440/ko.png",
       "daemons": [
         ["FF", "55", "55"],
         ["7A", "7A", "BD"],
@@ -352,7 +352,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "th.png",
+      "path": "2560x1440/th.png",
       "daemons": [
         ["1C", "1C", "55"],
         ["1C", "E9", "1C", "1C"],
@@ -370,7 +370,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "zh-CN.png",
+      "path": "2560x1440/zh-CN.png",
       "daemons": [
         ["1C", "FF", "7A", "7A"],
         ["7A", "E9", "55"],
@@ -388,7 +388,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "g050.png",
+      "path": "2560x1440/g050.png",
       "daemons": [
         ["BD", "BD"],
         ["E9", "BD"],
@@ -404,7 +404,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "g150.png",
+      "path": "2560x1440/g150.png",
       "daemons": [
         ["55", "55", "1C"],
         ["1C", "55", "E9"],
@@ -422,7 +422,7 @@
   ],
   "3440x1440": [
     {
-      "fileName": "1.png",
+      "path": "3440x1440/1.png",
       "daemons": [
         ["BD", "BD"],
         ["1C", "1C"],
@@ -443,7 +443,7 @@
   ],
   "3840x2160": [
     {
-      "fileName": "1.png",
+      "path": "3840x2160/1.png",
       "daemons": [
         ["55", "E9", "1C"]
       ],
@@ -457,7 +457,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "2.png",
+      "path": "3840x2160/2.png",
       "daemons": [
         ["1C", "BD"],
         ["55", "1C"]
@@ -473,7 +473,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "3.png",
+      "path": "3840x2160/3.png",
       "daemons": [
         ["55", "E9"],
         ["1C", "55", "55"]
@@ -489,7 +489,7 @@
       "bufferSize": 8
     },
     {
-      "fileName": "4.png",
+      "path": "3840x2160/4.png",
       "daemons": [
         ["BD", "1C"],
         ["BD", "1C", "1C"],
@@ -505,7 +505,7 @@
       "bufferSize": 7
     },
     {
-      "fileName": "5.png",
+      "path": "3840x2160/5.png",
       "daemons": [
         ["1C", "1C", "E9"],
         ["BD", "1C", "1C"],

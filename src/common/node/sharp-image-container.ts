@@ -3,11 +3,19 @@ import sharp from 'sharp';
 
 const SHARP_TOKEN = Symbol('SharpImageContainer');
 
+export interface SharpImageContainerConfig {
+  downscaleSource?: boolean;
+}
+
 // NOTE: this class will not work in web environments!
 export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
+  // Only downscale from 4k or higher resolutions.
+  static readonly MIN_DOWNSCALE_WIDTH = 3840;
+
   constructor(
     public readonly instance: sharp.Sharp,
     public readonly dimensions: { x: number; y: number },
+    private readonly config: SharpImageContainerConfig,
     token?: Symbol
   ) {
     super();
@@ -19,12 +27,16 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     }
   }
 
-  static async create(instance: sharp.Sharp) {
+  static async create(
+    instance: sharp.Sharp,
+    config: SharpImageContainerConfig = {}
+  ) {
     const { width, height } = await instance.metadata();
 
     return new SharpImageContainer(
       instance,
       { x: width, y: height },
+      config,
       SHARP_TOKEN
     );
   }
@@ -34,19 +46,19 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .clone()
       .removeAlpha()
       .extract(fragmentBoundingBox)
-      .negate()
+      .negate({ alpha: false } as any) // TODO: update typings.
       .toColorspace('b-w')
       .png({ colors: 2 });
   }
 
   processGridFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
-    return this.process(fragmentBoundingBox);
+    return this.processWithOptionalDownscaling(fragmentBoundingBox, 400);
   }
 
   processDaemonsFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ) {
-    return this.process(fragmentBoundingBox);
+    return this.processWithOptionalDownscaling(fragmentBoundingBox, 450);
   }
 
   processBufferSizeFragment(
@@ -82,5 +94,23 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
 
   toFile(instance: sharp.Sharp, fileName: string) {
     return instance.clone().toFile(fileName);
+  }
+
+  private processWithOptionalDownscaling(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox,
+    width: number
+  ) {
+    const instance = this.process(fragmentBoundingBox);
+    const isHighResolution =
+      fragmentBoundingBox.innerWidth >= SharpImageContainer.MIN_DOWNSCALE_WIDTH;
+
+    if (this.config.downscaleSource && isHighResolution) {
+      return instance.resize({
+        width,
+        withoutEnlargement: true,
+      });
+    }
+
+    return instance;
   }
 }

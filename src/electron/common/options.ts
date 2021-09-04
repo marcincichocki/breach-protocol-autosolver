@@ -134,6 +134,12 @@ const options: BreachProtocolOption[] = [
     description: 'Path to AutoHotkey executable.',
     defaultValue: '',
   },
+  {
+    id: 'downscaleSource',
+    description:
+      'Downscale source image to speed up OCR. This option have no effect on resolutions smaller than 4k.',
+    defaultValue: false,
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {

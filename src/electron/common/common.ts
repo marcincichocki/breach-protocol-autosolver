@@ -1,4 +1,4 @@
-import { RobotSettings } from '@/common/node';
+import { RobotSettings, SharpImageContainerConfig } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
@@ -43,7 +43,9 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
-export interface AppSettings extends RobotSettings {
+export interface AppSettings
+  extends RobotSettings,
+    Required<SharpImageContainerConfig> {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
