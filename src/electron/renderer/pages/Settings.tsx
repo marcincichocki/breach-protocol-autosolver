@@ -282,9 +282,20 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
 };
 
 const PerformanceSettings = () => {
+  async function onDownscaleSourceChange(value: boolean) {
+    if (value) {
+      await NativeDialog.alert({
+        detail: 'This option have no effect on resolutions smaller than 4k.',
+        message:
+          "Automatic thresholds for grid and daemons fragments might stop working with downscaling turned on. It's recommended to set fixed thresholds.",
+        buttons: ['I understand'],
+      });
+    }
+  }
+
   return (
     <Section title="Performance">
-      <Field name="downscaleSource">
+      <Field name="downscaleSource" onValueChange={onDownscaleSourceChange}>
         <Label>Downscale source image</Label>
         <Switch />
       </Field>
