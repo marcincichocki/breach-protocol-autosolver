@@ -84,11 +84,6 @@ const FieldDescription = ({ name }: { name: keyof AppSettings }) => {
 };
 
 const GeneralSettings = ({ historySize }: { historySize: number }) => {
-  const formatOptions = [
-    { name: 'jpg', value: 'jpg' },
-    { name: 'png', value: 'png' },
-  ];
-
   const onBeforeHistorySizeChange: OnBeforeValueChange<number> = async (
     value,
     next
@@ -136,10 +131,6 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
       <Field name="autoUpdate">
         <Label>Auto update</Label>
         <Switch />
-      </Field>
-      <Field name="format">
-        <Label>Source format</Label>
-        <Select options={formatOptions} />
       </Field>
     </Section>
   );
@@ -242,10 +233,6 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         <Label>Start sound</Label>
         <File accept=".mp3,.wav" />
       </Field>
-      <Field name="delay">
-        <Label>Delay(ms)</Label>
-        <RangeSlider />
-      </Field>
       <Field name="autoExit">
         <Label>Auto exit</Label>
         <Switch />
@@ -281,6 +268,11 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   );
 };
 
+const formatOptions = [
+  { name: 'jpg(speed)', value: 'jpg' },
+  { name: 'png(quality)', value: 'png' },
+];
+
 const PerformanceSettings = () => {
   async function onDownscaleSourceChange(value: boolean) {
     if (value) {
@@ -303,9 +295,17 @@ const PerformanceSettings = () => {
 
   return (
     <Section title="Performance">
+      <Field name="format">
+        <Label>Source format</Label>
+        <Select options={formatOptions} />
+      </Field>
       <Field name="downscaleSource" onValueChange={onDownscaleSourceChange}>
         <Label>Downscale source image</Label>
         <Switch />
+      </Field>
+      <Field name="delay">
+        <Label>Delay(ms)</Label>
+        <RangeSlider />
       </Field>
       <Field name="resolveDelay" onValueChange={onResolveDelayChange}>
         <Label>Resolve delay(ms)</Label>
