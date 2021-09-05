@@ -117,6 +117,7 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "date-fns": "^2.22.1",
     "dompurify": "^2.3.1",
     "electron-first-run": "^3.0.0",
@@ -127,7 +128,6 @@
     "is-wsl": "^2.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.5",
