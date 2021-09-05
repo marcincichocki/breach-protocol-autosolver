@@ -16,7 +16,7 @@ This can be quite common behavior, and may depend on variety of factors:
 - _BP_ you are trying to solve has already started.
 - You are trying to solve something that isn't a _BP_.
 
-### Recognition works, but _BP_ is not resolved!
+### Recognition works, but Cyberpunk 2077 does not receive any input commands!
 
 This is caused most likely by selecting incorrect engine/input device to the platform you are running Cyberpunk 2077 on.
 
@@ -34,4 +34,7 @@ Use keyboard as input device, mouse input is discouraged, as it's tricky to work
 
 ### Simulated sequence is not correct!
 
-Don't use your peripherals(mouse, keyboard, gamepad) while _BPA_ is working.
+This can be caused either by:
+
+- using your peripherals(mouse, keyboard, gamepad) while _BPA_ is working.
+- starting _BPA_ to quickly. For more information consult [Breach Protocol bugs page](bugs.md)
