@@ -270,8 +270,8 @@ export const KeyBind = ({ onFocus, onBlur }: KeyBindProps) => {
           ref.current.blur();
 
           return NativeDialog.alert({
-            title: 'Invalid key bind',
-            message: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
+            message: 'Invalid key bind',
+            detail: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
           });
         }
 

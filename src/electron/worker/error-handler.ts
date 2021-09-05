@@ -7,7 +7,6 @@ function globalErrorHandler(event: ErrorEvent | PromiseRejectionEvent) {
     event instanceof ErrorEvent ? event.message : event.reason.toString();
 
   NativeDialog.alert({
-    title: 'Error',
     type: 'error',
     message: 'Error occurred in worker process.',
     detail,
