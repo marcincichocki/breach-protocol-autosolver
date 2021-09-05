@@ -166,7 +166,7 @@ export class BreachProtocolWorker {
     if (type === ActionTypes.UPDATE_SETTINGS) {
       this.settings = payload.settings;
 
-      this.player.update(payload.settings);
+      this.player.update(this.settings);
     }
 
     if (type === ActionTypes.SET_STATUS) {

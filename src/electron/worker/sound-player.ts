@@ -8,8 +8,10 @@ interface SoundPlayer {
   play(id: string): Promise<void>;
 }
 
+type TrackId = 'start' | 'error';
+
 export class BreachProtocolSoundPlayer implements SoundPlayer {
-  private readonly library = new Map([
+  private readonly library = new Map<TrackId, HTMLAudioElement>([
     ['start', this.initAudio(this.config.startSoundPath)],
     ['error', this.initAudio(this.config.errorSoundPath)],
   ]);
@@ -32,7 +34,7 @@ export class BreachProtocolSoundPlayer implements SoundPlayer {
     }
   }
 
-  play(id: 'start' | 'error') {
+  play(id: TrackId) {
     if (!this.config.soundEnabled) return;
 
     const audio = this.library.get(id);
