@@ -67,7 +67,7 @@ export class BreachProtocolAutosolverUpdater {
 
     if (!this.autoUpdate) {
       const result = await NativeDialog.confirm({
-        message: `New version ${version} is available.`,
+        message: `New version of ${PRODUCT_NAME}(${version}) is available.`,
         buttons: ['Download and install', 'Cancel'],
         type: 'info',
       });
