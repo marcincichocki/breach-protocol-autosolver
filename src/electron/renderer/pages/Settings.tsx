@@ -151,7 +151,7 @@ function updateWorkerStatus(status: WorkerStatus) {
   dispatch(new SetStatusAction(status, 'renderer'));
 }
 
-const outputDeviceOptions = [
+const inputDeviceOptions = [
   { name: 'Keyboard(recommended)', value: 'keyboard' },
   { name: 'Mouse', value: 'mouse' },
 ];
@@ -212,10 +212,10 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     next();
   }
 
-  async function notifyAboutOutputDevice(value: string, next: () => void) {
+  async function notifyAboutInputDevice(value: string, next: () => void) {
     if (value === 'mouse') {
       const message =
-        'Mouse output device is experimental feature and might not work correctly. Do you still want to use it?';
+        'Mouse input device is experimental feature and might not work correctly. Do you still want to use it?';
       const result = await NativeDialog.confirm({ message });
 
       if (!result) return;
@@ -265,10 +265,10 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
         </Field>
       )}
       <Field name="outputDevice">
-        <Label>Output device</Label>
+        <Label>Input device</Label>
         <Select
-          options={outputDeviceOptions}
-          onBeforeValueChange={notifyAboutOutputDevice}
+          options={inputDeviceOptions}
+          onBeforeValueChange={notifyAboutInputDevice}
         />
       </Field>
       {values.outputDevice === 'mouse' && (
@@ -285,10 +285,18 @@ const PerformanceSettings = () => {
   async function onDownscaleSourceChange(value: boolean) {
     if (value) {
       await NativeDialog.alert({
-        detail: 'This option have no effect on resolutions smaller than 4k.',
-        message:
+        message: 'This option have no effect on resolutions smaller than 4k.',
+        detail:
           "Automatic thresholds for grid and daemons fragments might stop working with downscaling turned on. It's recommended to set fixed thresholds.",
         buttons: ['I understand'],
+      });
+    }
+  }
+
+  async function onResolveDelayChange(value: number) {
+    if (value && value <= 500) {
+      await NativeDialog.alert({
+        message: 'Resolve delay that low might have no effect.',
       });
     }
   }
@@ -298,6 +306,10 @@ const PerformanceSettings = () => {
       <Field name="downscaleSource" onValueChange={onDownscaleSourceChange}>
         <Label>Downscale source image</Label>
         <Switch />
+      </Field>
+      <Field name="resolveDelay" onValueChange={onResolveDelayChange}>
+        <Label>Resolve delay(ms)</Label>
+        <RangeSlider min={0} max={1500} step={100} />
       </Field>
     </Section>
   );

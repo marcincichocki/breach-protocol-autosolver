@@ -2,6 +2,7 @@ import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';
 import screenshot, { ScreenshotFormat } from 'screenshot-desktop';
+import { sleep } from '../util';
 
 export interface RobotSettings {
   delay: number;
@@ -47,7 +48,7 @@ export abstract class BreachProtocolRobot {
   protected async bin(command: string) {
     const args = command.split(' ');
     const data = await this.execBin(args);
-    await this.sleep();
+    await sleep(this.settings.delay);
 
     return data;
   }
@@ -63,11 +64,6 @@ export abstract class BreachProtocolRobot {
         }
       });
     });
-  }
-
-  /** Wait for given amount of miliseconds. */
-  protected sleep(delay: number = this.settings.delay) {
-    return new Promise((r) => setTimeout(r, delay));
   }
 
   /** Make screenshot of given screen and save it in screenshot dir. */
@@ -156,7 +152,7 @@ export class AhkRobot extends BreachProtocolRobot {
   override async bin(command: string) {
     const args = [this.scriptPath, ...command.split(' ')];
     const data = await this.execBin(args);
-    await this.sleep();
+    await sleep(this.settings.delay);
 
     return data;
   }

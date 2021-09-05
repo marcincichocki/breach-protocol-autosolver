@@ -7,6 +7,7 @@ interface RangeSliderProps {
   disabled?: boolean;
   min?: number;
   max?: number;
+  step?: number;
 }
 
 const Range = styled.input.attrs<RangeSliderProps>({ type: 'range' })`
@@ -99,5 +100,5 @@ export function RangeSlider({
 }
 
 export const ThresholdSlider = (props: RangeSliderProps) => (
-  <RangeSlider {...props} min={0} max={255} />
+  <RangeSlider {...props} min={0} max={255} step={1} />
 );

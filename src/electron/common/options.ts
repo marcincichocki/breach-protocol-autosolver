@@ -19,7 +19,7 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'delay',
-    description: 'Delay in milliseconds between output commands.',
+    description: 'Delay in milliseconds between input commands.',
     defaultValue: 75,
   },
   {
@@ -111,7 +111,7 @@ const options: BreachProtocolOption[] = [
   {
     id: 'useScaling',
     description:
-      'Take display scaling into account when calculating coordinates of squares. Applies only to mouse output.',
+      'Take display scaling into account when calculating coordinates of squares. Applies only to mouse input.',
     defaultValue: false,
   },
   {
@@ -121,12 +121,12 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'outputDevice',
-    description: 'Output device that will be used to solve breach protocol.',
+    description: 'Input device that will be used to solve breach protocol.',
     defaultValue: 'keyboard',
   },
   {
     id: 'engine',
-    description: 'Program that will send output commands to Cyberpunk 2077.',
+    description: 'Program that will send input commands to Cyberpunk 2077.',
     defaultValue: BUILD_PLATFORM === 'win32' ? 'nircmd' : 'xdotool',
   },
   {
@@ -139,6 +139,12 @@ const options: BreachProtocolOption[] = [
     description:
       'Downscale source image to speed up OCR. This option have no effect on resolutions smaller than 4k.',
     defaultValue: false,
+  },
+  {
+    id: 'resolveDelay',
+    description:
+      'Wait at least given amount of milliseconds counting from the start of a job before sending input commands. Using this option can help avoid bug with invalid sequence.',
+    defaultValue: 0,
   },
 ];
 
