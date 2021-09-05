@@ -64,6 +64,7 @@ export interface AppSettings
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
   ahkBinPath: string;
+  resolveDelay: number;
 }
 
 export interface AppStats {

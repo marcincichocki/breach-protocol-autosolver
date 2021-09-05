@@ -16,7 +16,7 @@ export abstract class BreachProtocolResolver {
 
   constructor(protected readonly robot: BreachProtocolRobot) {}
 
-  /** Output solution to the game. */
+  /** Send solution to the game. */
   abstract resolve(path: string[]): Promise<void>;
 
   /** Exit BP manually if required. */
