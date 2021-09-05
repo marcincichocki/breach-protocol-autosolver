@@ -16,7 +16,7 @@ This can be quite common behavior, and may depend on variety of factors:
 - _BP_ you are trying to solve has already started.
 - You are trying to solve something that isn't a _BP_.
 
-### Recognition works, but Cyberpunk 2077 does not receive any input commands!
+### Recognition works, but Cyberpunk 2077 did not receive any input commands!
 
 This is caused most likely by selecting incorrect engine/input device to the platform you are running Cyberpunk 2077 on.
 
