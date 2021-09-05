@@ -8,6 +8,7 @@ import {
 import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
+import { SoundPlayerConfig } from '../worker/sound-player';
 
 export enum WorkerStatus {
   Disconnected,
@@ -45,13 +46,11 @@ export interface HistoryEntry {
 
 export interface AppSettings
   extends RobotSettings,
-    Required<SharpImageContainerConfig> {
+    Required<SharpImageContainerConfig>,
+    SoundPlayerConfig {
   keyBind: Accelerator;
   historySize: number;
   preserveSourceOnSuccess: boolean;
-  soundEnabled: boolean;
-  errorSoundPath: string;
-  startSoundPath: string;
   checkForUpdates: boolean;
   autoUpdate: boolean;
   minimizeToTray: boolean;

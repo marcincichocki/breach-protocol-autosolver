@@ -23,6 +23,7 @@ import {
 import { remove } from 'fs-extra';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
+import { BreachProtocolSoundPlayer } from './sound-player';
 
 export class BreachProtocolAutosolver {
   private readonly uuid = uuidv4();
@@ -41,11 +42,12 @@ export class BreachProtocolAutosolver {
 
   constructor(
     private readonly settings: AppSettings,
-    private readonly robot: BreachProtocolRobot
+    private readonly robot: BreachProtocolRobot,
+    private readonly player: BreachProtocolSoundPlayer
   ) {}
 
   async solve() {
-    this.notifyUser('start');
+    await this.player.play('start');
 
     this.fileName = await this.robot.captureScreen();
     this.recognitionResult = await this.recognize();
@@ -129,8 +131,8 @@ export class BreachProtocolAutosolver {
     };
   }
 
-  private reject() {
-    this.notifyUser('error');
+  private async reject() {
+    await this.player.play('error');
 
     return this.finishWithStatus(BreachProtocolStatus.Rejected);
   }
@@ -148,19 +150,6 @@ export class BreachProtocolAutosolver {
     this.finishedAt = Date.now();
 
     return this.toJSON();
-  }
-
-  private notifyUser(type: 'start' | 'error') {
-    if (this.settings.soundEnabled) {
-      const source =
-        type === 'start'
-          ? this.settings.startSoundPath
-          : this.settings.errorSoundPath;
-
-      if (source) {
-        new Audio(source).play();
-      }
-    }
   }
 
   private removeSourceImage() {
