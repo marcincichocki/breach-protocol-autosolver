@@ -11,6 +11,22 @@
       "@/(.*)": "<rootDir>/src/$1"
     }
   },
+  "standard-version": {
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "perf",
+        "section": "Performance improvements"
+      }
+    ]
+  },
   "build": {
     "appId": "com.marcincichocki.breach-protocol-autosolver",
     "productName": "Breach Protocol Autosolver",
