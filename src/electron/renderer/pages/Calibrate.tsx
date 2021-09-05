@@ -1,6 +1,6 @@
 import { rendererAsyncRequestDispatcher as asyncRequest } from '@/electron/common';
+import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
 import { FC, useEffect } from 'react';
-import { MdKeyboardBackspace } from 'react-icons/md';
 import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {

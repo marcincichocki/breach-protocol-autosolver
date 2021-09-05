@@ -1,6 +1,7 @@
 import { BreachProtocolStatus } from '@/electron/common';
+import { MdClose } from '@react-icons/all-files/md/MdClose';
+import { MdDone } from '@react-icons/all-files/md/MdDone';
 import { FC, useContext } from 'react';
-import { MdClose, MdDone } from 'react-icons/md';
 import {
   NavLink,
   Redirect,
