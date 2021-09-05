@@ -4,6 +4,7 @@
   "description": "Automatically solve breach protocol minigame in Cyberpunk 2077",
   "main": "dist/main.js",
   "private": true,
+  "sideEffects": false,
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
