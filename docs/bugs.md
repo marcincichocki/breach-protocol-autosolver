@@ -12,7 +12,7 @@ As a workaround change resolution to **1366**x768.
 
 ### Speedy Gonzales bug
 
-This bug makes input device unresponsive when _BP_ is starting. Even though UI looks ready, it's impossible to select any square in grid. Only after daemons do a little "jump" it looks _BP_ is ready to receive input.
+This bug makes input device unresponsive when _BP_ is starting. Even though UI looks ready, it's impossible to select any square in grid. Only after daemons do a little "jump" it looks like _BP_ is ready to receive input.
 
 Depending on settings(and user's reaction time), _BPA_ can be really fast and try to resolve _BP_ **before** it's ready. This will cause invalid sequence to be selected.
 
