@@ -1,4 +1,4 @@
-import { BitMask } from '@/common';
+import { BitMask, sleep } from '@/common';
 import {
   BreachProtocolKeyboardResolver,
   BreachProtocolMouseResolver,
@@ -47,6 +47,7 @@ export class BreachProtocolAutosolver {
   ) {}
 
   async solve() {
+    const resolveDelay = this.getResolveDelay();
     await this.player.play('start');
 
     this.fileName = await this.robot.captureScreen();
@@ -66,9 +67,16 @@ export class BreachProtocolAutosolver {
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
 
+    await resolveDelay;
     await this.resolveBreachProtocol(this.result);
 
     return this.resolve();
+  }
+
+  private getResolveDelay() {
+    const { resolveDelay } = this.settings;
+
+    return resolveDelay ? sleep(resolveDelay) : Promise.resolve();
   }
 
   private getResolver(): BreachProtocolResolver {

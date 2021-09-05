@@ -117,3 +117,8 @@ export class BitMask {
     return this;
   }
 }
+
+/** Wait for given amount of miliseconds. */
+export function sleep(delay: number) {
+  return new Promise((r) => setTimeout(r, delay));
+}
