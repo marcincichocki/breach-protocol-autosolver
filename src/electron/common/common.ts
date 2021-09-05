@@ -179,7 +179,7 @@ export interface TestThresholdData {
 export class NativeDialog {
   static async confirm(options: Electron.MessageBoxOptions) {
     const defaultOptions: Partial<Electron.MessageBoxOptions> = {
-      title: 'Confirm',
+      title: PRODUCT_NAME,
       defaultId: 0,
       cancelId: 1,
       noLink: true,
@@ -198,7 +198,7 @@ export class NativeDialog {
     const defaultOptions: Partial<Electron.MessageBoxOptions> = {
       noLink: true,
       defaultId: 0,
-      title: 'Alert',
+      title: PRODUCT_NAME,
       type: 'warning',
       buttons: ['Ok'],
     };
