@@ -1,4 +1,4 @@
-import { RobotSettings, SharpImageContainerConfig } from '@/common/node';
+import type { RobotSettings, SharpImageContainerConfig } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,
@@ -6,7 +6,7 @@ import {
   SequenceJSON,
 } from '@/core';
 import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 import { SoundPlayerConfig } from '../worker/sound-player';
 

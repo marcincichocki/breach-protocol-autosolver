@@ -10,7 +10,7 @@ import {
   UpdateStatus,
   WorkerStatus,
 } from '@/electron/common';
-import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 
 type Handler<T = any, S = State> = (state: S, action: Action<T>) => State;
 
