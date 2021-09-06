@@ -40,6 +40,8 @@ export class BreachProtocolAutosolver {
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
+  private resolveDelay: Promise<unknown>;
+
   constructor(
     private readonly settings: AppSettings,
     private readonly robot: BreachProtocolRobot,
@@ -47,7 +49,7 @@ export class BreachProtocolAutosolver {
   ) {}
 
   async solve() {
-    const resolveDelay = this.getResolveDelay();
+    this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
     this.fileName = await this.robot.captureScreen();
@@ -67,16 +69,13 @@ export class BreachProtocolAutosolver {
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
 
-    await resolveDelay;
     await this.resolveBreachProtocol(this.result);
 
     return this.resolve();
   }
 
-  private getResolveDelay() {
-    const { resolveDelay } = this.settings;
-
-    return resolveDelay ? sleep(resolveDelay) : Promise.resolve();
+  private getResolveDelayPromise() {
+    return sleep(this.settings.resolveDelay);
   }
 
   private getResolver(): BreachProtocolResolver {
@@ -94,6 +93,7 @@ export class BreachProtocolAutosolver {
   }: BreachProtocolResult) {
     const resolver = this.getResolver();
 
+    await this.resolveDelay;
     await resolver.resolve(path);
 
     if (this.settings.autoExit) {
