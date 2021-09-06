@@ -4,7 +4,10 @@
   "description": "Automatically solve breach protocol minigame in Cyberpunk 2077",
   "main": "dist/main.js",
   "private": true,
-  "sideEffects": false,
+  "sideEffects": [
+    "src/electron/renderer/styles/fonts.css",
+    "src/electron/worker/error-handler.ts"
+  ],
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
