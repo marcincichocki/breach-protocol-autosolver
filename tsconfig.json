@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "module": "CommonJS",
+    "module": "esnext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2019",
@@ -20,5 +20,10 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["./types"]
+  "exclude": ["./types"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import {
   Action,
   AppSettings,
