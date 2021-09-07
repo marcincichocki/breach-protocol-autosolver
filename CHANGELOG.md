@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-rc.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2021-09-07)
+
+
+### Features
+
+* **client-electron:** add ability to delay resolve step ([13fb17f](https://github.com/marcincichocki/breach-protocol-autosolver/commit/13fb17fea3bce2eb2ff1e7e12befac75680b6867)), closes [#198](https://github.com/marcincichocki/breach-protocol-autosolver/issues/198)
+
+
+### Bug Fixes
+
+* **client-electron:** prefetch audio files ([c25d23b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c25d23b252402d9015133c6517bc0a61d93ce805)), closes [#190](https://github.com/marcincichocki/breach-protocol-autosolver/issues/190)
+* **client-electron:** set product name as dialog title ([fe45c5a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/fe45c5a2ab97e5cf0de61e8cc4e85ed196415b2f)), closes [#189](https://github.com/marcincichocki/breach-protocol-autosolver/issues/189)
+* **core:** allow daemons of length 6 ([c1ee30e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c1ee30e3af3fa3e7d886889c5cae2dd8e746a6ac)), closes [#194](https://github.com/marcincichocki/breach-protocol-autosolver/issues/194)
+
+
+### Performance improvements
+
+* **client-electron:** remove dead code ([a168a6e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a168a6e5ea30cd96378e729ae7815a138f59f663)), closes [#197](https://github.com/marcincichocki/breach-protocol-autosolver/issues/197)
+* **common:** add ability to downscale source image ([53782b6](https://github.com/marcincichocki/breach-protocol-autosolver/commit/53782b61ca8097c4cc8cae58fcf22cc449aba7e3))
+* **common:** skip setTimeout of 0ms ([447e37a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/447e37aef17ce0cc576b725be5db16cd3d299f88))
+* **core:** format fragments as png ([31cb24b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/31cb24bd29a00bf05a6616c4fbb2bd3b40cc9478))
+
 ## [2.0.0-rc.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-beta.3...v2.0.0-rc.0) (2021-08-31)
 
 
