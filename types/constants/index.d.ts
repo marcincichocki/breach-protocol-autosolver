@@ -21,3 +21,5 @@ declare const BUILD_PLATFORM: NodeJS.Platform;
 
 /** Application ID, Windows only. */
 declare const APP_ID: string;
+
+declare const api: any;

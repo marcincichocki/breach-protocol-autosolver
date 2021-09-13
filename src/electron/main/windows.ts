@@ -12,7 +12,7 @@ function createWindow(name: string, options: BrowserWindowConstructorOptions) {
 }
 
 const workerOptions: BrowserWindowConstructorOptions = {
-  show: false,
+  show: true,
   webPreferences: {
     nodeIntegration: true,
     contextIsolation: false,
@@ -29,8 +29,7 @@ const rendererOptions: BrowserWindowConstructorOptions = {
   icon: join(__dirname, icon),
   autoHideMenuBar: true,
   webPreferences: {
-    nodeIntegration: true,
-    contextIsolation: false,
+    preload: join(__dirname, 'preload.js'),
   },
 };
 
