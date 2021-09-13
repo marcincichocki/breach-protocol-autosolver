@@ -17,12 +17,12 @@ import {
   AddHistoryEntryAction,
   AppSettings,
   Request,
+  Response,
   SetDisplaysAction,
   SetStatusAction,
   State,
   TestThresholdData,
   UpdateSettingsAction,
-  workerAsyncRequestListener,
   WorkerStatus,
 } from '@/electron/common';
 import { execSync } from 'child_process';
@@ -30,8 +30,8 @@ import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { join } from 'path';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
-import { NativeDialog } from '../common';
 import { BreachProtocolAutosolver } from './autosolver';
+import { nativeDialog } from './dialog';
 import { BreachProtocolSoundPlayer } from './sound-player';
 
 export class BreachProtocolWorker {
@@ -50,6 +50,8 @@ export class BreachProtocolWorker {
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
+
+  private port: Electron.MessagePortMain = null;
 
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
@@ -105,7 +107,7 @@ export class BreachProtocolWorker {
       if (!isImageMagickInstalled || !isXDoToolInstalled) {
         const message = 'imagemagick and xdotool packages are required!';
 
-        NativeDialog.alert({ message });
+        nativeDialog.alert({ message });
 
         return false;
       }
@@ -139,9 +141,22 @@ export class BreachProtocolWorker {
     ipc.on('worker:solve', this.onWorkerSolve.bind(this));
     ipc.on('state', this.onStateChanged.bind(this));
 
-    this.disposeAsyncRequestListener = workerAsyncRequestListener(
+    this.disposeAsyncRequestListener = this.asyncRequestListener(
       this.handleAsyncRequest.bind(this)
     );
+  }
+
+  private asyncRequestListener(handler: (req: Request) => Promise<any>) {
+    ipc.on('async-request', async (event: any, req: Request) => {
+      const data = await handler(req);
+      const res: Response = { data, uuid: req.uuid, origin: 'worker' };
+
+      event.sender.send('async-response', res);
+    });
+
+    return () => {
+      ipc.removeAllListeners('async-request');
+    };
   }
 
   private async onWorkerSolve() {

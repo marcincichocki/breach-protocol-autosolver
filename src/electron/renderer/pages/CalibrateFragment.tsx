@@ -1,13 +1,12 @@
 import { BreachProtocolFragmentResults, FragmentId } from '@/core';
 import {
   HistoryEntry,
-  rendererAsyncRequestDispatcher as asyncRequest,
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { dispatch, fromCamelCase } from '../common';
+import { asyncRequestDispatcher, dispatch, fromCamelCase } from '../common';
 import {
   Col,
   Field,
@@ -73,7 +72,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
   async function onTestThreshold(threshold: number) {
     setLoading(true);
 
-    const result = await asyncRequest<
+    const result = await asyncRequestDispatcher<
       BreachProtocolFragmentResults[number],
       TestThresholdData
     >({

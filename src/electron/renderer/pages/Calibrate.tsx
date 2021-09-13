@@ -1,9 +1,9 @@
-import { rendererAsyncRequestDispatcher as asyncRequest } from '@/electron/common';
 import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
 import { FC, useEffect } from 'react';
 import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {
+  asyncRequestDispatcher,
   fromCamelCase,
   transformTimestamp,
   useHistoryEntryFromParam,
@@ -22,10 +22,10 @@ const Heading = styled.h1<{ active: boolean }>`
 function useContainerInit(fileName: string) {
   useEffect(() => {
     // FIXME: tiny race condition. Disable button until fragments are ready.
-    asyncRequest({ type: 'TEST_THRESHOLD_INIT', data: fileName });
+    asyncRequestDispatcher({ type: 'TEST_THRESHOLD_INIT', data: fileName });
 
     return () => {
-      asyncRequest({ type: 'TEST_THRESHOLD_DISPOSE' });
+      asyncRequestDispatcher({ type: 'TEST_THRESHOLD_DISPOSE' });
     };
   }, []);
 }
