@@ -1,12 +1,12 @@
 import { clear } from 'electron-first-run';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 import {
-  NativeDialog,
   SetStatusAction,
   SetUpdateStatusAction,
   UpdateStatus,
   WorkerStatus,
 } from '../common';
+import { nativeDialog } from './dialog';
 import { Store } from './store/store';
 
 export class BreachProtocolAutosolverUpdater {
@@ -66,7 +66,7 @@ export class BreachProtocolAutosolverUpdater {
     this.setUpdateStatus(UpdateStatus.UpdateAvailable);
 
     if (!this.autoUpdate) {
-      const result = await NativeDialog.confirm({
+      const result = await nativeDialog.confirm({
         message: `New version of ${PRODUCT_NAME}(${version}) is available.`,
         buttons: ['Download and install', 'Cancel'],
         type: 'info',

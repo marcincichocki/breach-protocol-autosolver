@@ -1,4 +1,3 @@
-import { NativeDialog } from '@/electron/common';
 import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
@@ -7,6 +6,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
+import { nativeDialog } from '../common';
 import { useField } from './Form';
 
 /**
@@ -269,7 +269,7 @@ export const KeyBind = ({ onFocus, onBlur }: KeyBindProps) => {
         if (!isAccelerator(value)) {
           ref.current.blur();
 
-          return NativeDialog.alert({
+          return nativeDialog.alert({
             message: 'Invalid key bind',
             detail: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
           });

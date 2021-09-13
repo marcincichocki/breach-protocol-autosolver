@@ -1,9 +1,16 @@
-import { Action, State } from '@/electron/common';
+import {
+  Action,
+  NativeDialog,
+  Request,
+  Response,
+  State,
+} from '@/electron/common';
 import { format, formatDistanceToNow } from 'date-fns';
-import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import type { IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import { v4 as uuidv4 } from 'uuid';
 import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */
@@ -44,19 +51,19 @@ export function useIpcEvent<T>(
 ) {
   useEffect(() => {
     channels.forEach((c) => {
-      ipc.on(c, callback);
+      api.on(c, callback);
     });
 
     return () => {
       channels.forEach((c) => {
-        ipc.removeListener(c, callback);
+        api.removeListener(c, callback);
       });
     };
   }, []);
 }
 
 export function useIpcState() {
-  const [state, setState] = useState<State>(ipc.sendSync('get-state'));
+  const [state, setState] = useState<State>(api.getState());
 
   function handleEvent(e: IpcRendererEvent, { payload }: Action<State>) {
     setState(payload);
@@ -72,7 +79,7 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
 }
 
 export function dispatch(action: Action) {
-  return ipc.send('state', action);
+  return api.dispatch(action);
 }
 
 export function useHistoryRedirect(channels: string[]) {
@@ -87,4 +94,32 @@ export function createRootElement(id: string) {
   document.body.appendChild(root);
 
   return root;
+}
+
+class RendererNativeDialog extends NativeDialog {
+  showMessageBox(options: Electron.MessageBoxOptions) {
+    return api.invoke('renderer:show-message-box', options);
+  }
+}
+
+export const nativeDialog = new RendererNativeDialog();
+
+export function asyncRequestDispatcher<TRes, TReq = any>(
+  action: Omit<Request<TReq>, 'origin' | 'uuid'>
+) {
+  return new Promise<TRes>((resolve) => {
+    const uuid = uuidv4();
+    const req: Request<TReq> = { ...action, origin: 'renderer', uuid };
+
+    function onAsyncResponse(e: IpcRendererEvent, res: Response<TRes>) {
+      if (res.uuid !== uuid) return;
+
+      api.removeListener('async-response', onAsyncResponse);
+
+      resolve(res.data);
+    }
+
+    api.on('async-response', onAsyncResponse);
+    api.send('async-request', req);
+  });
 }
