@@ -26,6 +26,13 @@ export const config: webpack.Configuration = {
     new HtmlWebpackPlugin({
       filename: 'renderer.html',
       title: pkg.build.productName,
+      meta: {
+        csp: {
+          'http-equiv': 'Content-Security-Policy',
+          content:
+            "default-src 'none'; img-src data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self';",
+        },
+      },
     }),
   ],
 };
