@@ -4,7 +4,6 @@ import {
   RemoveHistoryEntryAction,
 } from '@/electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
-import { ipcRenderer as ipc, shell } from 'electron';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -30,14 +29,14 @@ const OpenInExplorer = ({ fileName }: { fileName: string }) => {
   }
 
   return (
-    <LinkButton onClick={() => shell.showItemInFolder(fileName)}>
+    <LinkButton onClick={() => api.showItemInFolder(fileName)}>
       Open in explorer
     </LinkButton>
   );
 };
 
 const SaveSnapshot = ({ entryId }: { entryId: string }) => (
-  <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
+  <LinkButton onClick={() => api.send('renderer:save-snapshot', entryId)}>
     Save snapshot
   </LinkButton>
 );

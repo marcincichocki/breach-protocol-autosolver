@@ -1,8 +1,9 @@
 import { MdClose } from '@react-icons/all-files/md/MdClose';
-import { basename } from 'path';
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
+
+const { basename } = api.utils;
 
 const FileOutput = styled.output`
   flex-grow: 1;
