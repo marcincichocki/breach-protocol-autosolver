@@ -51,8 +51,6 @@ export class BreachProtocolWorker {
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
 
-  private port: Electron.MessagePortMain = null;
-
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
 
