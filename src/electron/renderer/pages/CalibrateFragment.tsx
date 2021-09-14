@@ -6,7 +6,7 @@ import {
 } from '@/electron/common';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { asyncRequestDispatcher, dispatch, fromCamelCase } from '../common';
+import { asyncRequestDispatcher, fromCamelCase } from '../common';
 import {
   Col,
   Field,
@@ -91,7 +91,7 @@ export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
       [`${key}Auto`]: false,
     };
 
-    dispatch(new UpdateSettingsAction(payload));
+    api.dispatch(new UpdateSettingsAction(payload));
   }
 
   return (

@@ -18,7 +18,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { dispatch, getDisplayName, nativeDialog } from '../common';
+import { getDisplayName, nativeDialog } from '../common';
 import {
   Col,
   Field,
@@ -99,7 +99,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         return next(true);
       }
 
-      dispatch(new RemoveLastNHistoryEntriesAction(count));
+      api.dispatch(new RemoveLastNHistoryEntriesAction(count));
     }
 
     next();
@@ -138,7 +138,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
 let prevWorkerSatus: WorkerStatus = null;
 
 function updateWorkerStatus(status: WorkerStatus) {
-  dispatch(new SetStatusAction(status, 'renderer'));
+  api.dispatch(new SetStatusAction(status, 'renderer'));
 }
 
 const inputDeviceOptions = [
@@ -430,7 +430,7 @@ export const Settings: FC = () => {
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
     const payload = { [name]: values[name] };
 
-    dispatch(new UpdateSettingsAction(payload));
+    api.dispatch(new UpdateSettingsAction(payload));
   }
 
   return (

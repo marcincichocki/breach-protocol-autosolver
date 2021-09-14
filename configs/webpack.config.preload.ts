@@ -5,7 +5,7 @@ import { commonPlugins, commonRules } from './common';
 
 export const config: webpack.Configuration = {
   mode: 'development',
-  entry: join(__dirname, '../src/electron/renderer/preload.ts'),
+  entry: join(__dirname, '../src/electron/renderer/preload/index.ts'),
   target: 'electron-preload',
   output: {
     path: join(__dirname, '../dist'),

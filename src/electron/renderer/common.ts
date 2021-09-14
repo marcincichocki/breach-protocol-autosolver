@@ -78,10 +78,6 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
 }
 
-export function dispatch(action: Action) {
-  return api.dispatch(action);
-}
-
 export function useHistoryRedirect(channels: string[]) {
   const history = useHistory();
 

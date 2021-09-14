@@ -7,7 +7,7 @@ import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { dispatch, useHistoryEntryFromParam } from '../common';
+import { useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
 
 const Heading2 = styled.h2`
@@ -42,7 +42,9 @@ const SaveSnapshot = ({ entryId }: { entryId: string }) => (
 );
 
 const RemoveEntry = ({ entryId }: { entryId: string }) => (
-  <LinkButton onClick={() => dispatch(new RemoveHistoryEntryAction(entryId))}>
+  <LinkButton
+    onClick={() => api.dispatch(new RemoveHistoryEntryAction(entryId))}
+  >
     Remove entry
   </LinkButton>
 );

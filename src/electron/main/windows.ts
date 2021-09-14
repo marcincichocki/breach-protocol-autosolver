@@ -12,7 +12,7 @@ function createWindow(name: string, options: BrowserWindowConstructorOptions) {
 }
 
 const workerOptions: BrowserWindowConstructorOptions = {
-  show: true,
+  show: false,
   webPreferences: {
     nodeIntegration: true,
     contextIsolation: false,

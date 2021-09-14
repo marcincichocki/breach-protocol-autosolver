@@ -46,7 +46,7 @@ export const ReleaseNotesDialog = () => {
     if (event.target instanceof HTMLAnchorElement) {
       event.preventDefault();
 
-      api.openLinkInBrowser(event.target.href);
+      api.openExternal(event.target.href);
     }
   }
 
