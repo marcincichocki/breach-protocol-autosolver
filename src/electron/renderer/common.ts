@@ -93,7 +93,7 @@ export function createRootElement(id: string) {
 }
 
 class RendererNativeDialog extends NativeDialog {
-  showMessageBox(options: Electron.MessageBoxOptions) {
+  protected showMessageBox(options: Electron.MessageBoxOptions) {
     return api.invoke('renderer:show-message-box', options);
   }
 }
