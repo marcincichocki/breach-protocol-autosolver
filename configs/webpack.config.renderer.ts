@@ -2,9 +2,12 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
-import { commonPlugins, commonRules } from './common';
+import { commonPlugins, commonRules, getCSPMetaTagConfig } from './common';
 
 const pkg = require('../package.json');
+const allowedSources =
+  "default-src 'none'; img-src data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self';";
+const csp = getCSPMetaTagConfig(allowedSources);
 
 export const config: webpack.Configuration = {
   mode: 'development',
@@ -26,13 +29,7 @@ export const config: webpack.Configuration = {
     new HtmlWebpackPlugin({
       filename: 'renderer.html',
       title: pkg.build.productName,
-      meta: {
-        csp: {
-          'http-equiv': 'Content-Security-Policy',
-          content:
-            "default-src 'none'; img-src data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self';",
-        },
-      },
+      meta: { csp },
     }),
   ],
 };
