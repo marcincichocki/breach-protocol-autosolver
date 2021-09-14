@@ -1,0 +1,77 @@
+import type { Action, State } from '@/electron/common';
+import { ipcRenderer } from 'electron';
+
+const onChannels = [
+  'main:show-release-notes',
+  'main:download-progress',
+  'SET_SETTINGS',
+  'UPDATE_SETTINGS',
+  'ADD_HISTORY_ENTRY',
+  'REMOVE_HISTORY_ENTRY',
+  'state',
+  'async-response',
+];
+
+const invokeChannels = ['renderer:show-message-box'];
+
+const sendChannels = [
+  'renderer:show-help-menu',
+  'renderer:minimize',
+  'renderer:maximize',
+  'renderer:close',
+  'renderer:key-bind-change',
+  'renderer:save-snapshot',
+  'async-request',
+];
+
+function getInvalidChannelError(channel: string) {
+  return new Error(`Invalid channel "${channel}" provided.`);
+}
+
+function validateChannel(input: string, whitelist: string[]) {
+  if (!whitelist.includes(input)) {
+    throw getInvalidChannelError(input);
+  }
+}
+
+/** Wrapper around {@link ipcRenderer.on}. Accepts only curated list of channels. */
+export function on(
+  channel: string,
+  listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+) {
+  validateChannel(channel, onChannels);
+
+  ipcRenderer.on(channel, listener);
+}
+
+/** Wrapper around {@link ipcRenderer.send}. Accepts only curated list of channels. */
+export function send(channel: string, ...args: any[]) {
+  validateChannel(channel, sendChannels);
+
+  ipcRenderer.send(channel, ...args);
+}
+
+/** Wrapper around {@link ipcRenderer.invoke}. Accepts only curated list of channels. */
+export function invoke(channel: string, ...args: any[]) {
+  validateChannel(channel, invokeChannels);
+
+  return ipcRenderer.invoke(channel, ...args);
+}
+
+/** Wrapper around {@link ipcRenderer.removeListener}. Accepts only curated list of channels. */
+export function removeListener(
+  channel: string,
+  listener: (...args: any[]) => void
+) {
+  validateChannel(channel, onChannels);
+
+  ipcRenderer.removeListener(channel, listener);
+}
+
+export function getState(): State {
+  return ipcRenderer.sendSync('get-state');
+}
+
+export function dispatch(action: Action) {
+  ipcRenderer.send('state', action);
+}

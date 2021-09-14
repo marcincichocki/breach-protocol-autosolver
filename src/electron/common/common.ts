@@ -5,10 +5,9 @@ import {
   FragmentId,
   SequenceJSON,
 } from '@/core';
-import { Accelerator, ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import type { Accelerator } from 'electron';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
-import { v4 as uuidv4 } from 'uuid';
-import { SoundPlayerConfig } from '../worker/sound-player';
+import type { SoundPlayerConfig } from '../worker/sound-player';
 
 export enum WorkerStatus {
   Disconnected,
@@ -131,53 +130,18 @@ export interface Response<T = any> {
   origin: Origin;
 }
 
-export function createAsyncRequestDispatcher(origin: Origin) {
-  return <TRes, TReq = any>(action: Omit<Request<TReq>, 'origin' | 'uuid'>) =>
-    new Promise<TRes>((resolve) => {
-      const uuid = uuidv4();
-      const req: Request<TReq> = { ...action, origin, uuid };
-
-      function onAsyncResponse(e: IpcRendererEvent, res: Response<TRes>) {
-        if (res.uuid !== uuid) return;
-
-        ipc.removeListener('async-response', onAsyncResponse);
-
-        resolve(res.data);
-      }
-
-      ipc.on('async-response', onAsyncResponse);
-      ipc.send('async-request', req);
-    });
-}
-
-export const rendererAsyncRequestDispatcher =
-  createAsyncRequestDispatcher('renderer');
-
-export function createAsyncRequestListener(origin: Origin) {
-  return (handler: (req: Request) => Promise<any>) => {
-    ipc.on('async-request', async (event, req: Request) => {
-      const data = await handler(req);
-      const res: Response = { data, uuid: req.uuid, origin };
-
-      event.sender.send('async-response', res);
-    });
-
-    return () => {
-      ipc.removeAllListeners('async-request');
-    };
-  };
-}
-
-export const workerAsyncRequestListener = createAsyncRequestListener('worker');
-
 export interface TestThresholdData {
   fileName: string;
   threshold: number;
   fragmentId: FragmentId;
 }
 
-export class NativeDialog {
-  static async confirm(options: Electron.MessageBoxOptions) {
+export abstract class NativeDialog {
+  protected abstract showMessageBox(
+    options: Electron.MessageBoxOptions
+  ): Promise<Electron.MessageBoxReturnValue>;
+
+  async confirm(options: Electron.MessageBoxOptions) {
     const defaultOptions: Partial<Electron.MessageBoxOptions> = {
       title: PRODUCT_NAME,
       defaultId: 0,
@@ -186,7 +150,7 @@ export class NativeDialog {
       type: 'warning',
       buttons: ['Ok', 'Cancel'],
     };
-    const { response } = await NativeDialog.showMessageBox({
+    const { response } = await this.showMessageBox({
       ...defaultOptions,
       ...options,
     });
@@ -194,7 +158,7 @@ export class NativeDialog {
     return !response;
   }
 
-  static async alert(options?: Electron.MessageBoxOptions) {
+  async alert(options?: Electron.MessageBoxOptions) {
     const defaultOptions: Partial<Electron.MessageBoxOptions> = {
       noLink: true,
       defaultId: 0,
@@ -203,21 +167,9 @@ export class NativeDialog {
       buttons: ['Ok'],
     };
 
-    return NativeDialog.showMessageBox({
+    return this.showMessageBox({
       ...defaultOptions,
       ...options,
     });
-  }
-
-  private static showMessageBox(
-    options: Electron.MessageBoxOptions
-  ): Promise<Electron.MessageBoxReturnValue> {
-    if (require('is-electron-renderer')) {
-      return ipc.invoke('renderer:show-message-box', options);
-    } else {
-      const { dialog } = require('electron');
-
-      return dialog.showMessageBox(options);
-    }
   }
 }

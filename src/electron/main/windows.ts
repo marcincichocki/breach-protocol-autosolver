@@ -29,8 +29,7 @@ const rendererOptions: BrowserWindowConstructorOptions = {
   icon: join(__dirname, icon),
   autoHideMenuBar: true,
   webPreferences: {
-    nodeIntegration: true,
-    contextIsolation: false,
+    preload: join(__dirname, 'preload.js'),
   },
 };
 

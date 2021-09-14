@@ -1,5 +1,4 @@
 import { sanitize } from 'dompurify';
-import { shell } from 'electron';
 import type { UpdateInfo } from 'electron-updater';
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -47,7 +46,7 @@ export const ReleaseNotesDialog = () => {
     if (event.target instanceof HTMLAnchorElement) {
       event.preventDefault();
 
-      shell.openExternal(event.target.href);
+      api.openExternal(event.target.href);
     }
   }
 

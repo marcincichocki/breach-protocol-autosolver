@@ -1,0 +1,1 @@
+export { basename } from 'path';

@@ -1,4 +1,4 @@
-import { NativeDialog } from '../common';
+import { nativeDialog } from './dialog';
 
 function globalErrorHandler(event: ErrorEvent | PromiseRejectionEvent) {
   event.preventDefault();
@@ -6,7 +6,7 @@ function globalErrorHandler(event: ErrorEvent | PromiseRejectionEvent) {
   const detail =
     event instanceof ErrorEvent ? event.message : event.reason.toString();
 
-  NativeDialog.alert({
+  nativeDialog.alert({
     type: 'error',
     message: 'Error occurred in worker process.',
     detail,

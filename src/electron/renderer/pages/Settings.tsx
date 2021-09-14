@@ -1,13 +1,12 @@
 import {
   AppSettings,
-  NativeDialog,
   optionsDescription,
   RemoveLastNHistoryEntriesAction,
   SetStatusAction,
   UpdateSettingsAction,
   WorkerStatus,
 } from '@/electron/common';
-import { Accelerator, ipcRenderer as ipc } from 'electron';
+import type { Accelerator } from 'electron';
 import {
   FC,
   PropsWithChildren,
@@ -19,7 +18,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
-import { dispatch, getDisplayName } from '../common';
+import { getDisplayName, nativeDialog } from '../common';
 import {
   Col,
   Field,
@@ -91,7 +90,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
     if (value < historySize) {
       const count = historySize - value;
       const entryText = count > 1 ? 'entries' : 'entry';
-      const result = await NativeDialog.confirm({
+      const result = await nativeDialog.confirm({
         message: 'This action is irreversible!',
         detail: `${count} history ${entryText} will be deleted. Continue?`,
       });
@@ -100,7 +99,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
         return next(true);
       }
 
-      dispatch(new RemoveLastNHistoryEntriesAction(count));
+      api.dispatch(new RemoveLastNHistoryEntriesAction(count));
     }
 
     next();
@@ -139,7 +138,7 @@ const GeneralSettings = ({ historySize }: { historySize: number }) => {
 let prevWorkerSatus: WorkerStatus = null;
 
 function updateWorkerStatus(status: WorkerStatus) {
-  dispatch(new SetStatusAction(status, 'renderer'));
+  api.dispatch(new SetStatusAction(status, 'renderer'));
 }
 
 const inputDeviceOptions = [
@@ -158,7 +157,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   const { values } = useForm<AppSettings>();
 
   function changeKeyBind(accelerator: Accelerator) {
-    ipc.send('renderer:key-bind-change', accelerator);
+    api.send('renderer:key-bind-change', accelerator);
   }
 
   function changeEngine(engine: string) {
@@ -197,7 +196,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     if (value === 'ahk' && !values.ahkBinPath) {
       const message =
         'This option requires AutoHotkey to be installed on the system.';
-      await NativeDialog.alert({ message });
+      await nativeDialog.alert({ message });
     }
 
     next();
@@ -207,7 +206,7 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     if (value === 'mouse') {
       const message =
         'Mouse input device is experimental feature and might not work correctly. Do you still want to use it?';
-      const result = await NativeDialog.confirm({ message });
+      const result = await nativeDialog.confirm({ message });
 
       if (!result) return;
     }
@@ -276,7 +275,7 @@ const formatOptions = [
 const PerformanceSettings = () => {
   async function onDownscaleSourceChange(value: boolean) {
     if (value) {
-      await NativeDialog.alert({
+      await nativeDialog.alert({
         message: 'This option have no effect on resolutions smaller than 4k.',
         detail:
           "Automatic thresholds for grid and daemons fragments might stop working with downscaling turned on. It's recommended to set fixed thresholds.",
@@ -287,7 +286,7 @@ const PerformanceSettings = () => {
 
   async function onResolveDelayChange(value: number) {
     if (value && value <= 500) {
-      await NativeDialog.alert({
+      await nativeDialog.alert({
         message: 'Resolve delay that low might have no effect.',
       });
     }
@@ -431,7 +430,7 @@ export const Settings: FC = () => {
   function onValuesChange(values: AppSettings, name: keyof AppSettings) {
     const payload = { [name]: values[name] };
 
-    dispatch(new UpdateSettingsAction(payload));
+    api.dispatch(new UpdateSettingsAction(payload));
   }
 
   return (

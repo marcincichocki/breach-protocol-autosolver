@@ -4,11 +4,10 @@ import {
   RemoveHistoryEntryAction,
 } from '@/electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
-import { ipcRenderer as ipc, shell } from 'electron';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { dispatch, useHistoryEntryFromParam } from '../common';
+import { useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
 
 const Heading2 = styled.h2`
@@ -30,20 +29,22 @@ const OpenInExplorer = ({ fileName }: { fileName: string }) => {
   }
 
   return (
-    <LinkButton onClick={() => shell.showItemInFolder(fileName)}>
+    <LinkButton onClick={() => api.showItemInFolder(fileName)}>
       Open in explorer
     </LinkButton>
   );
 };
 
 const SaveSnapshot = ({ entryId }: { entryId: string }) => (
-  <LinkButton onClick={() => ipc.send('renderer:save-snapshot', entryId)}>
+  <LinkButton onClick={() => api.send('renderer:save-snapshot', entryId)}>
     Save snapshot
   </LinkButton>
 );
 
 const RemoveEntry = ({ entryId }: { entryId: string }) => (
-  <LinkButton onClick={() => dispatch(new RemoveHistoryEntryAction(entryId))}>
+  <LinkButton
+    onClick={() => api.dispatch(new RemoveHistoryEntryAction(entryId))}
+  >
     Remove entry
   </LinkButton>
 );

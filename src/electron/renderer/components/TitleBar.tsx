@@ -1,4 +1,3 @@
-import { ipcRenderer as ipc } from 'electron';
 import { memo } from 'react';
 import styled from 'styled-components';
 
@@ -73,16 +72,16 @@ const IconButton = styled.button<{ close?: boolean }>`
 
 export const TitleBar = memo(() => (
   <StyledTitleBar>
-    <IconButton onClick={() => ipc.send('renderer:show-help-menu')}>
+    <IconButton onClick={() => api.send('renderer:show-help-menu')}>
       <MenuIcon></MenuIcon>
     </IconButton>
-    <IconButton onClick={() => ipc.send('renderer:minimize')}>
+    <IconButton onClick={() => api.send('renderer:minimize')}>
       <MinimizeIcon />
     </IconButton>
-    <IconButton onClick={() => ipc.send('renderer:maximize')}>
+    <IconButton onClick={() => api.send('renderer:maximize')}>
       <DownIcon />
     </IconButton>
-    <IconButton close onClick={() => ipc.send('renderer:close')}>
+    <IconButton close onClick={() => api.send('renderer:close')}>
       <CloseIcon />
     </IconButton>
   </StyledTitleBar>

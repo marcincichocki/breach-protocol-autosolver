@@ -1,5 +1,4 @@
 import { MdClose } from '@react-icons/all-files/md/MdClose';
-import { basename } from 'path';
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useField } from './Form';
@@ -66,7 +65,7 @@ interface FileProps {
 
 export const File = ({ accept }: FileProps) => {
   const { setValue, value, name } = useField<string>();
-  const [displayName, setDisplayName] = useState<string>(basename(value));
+  const [displayName, setDisplayName] = useState<string>(api.basename(value));
 
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files[0];

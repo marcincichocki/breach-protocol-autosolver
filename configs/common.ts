@@ -41,3 +41,10 @@ export const commonRules: RuleSetRule[] = [
     use: ['style-loader', 'css-loader'],
   },
 ];
+
+export function getCSPMetaTagConfig(content: string) {
+  return {
+    'http-equiv': 'Content-Security-Policy',
+    content,
+  };
+}
