@@ -6,6 +6,7 @@ import {
   Navigation,
   ReleaseNotesDialog,
   StatusBar,
+  ThirdPartyLicensesDialog,
   TitleBar,
 } from './components';
 import { Calibrate, Dashboard, History, Settings } from './pages';
@@ -41,6 +42,7 @@ export const App = () => {
         </Switch>
       </Main>
       <ReleaseNotesDialog />
+      <ThirdPartyLicensesDialog />
       <StatusBar />
     </StateContext.Provider>
   );

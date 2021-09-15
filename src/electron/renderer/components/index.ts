@@ -15,4 +15,5 @@ export * from './Select';
 export * from './Spinner';
 export * from './StatusBar';
 export * from './Switch';
+export * from './ThirdPartyLicensesDialog';
 export * from './TitleBar';
