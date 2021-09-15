@@ -9,10 +9,16 @@ import {
   Tray,
 } from 'electron';
 import firstRun from 'electron-first-run';
-import { copyFileSync, ensureDirSync, remove, writeJSONSync } from 'fs-extra';
+import {
+  copyFileSync,
+  ensureDirSync,
+  readJSON,
+  remove,
+  writeJSONSync,
+} from 'fs-extra';
 import { extname, join } from 'path';
 import icon from '../../../resources/icon.png';
-import { Action, ActionTypes, WorkerStatus } from '../common';
+import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
 import { Store } from './store/store';
 import { BreachProtocolAutosolverUpdater } from './updater';
 import { createBrowserWindows } from './windows';
@@ -47,15 +53,7 @@ export class Main {
     { type: 'separator' },
     {
       label: 'Third-party licenses',
-      click() {
-        const licensesFileName = 'THIRD_PARTY_LICENSES.txt';
-        const licensesPath =
-          process.env.NODE_ENV === 'production'
-            ? join('..', licensesFileName)
-            : licensesFileName;
-
-        shell.showItemInFolder(join(app.getAppPath(), licensesPath));
-      },
+      click: this.showThridPartyLicesnsesDialog.bind(this),
     },
     { type: 'separator' },
     {
@@ -302,6 +300,28 @@ export class Main {
     if (response === 1) {
       clipboard.writeText(detail);
     }
+  }
+
+  private async showThridPartyLicesnsesDialog() {
+    const resourcesPath =
+      process.env.NODE_ENV === 'production' ? process.resourcesPath : './dist';
+    const modules = ['main', 'renderer', 'worker', 'preload'];
+    const contents = await Promise.all(
+      modules.map(this.getLicenseContent(resourcesPath))
+    );
+
+    this.renderer.webContents.send(
+      'main:third-party-licenses',
+      contents.flat()
+    );
+  }
+
+  private getLicenseContent(resourcesPath: string) {
+    return (name: string) => {
+      const path = join(resourcesPath, `${name}-licenses.json`);
+
+      return readJSON(path) as Promise<PackageDetails[]>;
+    };
   }
 
   private toggleKeyBind({ type, payload }: Action) {

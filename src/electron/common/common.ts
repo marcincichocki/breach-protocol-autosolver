@@ -173,3 +173,13 @@ export abstract class NativeDialog {
     });
   }
 }
+
+export interface PackageDetails {
+  name: string;
+  version: string;
+  author: string;
+  repository: string;
+  source: string;
+  license: string;
+  licenseText: string;
+}
