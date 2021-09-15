@@ -62,6 +62,19 @@ export function useIpcEvent<T>(
   }, []);
 }
 
+export function useIpcEventDialog<T>(channel: string) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<T>(null);
+  const close = () => setIsOpen(false);
+
+  useIpcEvent([channel], (e, data: T) => {
+    setData(data);
+    setIsOpen(true);
+  });
+
+  return { isOpen, data, close };
+}
+
 export function useIpcState() {
   const [state, setState] = useState<State>(api.getState());
 

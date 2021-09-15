@@ -1,25 +1,16 @@
 import { sanitize } from 'dompurify';
 import type { UpdateInfo } from 'electron-updater';
-import React, { useState } from 'react';
-import { useIpcEvent } from '../common';
+import React from 'react';
+import { useIpcEventDialog } from '../common';
 import { FlatButton } from './Buttons';
 import { Dialog, DialogBody, DialogTitle } from './Dialog';
 
-function useReleaseNotes() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [updateInfo, setUpdateInfo] = useState<UpdateInfo>(null);
-  const close = () => setIsOpen(false);
-
-  useIpcEvent(['main:show-release-notes'], (e, info: UpdateInfo) => {
-    setUpdateInfo(info);
-    setIsOpen(true);
-  });
-
-  return { isOpen, updateInfo, close };
-}
-
 export const ReleaseNotesDialog = () => {
-  const { isOpen, close, updateInfo } = useReleaseNotes();
+  const {
+    isOpen,
+    close,
+    data: updateInfo,
+  } = useIpcEventDialog<UpdateInfo>('main:show-release-notes');
 
   function catchLink(event: React.MouseEvent | React.KeyboardEvent) {
     if (event.target instanceof HTMLAnchorElement) {

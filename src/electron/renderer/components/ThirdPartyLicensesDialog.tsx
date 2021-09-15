@@ -1,25 +1,9 @@
 import { PackageDetails } from '@/electron/common';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent } from 'react';
 import styled from 'styled-components';
-import { useIpcEvent } from '../common';
+import { useIpcEventDialog } from '../common';
 import { FlatButton } from './Buttons';
 import { Dialog, DialogBody, DialogTitle } from './Dialog';
-
-function useThirdPartyLicenses() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [contents, setContents] = useState<PackageDetails[]>(null);
-  const close = () => setIsOpen(false);
-
-  useIpcEvent(
-    ['main:third-party-licenses'],
-    (e, contents: PackageDetails[]) => {
-      setContents(contents);
-      setIsOpen(true);
-    }
-  );
-
-  return { isOpen, contents, close };
-}
 
 const PackageInfo = styled.div`
   margin-bottom: 2rem;
@@ -32,7 +16,11 @@ function openResourcesFolder(event: MouseEvent) {
 }
 
 export const ThirdPartyLicensesDialog = () => {
-  const { isOpen, close, contents } = useThirdPartyLicenses();
+  const {
+    isOpen,
+    close,
+    data: contents,
+  } = useIpcEventDialog<PackageDetails[]>('main:third-party-licenses');
 
   if (!contents) {
     return null;
