@@ -37,6 +37,9 @@ export class Main {
 
   private readonly isFirstRun = firstRun({ name: 'update' });
 
+  /** Only allow to externally open websites from this list. */
+  private readonly urlWhitelist = ['https://github.com'];
+
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
       label: 'About',
@@ -143,6 +146,24 @@ export class Main {
     this.renderer.once('closed', this.onRendererClosed.bind(this));
     this.renderer.on('minimize', this.onRendererMinimize.bind(this));
     this.renderer.on('restore', this.onRendererRestore.bind(this));
+    this.renderer.webContents.on(
+      'will-navigate',
+      this.onWillNavigate.bind(this)
+    );
+  }
+
+  private isUrlAllowed(url: string) {
+    return this.urlWhitelist.some((a) => url.startsWith(a));
+  }
+
+  private onWillNavigate(event: Event, url: string) {
+    event.preventDefault();
+
+    if (!this.isUrlAllowed(url)) {
+      throw new Error(`Invalid url ${url} provided!`);
+    }
+
+    return shell.openExternal(url);
   }
 
   private onRendererReadyToShow() {
