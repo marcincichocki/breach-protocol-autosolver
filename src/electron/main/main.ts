@@ -226,7 +226,7 @@ export class Main {
       copyFileSync(entry.fileName, tmpSourcePath);
     }
 
-    const { default: tar } = await import('tar');
+    const { default: tar } = await import(/* webpackChunkName: "tar" */ 'tar');
 
     await tar.create({ gzip: true, file: filePath, cwd: tmpPath }, ['./']);
 

@@ -1,22 +1,15 @@
-import { join } from 'path';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
-import webpack from 'webpack';
-import { commonPlugins, commonRules } from './common';
+import WebpackLicensePlugin from 'webpack-license-plugin';
+import { defineConstantsPlugin, getConfig } from './common';
 
-export const config: webpack.Configuration = {
-  mode: 'development',
-  entry: join(__dirname, '../src/electron/main/index.ts'),
+export const config = getConfig({
   target: 'electron-main',
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-    plugins: [new TsconfigPathsPlugin()],
+  entry: {
+    main: './main/index.ts',
   },
-  output: {
-    path: join(__dirname, '../dist'),
-    filename: 'main.js',
-  },
-  module: {
-    rules: [...commonRules],
-  },
-  plugins: [...commonPlugins],
-};
+  plugins: [
+    defineConstantsPlugin,
+    new WebpackLicensePlugin({
+      outputFilename: 'main-licenses.json',
+    }),
+  ],
+});
