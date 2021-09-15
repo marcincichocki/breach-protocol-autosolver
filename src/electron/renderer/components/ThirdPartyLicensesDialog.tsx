@@ -1,5 +1,5 @@
 import { PackageDetails } from '@/electron/common';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useIpcEvent } from '../common';
 import { FlatButton } from './Buttons';
@@ -25,6 +25,12 @@ const PackageInfo = styled.div`
   margin-bottom: 2rem;
 `;
 
+function openResourcesFolder(event: MouseEvent) {
+  event.preventDefault();
+
+  api.openResourcesFolder();
+}
+
 export const ThirdPartyLicensesDialog = () => {
   const { isOpen, close, contents } = useThirdPartyLicenses();
 
@@ -36,6 +42,13 @@ export const ThirdPartyLicensesDialog = () => {
     <Dialog isOpen={isOpen}>
       <DialogTitle>Third party licenses</DialogTitle>
       <DialogBody style={{ whiteSpace: 'pre-line' }}>
+        <p>
+          For more license information visit{' '}
+          <a href="#" onClick={openResourcesFolder}>
+            resources
+          </a>{' '}
+          folder
+        </p>
         {contents.map((details, i) => (
           <PackageInfo key={i}>
             <h2>

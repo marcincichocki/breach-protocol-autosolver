@@ -43,6 +43,10 @@
         "from": "dist",
         "to": "resources",
         "filter": "*.json"
+      },
+      {
+        "from": "src/electron/renderer/assets/fonts/Rajdhani/OFL.txt",
+        "to": "resources"
       }
     ],
     "directories": {

@@ -16,3 +16,8 @@ export function openExternal(
 
   throw new Error(`Invalid url: "${url}" provided.`);
 }
+
+export function openResourcesFolder() {
+  // NOTE: this will point to incorrect folder while in development mode.
+  return shell.openPath(process.resourcesPath);
+}
