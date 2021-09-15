@@ -38,8 +38,8 @@ const DialogWrapper = styled(Col)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 50%;
-  max-height: 50%;
+  max-width: clamp(400px, 50%, 600px);
+  max-height: min(75%, 1000px);
   background: var(--background);
   border: 1px solid var(--primary);
   padding: 1rem;
@@ -49,6 +49,24 @@ const OverlayBackdrop = styled.div`
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+`;
+
+export const DialogBody = styled.section`
+  overflow-y: auto;
+  margin: 1rem 0;
+  padding-right: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+
+  a {
+    color: var(--accent);
+  }
+`;
+
+export const DialogTitle = styled.h1`
+  margin: 0;
+  color: var(--accent);
+  text-transform: uppercase;
 `;
 
 interface DialogContentProps {

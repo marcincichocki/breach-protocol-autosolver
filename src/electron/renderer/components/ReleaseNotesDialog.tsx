@@ -1,10 +1,9 @@
 import { sanitize } from 'dompurify';
 import type { UpdateInfo } from 'electron-updater';
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useIpcEvent } from '../common';
 import { FlatButton } from './Buttons';
-import { Dialog } from './Dialog';
+import { Dialog, DialogBody, DialogTitle } from './Dialog';
 
 function useReleaseNotes() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,26 +17,6 @@ function useReleaseNotes() {
 
   return { isOpen, updateInfo, close };
 }
-
-const ReleaseNotes = styled.article`
-  overflow-y: auto;
-  margin: 1rem 0;
-  padding-right: 1rem;
-
-  a {
-    color: var(--accent);
-  }
-
-  > ul {
-    font-size: 1.1rem;
-  }
-`;
-
-const ReleaseNotesTitle = styled.h1`
-  margin: 0;
-  color: var(--accent);
-  text-transform: uppercase;
-`;
 
 export const ReleaseNotesDialog = () => {
   const { isOpen, close, updateInfo } = useReleaseNotes();
@@ -56,9 +35,9 @@ export const ReleaseNotesDialog = () => {
 
   return (
     <Dialog isOpen={isOpen}>
-      <ReleaseNotesTitle>Release notes</ReleaseNotesTitle>
+      <DialogTitle>Release notes</DialogTitle>
       <span>{updateInfo.version}</span>
-      <ReleaseNotes
+      <DialogBody
         onClick={catchLink}
         onKeyDown={catchLink}
         dangerouslySetInnerHTML={{
