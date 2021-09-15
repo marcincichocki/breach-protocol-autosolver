@@ -43,6 +43,7 @@ const DialogWrapper = styled(Col)`
   background: var(--background);
   border: 1px solid var(--primary);
   padding: 1rem;
+  z-index: 1;
 `;
 
 const OverlayBackdrop = styled.div`
