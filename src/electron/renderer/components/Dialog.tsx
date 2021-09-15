@@ -38,7 +38,7 @@ const DialogWrapper = styled(Col)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: clamp(400px, 50%, 600px);
+  max-width: clamp(500px, 50%, 800px);
   max-height: min(75%, 1000px);
   background: var(--background);
   border: 1px solid var(--primary);
