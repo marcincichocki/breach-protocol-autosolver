@@ -47,7 +47,7 @@ export const ThirdPartyLicensesDialog = () => {
           <a href="#" onClick={openResourcesFolder}>
             resources
           </a>{' '}
-          folder
+          directory.
         </p>
         {contents.map((details, i) => (
           <PackageInfo key={i}>
