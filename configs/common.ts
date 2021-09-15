@@ -1,6 +1,13 @@
 import { execSync } from 'child_process';
-import { LicenseWebpackPlugin } from 'license-webpack-plugin';
-import { DefinePlugin, RuleSetRule, WebpackPluginInstance } from 'webpack';
+import { join, resolve } from 'path';
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+import {
+  Configuration,
+  DefinePlugin,
+  RuleSetRule,
+  WebpackPluginInstance,
+} from 'webpack';
+import LicensePlugin from 'webpack-license-plugin';
 
 function git(command: string) {
   return execSync(`git ${command}`, { encoding: 'utf-8' }).trim();
@@ -21,9 +28,6 @@ export const commonPlugins: WebpackPluginInstance[] = [
     APP_ID: JSON.stringify(pkg.build.appId),
     BUILD_PLATFORM: JSON.stringify(process.platform),
   }),
-  new LicenseWebpackPlugin({
-    outputFilename: 'THIRD_PARTY_LICENSES.txt',
-  }) as any,
 ];
 
 export const commonRules: RuleSetRule[] = [
@@ -46,5 +50,33 @@ export function getCSPMetaTagConfig(content: string) {
   return {
     'http-equiv': 'Content-Security-Policy',
     content,
+  };
+}
+
+export function getConfig(config: Configuration) {
+  const root = resolve(__dirname, '..');
+
+  return (env: any, options: any) => {
+    const defaultConfig: Configuration = {
+      mode: 'development',
+      context: join(root, './src/electron'),
+      output: {
+        path: join(root, './dist'),
+        filename: '[name].js',
+      },
+      resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        plugins: [new TsconfigPathsPlugin()],
+      },
+      module: {
+        rules: [...commonRules],
+      },
+      plugins: [...commonPlugins, new LicensePlugin()],
+    };
+
+    return {
+      ...defaultConfig,
+      ...config,
+    };
   };
 }

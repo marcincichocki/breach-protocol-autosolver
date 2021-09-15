@@ -1,22 +1,8 @@
-import { join } from 'path';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
-import webpack from 'webpack';
-import { commonPlugins, commonRules } from './common';
+import { getConfig } from './common';
 
-export const config: webpack.Configuration = {
-  mode: 'development',
-  entry: join(__dirname, '../src/electron/renderer/preload/index.ts'),
+export default getConfig({
   target: 'electron-preload',
-  output: {
-    path: join(__dirname, '../dist'),
-    filename: 'preload.js',
+  entry: {
+    preload: './renderer/preload/index.ts',
   },
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-    plugins: [new TsconfigPathsPlugin()],
-  },
-  module: {
-    rules: [...commonRules],
-  },
-  plugins: [...commonPlugins],
-};
+});

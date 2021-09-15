@@ -1,23 +1,11 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { join } from 'path';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
-import webpack from 'webpack';
-import { commonPlugins, commonRules } from './common';
+import LicensePlugin from 'webpack-license-plugin';
+import { commonPlugins, getConfig } from './common';
 
-export const config: webpack.Configuration = {
-  mode: 'development',
-  entry: join(__dirname, '../src/electron/worker/index.ts'),
+export default getConfig({
   target: 'electron-renderer',
-  output: {
-    path: join(__dirname, '../dist'),
-    filename: 'worker.js',
-  },
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-    plugins: [new TsconfigPathsPlugin()],
-  },
-  module: {
-    rules: [...commonRules],
+  entry: {
+    worker: './worker/index.ts',
   },
   externals: {
     sharp: 'commonjs sharp',
@@ -27,7 +15,8 @@ export const config: webpack.Configuration = {
   plugins: [
     ...commonPlugins,
     new HtmlWebpackPlugin({
-      filename: 'worker.html',
+      filename: '[name].html',
     }),
+    new LicensePlugin(),
   ],
-};
+});
