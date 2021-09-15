@@ -42,7 +42,7 @@
       {
         "from": "dist",
         "to": "resources",
-        "filter": "*.txt"
+        "filter": "*.json"
       }
     ],
     "directories": {
