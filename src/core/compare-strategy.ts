@@ -1,5 +1,20 @@
 import { Sequence } from './sequence';
 
+/**
+ * Determines value of a {@link Sequence}.
+ *
+ * Usage:
+ *
+ * ```ts
+ *
+ * declare const sequences: Sequence[];
+ * declare const strategy: SequenceCompareStrategy;
+ *
+ * // sequences are sorted according to chosen strategy
+ * sequences.sort((s1, s2) => strategy.apply(s1, s2));
+ *
+ * ```
+ */
 export abstract class SequenceCompareStrategy {
   protected byStrength(s1: Sequence, s2: Sequence) {
     return s2.strength - s1.strength;
@@ -13,7 +28,7 @@ export abstract class SequenceCompareStrategy {
     return this.byStrength(s1, s2) || this.byLength(s1, s2);
   }
 
-  /** Compare function for sequences. */
+  /** Compare sequences according to strategy. */
   abstract apply(s1: Sequence, s2: Sequence): number;
 }
 
@@ -52,7 +67,7 @@ export class IndexSequenceCompareStrategy extends SequenceCompareStrategy {
  * Strategy which focuses on a daemon with given index.
  * If it does not exist in a sequence, index strategy is used as a fallback.
  */
-export class FocusedSequenceCompareStrategy extends SequenceCompareStrategy {
+export class FocusDaemonSequenceCompareStrategy extends SequenceCompareStrategy {
   constructor(private readonly focusedDaemonIndex: number) {
     super();
   }

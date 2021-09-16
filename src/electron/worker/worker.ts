@@ -12,7 +12,7 @@ import {
   BreachProtocolGridFragment,
 } from '@/core';
 import {
-  FocusedSequenceCompareStrategy,
+  FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
 } from '@/core/compare-strategy';
 import {
@@ -184,7 +184,7 @@ export class BreachProtocolWorker {
 
   private getCompareStrategy(index?: number) {
     if (index != null) {
-      return new FocusedSequenceCompareStrategy(index);
+      return new FocusDaemonSequenceCompareStrategy(index);
     }
 
     return new IndexSequenceCompareStrategy();

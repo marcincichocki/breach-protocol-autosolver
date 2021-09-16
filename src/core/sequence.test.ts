@@ -1,6 +1,6 @@
 import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
-import { FocusedSequenceCompareStrategy } from './compare-strategy';
+import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
 import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
 
 interface SequenceEntry {
@@ -121,21 +121,33 @@ describe('sequences', () => {
 
     describe('focused strategy', () => {
       it('should return sequences sorted by selected daemon', () => {
-        const strategy = new FocusedSequenceCompareStrategy(0);
+        const strategy = new FocusDaemonSequenceCompareStrategy(0);
         const rawData: Omit<BreachProtocolRawData, 'grid'> = {
-          bufferSize: 8,
+          bufferSize: 5,
           daemons: [
             ['1C', '1C'],
             ['55', '7A', 'BD'],
+            ['1C', '7A', '7A'],
           ],
         };
         const sequences = makeSequences(rawData, strategy);
 
-        expectSequencesToContainDaemons(sequences, [[0, 1], [0, 1], [0], [1]]);
+        expectSequencesToContainDaemons(sequences, [
+          [0, 2],
+          [0, 2],
+          [0, 1],
+          [0, 1],
+          [0],
+          [2],
+          [1],
+        ]);
         expectSequencesToEqual(sequences, [
+          ['1C', '1C', '7A', '7A'],
+          ['1C', '7A', '7A', '1C', '1C'],
           ['1C', '1C', '55', '7A', 'BD'],
           ['55', '7A', 'BD', '1C', '1C'],
           ['1C', '1C'],
+          ['1C', '7A', '7A'],
           ['55', '7A', 'BD'],
         ]);
       });
