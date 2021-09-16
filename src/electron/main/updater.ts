@@ -12,6 +12,8 @@ import { Store } from './store/store';
 export class BreachProtocolAutosolverUpdater {
   private autoUpdate: boolean = null;
 
+  private wereReleseNotesShown = false;
+
   constructor(
     private store: Store,
     private renderer: Electron.webContents,
@@ -82,8 +84,9 @@ export class BreachProtocolAutosolverUpdater {
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {
-    if (this.isFirstRun) {
+    if (this.isFirstRun && !this.wereReleseNotesShown) {
       this.renderer.send('main:show-release-notes', info);
+      this.wereReleseNotesShown = true;
     }
 
     this.setUpdateStatus(UpdateStatus.UpdateNotAvailable);
