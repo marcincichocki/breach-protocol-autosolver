@@ -10,6 +10,7 @@ import {
   ROWS,
   toHex,
 } from './common';
+import { SequenceCompareStrategy } from './compare-strategy';
 import {
   makeSequences,
   memoizedFindOverlap,
@@ -125,9 +126,12 @@ export class BreachProtocol {
     fromHex(this.rawData.grid[i])
   );
 
-  public readonly sequences = makeSequences(this.rawData);
+  public readonly sequences = makeSequences(this.rawData, this.compareStrategy);
 
-  constructor(public readonly rawData: BreachProtocolRawData) {}
+  constructor(
+    public readonly rawData: BreachProtocolRawData,
+    private readonly compareStrategy?: SequenceCompareStrategy
+  ) {}
 
   solveForSequence(sequence: Sequence) {
     const path = this.findPath(sequence.tValue);

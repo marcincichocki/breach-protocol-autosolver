@@ -12,6 +12,10 @@ import {
   BreachProtocolGridFragment,
 } from '@/core';
 import {
+  FocusedSequenceCompareStrategy,
+  IndexSequenceCompareStrategy,
+} from '@/core/compare-strategy';
+import {
   Action,
   ActionTypes,
   AddHistoryEntryAction,
@@ -157,7 +161,7 @@ export class BreachProtocolWorker {
     };
   }
 
-  private async onWorkerSolve() {
+  private async onWorkerSolve(index?: number) {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
@@ -165,11 +169,25 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Working);
 
     const robot = this.getRobot();
-    const bpa = new BreachProtocolAutosolver(this.settings, robot, this.player);
+    const compareStrategy = this.getCompareStrategy(index);
+    const bpa = new BreachProtocolAutosolver(
+      this.settings,
+      robot,
+      this.player,
+      compareStrategy
+    );
     const entry = await bpa.solve();
 
     this.dispatch(new AddHistoryEntryAction(entry));
     this.updateStatus(WorkerStatus.Ready);
+  }
+
+  private getCompareStrategy(index?: number) {
+    if (index != null) {
+      return new FocusedSequenceCompareStrategy(index);
+    }
+
+    return new IndexSequenceCompareStrategy();
   }
 
   private onStateChanged(

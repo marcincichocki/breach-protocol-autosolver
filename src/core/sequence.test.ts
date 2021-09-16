@@ -1,9 +1,9 @@
-import registry from './bp-registry/sequences.json';
+import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
 import { FocusedSequenceCompareStrategy } from './compare-strategy';
 import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
 
-interface SequenceRegistryEntry {
+interface SequenceEntry {
   description: string;
   rawData: Omit<BreachProtocolRawData, 'grid'>;
   expected: {
@@ -108,7 +108,7 @@ describe('sequences', () => {
 
   describe('makeSequences', () => {
     describe('index strategy', () => {
-      it.each(registry as SequenceRegistryEntry[])(
+      it.each(entries as SequenceEntry[])(
         'should work with $description',
         ({ rawData, expected }) => {
           const sequences = makeSequences(rawData);

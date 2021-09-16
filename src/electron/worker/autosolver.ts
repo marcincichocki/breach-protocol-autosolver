@@ -14,6 +14,7 @@ import {
   BreachProtocolResult,
   FragmentId,
 } from '@/core';
+import { SequenceCompareStrategy } from '@/core/compare-strategy';
 import {
   AppSettings,
   BreachProtocolSolveProgress,
@@ -45,7 +46,8 @@ export class BreachProtocolAutosolver {
   constructor(
     private readonly settings: AppSettings,
     private readonly robot: BreachProtocolRobot,
-    private readonly player: BreachProtocolSoundPlayer
+    private readonly player: BreachProtocolSoundPlayer,
+    private readonly compareStrategy: SequenceCompareStrategy
   ) {}
 
   async solve() {
@@ -60,7 +62,10 @@ export class BreachProtocolAutosolver {
     }
 
     this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
-    this.game = new BreachProtocol(this.recognitionResult.rawData);
+    this.game = new BreachProtocol(
+      this.recognitionResult.rawData,
+      this.compareStrategy
+    );
     this.result = this.game.solve();
 
     if (!this.result) {
