@@ -166,11 +166,11 @@ export function makeSequences(
 }
 
 abstract class SequenceSortStrategy {
-  private byStrength(s1: Sequence, s2: Sequence) {
+  protected byStrength(s1: Sequence, s2: Sequence) {
     return s2.strength - s1.strength;
   }
 
-  private byLength(s1: Sequence, s2: Sequence) {
+  protected byLength(s1: Sequence, s2: Sequence) {
     return s1.length - s2.length;
   }
 
