@@ -161,7 +161,7 @@ export class BreachProtocolWorker {
     };
   }
 
-  private async onWorkerSolve(index?: number) {
+  private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
