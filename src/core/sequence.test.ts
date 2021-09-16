@@ -1,12 +1,7 @@
 import registry from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
-import {
-  findOverlap,
-  FocusedSequenceSortStrategy,
-  makeSequences,
-  parseDaemons,
-  Sequence,
-} from './sequence';
+import { FocusedSequenceCompareStrategy } from './compare-strategy';
+import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
 
 interface SequenceRegistryEntry {
   description: string;
@@ -126,7 +121,7 @@ describe('sequences', () => {
 
     describe('focused strategy', () => {
       it('should return sequences sorted by selected daemon', () => {
-        const strategy = new FocusedSequenceSortStrategy(0);
+        const strategy = new FocusedSequenceCompareStrategy(0);
         const rawData: Omit<BreachProtocolRawData, 'grid'> = {
           bufferSize: 8,
           daemons: [

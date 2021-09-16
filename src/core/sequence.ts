@@ -9,6 +9,10 @@ import {
   HexNumber,
   toHex,
 } from './common';
+import {
+  IndexSequenceCompareStrategy,
+  SequenceCompareStrategy,
+} from './compare-strategy';
 
 export interface RawSequence {
   value: string[];
@@ -146,7 +150,7 @@ export function parseDaemons(
 
 export function makeSequences(
   { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
-  strategy: SequenceSortStrategy = new IndexSequenceSortStrategy()
+  strategy: SequenceCompareStrategy = new IndexSequenceCompareStrategy()
 ) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
@@ -163,50 +167,4 @@ export function makeSequences(
     .filter(byUniqueValue())
     .filter(byBufferSize(bufferSize))
     .sort((s1, s2) => strategy.apply(s1, s2));
-}
-
-abstract class SequenceSortStrategy {
-  protected byStrength(s1: Sequence, s2: Sequence) {
-    return s2.strength - s1.strength;
-  }
-
-  protected byLength(s1: Sequence, s2: Sequence) {
-    return s1.length - s2.length;
-  }
-
-  protected byIndex(s1: Sequence, s2: Sequence) {
-    return this.byStrength(s1, s2) || this.byLength(s1, s2);
-  }
-
-  abstract apply(s1: Sequence, s2: Sequence): number;
-}
-
-export class IndexSequenceSortStrategy extends SequenceSortStrategy {
-  apply(s1: Sequence, s2: Sequence) {
-    return this.byIndex(s1, s2);
-  }
-}
-
-/**
- * Strategy that focuses one daemon at the time.
- */
-export class FocusedSequenceSortStrategy extends SequenceSortStrategy {
-  constructor(private readonly focusedDaemonIndex: number) {
-    super();
-  }
-
-  private hasFocusedDaemon(s: Sequence) {
-    return s.indexes.includes(this.focusedDaemonIndex);
-  }
-
-  private byFocus(s1: Sequence, s2: Sequence) {
-    const a = this.hasFocusedDaemon(s1);
-    const b = this.hasFocusedDaemon(s2);
-
-    return a === b ? 0 : a ? -1 : 1;
-  }
-
-  apply(s1: Sequence, s2: Sequence) {
-    return this.byFocus(s1, s2) || this.byIndex(s1, s2);
-  }
 }
