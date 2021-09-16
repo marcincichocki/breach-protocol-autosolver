@@ -125,10 +125,7 @@ export class BreachProtocol {
     fromHex(this.rawData.grid[i])
   );
 
-  public readonly sequences = makeSequences(
-    this.rawData.daemons,
-    this.rawData.bufferSize
-  );
+  public readonly sequences = makeSequences(this.rawData);
 
   constructor(public readonly rawData: BreachProtocolRawData) {}
 

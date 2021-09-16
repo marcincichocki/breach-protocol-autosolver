@@ -16,6 +16,7 @@ import { BreachProtocol, BreachProtocolResult } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
 
 const registryBreachProtocols = [
+  ...registry.custom,
   ...registry['1024x768'],
   ...registry['1920x1080'],
   ...registry['2560x1440'],

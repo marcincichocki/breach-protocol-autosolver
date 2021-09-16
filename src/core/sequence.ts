@@ -1,6 +1,6 @@
 import { memoize, permute, Serializable, uniqueWith } from '@/common';
 import {
-  BufferSize,
+  BreachProtocolRawData,
   byBufferSize,
   byUniqueValue,
   DaemonRawData,
@@ -144,7 +144,10 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
-export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
+export function makeSequences(
+  { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
+  strategy: SequenceSortStrategy = new IndexSequenceSortStrategy()
+) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(byUniqueValue())
@@ -159,10 +162,51 @@ export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
     .concat(childSequences)
     .filter(byUniqueValue())
     .filter(byBufferSize(bufferSize))
-    .sort((s1, s2) => {
-      const byStrength = s2.strength - s1.strength;
-      const byLength = s1.length - s2.length;
+    .sort((s1, s2) => strategy.apply(s1, s2));
+}
 
-      return byStrength || byLength;
-    });
+abstract class SequenceSortStrategy {
+  private byStrength(s1: Sequence, s2: Sequence) {
+    return s2.strength - s1.strength;
+  }
+
+  private byLength(s1: Sequence, s2: Sequence) {
+    return s1.length - s2.length;
+  }
+
+  protected byIndex(s1: Sequence, s2: Sequence) {
+    return this.byStrength(s1, s2) || this.byLength(s1, s2);
+  }
+
+  abstract apply(s1: Sequence, s2: Sequence): number;
+}
+
+export class IndexSequenceSortStrategy extends SequenceSortStrategy {
+  apply(s1: Sequence, s2: Sequence) {
+    return this.byIndex(s1, s2);
+  }
+}
+
+/**
+ * Strategy that focuses one daemon at the time.
+ */
+export class FocusedSequenceSortStrategy extends SequenceSortStrategy {
+  constructor(private readonly focusedDaemonIndex: number) {
+    super();
+  }
+
+  private hasFocusedDaemon(s: Sequence) {
+    return s.indexes.includes(this.focusedDaemonIndex);
+  }
+
+  private byFocus(s1: Sequence, s2: Sequence) {
+    const a = this.hasFocusedDaemon(s1);
+    const b = this.hasFocusedDaemon(s2);
+
+    return a === b ? 0 : a ? -1 : 1;
+  }
+
+  apply(s1: Sequence, s2: Sequence) {
+    return this.byFocus(s1, s2) || this.byIndex(s1, s2);
+  }
 }

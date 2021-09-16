@@ -1,0 +1,172 @@
+[
+  {
+    "description": "no overlap",
+    "rawData": {
+      "daemons": [["1C", "1C"], ["55"]], 
+      "bufferSize": 5
+    },
+    "expected": {
+      "sequences": [
+        ["1C", "1C", "55"],
+        ["55", "1C", "1C"],
+        ["55"],
+        ["1C", "1C"]
+      ],
+      "indexes": [[0, 1], [0, 1], [1], [0]]
+    }
+  },
+  {
+    "description": "full overlap",
+    "rawData": {
+      "daemons": [
+        ["7A", "BD", "BD"],
+        ["BD", "BD"],
+        ["7A", "7A"]
+      ], 
+      "bufferSize": 8
+    },
+    "expected": {
+      "sequences": [
+        ["7A", "7A", "BD", "BD"],
+        ["7A", "BD", "BD", "7A", "7A"],
+        ["7A", "7A"],
+        ["7A", "BD", "BD"],
+        ["BD", "BD"]
+      ],
+      "indexes": [
+        [0, 1, 2],
+        [0, 1, 2],
+        [2],
+        [0, 1],
+        [1]
+      ]
+    }
+  },
+  {
+    "description": "small buffer",
+    "rawData": {
+      "daemons": [
+        ["E9", "E9", "BD"],
+        ["FF", "FF"]
+      ], 
+      "bufferSize": 4
+    },
+    "expected": {
+      "sequences": [
+        ["FF", "FF"],
+        ["E9", "E9", "BD"]
+      ],
+      "indexes": [[1], [0]]
+    }
+  },
+  {
+    "description": "regular daemons overlap",
+    "rawData": {
+      "daemons": [
+        ["1C", "55", "55"],
+        ["55", "FF"],
+        ["FF", "FF"]
+      ], 
+      "bufferSize": 8
+    },
+    "expected": {
+      "sequences": [
+        ["1C", "55", "55", "FF", "FF"],
+        ["FF", "FF", "1C", "55", "55", "FF"],
+        ["55", "FF", "FF", "1C", "55", "55"],
+        ["55", "FF", "1C", "55", "55", "FF", "FF"],
+        ["1C", "55", "55", "FF", "FF", "55", "FF"],
+        ["FF", "FF", "55", "FF", "1C", "55", "55"],
+        ["55", "FF", "FF"],
+        ["FF", "FF", "55", "FF"],
+        ["FF", "FF", "1C", "55", "55"],
+        ["FF", "FF"],
+        ["1C", "55", "55", "FF"],
+        ["55", "FF", "1C", "55", "55"],
+        ["55", "FF"],
+        ["1C", "55", "55"]
+      ],
+      "indexes": [
+        [0, 1, 2],
+        [0, 1, 2],
+        [0, 1, 2],
+        [0, 1, 2],
+        [0, 1, 2],
+        [0, 1, 2],
+        [1, 2],
+        [1, 2],
+        [0, 2],
+        [2],
+        [0, 1],
+        [0, 1],
+        [1],
+        [0]
+      ]
+    }
+  },
+  {
+    "description": "duplicated child daemons with no overlap",
+    "rawData": {
+      "daemons": [
+        ["1C", "1C"],
+        ["1C", "1C"],
+        ["BD", "1C", "55"]
+      ], 
+      "bufferSize": 7
+    },
+    "expected": {
+      "sequences": [
+        ["1C", "1C", "BD", "1C", "55"],
+        ["BD", "1C", "55", "1C", "1C"],
+        ["BD", "1C", "55"],
+        ["1C", "1C"]
+      ],
+      "indexes": [[0, 1, 2], [0, 1, 2], [2], [0, 1]]
+    }
+  },
+  {
+    "description": "multiple overlaps and duplicates",
+    "rawData": {
+      "daemons": [["1C", "1C"], ["1C"], ["1C", "1C", "1C"], ["1C", "1C"]],
+      "bufferSize": 8
+    },
+    "expected": {
+      "sequences": [["1C", "1C", "1C"], ["1C", "1C"], ["1C"]],
+      "indexes": [[0, 1, 2, 3], [0, 1, 3], [1]]
+    }
+  },
+  {
+    "description": "duplicate with partial overlap",
+    "rawData": {
+      "daemons": [
+        ["BD", "55", "1C"],
+        ["1C", "1C"],
+        ["BD", "55", "1C"]
+      ],
+      "bufferSize": 7
+    },
+    "expected": {
+      "sequences": [
+        ["BD", "55", "1C", "1C"],
+        ["1C", "1C", "BD", "55", "1C"],
+        ["BD", "55", "1C"],
+        ["1C", "1C"]
+      ],
+      "indexes": [[0, 1, 2], [0, 1, 2], [0, 2], [1]]
+    }
+  },
+  {
+    "description": "only duplicates",
+    "rawData": {
+      "daemons": [
+        ["1C", "1C"],
+        ["1C", "1C"]
+      ],
+      "bufferSize": 7
+    },
+    "expected": {
+      "sequences": [["1C", "1C"]],
+      "indexes": [[0, 1]]
+    }
+  }
+]
