@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 const onChannels = [
   'main:show-release-notes',
   'main:download-progress',
+  'main:third-party-licenses',
   'SET_SETTINGS',
   'UPDATE_SETTINGS',
   'ADD_HISTORY_ENTRY',

@@ -27,7 +27,6 @@ import {
 } from '@/electron/common';
 import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { join } from 'path';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import { BreachProtocolAutosolver } from './autosolver';
@@ -83,12 +82,13 @@ export class BreachProtocolWorker {
   }
 
   private async initTesseractScheduler() {
-    const langPath =
-      BUILD_PLATFORM === 'linux' && process.env.NODE_ENV === 'production'
-        ? join(__dirname, '../..')
-        : './resources';
+    const langPath = this.getResourcesPath();
 
     await WasmBreachProtocolRecognizer.initScheduler(langPath);
+  }
+
+  private getResourcesPath() {
+    return ipc.sendSync('worker:get-resources-path');
   }
 
   private validateExternalDependencies() {

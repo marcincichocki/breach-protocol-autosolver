@@ -1,33 +1,32 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
-import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
-import webpack from 'webpack';
-import { commonPlugins, commonRules } from './common';
+import WebpackLicensePlugin from 'webpack-license-plugin';
+import { defineConstantsPlugin, getConfig, root } from './common';
 
-export const config: webpack.Configuration = {
-  mode: 'development',
-  entry: join(__dirname, '../src/electron/worker/index.ts'),
+const externalPackages = ['sharp', 'tesseract.js', 'screenshot-desktop'];
+const externalEnteries = externalPackages.map((n) => [n, `commonjs ${n}`]);
+const externals = Object.fromEntries(externalEnteries);
+
+function getAbsolutePathToExternalPackage(name: string) {
+  return join(root, 'node_modules', name);
+}
+
+export const config = getConfig({
   target: 'electron-renderer',
-  output: {
-    path: join(__dirname, '../dist'),
-    filename: 'worker.js',
+  entry: {
+    worker: './worker/index.ts',
   },
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-    plugins: [new TsconfigPathsPlugin()],
-  },
-  module: {
-    rules: [...commonRules],
-  },
-  externals: {
-    sharp: 'commonjs sharp',
-    'tesseract.js': 'commonjs tesseract.js',
-    'screenshot-desktop': 'commonjs screenshot-desktop',
-  },
+  externals,
   plugins: [
-    ...commonPlugins,
+    defineConstantsPlugin,
+    new WebpackLicensePlugin({
+      outputFilename: 'worker-licenses.json',
+      includePackages() {
+        return externalPackages.map(getAbsolutePathToExternalPackage);
+      },
+    }),
     new HtmlWebpackPlugin({
-      filename: 'worker.html',
+      filename: '[name].html',
     }),
   ],
-};
+});

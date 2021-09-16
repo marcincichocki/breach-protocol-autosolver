@@ -46,6 +46,7 @@ const StyledTitleBar = styled.nav`
   justify-content: flex-end;
   user-select: none;
   -webkit-app-region: drag;
+  z-index: 1;
 `;
 
 const IconButton = styled.button<{ close?: boolean }>`

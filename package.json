@@ -42,7 +42,11 @@
       {
         "from": "dist",
         "to": "resources",
-        "filter": "*.txt"
+        "filter": "*.json"
+      },
+      {
+        "from": "src/electron/renderer/assets/fonts/Rajdhani/OFL.txt",
+        "to": "resources"
       }
     ],
     "directories": {
@@ -99,14 +103,12 @@
     "@types/styled-components": "^5.1.9",
     "@types/tar": "^4.0.4",
     "@types/uuid": "^8.3.0",
-    "@types/webpack": "^5.28.0",
     "css-loader": "^5.2.4",
     "electron": "^13.1.2",
     "electron-builder": "^22.11.7",
     "fs-extra": "^9.1.0",
     "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
-    "license-webpack-plugin": "^2.3.19",
     "patch-package": "^6.4.7",
     "standard-version": "^9.3.1",
     "style-loader": "^2.0.0",
@@ -117,7 +119,8 @@
     "tslib": "^2.1.0",
     "typescript": "^4.3.2",
     "webpack": "^5.35.1",
-    "webpack-cli": "^4.6.0"
+    "webpack-cli": "^4.6.0",
+    "webpack-license-plugin": "^4.2.0"
   },
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
