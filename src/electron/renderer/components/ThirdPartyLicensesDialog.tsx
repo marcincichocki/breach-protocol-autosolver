@@ -9,6 +9,13 @@ const PackageInfo = styled.div`
   margin-bottom: 2rem;
 `;
 
+const PackageInfoTitle = styled.h2`
+  position: sticky;
+  top: -1px;
+  padding: 1rem 0;
+  background: var(--background);
+`;
+
 function openResourcesFolder(event: MouseEvent) {
   event.preventDefault();
 
@@ -39,9 +46,9 @@ export const ThirdPartyLicensesDialog = () => {
         </p>
         {contents.map((details, i) => (
           <PackageInfo key={i}>
-            <h2>
+            <PackageInfoTitle>
               {details.name}@{details.version}
-            </h2>
+            </PackageInfoTitle>
             {details.repository && (
               <a href={details.repository}>{details.repository}</a>
             )}
