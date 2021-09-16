@@ -82,12 +82,13 @@ export class BreachProtocolWorker {
   }
 
   private async initTesseractScheduler() {
-    const langPath =
-      process.env.NODE_ENV === 'production'
-        ? process.resourcesPath
-        : './resources';
+    const langPath = this.getResourcesPath();
 
     await WasmBreachProtocolRecognizer.initScheduler(langPath);
+  }
+
+  private getResourcesPath() {
+    return ipc.sendSync('worker:get-resources-path');
   }
 
   private validateExternalDependencies() {
