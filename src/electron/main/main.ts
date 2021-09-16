@@ -17,6 +17,7 @@ import {
   writeJSONSync,
 } from 'fs-extra';
 import { extname, join } from 'path';
+import { URL } from 'url';
 import icon from '../../../resources/icon.png';
 import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
 import { Store } from './store/store';
@@ -38,7 +39,7 @@ export class Main {
   private readonly isFirstRun = firstRun({ name: 'update' });
 
   /** Only allow to externally open websites from this list. */
-  private readonly urlWhitelist = ['https://github.com'];
+  private readonly originWhitelist = ['https://github.com'];
 
   private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     {
@@ -152,8 +153,10 @@ export class Main {
     );
   }
 
-  private isUrlAllowed(url: string) {
-    return this.urlWhitelist.some((a) => url.startsWith(a));
+  private isUrlAllowed(input: string) {
+    const url = new URL(input);
+
+    return this.originWhitelist.includes(url.origin);
   }
 
   private onWillNavigate(event: Event, url: string) {
