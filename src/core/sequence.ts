@@ -148,7 +148,7 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
-export function makeSequences(
+export function generateSequences(
   { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
   strategy: SequenceCompareStrategy = new IndexSequenceCompareStrategy()
 ) {

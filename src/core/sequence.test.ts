@@ -1,7 +1,12 @@
 import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
 import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
-import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
+import {
+  findOverlap,
+  generateSequences,
+  parseDaemons,
+  Sequence,
+} from './sequence';
 
 interface SequenceEntry {
   description: string;
@@ -111,7 +116,7 @@ describe('sequences', () => {
       it.each(entries as SequenceEntry[])(
         'should work with $description',
         ({ rawData, expected }) => {
-          const sequences = makeSequences(rawData);
+          const sequences = generateSequences(rawData);
 
           expectSequencesToContainDaemons(sequences, expected.indexes);
           expectSequencesToEqual(sequences, expected.sequences);
@@ -130,7 +135,7 @@ describe('sequences', () => {
             ['1C', '7A', '7A'],
           ],
         };
-        const sequences = makeSequences(rawData, strategy);
+        const sequences = generateSequences(rawData, strategy);
 
         expectSequencesToContainDaemons(sequences, [
           [0, 2],

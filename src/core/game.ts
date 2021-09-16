@@ -12,7 +12,7 @@ import {
 } from './common';
 import { SequenceCompareStrategy } from './compare-strategy';
 import {
-  makeSequences,
+  generateSequences,
   memoizedFindOverlap,
   Sequence,
   SequenceJSON,
@@ -126,7 +126,10 @@ export class BreachProtocol {
     fromHex(this.rawData.grid[i])
   );
 
-  public readonly sequences = makeSequences(this.rawData, this.compareStrategy);
+  public readonly sequences = generateSequences(
+    this.rawData,
+    this.compareStrategy
+  );
 
   constructor(
     public readonly rawData: BreachProtocolRawData,
