@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-rc.1...v2.0.0) (2021-09-16)
+
+
+### Bug Fixes
+
+* **client-electron:** include every 3rd party license ([9dcfbce](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9dcfbce1a82230a17fa75e22f4a94bc76f2ec2cb)), closes [#205](https://github.com/marcincichocki/breach-protocol-autosolver/issues/205)
+* **client-electron:** isolate renderer window ([08919a9](https://github.com/marcincichocki/breach-protocol-autosolver/commit/08919a98e7bf7ea5dfc745c2ecc98bc4dbe2de25)), closes [#139](https://github.com/marcincichocki/breach-protocol-autosolver/issues/139)
+* **client-electron:** show release notes only once ([75bcbdb](https://github.com/marcincichocki/breach-protocol-autosolver/commit/75bcbdb3d127be61ccabc3138ac38865be327eca)), closes [#184](https://github.com/marcincichocki/breach-protocol-autosolver/issues/184)
+
 ## [2.0.0-rc.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2021-09-07)
 
 
