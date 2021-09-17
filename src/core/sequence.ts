@@ -1,6 +1,6 @@
 import { memoize, permute, Serializable, uniqueWith } from '@/common';
 import {
-  BufferSize,
+  BreachProtocolRawData,
   byBufferSize,
   byUniqueValue,
   DaemonRawData,
@@ -9,6 +9,10 @@ import {
   HexNumber,
   toHex,
 } from './common';
+import {
+  IndexSequenceCompareStrategy,
+  SequenceCompareStrategy,
+} from './compare-strategy';
 
 export interface RawSequence {
   value: string[];
@@ -144,7 +148,10 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
-export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
+export function generateSequences(
+  { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
+  strategy: SequenceCompareStrategy = new IndexSequenceCompareStrategy()
+) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
   const childSequences = childDaemons
     .filter(byUniqueValue())
@@ -159,10 +166,5 @@ export function makeSequences(daemons: DaemonsRawData, bufferSize: BufferSize) {
     .concat(childSequences)
     .filter(byUniqueValue())
     .filter(byBufferSize(bufferSize))
-    .sort((s1, s2) => {
-      const byStrength = s2.strength - s1.strength;
-      const byLength = s1.length - s2.length;
-
-      return byStrength || byLength;
-    });
+    .sort((s1, s2) => strategy.apply(s1, s2));
 }

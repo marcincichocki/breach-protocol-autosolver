@@ -1,5 +1,21 @@
-import { DaemonsRawData } from './common';
-import { findOverlap, makeSequences, parseDaemons, Sequence } from './sequence';
+import entries from './bp-registry/sequences.json';
+import { BreachProtocolRawData, DaemonsRawData } from './common';
+import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
+import {
+  findOverlap,
+  generateSequences,
+  parseDaemons,
+  Sequence,
+} from './sequence';
+
+interface SequenceEntry {
+  description: string;
+  rawData: Omit<BreachProtocolRawData, 'grid'>;
+  expected: {
+    indexes: number[][];
+    sequences: DaemonsRawData;
+  };
+}
 
 describe('sequences', () => {
   it('should find correct overlaps', () => {
@@ -95,158 +111,52 @@ describe('sequences', () => {
     expect(s3.strength).toBe(9);
   });
 
-  it('should create correct sequences out of raw daemons', () => {
-    // No overlaps.
-    const s1 = makeSequences([['1C', '1C'], ['55']], 5);
+  describe('generateSequences', () => {
+    describe('index strategy', () => {
+      it.each(entries as SequenceEntry[])(
+        'should work with $description',
+        ({ rawData, expected }) => {
+          const sequences = generateSequences(rawData);
 
-    expectSequencesToContainDaemons(s1, [[0, 1], [0, 1], [1], [0]]);
-    expectSequencesToEqual(s1, [
-      ['1C', '1C', '55'],
-      ['55', '1C', '1C'],
-      ['55'],
-      ['1C', '1C'],
-    ]);
+          expectSequencesToContainDaemons(sequences, expected.indexes);
+          expectSequencesToEqual(sequences, expected.sequences);
+        }
+      );
+    });
 
-    // Full overlap
-    const s2 = makeSequences(
-      [
-        ['7A', 'BD', 'BD'],
-        ['BD', 'BD'],
-        ['7A', '7A'],
-      ],
-      8
-    );
+    describe('focus daemon strategy', () => {
+      it('should return sequences sorted by selected daemon', () => {
+        const strategy = new FocusDaemonSequenceCompareStrategy(0);
+        const rawData: Omit<BreachProtocolRawData, 'grid'> = {
+          bufferSize: 5,
+          daemons: [
+            ['1C', '1C'],
+            ['55', '7A', 'BD'],
+            ['1C', '7A', '7A'],
+          ],
+        };
+        const sequences = generateSequences(rawData, strategy);
 
-    expectSequencesToContainDaemons(s2, [
-      [0, 1, 2],
-      [0, 1, 2],
-      [2],
-      [0, 1],
-      [1],
-    ]);
-    expectSequencesToEqual(s2, [
-      ['7A', '7A', 'BD', 'BD'],
-      ['7A', 'BD', 'BD', '7A', '7A'],
-      ['7A', '7A'],
-      ['7A', 'BD', 'BD'],
-      ['BD', 'BD'],
-    ]);
-
-    // Small buffer.
-    const s3 = makeSequences(
-      [
-        ['E9', 'E9', 'BD'],
-        ['FF', 'FF'],
-      ],
-      4
-    );
-
-    expectSequencesToContainDaemons(s3, [[1], [0]]);
-    expectSequencesToEqual(s3, [
-      ['FF', 'FF'],
-      ['E9', 'E9', 'BD'],
-    ]);
-
-    // No child daemons, but there is overlap
-    // between regular daemons.
-    const s4 = makeSequences(
-      [
-        ['1C', '55', '55'],
-        ['55', 'FF'],
-        ['FF', 'FF'],
-      ],
-      8
-    );
-
-    expectSequencesToContainDaemons(s4, [
-      [0, 1, 2],
-      [0, 1, 2],
-      [0, 1, 2],
-      [0, 1, 2],
-      [0, 1, 2],
-      [0, 1, 2],
-      [1, 2],
-      [1, 2],
-      [0, 2],
-      [2],
-      [0, 1],
-      [0, 1],
-      [1],
-      [0],
-    ]);
-    expectSequencesToEqual(s4, [
-      ['1C', '55', '55', 'FF', 'FF'],
-      ['FF', 'FF', '1C', '55', '55', 'FF'],
-      ['55', 'FF', 'FF', '1C', '55', '55'],
-      ['55', 'FF', '1C', '55', '55', 'FF', 'FF'],
-      ['1C', '55', '55', 'FF', 'FF', '55', 'FF'],
-      ['FF', 'FF', '55', 'FF', '1C', '55', '55'],
-      ['55', 'FF', 'FF'],
-      ['FF', 'FF', '55', 'FF'],
-      ['FF', 'FF', '1C', '55', '55'],
-      ['FF', 'FF'],
-      ['1C', '55', '55', 'FF'],
-      ['55', 'FF', '1C', '55', '55'],
-      ['55', 'FF'],
-      ['1C', '55', '55'],
-    ]);
-
-    // Duplicated daemon with no overlap.
-    const s5 = makeSequences(
-      [
-        ['1C', '1C'],
-        ['1C', '1C'],
-        ['BD', '1C', '55'],
-      ],
-      7
-    );
-
-    expectSequencesToContainDaemons(s5, [[0, 1, 2], [0, 1, 2], [2], [0, 1]]);
-    expectSequencesToEqual(s5, [
-      ['1C', '1C', 'BD', '1C', '55'],
-      ['BD', '1C', '55', '1C', '1C'],
-      ['BD', '1C', '55'],
-      ['1C', '1C'],
-    ]);
-
-    // Multiple overlaps and duplicates.
-    const s6 = makeSequences(
-      [['1C', '1C'], ['1C'], ['1C', '1C', '1C'], ['1C', '1C']],
-      8
-    );
-
-    expectSequencesToContainDaemons(s6, [[0, 1, 2, 3], [0, 1, 3], [1]]);
-    expectSequencesToEqual(s6, [['1C', '1C', '1C'], ['1C', '1C'], ['1C']]);
-
-    // Duplicate with partial overlap.
-    const s7 = makeSequences(
-      [
-        ['BD', '55', '1C'],
-        ['1C', '1C'],
-        ['BD', '55', '1C'],
-      ],
-      7
-    );
-
-    expectSequencesToEqual(s7, [
-      ['BD', '55', '1C', '1C'],
-      ['1C', '1C', 'BD', '55', '1C'],
-      ['BD', '55', '1C'],
-      ['1C', '1C'],
-    ]);
-    expectSequencesToContainDaemons(s7, [[0, 1, 2], [0, 1, 2], [0, 2], [1]]);
-
-    // Only duplicate.
-    const s8 = makeSequences(
-      [
-        ['1C', '1C'],
-        ['1C', '1C'],
-      ],
-      7
-    );
-
-    expectSequencesToContainDaemons(s8, [[0, 1]]);
-    expectSequencesToEqual(s8, [['1C', '1C']]);
+        expectSequencesToContainDaemons(sequences, [
+          [0, 2],
+          [0, 2],
+          [0, 1],
+          [0, 1],
+          [0],
+          [2],
+          [1],
+        ]);
+        expectSequencesToEqual(sequences, [
+          ['1C', '1C', '7A', '7A'],
+          ['1C', '7A', '7A', '1C', '1C'],
+          ['1C', '1C', '55', '7A', 'BD'],
+          ['55', '7A', 'BD', '1C', '1C'],
+          ['1C', '1C'],
+          ['1C', '7A', '7A'],
+          ['55', '7A', 'BD'],
+        ]);
+      });
+    });
   });
 });
 
