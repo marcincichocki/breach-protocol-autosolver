@@ -76,7 +76,7 @@ export class FocusDaemonSequenceCompareStrategy extends SequenceCompareStrategy 
     return s.indexes.includes(this.focusedDaemonIndex);
   }
 
-  private byFocus(s1: Sequence, s2: Sequence) {
+  private byDaemonIndex(s1: Sequence, s2: Sequence) {
     const a = this.hasFocusedDaemon(s1);
     const b = this.hasFocusedDaemon(s2);
 
@@ -84,6 +84,6 @@ export class FocusDaemonSequenceCompareStrategy extends SequenceCompareStrategy 
   }
 
   apply(s1: Sequence, s2: Sequence) {
-    return this.byFocus(s1, s2) || this.byIndex(s1, s2);
+    return this.byDaemonIndex(s1, s2) || this.byIndex(s1, s2);
   }
 }
