@@ -10,11 +10,9 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
-} from '@/core';
-import {
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
-} from '@/core/compare-strategy';
+} from '@/core';
 import {
   Action,
   ActionTypes,

@@ -13,8 +13,8 @@ import {
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
   FragmentId,
+  SequenceCompareStrategy,
 } from '@/core';
-import { SequenceCompareStrategy } from '@/core/compare-strategy';
 import {
   AppSettings,
   BreachProtocolSolveProgress,

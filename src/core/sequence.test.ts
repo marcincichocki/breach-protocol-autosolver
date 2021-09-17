@@ -111,7 +111,7 @@ describe('sequences', () => {
     expect(s3.strength).toBe(9);
   });
 
-  describe('makeSequences', () => {
+  describe('generateSequences', () => {
     describe('index strategy', () => {
       it.each(entries as SequenceEntry[])(
         'should work with $description',
@@ -124,7 +124,7 @@ describe('sequences', () => {
       );
     });
 
-    describe('focused strategy', () => {
+    describe('focus daemon strategy', () => {
       it('should return sequences sorted by selected daemon', () => {
         const strategy = new FocusDaemonSequenceCompareStrategy(0);
         const rawData: Omit<BreachProtocolRawData, 'grid'> = {
