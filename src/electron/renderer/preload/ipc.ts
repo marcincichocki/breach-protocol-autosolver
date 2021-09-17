@@ -13,7 +13,10 @@ const onChannels = [
   'async-response',
 ];
 
-const invokeChannels = ['renderer:show-message-box'];
+const invokeChannels = [
+  'renderer:show-message-box',
+  'renderer:validate-key-bind',
+];
 
 const sendChannels = [
   'renderer:show-help-menu',

@@ -5,8 +5,8 @@ import {
   FragmentId,
   SequenceJSON,
 } from '@/core';
-import type { Accelerator } from 'electron';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
+import type { KeyBindConfig } from '../main/key-bind-manager';
 import type { SoundPlayerConfig } from '../worker/sound-player';
 
 export enum WorkerStatus {
@@ -46,8 +46,8 @@ export interface HistoryEntry {
 export interface AppSettings
   extends RobotSettings,
     Required<SharpImageContainerConfig>,
-    SoundPlayerConfig {
-  keyBind: Accelerator;
+    SoundPlayerConfig,
+    KeyBindConfig {
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;

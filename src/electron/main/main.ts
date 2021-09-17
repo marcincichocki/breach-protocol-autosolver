@@ -20,6 +20,7 @@ import { extname, join } from 'path';
 import { URL } from 'url';
 import icon from '../../../resources/icon.png';
 import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
+import { KeyBind, KeyBindManager } from './key-bind-manager';
 import { Store } from './store/store';
 import { BreachProtocolAutosolverUpdater } from './updater';
 import { createBrowserWindows } from './windows';
@@ -35,6 +36,8 @@ export class Main {
   private worker: Electron.BrowserWindow = null;
 
   private updater: BreachProtocolAutosolverUpdater = null;
+
+  private readonly keyBindManager = new KeyBindManager();
 
   private readonly isFirstRun = firstRun({ name: 'update' });
 
@@ -102,10 +105,40 @@ export class Main {
       this.toggleKeyBind.bind(this),
     ]);
 
+    this.addKeyBinds();
+
     this.renderer = renderer;
     this.worker = worker;
 
     this.registerListeners();
+  }
+
+  private addKeyBinds() {
+    const { keyBind } = this.getSettings();
+
+    // race condition?
+    this.keyBindManager
+      .addKeyBind('keyBind', new KeyBind(keyBind, () => this.onWorkerSolve()))
+      .addKeyBind(
+        'solveWithPriority1',
+        new KeyBind('Alt+1', () => this.onWorkerSolve(0))
+      )
+      .addKeyBind(
+        'solveWithPriority2',
+        new KeyBind('Alt+2', () => this.onWorkerSolve(1))
+      )
+      .addKeyBind(
+        'solveWithPriority3',
+        new KeyBind('Alt+3', () => this.onWorkerSolve(2))
+      )
+      .addKeyBind(
+        'solveWithPriority4',
+        new KeyBind('Alt+4', () => this.onWorkerSolve(3))
+      )
+      .addKeyBind(
+        'solveWithPriority5',
+        new KeyBind('Alt+5', () => this.onWorkerSolve(4))
+      );
   }
 
   private async updateApp() {
@@ -143,6 +176,7 @@ export class Main {
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.on('worker:get-resources-path', this.onGetResourcesPath.bind(this));
     ipc.handle('renderer:show-message-box', this.onShowMessageBox);
+    ipc.handle('renderer:validate-key-bind', this.onValidateKeyBind.bind(this));
 
     this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
@@ -152,6 +186,10 @@ export class Main {
       'will-navigate',
       this.onWillNavigate.bind(this)
     );
+  }
+
+  private onValidateKeyBind(e: Electron.IpcMainEvent, input: string) {
+    return this.keyBindManager.isValid(input);
   }
 
   private isUrlAllowed(input: string) {
@@ -212,10 +250,11 @@ export class Main {
     globalShortcut.register(keyBind, this.onWorkerSolve.bind(this));
   }
 
-  private onWorkerSolve() {
-    this.worker.webContents.send('worker:solve');
+  private onWorkerSolve(index?: number) {
+    this.worker.webContents.send('worker:solve', index);
   }
 
+  // TODO: HANDLE THIS
   private onKeyBindChange(
     e: Electron.IpcMainEvent,
     keyBind: Electron.Accelerator
@@ -359,12 +398,10 @@ export class Main {
 
   private toggleKeyBind({ type, payload }: Action) {
     if (type === ActionTypes.SET_STATUS) {
-      const { keyBind } = this.store.getState().settings;
-
       if (payload === WorkerStatus.Disabled) {
-        globalShortcut.unregister(keyBind);
-      } else if (!globalShortcut.isRegistered(keyBind)) {
-        this.registerKeyBind(keyBind);
+        this.keyBindManager.unregisterAll();
+      } else {
+        this.keyBindManager.registerAll();
       }
     }
   }
