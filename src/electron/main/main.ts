@@ -239,7 +239,6 @@ export class Main {
 
     this.renderer.removeAllListeners();
     this.worker.removeAllListeners();
-    this.keyBindManager.dispose();
   }
 
   private onWorkerSolve(index?: number) {
@@ -299,6 +298,7 @@ export class Main {
   }
 
   private onRendererClosed() {
+    this.keyBindManager.dispose();
     this.commandManager.dispose();
     this.updater.dispose();
     this.store.dispose();
