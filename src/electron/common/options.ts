@@ -51,8 +51,7 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'keyBind',
-    description:
-      'Key bind which triggers autosolver. Press "Enter" to save new key bind, or "Escape" to cancel.',
+    description: 'Key bind which triggers autosolver.',
     defaultValue: 'Alt+`',
   },
   {
