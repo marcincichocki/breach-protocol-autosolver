@@ -1,5 +1,6 @@
 import { Accelerator, globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
+import { Command, CommandManager } from './command-manager';
 
 export class KeyBind {
   private active = false;
@@ -10,7 +11,7 @@ export class KeyBind {
 
   constructor(
     public readonly accelerator: Accelerator,
-    public readonly callback: () => void
+    public readonly callback: Command
   ) {}
 
   register() {
@@ -43,16 +44,19 @@ export interface KeyBindConfig {
   solveWithPriority5: Accelerator;
 }
 
-type KeyBindId = keyof KeyBindConfig;
-
 /** Manage global key binds. */
 export class KeyBindManager {
-  private readonly registry = new Map<KeyBindId, KeyBind>();
+  private readonly registry = new Map<string, KeyBind>();
 
-  addKeyBind(id: KeyBindId, keyBind: KeyBind) {
+  constructor(private commandManager: CommandManager) {}
+
+  register(id: string, accelerator: Accelerator) {
     if (this.registry.has(id)) {
       throw new Error(`Id "${id}" is alredy specified!`);
     }
+
+    const command = this.commandManager.get(id);
+    const keyBind = new KeyBind(accelerator, command);
 
     this.registry.set(id, keyBind);
 
@@ -60,13 +64,14 @@ export class KeyBindManager {
   }
 
   /** Set new accelerator for given key bind id. */
-  changeAcceleratorFor(id: KeyBindId, accelerator: Accelerator) {
+  changeAcceleratorFor(id: string, accelerator: Accelerator) {
     if (!this.registry.has(id)) {
       throw new Error(`Key bind with id: "${id}" does not exist!`);
     }
 
     const oldKeyBind = this.registry.get(id);
-    const keyBind = new KeyBind(accelerator, oldKeyBind.callback);
+    const command = this.commandManager.get(id);
+    const keyBind = new KeyBind(accelerator, command);
 
     if (oldKeyBind.isActive) {
       oldKeyBind.unregister();
@@ -76,12 +81,17 @@ export class KeyBindManager {
     this.registry.set(id, keyBind);
   }
 
-  registerAll() {
+  enable() {
     this.registry.forEach((k) => k.register());
   }
 
-  unregisterAll() {
+  disable() {
     this.registry.forEach((k) => k.unregister());
+  }
+
+  dispose() {
+    this.disable();
+    this.registry.clear();
   }
 
   /** Check if given {@link Accelerator} is valid. */
