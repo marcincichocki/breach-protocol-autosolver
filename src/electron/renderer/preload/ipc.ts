@@ -11,12 +11,12 @@ const onChannels = [
   'REMOVE_HISTORY_ENTRY',
   'state',
   'async-response',
-];
+] as const;
 
 const invokeChannels = [
   'renderer:show-message-box',
   'renderer:validate-key-bind',
-];
+] as const;
 
 const sendChannels = [
   'renderer:show-help-menu',
@@ -26,13 +26,13 @@ const sendChannels = [
   'renderer:key-bind-change',
   'renderer:save-snapshot',
   'async-request',
-];
+] as const;
 
 function getInvalidChannelError(channel: string) {
   return new Error(`Invalid channel "${channel}" provided.`);
 }
 
-function validateChannel(input: string, whitelist: string[]) {
+function validateChannel(input: string, whitelist: readonly string[]) {
   if (!whitelist.includes(input)) {
     throw getInvalidChannelError(input);
   }
@@ -40,7 +40,7 @@ function validateChannel(input: string, whitelist: string[]) {
 
 /** Wrapper around {@link ipcRenderer.on}. Accepts only curated list of channels. */
 export function on(
-  channel: string,
+  channel: typeof onChannels[number],
   listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
 ) {
   validateChannel(channel, onChannels);
@@ -49,14 +49,14 @@ export function on(
 }
 
 /** Wrapper around {@link ipcRenderer.send}. Accepts only curated list of channels. */
-export function send(channel: string, ...args: any[]) {
+export function send(channel: typeof sendChannels[number], ...args: any[]) {
   validateChannel(channel, sendChannels);
 
   ipcRenderer.send(channel, ...args);
 }
 
 /** Wrapper around {@link ipcRenderer.invoke}. Accepts only curated list of channels. */
-export function invoke(channel: string, ...args: any[]) {
+export function invoke(channel: typeof invokeChannels[number], ...args: any[]) {
   validateChannel(channel, invokeChannels);
 
   return ipcRenderer.invoke(channel, ...args);
