@@ -7,6 +7,7 @@ export * from './Form';
 export * from './FragmentPreview';
 export * from './GridViewer';
 export * from './HistoryViewer';
+export * from './KeyBind';
 export * from './Navigation';
 export * from './RangeSlider';
 export * from './RawDataPreview';

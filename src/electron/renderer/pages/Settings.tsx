@@ -20,6 +20,7 @@ import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import styled from 'styled-components';
 import { getDisplayName, nativeDialog } from '../common';
 import {
+  AcceleratorKeyBind,
   Col,
   Field,
   File,
@@ -33,7 +34,6 @@ import {
   ThresholdSlider,
   useForm,
 } from '../components';
-import { KeyBind } from '../components/KeyBind';
 import { StateContext } from '../state';
 
 const Header = styled.h1`
@@ -220,11 +220,33 @@ const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
     next();
   }
 
+  async function validateKeyBind(
+    value: Electron.Accelerator,
+    next: (reset?: boolean) => void
+  ) {
+    const isValid = await api.invoke('renderer:validate-key-bind', value);
+
+    if (isValid) {
+      next();
+    } else {
+      next(true);
+
+      await nativeDialog.alert({
+        message: 'Invalid key bind',
+        detail: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
+      });
+    }
+  }
+
   return (
     <Section title="AutoSolver">
       <Field name="keyBind" onValueChange={changeKeyBind}>
         <Label>Key bind</Label>
-        <KeyBind onFocus={onFocus} onBlur={onBlur} />
+        <AcceleratorKeyBind
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onBeforeValueChange={validateKeyBind}
+        />
       </Field>
       <Field name="soundEnabled">
         <Label>Sound</Label>

@@ -251,7 +251,7 @@ interface KeyBindProps<I = any, O = any> {
   onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
 }
 
-export const NewKeyBind = ({
+const KeyBind = ({
   transformer,
   depth,
   onFocus,
@@ -378,12 +378,19 @@ const acceleratorTransformer: Transformer<Electron.Accelerator, string[]> = {
 
 export const AcceleratorKeyBind = (props: Partial<KeyBindProps>) => {
   return (
-    <NewKeyBind
-      {...props}
-      transformer={acceleratorTransformer}
-      depth={Infinity}
-    />
+    <KeyBind {...props} transformer={acceleratorTransformer} depth={Infinity} />
   );
 };
 
-export const NativeKeyBind = () => {};
+const noopTransformer: Transformer<string[], string[]> = {
+  toUniversal(input: string[]) {
+    return input;
+  },
+  fromUniversal(input: string[]) {
+    return input;
+  },
+};
+
+export const MapKeyBind = (props: Partial<KeyBindProps>) => {
+  return <KeyBind {...props} transformer={noopTransformer} depth={1} />;
+};
