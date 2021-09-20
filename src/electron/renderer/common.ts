@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
+import type { IpcOnChannels } from './preload/ipc';
 import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */
@@ -46,7 +47,7 @@ export function transformTimestamp(timestamp: number) {
 }
 
 export function useIpcEvent<T>(
-  channels: string[],
+  channels: IpcOnChannels[],
   callback: (event: IpcRendererEvent, value: T) => void
 ) {
   useEffect(() => {
@@ -62,7 +63,7 @@ export function useIpcEvent<T>(
   }, []);
 }
 
-export function useIpcEventDialog<T>(channel: string) {
+export function useIpcEventDialog<T>(channel: IpcOnChannels) {
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<T>(null);
   const close = () => setIsOpen(false);
@@ -91,7 +92,7 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
 }
 
-export function useHistoryRedirect(channels: string[]) {
+export function useHistoryRedirect(channels: IpcOnChannels[]) {
   const history = useHistory();
 
   useIpcEvent(channels, () => history.replace('/history'));
