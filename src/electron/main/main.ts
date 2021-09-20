@@ -2,7 +2,6 @@ import {
   app,
   clipboard,
   dialog,
-  globalShortcut,
   ipcMain as ipc,
   Menu,
   shell,
@@ -20,7 +19,8 @@ import { extname, join } from 'path';
 import { URL } from 'url';
 import icon from '../../../resources/icon.png';
 import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
-import { KeyBind, KeyBindManager } from './key-bind-manager';
+import { CommandManager } from './command-manager';
+import { KeyBindManager } from './key-bind-manager';
 import { Store } from './store/store';
 import { BreachProtocolAutosolverUpdater } from './updater';
 import { createBrowserWindows } from './windows';
@@ -37,7 +37,9 @@ export class Main {
 
   private updater: BreachProtocolAutosolverUpdater = null;
 
-  private readonly keyBindManager = new KeyBindManager();
+  private readonly commandManager = this.registerCommands();
+
+  private readonly keyBindManager = new KeyBindManager(this.commandManager);
 
   private readonly isFirstRun = firstRun({ name: 'update' });
 
@@ -105,40 +107,27 @@ export class Main {
       this.toggleKeyBind.bind(this),
     ]);
 
-    this.addKeyBinds();
-
     this.renderer = renderer;
     this.worker = worker;
 
+    this.registerKeyBinds();
     this.registerListeners();
   }
 
-  private addKeyBinds() {
+  private registerCommands() {
+    return new CommandManager()
+      .register('worker:solve', () => this.onWorkerSolve())
+      .register('worker:solve.withPriority1', () => this.onWorkerSolve(0))
+      .register('worker:solve.withPriority2', () => this.onWorkerSolve(1))
+      .register('worker:solve.withPriority3', () => this.onWorkerSolve(2))
+      .register('worker:solve.withPriority4', () => this.onWorkerSolve(3))
+      .register('worker:solve.withPriority5', () => this.onWorkerSolve(4));
+  }
+
+  private registerKeyBinds() {
     const { keyBind } = this.getSettings();
 
-    // race condition?
-    this.keyBindManager
-      .addKeyBind('keyBind', new KeyBind(keyBind, () => this.onWorkerSolve()))
-      .addKeyBind(
-        'solveWithPriority1',
-        new KeyBind('Alt+1', () => this.onWorkerSolve(0))
-      )
-      .addKeyBind(
-        'solveWithPriority2',
-        new KeyBind('Alt+2', () => this.onWorkerSolve(1))
-      )
-      .addKeyBind(
-        'solveWithPriority3',
-        new KeyBind('Alt+3', () => this.onWorkerSolve(2))
-      )
-      .addKeyBind(
-        'solveWithPriority4',
-        new KeyBind('Alt+4', () => this.onWorkerSolve(3))
-      )
-      .addKeyBind(
-        'solveWithPriority5',
-        new KeyBind('Alt+5', () => this.onWorkerSolve(4))
-      );
+    this.keyBindManager.register('worker:solve', keyBind);
   }
 
   private async updateApp() {
@@ -242,26 +231,19 @@ export class Main {
 
     this.renderer.removeAllListeners();
     this.worker.removeAllListeners();
-
-    globalShortcut.unregisterAll();
-  }
-
-  private registerKeyBind(keyBind: Electron.Accelerator) {
-    globalShortcut.register(keyBind, this.onWorkerSolve.bind(this));
+    this.keyBindManager.dispose();
   }
 
   private onWorkerSolve(index?: number) {
     this.worker.webContents.send('worker:solve', index);
   }
 
-  // TODO: HANDLE THIS
   private onKeyBindChange(
     e: Electron.IpcMainEvent,
-    keyBind: Electron.Accelerator
+    keyBind: Electron.Accelerator,
+    id: string
   ) {
-    globalShortcut.unregisterAll();
-
-    this.registerKeyBind(keyBind);
+    this.keyBindManager.changeAcceleratorFor(id, keyBind);
   }
 
   private async onSaveSnapshot(e: Electron.IpcMainEvent, entryId: string) {
@@ -309,6 +291,7 @@ export class Main {
   }
 
   private onRendererClosed() {
+    this.commandManager.dispose();
     this.updater.dispose();
     this.store.dispose();
     this.store = null;
@@ -399,9 +382,9 @@ export class Main {
   private toggleKeyBind({ type, payload }: Action) {
     if (type === ActionTypes.SET_STATUS) {
       if (payload === WorkerStatus.Disabled) {
-        this.keyBindManager.unregisterAll();
+        this.keyBindManager.disable();
       } else {
-        this.keyBindManager.registerAll();
+        this.keyBindManager.enable();
       }
     }
   }
