@@ -263,6 +263,7 @@ const KeyBind = ({
   const initial = transformer.toUniversal(value);
   const [selected, setSelected] = useState<string[]>(initial);
   const [active, setActive] = useState<string[]>([]);
+  const [focused, setFocused] = useState<boolean>(false);
 
   useEffect(() => {
     if (!active.length || active.length === depth) {
@@ -273,12 +274,14 @@ const KeyBind = ({
   const onInputFocus = useCallback(() => {
     if (onFocus) onFocus();
 
+    setFocused(true);
     setSelected([]);
   }, []);
 
   const onInputBlur = useCallback(() => {
     if (onBlur) onBlur();
 
+    setFocused(false);
     setActive([]);
 
     // If there is no key selected, return to previous value and don't emit anything.
@@ -305,6 +308,12 @@ const KeyBind = ({
       event.preventDefault();
       event.stopPropagation();
 
+      // In rare cases OS can intercept shortcuts like
+      // Alt+Tab or LeftShift+Del which cause weird behaviour
+      // in keyDown and keyUp events. This check makes sure to only
+      // save new value when input is focused.
+      if (!focused) return;
+
       const { code } = event;
 
       if (active.some((k) => k === code)) return;
@@ -315,7 +324,7 @@ const KeyBind = ({
 
       setSelected((selected) => [...selected, code]);
     },
-    [active, selected]
+    [active, selected, focused]
   );
 
   const onInputKeyUp = useCallback(
