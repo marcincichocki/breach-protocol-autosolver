@@ -1,9 +1,9 @@
 export type Command = () => void;
 
-export class CommandManager {
-  private readonly commands = new Map<string, Command>();
+export class CommandManager<T> {
+  private readonly commands = new Map<T, Command>();
 
-  register(id: string, command: Command) {
+  register(id: T, command: Command) {
     if (this.commands.has(id)) {
       throw new Error(`Command with id: "${id}" alredy exist!`);
     }
@@ -13,7 +13,7 @@ export class CommandManager {
     return this;
   }
 
-  get(id: string) {
+  get(id: T) {
     return this.commands.get(id);
   }
 

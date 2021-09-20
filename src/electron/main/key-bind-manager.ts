@@ -36,12 +36,12 @@ export class KeyBind {
 }
 
 /** Manage global key binds. */
-export class KeyBindManager {
-  private readonly registry = new Map<string, KeyBind>();
+export class KeyBindManager<T> {
+  private readonly registry = new Map<T, KeyBind>();
 
-  constructor(private commandManager: CommandManager) {}
+  constructor(private commandManager: CommandManager<T>) {}
 
-  register(id: string, accelerator: Accelerator) {
+  register(id: T, accelerator: Accelerator) {
     if (this.registry.has(id)) {
       throw new Error(`Id "${id}" is alredy specified!`);
     }
@@ -55,7 +55,7 @@ export class KeyBindManager {
   }
 
   /** Set new accelerator for given key bind id. */
-  changeAcceleratorFor(id: string, accelerator: Accelerator) {
+  changeAcceleratorFor(id: T, accelerator: Accelerator) {
     if (!this.registry.has(id)) {
       throw new Error(`Key bind with id: "${id}" does not exist!`);
     }
@@ -93,14 +93,21 @@ export class KeyBindManager {
     return isValidAccelerator && isUnique;
   }
 
-  private isUniqueAccelerator(accelerator: Accelerator) {
-    // TODO: check if inverse accelerators work, for example Alt+1 and 1+Alt.
-    for (const keyBind of this.registry.values()) {
-      if (keyBind.accelerator === accelerator) {
+  private isUniqueAccelerator(input: Accelerator) {
+    const a = this.normalizeAccelerator(input);
+
+    for (const { accelerator } of this.registry.values()) {
+      const b = this.normalizeAccelerator(accelerator);
+
+      if (a === b) {
         return false;
       }
     }
 
     return true;
+  }
+
+  private normalizeAccelerator(input: Accelerator): Accelerator {
+    return input.split('+').sort().join('+');
   }
 }

@@ -18,7 +18,13 @@ import {
 import { extname, join } from 'path';
 import { URL } from 'url';
 import icon from '../../../resources/icon.png';
-import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
+import {
+  Action,
+  ActionTypes,
+  BreachProtocolCommands,
+  PackageDetails,
+  WorkerStatus,
+} from '../common';
 import { CommandManager } from './command-manager';
 import { KeyBindManager } from './key-bind-manager';
 import { Store } from './store/store';
@@ -39,7 +45,9 @@ export class Main {
 
   private readonly commandManager = this.registerCommands();
 
-  private readonly keyBindManager = new KeyBindManager(this.commandManager);
+  private readonly keyBindManager = new KeyBindManager<BreachProtocolCommands>(
+    this.commandManager
+  );
 
   private readonly isFirstRun = firstRun({ name: 'update' });
 
@@ -115,7 +123,7 @@ export class Main {
   }
 
   private registerCommands() {
-    return new CommandManager()
+    return new CommandManager<BreachProtocolCommands>()
       .register('worker:solve', () => this.onWorkerSolve())
       .register('worker:solve.withPriority1', () => this.onWorkerSolve(0))
       .register('worker:solve.withPriority2', () => this.onWorkerSolve(1))
@@ -241,7 +249,7 @@ export class Main {
   private onKeyBindChange(
     e: Electron.IpcMainEvent,
     keyBind: Electron.Accelerator,
-    id: string
+    id: BreachProtocolCommands
   ) {
     this.keyBindManager.changeAcceleratorFor(id, keyBind);
   }
