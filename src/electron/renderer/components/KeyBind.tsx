@@ -1,13 +1,14 @@
-import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
+  KeyboardEvent,
   KeyboardEvent as ReactKeyboardEvent,
+  useCallback,
+  useEffect,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { nativeDialog } from '../common';
-import { useField } from './Form';
+import { OnBeforeValueChange, useField } from './Form';
 
 /**
  * Map between {@link KeyboardEvent.code} and electron.js accelerator code
@@ -109,9 +110,9 @@ export const CODES_MAP: Record<string, string> = {
   Delete: 'Delete',
   Insert: 'Insert',
 
-  // MISSING CODES(these codes are forbidden).
-  // - Return(Enter)
-  // - Escape(Esc)
+  Escape: 'Escape',
+  Enter: 'Enter',
+
   ArrowUp: 'Up',
   ArrowDown: 'Down',
   ArrowLeft: 'Left',
@@ -242,89 +243,147 @@ export const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
-function toKeyCodes(accelerator: Electron.Accelerator) {
-  const codes = Object.keys(CODES_MAP);
-
-  return accelerator
-    .split('+')
-    .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
-}
-
-interface KeyBindProps {
+interface KeyBindProps<I = any, O = any> {
+  transformer: Transformer<I, O>;
+  depth: number;
   onFocus?: () => void;
   onBlur?: () => void;
+  onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
 }
 
-export const KeyBind = ({ onFocus, onBlur }: KeyBindProps) => {
-  const { value, setValue } = useField();
-  const [visited, setVisited] = useState(false);
-  const keys = toKeyCodes(value as string);
+export const NewKeyBind = ({
+  transformer,
+  depth,
+  onFocus,
+  onBlur,
+  onBeforeValueChange,
+}: KeyBindProps) => {
   const ref = useRef<HTMLInputElement>();
-  let reset = true;
-  const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
-    useKeyPress(
-      () => {
-        const value = pressed.map((p) => p.electronCode).join('+');
+  const { value, setValue } = useField();
+  const initial = transformer.toUniversal(value);
+  const [selected, setSelected] = useState<string[]>(initial);
+  const [active, setActive] = useState<string[]>([]);
 
-        if (!isAccelerator(value)) {
-          ref.current.blur();
+  useEffect(() => {
+    if (!active.length || active.length === depth) {
+      ref.current.blur();
+    }
+  }, [active]);
 
-          return nativeDialog.alert({
-            message: 'Invalid key bind',
-            detail: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
-          });
-        }
+  const onInputFocus = useCallback(() => {
+    if (onFocus) onFocus();
 
-        setValue(value);
-        reset = false;
-        ref.current.blur();
-      },
-      () => ref.current.blur(),
-      keys
-    );
+    setSelected([]);
+  }, []);
 
-  function onInputBlur() {
-    if (onBlur) {
-      onBlur();
+  const onInputBlur = useCallback(() => {
+    if (onBlur) onBlur();
+
+    setActive([]);
+
+    // If there is no key selected, return to previous value and don't emit anything.
+    if (!selected.length) {
+      return setSelected(initial);
     }
 
-    if (reset) {
-      setPressed(keys);
+    const newValue = transformer.fromUniversal(selected);
+
+    if (newValue !== value) {
+      const next = (restart?: boolean) =>
+        restart ? setSelected(initial) : setValue(newValue);
+
+      if (onBeforeValueChange) {
+        onBeforeValueChange(newValue, next);
+      } else {
+        next();
+      }
     }
+  }, [selected]);
 
-    reset = true;
-    setDirty(false);
-    setVisited(false);
-  }
+  const onInputKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-  function onInputFocus() {
-    if (onFocus) {
-      onFocus();
-    }
+      const { code } = event;
 
-    setVisited(true);
-  }
+      if (active.some((k) => k === code)) return;
+
+      setActive((active) => [...active, code]);
+
+      if (selected.some((k) => k === code)) return;
+
+      setSelected((selected) => [...selected, code]);
+    },
+    [active, selected]
+  );
+
+  const onInputKeyUp = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      setActive((active) => active.filter((k) => k !== event.code));
+    },
+    [active]
+  );
 
   return (
     <KeyBindWrapper onClick={() => ref.current.focus()}>
-      {!dirty && visited ? (
+      {!selected.length ? (
         <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
       ) : (
-        pressed.map((k, i) => (
-          <Fragment key={k.code}>
+        selected.map((key, i) => (
+          <Fragment key={i}>
             {!!i && ' + '}
-            <KeyCode>{k.electronCode}</KeyCode>
+            <KeyCode>{key}</KeyCode>
           </Fragment>
         ))
       )}
       <VisuallyHiddenInput
-        type="text"
         ref={ref}
-        onKeyDown={onKeyDown}
-        onKeyUp={onKeyUp}
         onFocus={onInputFocus}
         onBlur={onInputBlur}
+        onKeyDown={onInputKeyDown}
+        onKeyUp={onInputKeyUp}
       />
     </KeyBindWrapper>
   );
 };
+
+interface Transformer<I, O> {
+  toUniversal(input: I): O;
+  fromUniversal(output: O): I;
+}
+
+function keyCodeToAccelerator(keyCode: string): Electron.Accelerator {
+  return CODES_MAP[keyCode];
+}
+
+function acceleratorToKeyCode(accelerator: Electron.Accelerator): string {
+  for (const [code, electronCode] of Object.entries(CODES_MAP)) {
+    if (electronCode === accelerator) {
+      return code;
+    }
+  }
+
+  throw new Error('invalid accelerator');
+}
+
+const acceleratorTransformer: Transformer<Electron.Accelerator, string[]> = {
+  toUniversal(input: Electron.Accelerator) {
+    return input.split('+').map((k) => acceleratorToKeyCode(k));
+  },
+  fromUniversal(output: string[]) {
+    return output.map((k) => keyCodeToAccelerator(k)).join('+');
+  },
+};
+
+export const AcceleratorKeyBind = (props: Partial<KeyBindProps>) => {
+  return (
+    <NewKeyBind
+      {...props}
+      transformer={acceleratorTransformer}
+      depth={Infinity}
+    />
+  );
+};
+
+export const NativeKeyBind = () => {};
