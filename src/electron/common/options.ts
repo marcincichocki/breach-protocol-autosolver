@@ -56,31 +56,6 @@ const options: BreachProtocolOption[] = [
     defaultValue: 'Alt+`',
   },
   {
-    id: 'solveWithPriority1',
-    description: 'todo',
-    defaultValue: 'Alt+1',
-  },
-  {
-    id: 'solveWithPriority2',
-    description: 'todo',
-    defaultValue: 'Alt+2',
-  },
-  {
-    id: 'solveWithPriority3',
-    description: 'todo',
-    defaultValue: 'Alt+3',
-  },
-  {
-    id: 'solveWithPriority4',
-    description: 'todo',
-    defaultValue: 'Alt+4',
-  },
-  {
-    id: 'solveWithPriority5',
-    description: 'todo',
-    defaultValue: 'Alt+5',
-  },
-  {
     id: 'preserveSourceOnSuccess',
     description: 'Preserve source image after successful breach protocol.',
     defaultValue: true,

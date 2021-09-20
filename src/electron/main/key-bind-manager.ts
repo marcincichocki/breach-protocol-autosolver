@@ -35,15 +35,6 @@ export class KeyBind {
   }
 }
 
-export interface KeyBindConfig {
-  keyBind: Accelerator;
-  solveWithPriority1: Accelerator;
-  solveWithPriority2: Accelerator;
-  solveWithPriority3: Accelerator;
-  solveWithPriority4: Accelerator;
-  solveWithPriority5: Accelerator;
-}
-
 /** Manage global key binds. */
 export class KeyBindManager {
   private readonly registry = new Map<string, KeyBind>();
