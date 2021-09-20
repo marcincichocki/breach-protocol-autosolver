@@ -2,7 +2,6 @@ import {
   app,
   clipboard,
   dialog,
-  globalShortcut,
   ipcMain as ipc,
   Menu,
   shell,
@@ -19,7 +18,15 @@ import {
 import { extname, join } from 'path';
 import { URL } from 'url';
 import icon from '../../../resources/icon.png';
-import { Action, ActionTypes, PackageDetails, WorkerStatus } from '../common';
+import {
+  Action,
+  ActionTypes,
+  BreachProtocolCommands,
+  PackageDetails,
+  WorkerStatus,
+} from '../common';
+import { CommandManager } from './command-manager';
+import { KeyBindManager } from './key-bind-manager';
 import { Store } from './store/store';
 import { BreachProtocolAutosolverUpdater } from './updater';
 import { createBrowserWindows } from './windows';
@@ -35,6 +42,12 @@ export class Main {
   private worker: Electron.BrowserWindow = null;
 
   private updater: BreachProtocolAutosolverUpdater = null;
+
+  private readonly commandManager = this.registerCommands();
+
+  private readonly keyBindManager = new KeyBindManager<BreachProtocolCommands>(
+    this.commandManager
+  );
 
   private readonly isFirstRun = firstRun({ name: 'update' });
 
@@ -105,7 +118,24 @@ export class Main {
     this.renderer = renderer;
     this.worker = worker;
 
+    this.registerKeyBinds();
     this.registerListeners();
+  }
+
+  private registerCommands() {
+    return new CommandManager<BreachProtocolCommands>()
+      .register('worker:solve', () => this.onWorkerSolve())
+      .register('worker:solve.withPriority1', () => this.onWorkerSolve(0))
+      .register('worker:solve.withPriority2', () => this.onWorkerSolve(1))
+      .register('worker:solve.withPriority3', () => this.onWorkerSolve(2))
+      .register('worker:solve.withPriority4', () => this.onWorkerSolve(3))
+      .register('worker:solve.withPriority5', () => this.onWorkerSolve(4));
+  }
+
+  private registerKeyBinds() {
+    const { keyBind } = this.getSettings();
+
+    this.keyBindManager.register('worker:solve', keyBind);
   }
 
   private async updateApp() {
@@ -143,6 +173,7 @@ export class Main {
     ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.on('worker:get-resources-path', this.onGetResourcesPath.bind(this));
     ipc.handle('renderer:show-message-box', this.onShowMessageBox);
+    ipc.handle('renderer:validate-key-bind', this.onValidateKeyBind.bind(this));
 
     this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
@@ -152,6 +183,10 @@ export class Main {
       'will-navigate',
       this.onWillNavigate.bind(this)
     );
+  }
+
+  private onValidateKeyBind(e: Electron.IpcMainEvent, input: string) {
+    return this.keyBindManager.isValid(input);
   }
 
   private isUrlAllowed(input: string) {
@@ -204,25 +239,18 @@ export class Main {
 
     this.renderer.removeAllListeners();
     this.worker.removeAllListeners();
-
-    globalShortcut.unregisterAll();
   }
 
-  private registerKeyBind(keyBind: Electron.Accelerator) {
-    globalShortcut.register(keyBind, this.onWorkerSolve.bind(this));
-  }
-
-  private onWorkerSolve() {
-    this.worker.webContents.send('worker:solve');
+  private onWorkerSolve(index?: number) {
+    this.worker.webContents.send('worker:solve', index);
   }
 
   private onKeyBindChange(
     e: Electron.IpcMainEvent,
-    keyBind: Electron.Accelerator
+    keyBind: Electron.Accelerator,
+    id: BreachProtocolCommands
   ) {
-    globalShortcut.unregisterAll();
-
-    this.registerKeyBind(keyBind);
+    this.keyBindManager.changeAcceleratorFor(id, keyBind);
   }
 
   private async onSaveSnapshot(e: Electron.IpcMainEvent, entryId: string) {
@@ -270,6 +298,8 @@ export class Main {
   }
 
   private onRendererClosed() {
+    this.keyBindManager.dispose();
+    this.commandManager.dispose();
     this.updater.dispose();
     this.store.dispose();
     this.store = null;
@@ -359,12 +389,10 @@ export class Main {
 
   private toggleKeyBind({ type, payload }: Action) {
     if (type === ActionTypes.SET_STATUS) {
-      const { keyBind } = this.store.getState().settings;
-
       if (payload === WorkerStatus.Disabled) {
-        globalShortcut.unregister(keyBind);
-      } else if (!globalShortcut.isRegistered(keyBind)) {
-        this.registerKeyBind(keyBind);
+        this.keyBindManager.disable();
+      } else {
+        this.keyBindManager.enable();
       }
     }
   }

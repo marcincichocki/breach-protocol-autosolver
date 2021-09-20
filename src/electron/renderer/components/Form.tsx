@@ -110,7 +110,7 @@ export function useField<T>() {
 
 interface FieldProps {
   name: string;
-  onValueChange?: (currentValue: any) => void;
+  onValueChange?: (currentValue: any, name: string) => void;
   render?: (props: { values: any }) => JSX.Element;
 }
 
@@ -128,7 +128,7 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
       setValues(newValues);
 
       if (options.emit) {
-        if (onValueChange) onValueChange(value);
+        if (onValueChange) onValueChange(value, name);
         if (onValuesChange) onValuesChange(newValues, name);
       }
     }

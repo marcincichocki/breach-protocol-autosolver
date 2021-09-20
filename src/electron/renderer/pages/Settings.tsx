@@ -153,11 +153,17 @@ const engineOptions =
       ]
     : [{ name: 'xdotool', value: 'xdotool' }];
 
+const commands: Record<string, string> = {
+  keyBind: 'worker:solve',
+};
+
 const AutoSolverSettings = ({ status }: { status: WorkerStatus }) => {
   const { values } = useForm<AppSettings>();
 
-  function changeKeyBind(accelerator: Accelerator) {
-    api.send('renderer:key-bind-change', accelerator);
+  function changeKeyBind(accelerator: Accelerator, name: string) {
+    const id = commands[name];
+
+    api.send('renderer:key-bind-change', accelerator, id);
   }
 
   function changeEngine(engine: string) {

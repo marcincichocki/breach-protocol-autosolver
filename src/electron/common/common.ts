@@ -183,3 +183,11 @@ export interface PackageDetails {
   license: string;
   licenseText: string;
 }
+
+export type BreachProtocolCommands =
+  | 'worker:solve'
+  | 'worker:solve.withPriority1'
+  | 'worker:solve.withPriority2'
+  | 'worker:solve.withPriority3'
+  | 'worker:solve.withPriority4'
+  | 'worker:solve.withPriority5';
