@@ -1,7 +1,6 @@
 import {
   Fragment,
   KeyboardEvent,
-  KeyboardEvent as ReactKeyboardEvent,
   useCallback,
   useEffect,
   useRef,
@@ -148,49 +147,6 @@ export const CODES_MAP: Record<string, string> = {
   NumpadMultiply: 'nummult',
   NumpadDivide: 'numdiv',
   NumpadEnter: 'Enter',
-};
-
-class KeyBindEvent {
-  public readonly electronCode = CODES_MAP[this.code];
-
-  constructor(public readonly code: string) {}
-}
-
-export const useKeyPress = (
-  onEnter: (...args: any[]) => void,
-  onEscape: (...args: any[]) => void,
-  initialValue: KeyBindEvent[]
-) => {
-  const [pressed, setPressed] = useState<KeyBindEvent[]>(initialValue);
-  const [count, setCount] = useState(0);
-  const [dirty, setDirty] = useState(false);
-
-  function onKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (count && pressed.find((e) => e.code === event.code)) return;
-
-    switch (event.code) {
-      case 'Enter':
-        return onEnter();
-      case 'Escape':
-        return onEscape();
-      default: {
-        setDirty(true);
-        setCount((c) => c + 1);
-
-        const data = new KeyBindEvent(event.code);
-        setPressed((p) => (!count ? [data] : [...p, data]));
-      }
-    }
-  }
-
-  function onKeyUp() {
-    setCount((c) => (!c ? 0 : c - 1));
-  }
-
-  return { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty };
 };
 
 const KeyBindWrapper = styled.div`
