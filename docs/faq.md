@@ -12,8 +12,8 @@ It's [open source](https://github.com/marcincichocki/breach-protocol-autosolver)
 
 1. go to the settings;
 2. in _AutoSolver_ section click on key bind input;
-3. press desired key combination;
-4. confirm your choice with <kbd>Enter</kbd>.
+3. press desired key combination.
+4. **Only on versions below 2.1.0**: Confirm your choice with <kbd>Enter</kbd>.
 
 ### I'm playing on gamepad, is it possible to bind _BPA_ to it?
 
