@@ -1,3 +1,4 @@
+export * from './AcceleratorKeyBind';
 export * from './BufferSizeViewer';
 export * from './Buttons';
 export * from './DaemonsViewer';

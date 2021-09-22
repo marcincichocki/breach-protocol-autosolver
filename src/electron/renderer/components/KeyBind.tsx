@@ -1,196 +1,18 @@
-import isAccelerator from 'electron-is-accelerator';
 import {
   Fragment,
-  KeyboardEvent as ReactKeyboardEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { nativeDialog } from '../common';
-import { useField } from './Form';
+import { OnBeforeValueChange, useField } from './Form';
 
-/**
- * Map between {@link KeyboardEvent.code} and electron.js accelerator code
- *
- * https://www.electronjs.org/docs/api/accelerator
- */
-export const CODES_MAP: Record<string, string> = {
-  // Modifiers
-  // Accelerator codes that are NOT handled:
-  // - Command(Cmd)
-  // - Control(Ctrl)
-  // - Option
-  // - Meta
-  ControlLeft: 'CommandOrControl',
-  ControlRight: 'CommandOrControl',
-  AltLeft: 'Alt',
-  AltRight: 'AltGr',
-  ShiftLeft: 'Shift',
-  ShiftRight: 'Shift',
-  MetaLeft: 'Super',
-
-  // Key codes
-  // [0-9]
-  Digit0: '0',
-  Digit1: '1',
-  Digit2: '2',
-  Digit3: '3',
-  Digit4: '4',
-  Digit5: '5',
-  Digit6: '6',
-  Digit7: '7',
-  Digit8: '8',
-  Digit9: '9',
-
-  // [A-Z]
-  KeyQ: 'Q',
-  KeyW: 'W',
-  KeyE: 'E',
-  KeyR: 'R',
-  KeyT: 'T',
-  KeyY: 'Y',
-  KeyU: 'U',
-  KeyI: 'I',
-  KeyO: 'O',
-  KeyP: 'P',
-  KeyA: 'A',
-  KeyS: 'S',
-  KeyD: 'D',
-  KeyF: 'F',
-  KeyG: 'G',
-  KeyH: 'H',
-  KeyJ: 'J',
-  KeyK: 'K',
-  KeyL: 'L',
-  KeyZ: 'Z',
-  KeyX: 'X',
-  KeyC: 'C',
-  KeyV: 'V',
-  KeyB: 'B',
-  KeyN: 'N',
-  KeyM: 'M',
-
-  // [F1-F12]
-  // MISSING CODES: [F13-F24]
-  F1: 'F1',
-  F2: 'F2',
-  F3: 'F3',
-  F4: 'F4',
-  F5: 'F5',
-  F6: 'F6',
-  F7: 'F7',
-  F8: 'F8',
-  F9: 'F9',
-  F10: 'F10',
-  F11: 'F11',
-  F12: 'F12',
-
-  // MISSING CODES: special characters [0-9]
-  // Use modifier to bind to them. e.g. to bind to "&" use "ShiftLeft" + "Digit7"
-  Backquote: '`',
-  Minus: '-',
-  Equal: '=',
-  BracketLeft: '[',
-  BracketRight: ']',
-  Backslash: '\\',
-  Semicolon: ';',
-  // prettier-ignore
-  Quote: '\'',
-  Comma: ',',
-  Period: '.',
-  Slash: '/',
-
-  Space: 'Space',
-  Tab: 'Tab',
-  CapsLock: 'Capslock',
-  NumLock: 'Numlock',
-  ScrollLock: 'Scrolllock',
-  Backspace: 'Backspace',
-  Delete: 'Delete',
-  Insert: 'Insert',
-
-  // MISSING CODES(these codes are forbidden).
-  // - Return(Enter)
-  // - Escape(Esc)
-  ArrowUp: 'Up',
-  ArrowDown: 'Down',
-  ArrowLeft: 'Left',
-  ArrowRight: 'Right',
-
-  Home: 'Home',
-  End: 'End',
-  PageUp: 'PageUp',
-  PageDown: 'PageDown',
-
-  // MISSING CODES:
-  // - VolumeUp
-  // - VolumeDown
-  // - VolumeMute
-  // - MediaNextTrack
-  // - MediaPreciousTrack
-  // - MediaStop
-  // - MediaPlayPause
-  // - PrintScreen
-  Numpad0: 'num0',
-  Numpad1: 'num1',
-  Numpad2: 'num2',
-  Numpad3: 'num3',
-  Numpad4: 'num4',
-  Numpad5: 'num5',
-  Numpad6: 'num6',
-  Numpad7: 'num7',
-  Numpad8: 'num8',
-  Numpad9: 'num9',
-  NumpadDecimal: 'numdec',
-  NumpadAdd: 'numadd',
-  NumpadSubtract: 'numsub',
-  NumpadMultiply: 'nummult',
-  NumpadDivide: 'numdiv',
-  NumpadEnter: 'Enter',
-};
-
-class KeyBindEvent {
-  public readonly electronCode = CODES_MAP[this.code];
-
-  constructor(public readonly code: string) {}
+export interface Transformer<I, O> {
+  toUniversal(input: I): O;
+  fromUniversal(output: O): I;
 }
-
-export const useKeyPress = (
-  onEnter: (...args: any[]) => void,
-  onEscape: (...args: any[]) => void,
-  initialValue: KeyBindEvent[]
-) => {
-  const [pressed, setPressed] = useState<KeyBindEvent[]>(initialValue);
-  const [count, setCount] = useState(0);
-  const [dirty, setDirty] = useState(false);
-
-  function onKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (count && pressed.find((e) => e.code === event.code)) return;
-
-    switch (event.code) {
-      case 'Enter':
-        return onEnter();
-      case 'Escape':
-        return onEscape();
-      default: {
-        setDirty(true);
-        setCount((c) => c + 1);
-
-        const data = new KeyBindEvent(event.code);
-        setPressed((p) => (!count ? [data] : [...p, data]));
-      }
-    }
-  }
-
-  function onKeyUp() {
-    setCount((c) => (!c ? 0 : c - 1));
-  }
-
-  return { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty };
-};
 
 const KeyBindWrapper = styled.div`
   width: 510px;
@@ -234,7 +56,7 @@ const VisuallyHiddenInput = styled.input`
   left: 0;
 `;
 
-export const KeyCode = styled.kbd`
+const KeyCode = styled.kbd`
   border: 1px solid var(--accent);
   padding: 0 8px;
   font-family: 'Rajdhani';
@@ -242,88 +64,115 @@ export const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
-function toKeyCodes(accelerator: Electron.Accelerator) {
-  const codes = Object.keys(CODES_MAP);
-
-  return accelerator
-    .split('+')
-    .map((key) => new KeyBindEvent(codes.find((c) => CODES_MAP[c] === key)));
-}
-
-interface KeyBindProps {
+export interface KeyBindProps<I = any, O = any> {
+  transformer: Transformer<I, O>;
+  depth: number;
   onFocus?: () => void;
   onBlur?: () => void;
+  onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
 }
 
-export const KeyBind = ({ onFocus, onBlur }: KeyBindProps) => {
-  const { value, setValue } = useField();
-  const [visited, setVisited] = useState(false);
-  const keys = toKeyCodes(value as string);
+export const KeyBind = ({
+  transformer,
+  depth,
+  onFocus,
+  onBlur,
+  onBeforeValueChange,
+}: KeyBindProps) => {
   const ref = useRef<HTMLInputElement>();
-  let reset = true;
-  const { onKeyDown, onKeyUp, pressed, setPressed, dirty, setDirty } =
-    useKeyPress(
-      () => {
-        const value = pressed.map((p) => p.electronCode).join('+');
+  const { value, setValue } = useField();
+  const initial = transformer.toUniversal(value);
+  const [selected, setSelected] = useState<string[]>(initial);
+  const [active, setActive] = useState<string[]>([]);
+  const [focused, setFocused] = useState<boolean>(false);
 
-        if (!isAccelerator(value)) {
-          ref.current.blur();
+  useEffect(() => {
+    if (!active.length || active.length === depth) {
+      ref.current.blur();
+    }
+  }, [active]);
 
-          return nativeDialog.alert({
-            message: 'Invalid key bind',
-            detail: `Key bind can contain multiple modifiers and a single key code, but got instead: ${value}.`,
-          });
-        }
+  const onInputFocus = useCallback(() => {
+    if (onFocus) onFocus();
 
-        setValue(value);
-        reset = false;
-        ref.current.blur();
-      },
-      () => ref.current.blur(),
-      keys
-    );
+    setFocused(true);
+    setSelected([]);
+  }, []);
 
-  function onInputBlur() {
-    if (onBlur) {
-      onBlur();
+  const onInputBlur = useCallback(() => {
+    if (onBlur) onBlur();
+
+    setFocused(false);
+    setActive([]);
+
+    // If there is no key selected, return to previous value and don't emit anything.
+    if (!selected.length) {
+      return setSelected(initial);
     }
 
-    if (reset) {
-      setPressed(keys);
+    const newValue = transformer.fromUniversal(selected);
+
+    if (newValue !== value) {
+      const next = (restart?: boolean) =>
+        restart ? setSelected(initial) : setValue(newValue);
+
+      if (onBeforeValueChange) {
+        onBeforeValueChange(newValue, next);
+      } else {
+        next();
+      }
     }
+  }, [selected]);
 
-    reset = true;
-    setDirty(false);
-    setVisited(false);
-  }
+  const onInputKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-  function onInputFocus() {
-    if (onFocus) {
-      onFocus();
-    }
+      // In rare cases OS can intercept shortcuts like
+      // Alt+Tab or LeftShift+Del which cause weird behaviour
+      // in keyDown and keyUp events. This check makes sure to only
+      // save new value when input is focused.
+      if (!focused) return;
 
-    setVisited(true);
-  }
+      const { code } = event;
+
+      if (active.some((k) => k === code)) return;
+
+      setActive((active) => [...active, code]);
+
+      if (selected.some((k) => k === code)) return;
+
+      setSelected((selected) => [...selected, code]);
+    },
+    [active, selected, focused]
+  );
+
+  const onInputKeyUp = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      setActive((active) => active.filter((k) => k !== event.code));
+    },
+    [active]
+  );
 
   return (
     <KeyBindWrapper onClick={() => ref.current.focus()}>
-      {!dirty && visited ? (
+      {!selected.length ? (
         <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
       ) : (
-        pressed.map((k, i) => (
-          <Fragment key={k.code}>
+        selected.map((key, i) => (
+          <Fragment key={i}>
             {!!i && ' + '}
-            <KeyCode>{k.electronCode}</KeyCode>
+            <KeyCode>{key}</KeyCode>
           </Fragment>
         ))
       )}
       <VisuallyHiddenInput
-        type="text"
         ref={ref}
-        onKeyDown={onKeyDown}
-        onKeyUp={onKeyUp}
         onFocus={onInputFocus}
         onBlur={onInputBlur}
+        onKeyDown={onInputKeyDown}
+        onKeyUp={onInputKeyUp}
       />
     </KeyBindWrapper>
   );
