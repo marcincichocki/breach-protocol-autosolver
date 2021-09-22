@@ -62,7 +62,6 @@ export interface AppSettings
   experimentalBufferSizeRecognition: boolean;
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
-  ahkBinPath: string;
   resolveDelay: number;
 }
 

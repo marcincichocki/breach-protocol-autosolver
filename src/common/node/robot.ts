@@ -11,6 +11,7 @@ export interface RobotSettings {
   screenshotDir: string;
   autoExit: boolean;
   useScaling: boolean;
+  ahkBinPath: string;
 }
 
 export enum BreachProtocolRobotKeys {
@@ -146,7 +147,7 @@ export class AhkRobot extends BreachProtocolRobot {
     [BreachProtocolRobotKeys.Right]: 'Right',
   };
 
-  protected readonly binPath = 'C:/Program Files/AutoHotkey/AutoHotkey.exe';
+  protected readonly binPath = this.settings.ahkBinPath;
   private readonly scriptPath = './resources/win32/ahk/robot.ahk';
 
   override async bin(command: string) {
