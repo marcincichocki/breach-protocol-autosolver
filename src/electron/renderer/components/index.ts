@@ -1,3 +1,4 @@
+export * from './AcceleratorKeyBind';
 export * from './BufferSizeViewer';
 export * from './Buttons';
 export * from './DaemonsViewer';
@@ -7,7 +8,6 @@ export * from './Form';
 export * from './FragmentPreview';
 export * from './GridViewer';
 export * from './HistoryViewer';
-export * from './KeyBind';
 export * from './Navigation';
 export * from './RangeSlider';
 export * from './RawDataPreview';

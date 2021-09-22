@@ -9,145 +9,10 @@ import {
 import styled from 'styled-components';
 import { OnBeforeValueChange, useField } from './Form';
 
-/**
- * Map between {@link KeyboardEvent.code} and electron.js accelerator code
- *
- * https://www.electronjs.org/docs/api/accelerator
- */
-export const CODES_MAP: Record<string, string> = {
-  // Modifiers
-  // Accelerator codes that are NOT handled:
-  // - Command(Cmd)
-  // - Control(Ctrl)
-  // - Option
-  // - Meta
-  ControlLeft: 'CommandOrControl',
-  ControlRight: 'CommandOrControl',
-  AltLeft: 'Alt',
-  AltRight: 'AltGr',
-  ShiftLeft: 'Shift',
-  ShiftRight: 'Shift',
-  MetaLeft: 'Super',
-
-  // Key codes
-  // [0-9]
-  Digit0: '0',
-  Digit1: '1',
-  Digit2: '2',
-  Digit3: '3',
-  Digit4: '4',
-  Digit5: '5',
-  Digit6: '6',
-  Digit7: '7',
-  Digit8: '8',
-  Digit9: '9',
-
-  // [A-Z]
-  KeyQ: 'Q',
-  KeyW: 'W',
-  KeyE: 'E',
-  KeyR: 'R',
-  KeyT: 'T',
-  KeyY: 'Y',
-  KeyU: 'U',
-  KeyI: 'I',
-  KeyO: 'O',
-  KeyP: 'P',
-  KeyA: 'A',
-  KeyS: 'S',
-  KeyD: 'D',
-  KeyF: 'F',
-  KeyG: 'G',
-  KeyH: 'H',
-  KeyJ: 'J',
-  KeyK: 'K',
-  KeyL: 'L',
-  KeyZ: 'Z',
-  KeyX: 'X',
-  KeyC: 'C',
-  KeyV: 'V',
-  KeyB: 'B',
-  KeyN: 'N',
-  KeyM: 'M',
-
-  // [F1-F12]
-  // MISSING CODES: [F13-F24]
-  F1: 'F1',
-  F2: 'F2',
-  F3: 'F3',
-  F4: 'F4',
-  F5: 'F5',
-  F6: 'F6',
-  F7: 'F7',
-  F8: 'F8',
-  F9: 'F9',
-  F10: 'F10',
-  F11: 'F11',
-  F12: 'F12',
-
-  // MISSING CODES: special characters [0-9]
-  // Use modifier to bind to them. e.g. to bind to "&" use "ShiftLeft" + "Digit7"
-  Backquote: '`',
-  Minus: '-',
-  Equal: '=',
-  BracketLeft: '[',
-  BracketRight: ']',
-  Backslash: '\\',
-  Semicolon: ';',
-  // prettier-ignore
-  Quote: '\'',
-  Comma: ',',
-  Period: '.',
-  Slash: '/',
-
-  Space: 'Space',
-  Tab: 'Tab',
-  CapsLock: 'Capslock',
-  NumLock: 'Numlock',
-  ScrollLock: 'Scrolllock',
-  Backspace: 'Backspace',
-  Delete: 'Delete',
-  Insert: 'Insert',
-
-  Escape: 'Escape',
-  Enter: 'Enter',
-
-  ArrowUp: 'Up',
-  ArrowDown: 'Down',
-  ArrowLeft: 'Left',
-  ArrowRight: 'Right',
-
-  Home: 'Home',
-  End: 'End',
-  PageUp: 'PageUp',
-  PageDown: 'PageDown',
-
-  // MISSING CODES:
-  // - VolumeUp
-  // - VolumeDown
-  // - VolumeMute
-  // - MediaNextTrack
-  // - MediaPreciousTrack
-  // - MediaStop
-  // - MediaPlayPause
-  // - PrintScreen
-  Numpad0: 'num0',
-  Numpad1: 'num1',
-  Numpad2: 'num2',
-  Numpad3: 'num3',
-  Numpad4: 'num4',
-  Numpad5: 'num5',
-  Numpad6: 'num6',
-  Numpad7: 'num7',
-  Numpad8: 'num8',
-  Numpad9: 'num9',
-  NumpadDecimal: 'numdec',
-  NumpadAdd: 'numadd',
-  NumpadSubtract: 'numsub',
-  NumpadMultiply: 'nummult',
-  NumpadDivide: 'numdiv',
-  NumpadEnter: 'Enter',
-};
+export interface Transformer<I, O> {
+  toUniversal(input: I): O;
+  fromUniversal(output: O): I;
+}
 
 const KeyBindWrapper = styled.div`
   width: 510px;
@@ -191,7 +56,7 @@ const VisuallyHiddenInput = styled.input`
   left: 0;
 `;
 
-export const KeyCode = styled.kbd`
+const KeyCode = styled.kbd`
   border: 1px solid var(--accent);
   padding: 0 8px;
   font-family: 'Rajdhani';
@@ -199,7 +64,7 @@ export const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
-interface KeyBindProps<I = any, O = any> {
+export interface KeyBindProps<I = any, O = any> {
   transformer: Transformer<I, O>;
   depth: number;
   onFocus?: () => void;
@@ -207,7 +72,7 @@ interface KeyBindProps<I = any, O = any> {
   onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
 }
 
-const KeyBind = ({
+export const KeyBind = ({
   transformer,
   depth,
   onFocus,
@@ -311,51 +176,4 @@ const KeyBind = ({
       />
     </KeyBindWrapper>
   );
-};
-
-interface Transformer<I, O> {
-  toUniversal(input: I): O;
-  fromUniversal(output: O): I;
-}
-
-function keyCodeToAccelerator(keyCode: string): Electron.Accelerator {
-  return CODES_MAP[keyCode];
-}
-
-function acceleratorToKeyCode(accelerator: Electron.Accelerator): string {
-  for (const [code, electronCode] of Object.entries(CODES_MAP)) {
-    if (electronCode === accelerator) {
-      return code;
-    }
-  }
-
-  throw new Error('invalid accelerator');
-}
-
-const acceleratorTransformer: Transformer<Electron.Accelerator, string[]> = {
-  toUniversal(input: Electron.Accelerator) {
-    return input.split('+').map((k) => acceleratorToKeyCode(k));
-  },
-  fromUniversal(output: string[]) {
-    return output.map((k) => keyCodeToAccelerator(k)).join('+');
-  },
-};
-
-export const AcceleratorKeyBind = (props: Partial<KeyBindProps>) => {
-  return (
-    <KeyBind {...props} transformer={acceleratorTransformer} depth={Infinity} />
-  );
-};
-
-const noopTransformer: Transformer<string[], string[]> = {
-  toUniversal(input: string[]) {
-    return input;
-  },
-  fromUniversal(input: string[]) {
-    return input;
-  },
-};
-
-export const MapKeyBind = (props: Partial<KeyBindProps>) => {
-  return <KeyBind {...props} transformer={noopTransformer} depth={1} />;
 };
