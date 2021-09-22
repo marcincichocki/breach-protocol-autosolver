@@ -204,20 +204,22 @@ export class BreachProtocolWorker {
   }
 
   private getRobot(): BreachProtocolRobot {
-    switch (this.settings.engine) {
-      case 'ahk':
-        return new AhkRobot(this.settings);
-      case 'nircmd':
-        const { activeDisplayId } = this.settings;
-        const { dpiScale } = this.displays.find(
-          (d) => d.id === activeDisplayId
-        );
+    if (BUILD_PLATFORM === 'win32') {
+      switch (this.settings.engine) {
+        case 'ahk':
+          return new AhkRobot(this.settings);
+        case 'nircmd':
+          const { activeDisplayId } = this.settings;
+          const { dpiScale } = this.displays.find(
+            (d) => d.id === activeDisplayId
+          );
 
-        return new NirCmdRobot(this.settings, dpiScale);
-      case 'xdotool':
-        return new XDoToolRobot(this.settings);
-      default:
-        throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
+          return new NirCmdRobot(this.settings, dpiScale);
+        default:
+          throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
+      }
+    } else if (BUILD_PLATFORM === 'linux') {
+      return new XDoToolRobot(this.settings);
     }
   }
 
