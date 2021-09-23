@@ -1,6 +1,8 @@
+import { MdClose } from '@react-icons/all-files/md/MdClose';
 import {
   Fragment,
   KeyboardEvent,
+  MouseEvent,
   useCallback,
   useEffect,
   useRef,
@@ -64,9 +66,19 @@ const KeyCode = styled.kbd`
   box-sizing: border-box;
 `;
 
+const ClearButton = styled.button`
+  height: 50px;
+  width: 50px;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: #942f2f;
+  cursor: pointer;
+`;
+
 export interface KeyBindProps<I = any, O = any> {
   transformer: Transformer<I, O>;
   depth: number;
+  allowRemove?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
   onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
@@ -75,6 +87,7 @@ export interface KeyBindProps<I = any, O = any> {
 export const KeyBind = ({
   transformer,
   depth,
+  allowRemove,
   onFocus,
   onBlur,
   onBeforeValueChange,
@@ -155,10 +168,28 @@ export const KeyBind = ({
     [active]
   );
 
+  function clear(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setSelected([]);
+    setValue('');
+  }
+
   return (
     <KeyBindWrapper onClick={() => ref.current.focus()}>
-      {!selected.length ? (
+      {allowRemove && value && (
+        <ClearButton onClick={clear}>
+          <MdClose size="24px" />
+        </ClearButton>
+      )}
+
+      {focused && !selected.length ? (
         <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
+      ) : !value && !focused ? (
+        <span style={{ textTransform: 'uppercase', color: 'var(--primary)' }}>
+          Unbound
+        </span>
       ) : (
         selected.map((key, i) => (
           <Fragment key={i}>
