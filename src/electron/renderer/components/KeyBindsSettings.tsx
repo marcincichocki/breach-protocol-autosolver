@@ -2,20 +2,15 @@ import {
   BreachProtocolCommands,
   KeyBindsConfig,
   KeyBindValidationErrors,
-  SetStatusAction,
   WorkerStatus,
 } from '@/electron/common';
 import type { Accelerator } from 'electron';
-import { nativeDialog } from '../common';
+import { nativeDialog, updateWorkerStatus } from '../common';
 import { AcceleratorKeyBind } from './AcceleratorKeyBind';
 import { Field, Label } from './Form';
 import { Section } from './Section';
 
 let prevWorkerSatus: WorkerStatus = null;
-
-function updateWorkerStatus(status: WorkerStatus) {
-  api.dispatch(new SetStatusAction(status, 'renderer'));
-}
 
 const commands: Record<keyof KeyBindsConfig, BreachProtocolCommands> = {
   keyBind: 'worker:solve',
