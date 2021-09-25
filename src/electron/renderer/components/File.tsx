@@ -1,6 +1,7 @@
 import { MdClose } from '@react-icons/all-files/md/MdClose';
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
+import { ClearButton } from './Buttons';
 import { useField } from './Form';
 
 const FileOutput = styled.output`
@@ -47,15 +48,6 @@ const FileLabel = styled.label`
   text-transform: uppercase;
   padding: 0 2rem;
   height: 100%;
-  cursor: pointer;
-`;
-
-const ClearButton = styled.button`
-  height: 50px;
-  width: 50px;
-  border: 2px solid var(--primary);
-  color: var(--primary);
-  background: #942f2f;
   cursor: pointer;
 `;
 

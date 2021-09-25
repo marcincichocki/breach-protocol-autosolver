@@ -1,3 +1,4 @@
+import { MdClose } from '@react-icons/all-files/md/MdClose';
 import {
   Fragment,
   KeyboardEvent,
@@ -7,6 +8,8 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
+import { ClearButton } from './Buttons';
+import { Row } from './Flex';
 import { OnBeforeValueChange, useField } from './Form';
 
 export interface Transformer<I, O> {
@@ -14,30 +17,36 @@ export interface Transformer<I, O> {
   fromUniversal(output: O): I;
 }
 
-const KeyBindWrapper = styled.div`
-  width: 510px;
+const KeyBindContainer = styled.div`
+  flex: 1;
   height: 50px;
   border: 1px solid var(--primary-dark);
   background: var(--background);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 7px;
-  color: var(--accent);
+  gap: 0.5rem;
   font-weight: 500;
   font-size: 24px;
   cursor: pointer;
   box-sizing: border-box;
+  color: var(--primary);
 
   &:hover:not(:focus-within) {
     background: var(--primary-darker);
     border-color: var(--accent);
+    color: var(--accent);
   }
 
   &:focus-within {
-    border-color: var(--accent);
     background: #367c7f;
+    border-color: var(--accent);
+    color: var(--accent);
   }
+`;
+
+const KeyBindText = styled.span`
+  text-transform: uppercase;
 `;
 
 const VisuallyHiddenInput = styled.input`
@@ -58,15 +67,21 @@ const VisuallyHiddenInput = styled.input`
 
 const KeyCode = styled.kbd`
   border: 1px solid var(--accent);
+  color: var(--accent);
   padding: 0 8px;
   font-family: 'Rajdhani';
   min-width: 32px;
   box-sizing: border-box;
 `;
 
+const KeyCodeSeparator = styled.span`
+  color: var(--accent);
+`;
+
 export interface KeyBindProps<I = any, O = any> {
   transformer: Transformer<I, O>;
   depth: number;
+  allowRemove?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
   onBeforeValueChange?: OnBeforeValueChange<Electron.Accelerator>;
@@ -75,6 +90,7 @@ export interface KeyBindProps<I = any, O = any> {
 export const KeyBind = ({
   transformer,
   depth,
+  allowRemove,
   onFocus,
   onBlur,
   onBeforeValueChange,
@@ -156,24 +172,33 @@ export const KeyBind = ({
   );
 
   return (
-    <KeyBindWrapper onClick={() => ref.current.focus()}>
-      {!selected.length ? (
-        <span style={{ textTransform: 'uppercase' }}>Press key to bind</span>
-      ) : (
-        selected.map((key, i) => (
-          <Fragment key={i}>
-            {!!i && ' + '}
-            <KeyCode>{key}</KeyCode>
-          </Fragment>
-        ))
+    <Row style={{ width: '510px' }}>
+      {allowRemove && value && !focused && (
+        <ClearButton onClick={() => setValue('')}>
+          <MdClose size="24px" />
+        </ClearButton>
       )}
-      <VisuallyHiddenInput
-        ref={ref}
-        onFocus={onInputFocus}
-        onBlur={onInputBlur}
-        onKeyDown={onInputKeyDown}
-        onKeyUp={onInputKeyUp}
-      />
-    </KeyBindWrapper>
+      <KeyBindContainer onClick={() => ref.current.focus()}>
+        {focused && !selected.length ? (
+          <KeyBindText>Press key to bind</KeyBindText>
+        ) : !value && !focused ? (
+          <KeyBindText>Unbound</KeyBindText>
+        ) : (
+          selected.map((key, i) => (
+            <Fragment key={i}>
+              {!!i && <KeyCodeSeparator>+</KeyCodeSeparator>}
+              <KeyCode>{key}</KeyCode>
+            </Fragment>
+          ))
+        )}
+        <VisuallyHiddenInput
+          ref={ref}
+          onFocus={onInputFocus}
+          onBlur={onInputBlur}
+          onKeyDown={onInputKeyDown}
+          onKeyUp={onInputKeyUp}
+        />
+      </KeyBindContainer>
+    </Row>
   );
 };

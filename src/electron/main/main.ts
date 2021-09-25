@@ -250,7 +250,11 @@ export class Main {
     keyBind: Electron.Accelerator,
     id: BreachProtocolCommands
   ) {
-    this.keyBindManager.changeAcceleratorFor(id, keyBind);
+    if (keyBind) {
+      this.keyBindManager.register(id, keyBind);
+    } else {
+      this.keyBindManager.unregister(id);
+    }
   }
 
   private async onSaveSnapshot(e: Electron.IpcMainEvent, entryId: string) {

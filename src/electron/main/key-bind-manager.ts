@@ -2,12 +2,8 @@ import { Accelerator, globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
 import { Command, CommandManager } from './command-manager';
 
-export class KeyBind {
+class KeyBind {
   private active = false;
-
-  get isActive() {
-    return this.active;
-  }
 
   constructor(
     public readonly accelerator: Accelerator,
@@ -22,8 +18,6 @@ export class KeyBind {
     if (!this.active) {
       throw new Error(`Couldn't register "${this.accelerator}" accelerator`);
     }
-
-    return this.active;
   }
 
   unregister() {
@@ -39,45 +33,50 @@ export class KeyBind {
 export class KeyBindManager<T> {
   private readonly registry = new Map<T, KeyBind>();
 
+  private active = false;
+
   constructor(private commandManager: CommandManager<T>) {}
 
+  /** Register new or update existing command. */
   register(id: T, accelerator: Accelerator) {
-    if (this.registry.has(id)) {
-      throw new Error(`Id "${id}" is alredy specified!`);
-    }
-
     const command = this.commandManager.get(id);
     const keyBind = new KeyBind(accelerator, command);
+
+    if (this.active) {
+      const oldKeyBind = this.registry.get(id);
+
+      if (oldKeyBind) {
+        oldKeyBind.unregister();
+      }
+
+      keyBind.register();
+    }
 
     this.registry.set(id, keyBind);
 
     return this;
   }
 
-  /** Set new accelerator for given key bind id. */
-  changeAcceleratorFor(id: T, accelerator: Accelerator) {
+  /** Unregister command and remove it from the registry. */
+  unregister(id: T) {
     if (!this.registry.has(id)) {
-      throw new Error(`Key bind with id: "${id}" does not exist!`);
+      throw new Error(`Key bind with id "${id}" does not exist!`);
     }
 
-    const oldKeyBind = this.registry.get(id);
-    const command = this.commandManager.get(id);
-    const keyBind = new KeyBind(accelerator, command);
-
-    if (oldKeyBind.isActive) {
-      oldKeyBind.unregister();
-      keyBind.register();
-    }
-
-    this.registry.set(id, keyBind);
+    this.registry.get(id).unregister();
+    this.registry.delete(id);
   }
 
+  /** Enable every {@link Accelerator}. */
   enable() {
     this.registry.forEach((k) => k.register());
+    this.active = true;
   }
 
+  /** Disable every {@link Accelerator}. */
   disable() {
     this.registry.forEach((k) => k.unregister());
+    this.active = false;
   }
 
   dispose() {
