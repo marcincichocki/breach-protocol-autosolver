@@ -2,11 +2,7 @@ import {
   BreachProtocolKeyboardResolver,
   BreachProtocolResolver,
 } from './resolver';
-import {
-  BreachProtocolRobot,
-  BreachProtocolRobotKeys,
-  RobotSettings,
-} from './robot';
+import { BreachProtocolRobot, RobotSettings } from './robot';
 
 describe('resolvers', () => {
   let robot: BreachProtocolRobot;
@@ -51,9 +47,11 @@ describe('resolvers', () => {
 });
 
 class TestRobot extends BreachProtocolRobot {
-  keys = {} as Record<BreachProtocolRobotKeys, string>;
   binPath = '';
 
+  getMappedKey() {
+    return '';
+  }
   async click() {}
   async move() {}
   async pressKey() {}
