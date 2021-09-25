@@ -10,26 +10,26 @@ const formatOptions = [
   { name: 'png(quality)', value: 'png' },
 ];
 
+async function onDownscaleSourceChange(value: boolean) {
+  if (value) {
+    await nativeDialog.alert({
+      message: 'This option have no effect on resolutions smaller than 4k.',
+      detail:
+        "Automatic thresholds for grid and daemons fragments might stop working with downscaling turned on. It's recommended to set fixed thresholds.",
+      buttons: ['I understand'],
+    });
+  }
+}
+
+async function onResolveDelayChange(value: number) {
+  if (value && value <= 500) {
+    await nativeDialog.alert({
+      message: 'Resolve delay that low might have no effect.',
+    });
+  }
+}
+
 export const PerformanceSettings = () => {
-  async function onDownscaleSourceChange(value: boolean) {
-    if (value) {
-      await nativeDialog.alert({
-        message: 'This option have no effect on resolutions smaller than 4k.',
-        detail:
-          "Automatic thresholds for grid and daemons fragments might stop working with downscaling turned on. It's recommended to set fixed thresholds.",
-        buttons: ['I understand'],
-      });
-    }
-  }
-
-  async function onResolveDelayChange(value: number) {
-    if (value && value <= 500) {
-      await nativeDialog.alert({
-        message: 'Resolve delay that low might have no effect.',
-      });
-    }
-  }
-
   return (
     <Section title="Performance">
       <Field name="format">
