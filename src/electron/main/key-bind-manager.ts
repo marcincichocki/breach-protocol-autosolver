@@ -1,5 +1,6 @@
 import { Accelerator, globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
+import { KeyBindValidationErrors } from '../common';
 import { Command, CommandManager } from './command-manager';
 
 class KeyBind {
@@ -84,12 +85,17 @@ export class KeyBindManager<T> {
     this.registry.clear();
   }
 
-  /** Check if given {@link Accelerator} is valid. */
-  isValid(input: string) {
+  /** Check if given {@link Accelerator} contains any errors. */
+  validate(input: string): KeyBindValidationErrors {
     const isValidAccelerator = isAccelerator(input);
     const isUnique = this.isUniqueAccelerator(input);
 
-    return isValidAccelerator && isUnique;
+    return isValidAccelerator && isUnique
+      ? null
+      : {
+          isValidAccelerator,
+          isUnique,
+        };
   }
 
   private isUniqueAccelerator(input: Accelerator) {

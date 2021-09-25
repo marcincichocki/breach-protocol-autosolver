@@ -43,11 +43,20 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
+export interface KeyBindsConfig {
+  keyBind: Accelerator;
+  keyBindWithPriority1: Accelerator;
+  keyBindWithPriority2: Accelerator;
+  keyBindWithPriority3: Accelerator;
+  keyBindWithPriority4: Accelerator;
+  keyBindWithPriority5: Accelerator;
+}
+
 export interface AppSettings
   extends RobotSettings,
     Required<SharpImageContainerConfig>,
-    SoundPlayerConfig {
-  keyBind: Accelerator;
+    SoundPlayerConfig,
+    KeyBindsConfig {
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;
@@ -190,3 +199,8 @@ export type BreachProtocolCommands =
   | 'worker:solve.withPriority3'
   | 'worker:solve.withPriority4'
   | 'worker:solve.withPriority5';
+
+export interface KeyBindValidationErrors {
+  isValidAccelerator: boolean;
+  isUnique: boolean;
+}

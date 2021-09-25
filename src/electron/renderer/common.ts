@@ -3,7 +3,9 @@ import {
   NativeDialog,
   Request,
   Response,
+  SetStatusAction,
   State,
+  WorkerStatus,
 } from '@/electron/common';
 import { format, formatDistanceToNow } from 'date-fns';
 import type { IpcRendererEvent } from 'electron';
@@ -132,4 +134,8 @@ export function asyncRequestDispatcher<TRes, TReq = any>(
     api.on('async-response', onAsyncResponse);
     api.send('async-request', req);
   });
+}
+
+export function updateWorkerStatus(status: WorkerStatus) {
+  api.dispatch(new SetStatusAction(status, 'renderer'));
 }
