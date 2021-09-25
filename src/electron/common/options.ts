@@ -6,7 +6,7 @@ interface BreachProtocolOption {
   defaultValue: boolean | string | number;
 }
 
-const options: BreachProtocolOption[] = [
+export const options: BreachProtocolOption[] = [
   {
     id: 'activeDisplayId',
     description: 'Select monitor on which Cyberpunk 2077 is running.',
@@ -51,8 +51,34 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'keyBind',
-    description: 'Key bind which triggers autosolver.',
+    description:
+      'Solve breach protocol(prioritize daemons that are lower on the list).',
     defaultValue: 'Alt+`',
+  },
+  {
+    id: 'keyBindWithPriority1',
+    description: 'Solve breach protocol(prioritize first daemon).',
+    defaultValue: 'Alt+1',
+  },
+  {
+    id: 'keyBindWithPriority2',
+    description: 'Solve breach protocol(prioritize second daemon).',
+    defaultValue: 'Alt+2',
+  },
+  {
+    id: 'keyBindWithPriority3',
+    description: 'Solve breach protocol(prioritize third daemon).',
+    defaultValue: 'Alt+3',
+  },
+  {
+    id: 'keyBindWithPriority4',
+    description: 'Solve breach protocol(prioritize fourth daemon).',
+    defaultValue: 'Alt+4',
+  },
+  {
+    id: 'keyBindWithPriority5',
+    description: 'Solve breach protocol(prioritize fifth daemon).',
+    defaultValue: 'Alt+5',
   },
   {
     id: 'preserveSourceOnSuccess',

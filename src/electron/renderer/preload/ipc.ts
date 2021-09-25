@@ -62,10 +62,10 @@ export function send(channel: IpcSendChannels, ...args: any[]) {
 }
 
 /** Wrapper around {@link ipcRenderer.invoke}. Accepts only curated list of channels. */
-export function invoke(channel: IpcInvokeChannels, ...args: any[]) {
+export function invoke<T = any>(channel: IpcInvokeChannels, ...args: any[]) {
   validateChannel(channel, invokeChannels);
 
-  return ipcRenderer.invoke(channel, ...args);
+  return ipcRenderer.invoke(channel, ...args) as Promise<T>;
 }
 
 /** Wrapper around {@link ipcRenderer.removeListener}. Accepts only curated list of channels. */

@@ -1,8 +1,8 @@
-import { dialog } from 'electron';
+import { dialog, MessageBoxOptions } from 'electron';
 import { NativeDialog } from '../common';
 
 class MainNativeDialog extends NativeDialog {
-  protected showMessageBox(options: Electron.MessageBoxOptions) {
+  protected showMessageBox(options: MessageBoxOptions) {
     return dialog.showMessageBox(options);
   }
 }
