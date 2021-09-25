@@ -46,7 +46,7 @@ export abstract class BreachProtocolRobot {
     protected readonly scaling: number = 1
   ) {}
 
-  abstract getMappedKey(key: BreachProtocolRobotKeys): string;
+  protected abstract getMappedKey(key: BreachProtocolRobotKeys): string;
 
   /** Click with left mouse button. */
   abstract click(): Promise<any>;
