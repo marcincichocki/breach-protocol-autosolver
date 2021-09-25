@@ -12,9 +12,9 @@ import { ClearButton } from './Buttons';
 import { Row } from './Flex';
 import { OnBeforeValueChange, useField } from './Form';
 
-export interface Transformer<I, O> {
-  toUniversal(input: I): O;
-  fromUniversal(output: O): I;
+export interface Transformer {
+  toUniversal(input: string): string[];
+  fromUniversal(output: string[]): string;
 }
 
 const KeyBindContainer = styled.div`
@@ -78,8 +78,8 @@ const KeyCodeSeparator = styled.span`
   color: var(--accent);
 `;
 
-export interface KeyBindProps<I = any, O = any> {
-  transformer: Transformer<I, O>;
+export interface KeyBindProps {
+  transformer: Transformer;
   depth: number;
   allowRemove?: boolean;
   onFocus?: () => void;
@@ -96,7 +96,7 @@ export const KeyBind = ({
   onBeforeValueChange,
 }: KeyBindProps) => {
   const ref = useRef<HTMLInputElement>();
-  const { value, setValue } = useField();
+  const { value, setValue } = useField<string>();
   const initial = transformer.toUniversal(value);
   const [selected, setSelected] = useState<string[]>(initial);
   const [active, setActive] = useState<string[]>([]);

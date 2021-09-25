@@ -1,3 +1,11 @@
+import {
+  VK_ARROW_DOWN,
+  VK_ARROW_LEFT,
+  VK_ARROW_RIGHT,
+  VK_ARROW_UP,
+  VK_ENTER,
+  VK_ESCAPE,
+} from '@/common';
 import { AppSettings } from './common';
 
 interface BreachProtocolOption {
@@ -170,6 +178,36 @@ export const options: BreachProtocolOption[] = [
     description:
       'Wait at least given amount of milliseconds counting from the start of a job before sending input commands. Using this option can help avoid bug with invalid sequence.',
     defaultValue: 0,
+  },
+  {
+    id: 'keySelect',
+    description: 'Key that is used to select code in the grid.',
+    defaultValue: VK_ENTER,
+  },
+  {
+    id: 'keyExit',
+    description: 'Key that is used to exit breach protocol.',
+    defaultValue: VK_ESCAPE,
+  },
+  {
+    id: 'keyNavigateUp',
+    description: 'Key that is used to navigate up in the grid.',
+    defaultValue: VK_ARROW_UP,
+  },
+  {
+    id: 'keyNavigateDown',
+    description: 'Key that is used to navigate down in the grid.',
+    defaultValue: VK_ARROW_DOWN,
+  },
+  {
+    id: 'keyNavigateLeft',
+    description: 'Key that is used to navigate left in the grid.',
+    defaultValue: VK_ARROW_LEFT,
+  },
+  {
+    id: 'keyNavigateRight',
+    description: 'Key that is used to navigate right in the grid.',
+    defaultValue: VK_ARROW_RIGHT,
   },
 ];
 

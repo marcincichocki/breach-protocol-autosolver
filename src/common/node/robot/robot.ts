@@ -12,12 +12,12 @@ export interface RobotSettings {
   autoExit: boolean;
   useScaling: boolean;
   ahkBinPath: string;
-  keyEscape: string;
-  keyEnter: string;
-  keyUp: string;
-  keyDown: string;
-  keyLeft: string;
-  keyRight: string;
+  keyExit: string;
+  keySelect: string;
+  keyNavigateUp: string;
+  keyNavigateDown: string;
+  keyNavigateLeft: string;
+  keyNavigateRight: string;
 }
 
 export enum BreachProtocolRobotKeys {
@@ -31,12 +31,12 @@ export enum BreachProtocolRobotKeys {
 
 export abstract class BreachProtocolRobot {
   protected readonly keys = {
-    [BreachProtocolRobotKeys.Escape]: this.settings.keyEscape,
-    [BreachProtocolRobotKeys.Enter]: this.settings.keyEnter,
-    [BreachProtocolRobotKeys.Up]: this.settings.keyUp,
-    [BreachProtocolRobotKeys.Down]: this.settings.keyDown,
-    [BreachProtocolRobotKeys.Left]: this.settings.keyLeft,
-    [BreachProtocolRobotKeys.Right]: this.settings.keyRight,
+    [BreachProtocolRobotKeys.Escape]: this.settings.keyExit,
+    [BreachProtocolRobotKeys.Enter]: this.settings.keySelect,
+    [BreachProtocolRobotKeys.Up]: this.settings.keyNavigateUp,
+    [BreachProtocolRobotKeys.Down]: this.settings.keyNavigateDown,
+    [BreachProtocolRobotKeys.Left]: this.settings.keyNavigateLeft,
+    [BreachProtocolRobotKeys.Right]: this.settings.keyNavigateRight,
   };
 
   protected abstract readonly binPath: string;
