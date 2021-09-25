@@ -28,7 +28,7 @@ export const AutoSolverSettings = () => {
         updateWorkerStatus(WorkerStatus.Disabled);
       }
     } else {
-      // NOTE: this will line will always change worker status to ready, even if
+      // NOTE: this line will always change worker status to ready, even if
       // status was not ready before engine value was changed.
       updateWorkerStatus(WorkerStatus.Ready);
     }
