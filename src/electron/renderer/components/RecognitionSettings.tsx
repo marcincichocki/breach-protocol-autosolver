@@ -72,39 +72,37 @@ export const RecognitionSettings = ({
   const { values } = useForm<AppSettings>();
 
   return (
-    <>
-      <Section title="Recognition">
-        <Field ref={ref} name="activeDisplayId">
-          <Label>Display</Label>
-          <Select
-            options={displayOptions}
-            disabled={displayOptions.length === 1}
-          />
-        </Field>
-        <ThresholdField
-          name="thresholdGrid"
-          switchName="thresholdGridAuto"
-          label="Grid threshold"
-          switchLabel="Automatic grid threshold"
+    <Section title="Recognition">
+      <Field ref={ref} name="activeDisplayId">
+        <Label>Display</Label>
+        <Select
+          options={displayOptions}
+          disabled={displayOptions.length === 1}
         />
-        <ThresholdField
-          name="thresholdDaemons"
-          switchName="thresholdDaemonsAuto"
-          label="Daemons threshold"
-          switchLabel="Automatic daemons threshold"
-        />
-        <Field name="experimentalBufferSizeRecognition">
-          <Label>Experimental buffer size recognition</Label>
-          <Switch />
-        </Field>
-        <ThresholdField
-          name="thresholdBufferSize"
-          switchName="thresholdBufferSizeAuto"
-          label="Buffer size threshold"
-          switchLabel="Automatic buffer size threshold"
-          disabled={values.experimentalBufferSizeRecognition}
-        />
-      </Section>
-    </>
+      </Field>
+      <ThresholdField
+        name="thresholdGrid"
+        switchName="thresholdGridAuto"
+        label="Grid threshold"
+        switchLabel="Automatic grid threshold"
+      />
+      <ThresholdField
+        name="thresholdDaemons"
+        switchName="thresholdDaemonsAuto"
+        label="Daemons threshold"
+        switchLabel="Automatic daemons threshold"
+      />
+      <Field name="experimentalBufferSizeRecognition">
+        <Label>Experimental buffer size recognition</Label>
+        <Switch />
+      </Field>
+      <ThresholdField
+        name="thresholdBufferSize"
+        switchName="thresholdBufferSizeAuto"
+        label="Buffer size threshold"
+        switchLabel="Automatic buffer size threshold"
+        disabled={values.experimentalBufferSizeRecognition}
+      />
+    </Section>
   );
 };
