@@ -2,7 +2,6 @@ import { MdClose } from '@react-icons/all-files/md/MdClose';
 import {
   Fragment,
   KeyboardEvent,
-  MouseEvent,
   useCallback,
   useEffect,
   useRef,
@@ -172,17 +171,10 @@ export const KeyBind = ({
     [active]
   );
 
-  function clear(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    setValue('');
-  }
-
   return (
     <Row style={{ width: '510px' }}>
       {allowRemove && value && !focused && (
-        <ClearButton onClick={clear}>
+        <ClearButton onClick={() => setValue('')}>
           <MdClose size="24px" />
         </ClearButton>
       )}
