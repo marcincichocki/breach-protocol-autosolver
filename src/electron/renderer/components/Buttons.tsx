@@ -67,3 +67,18 @@ export const LinkButton = styled.button`
   font-size: 1rem;
   font-weight: 500;
 `;
+
+export const ClearButton = styled.button`
+  height: 50px;
+  width: 50px;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: #942f2f;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: #367c7f;
+  }
+`;
