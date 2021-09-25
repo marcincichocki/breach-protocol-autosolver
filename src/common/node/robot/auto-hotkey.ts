@@ -1,16 +1,10 @@
 import { sleep } from '@/common/util';
-import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
-import { WINDOWS_VK_MAP } from './win32';
+import { BreachProtocolRobotKeys } from './robot';
+import { WindowsRobot } from './win32';
 
-export class AutoHotkeyRobot extends BreachProtocolRobot {
+export class AutoHotkeyRobot extends WindowsRobot {
   protected readonly binPath = this.settings.ahkBinPath;
   private readonly scriptPath = './resources/win32/ahk/robot.ahk';
-
-  protected getMappedKey(key: BreachProtocolRobotKeys) {
-    const code = this.keys[key];
-
-    return WINDOWS_VK_MAP.get(code).toString(16);
-  }
 
   override async bin(command: string) {
     const args = [this.scriptPath, ...command.split(' ')];

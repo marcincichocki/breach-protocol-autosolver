@@ -1,19 +1,11 @@
-import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
-import { WINDOWS_VK_MAP } from './win32';
+import { BreachProtocolRobotKeys } from './robot';
+import { WindowsRobot } from './win32';
 
-export class NirCmdRobot extends BreachProtocolRobot {
-  static readonly codes = new Map([]);
-
+export class NirCmdRobot extends WindowsRobot {
   private x = 0;
   private y = 0;
 
   protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
-
-  protected getMappedKey(key: BreachProtocolRobotKeys) {
-    const code = this.keys[key];
-
-    return WINDOWS_VK_MAP.get(code).toString(16);
-  }
 
   click() {
     return this.bin('sendmouse left click');
