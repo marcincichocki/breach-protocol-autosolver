@@ -51,7 +51,8 @@ const options: BreachProtocolOption[] = [
   },
   {
     id: 'keyBind',
-    description: 'Solve breach protocol(lower daemons are better).',
+    description:
+      'Solve breach protocol(prioritize daemons that are lower on the list).',
     defaultValue: 'Alt+`',
   },
   {
