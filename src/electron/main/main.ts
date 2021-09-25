@@ -1,9 +1,14 @@
 import {
+  Accelerator,
   app,
+  BrowserWindow,
   clipboard,
   dialog,
   ipcMain as ipc,
+  IpcMainEvent,
   Menu,
+  MenuItemConstructorOptions,
+  MessageBoxOptions,
   shell,
   Tray,
 } from 'electron';
@@ -36,10 +41,10 @@ export class Main {
   private store: Store = null;
 
   /** Main app window, contains react app. */
-  private renderer: Electron.BrowserWindow = null;
+  private renderer: BrowserWindow = null;
 
   /** Hidden "worker" window, does all the heavy lifting(ocr, solving). */
-  private worker: Electron.BrowserWindow = null;
+  private worker: BrowserWindow = null;
 
   private updater: BreachProtocolAutosolverUpdater = null;
 
@@ -54,7 +59,7 @@ export class Main {
   /** Only allow to externally open websites from this list. */
   private readonly originWhitelist = ['https://github.com'];
 
-  private helpMenuTemplate: Electron.MenuItemConstructorOptions[] = [
+  private helpMenuTemplate: MenuItemConstructorOptions[] = [
     {
       label: 'About',
       click: () => {
@@ -87,7 +92,7 @@ export class Main {
     },
   ];
 
-  private trayMenu: Electron.MenuItemConstructorOptions[] = [
+  private trayMenu: MenuItemConstructorOptions[] = [
     {
       label: 'Show',
       click: () => {
@@ -103,7 +108,7 @@ export class Main {
     },
   ];
 
-  tray: Electron.Tray;
+  tray: Tray;
 
   init() {
     if (BUILD_PLATFORM === 'win32') {
@@ -132,10 +137,37 @@ export class Main {
       .register('worker:solve.withPriority5', () => this.onWorkerSolve(4));
   }
 
-  private registerKeyBinds() {
-    const { keyBind } = this.getSettings();
+  private getKeybindings(): {
+    id: BreachProtocolCommands;
+    accelerator: Accelerator;
+  }[] {
+    const {
+      keyBind,
+      keyBindWithPriority1,
+      keyBindWithPriority2,
+      keyBindWithPriority3,
+      keyBindWithPriority4,
+      keyBindWithPriority5,
+    } = this.getSettings();
 
-    this.keyBindManager.register('worker:solve', keyBind);
+    return [
+      { id: 'worker:solve', accelerator: keyBind },
+      { id: 'worker:solve.withPriority1', accelerator: keyBindWithPriority1 },
+      { id: 'worker:solve.withPriority2', accelerator: keyBindWithPriority2 },
+      { id: 'worker:solve.withPriority3', accelerator: keyBindWithPriority3 },
+      { id: 'worker:solve.withPriority4', accelerator: keyBindWithPriority4 },
+      { id: 'worker:solve.withPriority5', accelerator: keyBindWithPriority5 },
+    ];
+  }
+
+  private registerKeyBinds() {
+    const keybindings = this.getKeybindings();
+
+    for (const { id, accelerator } of keybindings) {
+      if (accelerator) {
+        this.keyBindManager.register(id, accelerator);
+      }
+    }
   }
 
   private async updateApp() {
@@ -185,8 +217,8 @@ export class Main {
     );
   }
 
-  private onValidateKeyBind(e: Electron.IpcMainEvent, input: string) {
-    return this.keyBindManager.isValid(input);
+  private onValidateKeyBind(e: IpcMainEvent, input: string) {
+    return this.keyBindManager.validate(input);
   }
 
   private isUrlAllowed(input: string) {
@@ -210,7 +242,7 @@ export class Main {
     this.updateApp();
   }
 
-  private onRendererMinimize(event: Electron.Event) {
+  private onRendererMinimize(event: Event) {
     if (!this.getSettings().minimizeToTray) {
       return;
     }
@@ -246,9 +278,9 @@ export class Main {
   }
 
   private onKeyBindChange(
-    e: Electron.IpcMainEvent,
-    keyBind: Electron.Accelerator,
-    id: BreachProtocolCommands
+    e: IpcMainEvent,
+    id: BreachProtocolCommands,
+    keyBind: Accelerator
   ) {
     if (keyBind) {
       this.keyBindManager.register(id, keyBind);
@@ -257,7 +289,7 @@ export class Main {
     }
   }
 
-  private async onSaveSnapshot(e: Electron.IpcMainEvent, entryId: string) {
+  private async onSaveSnapshot(e: IpcMainEvent, entryId: string) {
     const defaultPath = `bpa-snapshot-${entryId}.tgz`;
     const { canceled, filePath } = await dialog.showSaveDialog(this.renderer, {
       defaultPath,
@@ -288,10 +320,7 @@ export class Main {
     remove(tmpPath);
   }
 
-  private onShowMessageBox(
-    e: Electron.IpcMainEvent,
-    options: Electron.MessageBoxOptions
-  ) {
+  private onShowMessageBox(e: IpcMainEvent, options: MessageBoxOptions) {
     return dialog.showMessageBox(options);
   }
 
@@ -365,7 +394,7 @@ export class Main {
     return app.isPackaged ? process.resourcesPath : fallback;
   }
 
-  private onGetResourcesPath(event: Electron.IpcMainEvent) {
+  private onGetResourcesPath(event: IpcMainEvent) {
     event.returnValue = this.getResourcesPath();
   }
 
