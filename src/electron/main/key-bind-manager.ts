@@ -1,6 +1,6 @@
 import { Accelerator, globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
-import { KeyBindValidationErrors } from '../common';
+import { KeyBindValidationErrors, normalizeAccelerator } from '../common';
 import { Command, CommandManager } from './command-manager';
 
 class KeyBind {
@@ -99,10 +99,10 @@ export class KeyBindManager<T> {
   }
 
   private isUniqueAccelerator(input: Accelerator) {
-    const a = this.normalizeAccelerator(input);
+    const a = normalizeAccelerator(input);
 
     for (const { accelerator } of this.registry.values()) {
-      const b = this.normalizeAccelerator(accelerator);
+      const b = normalizeAccelerator(accelerator);
 
       if (a === b) {
         return false;
@@ -110,9 +110,5 @@ export class KeyBindManager<T> {
     }
 
     return true;
-  }
-
-  private normalizeAccelerator(input: Accelerator): Accelerator {
-    return input.split('+').sort().join('+');
   }
 }

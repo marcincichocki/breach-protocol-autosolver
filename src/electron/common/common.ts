@@ -204,3 +204,7 @@ export interface KeyBindValidationErrors {
   isValidAccelerator: boolean;
   isUnique: boolean;
 }
+
+export function normalizeAccelerator(input: Accelerator): Accelerator {
+  return input.split('+').sort().join('+');
+}

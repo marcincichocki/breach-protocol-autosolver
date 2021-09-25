@@ -5,6 +5,8 @@ import {
   AppStats,
   defaultOptions,
   HistoryEntry,
+  normalizeAccelerator as normalize,
+  options,
   RemoveLastNHistoryEntriesAction,
   Request,
   Response,
@@ -23,6 +25,19 @@ export class Store {
   private settings = new ElectronStore<AppSettings>({
     name: 'settings',
     defaults: defaultOptions,
+    migrations: {
+      '>=2.1.0': (store) => {
+        const keyBind = normalize(store.get('keyBind'));
+        const result = options
+          .filter((o) => o.id.startsWith('keyBindWithPriority'))
+          .find((o) => normalize(o.defaultValue as string) === keyBind);
+
+        if (result) {
+          // Remove key bind if there is a conflict.
+          store.set(result.id, '');
+        }
+      },
+    },
   });
 
   private history = new ElectronStore<{ data: HistoryEntry[] }>({

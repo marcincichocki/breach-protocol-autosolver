@@ -6,7 +6,7 @@ interface BreachProtocolOption {
   defaultValue: boolean | string | number;
 }
 
-const options: BreachProtocolOption[] = [
+export const options: BreachProtocolOption[] = [
   {
     id: 'activeDisplayId',
     description: 'Select monitor on which Cyberpunk 2077 is running.',
