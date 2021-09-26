@@ -1,5 +1,10 @@
 import * as k from '@/common/keyboard';
-import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
+import {
+  BreachProtocolRobot,
+  BreachProtocolRobotKeys,
+  VK_DIGITS,
+  VK_KEYS,
+} from './robot';
 
 export abstract class WindowsRobot extends BreachProtocolRobot {
   /** {@link KeyboardEvent.code} to win32 virtual codes map. */
@@ -10,43 +15,9 @@ export abstract class WindowsRobot extends BreachProtocolRobot {
     [k.VK_ALT_RIGHT, 0x12], // Same as left alt
     [k.VK_SHIFT_LEFT, 0xa0],
     [k.VK_SHIFT_RIGHT, 0xa1],
-    [k.VK_META_LEFT, 0x12], // Same as left alt
-    [k.VK_DIGIT_0, 0x30],
-    [k.VK_DIGIT_1, 0x31],
-    [k.VK_DIGIT_2, 0x32],
-    [k.VK_DIGIT_3, 0x33],
-    [k.VK_DIGIT_4, 0x34],
-    [k.VK_DIGIT_5, 0x35],
-    [k.VK_DIGIT_6, 0x36],
-    [k.VK_DIGIT_7, 0x37],
-    [k.VK_DIGIT_8, 0x38],
-    [k.VK_DIGIT_9, 0x39],
-    [k.VK_KEY_Q, 0x51],
-    [k.VK_KEY_W, 0x57],
-    [k.VK_KEY_E, 0x45],
-    [k.VK_KEY_R, 0x52],
-    [k.VK_KEY_T, 0x54],
-    [k.VK_KEY_Y, 0x59],
-    [k.VK_KEY_U, 0x55],
-    [k.VK_KEY_I, 0x49],
-    [k.VK_KEY_O, 0x4f],
-    [k.VK_KEY_P, 0x50],
-    [k.VK_KEY_A, 0x41],
-    [k.VK_KEY_S, 0x53],
-    [k.VK_KEY_D, 0x44],
-    [k.VK_KEY_F, 0x46],
-    [k.VK_KEY_G, 0x47],
-    [k.VK_KEY_H, 0x48],
-    [k.VK_KEY_J, 0x4a],
-    [k.VK_KEY_K, 0x4b],
-    [k.VK_KEY_L, 0x4c],
-    [k.VK_KEY_Z, 0x5a],
-    [k.VK_KEY_X, 0x58],
-    [k.VK_KEY_C, 0x43],
-    [k.VK_KEY_V, 0x56],
-    [k.VK_KEY_B, 0x42],
-    [k.VK_KEY_N, 0x4e],
-    [k.VK_KEY_M, 0x4d],
+    [k.VK_META_LEFT, 0x12], // Same as left alta
+    ...VK_KEYS,
+    ...VK_DIGITS,
     [k.VK_F1, 0x70],
     [k.VK_F2, 0x71],
     [k.VK_F3, 0x72],
