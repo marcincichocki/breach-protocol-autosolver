@@ -15,7 +15,7 @@ export abstract class WindowsRobot extends BreachProtocolRobot {
     [k.VK_ALT_RIGHT, 0x12], // Same as left alt
     [k.VK_SHIFT_LEFT, 0xa0],
     [k.VK_SHIFT_RIGHT, 0xa1],
-    [k.VK_META_LEFT, 0x12], // Same as left alta
+    [k.VK_META_LEFT, 0x12], // Same as left alt
     ...VK_KEYS,
     ...VK_DIGITS,
     [k.VK_F1, 0x70],
