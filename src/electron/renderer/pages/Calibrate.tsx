@@ -1,6 +1,5 @@
-import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
 import { useEffect } from 'react';
-import { Link, Route, useRouteMatch } from 'react-router-dom';
+import { Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   asyncRequestDispatcher,
@@ -11,12 +10,13 @@ import {
 import { Col, NavLink, Row } from '../components';
 import { CalibrateFragment } from './CalibrateFragment';
 
-const Heading = styled.h1<{ active: boolean }>`
+const Heading = styled.h1`
   font-size: 2rem;
   text-transform: uppercase;
   font-weight: 500;
-  color: ${({ active }) => (active ? 'var(--accent)' : 'var(--primary)')};
+  color: var(--accent);
   margin: 0;
+  width: 600px;
 `;
 
 function useContainerInit(fileName: string) {
@@ -36,28 +36,21 @@ export const Calibrate = () => {
   if (!entry) return null;
 
   useContainerInit(entry.fileName);
-  const { path, params } = useRouteMatch<{ entryId: string }>();
+  const { path } = useRouteMatch<{ entryId: string }>();
   const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
     <Col style={{ flexGrow: 1 }}>
-      <Row style={{ alignItems: 'center', gap: '1rem' }}>
-        <Link
-          to={`/history/${params.entryId}`}
-          style={{ color: 'var(--primary)' }}
-        >
-          <MdKeyboardBackspace size="32px" />
-        </Link>
-        <Heading active>
-          {time} - {distance}
-        </Heading>
-      </Row>
       <Row style={{ gap: '2rem' }}>
         {entry.fragments.map((f) => (
           <NavLink key={f.id} to={f.id}>
             {fromCamelCase(f.id)}
           </NavLink>
         ))}
+        <span style={{ flexGrow: 1 }} />
+        <Heading>
+          {time} - {distance}
+        </Heading>
       </Row>
       <Route path={`${path}/:fragmentId`}>
         <CalibrateFragment entry={entry} />
