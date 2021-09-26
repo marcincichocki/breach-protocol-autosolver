@@ -15,21 +15,9 @@ import { Sequence } from './sequence';
  *
  * ```
  */
-export abstract class SequenceCompareStrategy {
-  protected byStrength(s1: Sequence, s2: Sequence) {
-    return s2.strength - s1.strength;
-  }
-
-  protected byLength(s1: Sequence, s2: Sequence) {
-    return s1.length - s2.length;
-  }
-
-  protected byIndex(s1: Sequence, s2: Sequence) {
-    return this.byStrength(s1, s2) || this.byLength(s1, s2);
-  }
-
+export interface SequenceCompareStrategy {
   /** Compare sequences according to strategy. */
-  abstract apply(s1: Sequence, s2: Sequence): number;
+  apply(s1: Sequence, s2: Sequence): number;
 }
 
 /**
@@ -57,9 +45,17 @@ export abstract class SequenceCompareStrategy {
  * ```
  *
  * */
-export class IndexSequenceCompareStrategy extends SequenceCompareStrategy {
+export class IndexSequenceCompareStrategy implements SequenceCompareStrategy {
+  protected byStrength(s1: Sequence, s2: Sequence) {
+    return s2.strength - s1.strength;
+  }
+
+  protected byLength(s1: Sequence, s2: Sequence) {
+    return s1.length - s2.length;
+  }
+
   apply(s1: Sequence, s2: Sequence) {
-    return this.byIndex(s1, s2);
+    return this.byStrength(s1, s2) || this.byLength(s1, s2);
   }
 }
 
@@ -67,7 +63,10 @@ export class IndexSequenceCompareStrategy extends SequenceCompareStrategy {
  * Strategy which focuses on a daemon with given index.
  * If it does not exist in a sequence, index strategy is used as a fallback.
  */
-export class FocusDaemonSequenceCompareStrategy extends SequenceCompareStrategy {
+export class FocusDaemonSequenceCompareStrategy
+  extends IndexSequenceCompareStrategy
+  implements SequenceCompareStrategy
+{
   constructor(private readonly focusedDaemonIndex: number) {
     super();
   }
@@ -83,7 +82,7 @@ export class FocusDaemonSequenceCompareStrategy extends SequenceCompareStrategy 
     return a === b ? 0 : a ? -1 : 1;
   }
 
-  apply(s1: Sequence, s2: Sequence) {
-    return this.byDaemonIndex(s1, s2) || this.byIndex(s1, s2);
+  override apply(s1: Sequence, s2: Sequence) {
+    return this.byDaemonIndex(s1, s2) || super.apply(s1, s2);
   }
 }
