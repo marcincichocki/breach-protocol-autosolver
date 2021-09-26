@@ -4,7 +4,7 @@ import {
   isGridFragment,
 } from '@/core';
 import { HistoryEntry } from '@/electron/common';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
@@ -19,7 +19,7 @@ interface HistoryViewerProps {
   entry: HistoryEntry;
 }
 
-export const HistoryViewer: FC<HistoryViewerProps> = ({ entry }) => {
+export const HistoryViewer = ({ entry }: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
   const { rawData: grid } = entry.fragments.find(isGridFragment);
   const { rawData: bufferSize } = entry.fragments.find(isBufferSizeFragment);

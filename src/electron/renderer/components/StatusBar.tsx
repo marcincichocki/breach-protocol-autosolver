@@ -1,6 +1,6 @@
 import { UpdateStatus, WorkerStatus } from '@/electron/common';
 import { ProgressInfo } from 'electron-updater';
-import { FC, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { getDisplayName, useIpcEvent } from '../common';
@@ -137,7 +137,7 @@ const DownloadProgressBar = styled.div<{ value: number }>`
   transition: width 0.5s;
 `;
 
-export const StatusBar: FC = () => {
+export const StatusBar = () => {
   const {
     displays,
     status,

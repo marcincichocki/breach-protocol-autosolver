@@ -4,7 +4,6 @@ import {
   RemoveHistoryEntryAction,
 } from '@/electron/common';
 import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
-import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
@@ -49,11 +48,11 @@ const RemoveEntry = ({ entryId }: { entryId: string }) => (
   </LinkButton>
 );
 
-const HistoryDetailsError: FC<{ entry: HistoryEntry }> = ({ entry }) => (
+const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
   <Col style={{ margin: 'auto', alignItems: 'center', gap: '1rem' }}>
     <Heading2>Error while trying to gather data</Heading2>
     <FlatButton color="accent" as={Link} to={`/calibrate/${entry.uuid}/grid`}>
-      Re-calibrate
+      Recalibrate
     </FlatButton>
     <OpenInExplorer fileName={entry.fileName} />
     <SaveSnapshot entryId={entry.uuid} />
@@ -66,7 +65,7 @@ const DetailText = styled.span`
   font-weight: 500;
 `;
 
-export const HistoryDetails: FC = () => {
+export const HistoryDetails = () => {
   const entry = useHistoryEntryFromParam();
 
   if (!entry) return null;
@@ -90,7 +89,7 @@ export const HistoryDetails: FC = () => {
             <>
               <OpenInExplorer fileName={entry.fileName} />
               <TextLink to={`/calibrate/${entry.uuid}/grid`}>
-                Re-calibrate
+                Recalibrate
               </TextLink>
             </>
           ) : (

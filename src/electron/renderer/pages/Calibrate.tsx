@@ -1,5 +1,5 @@
 import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -30,7 +30,7 @@ function useContainerInit(fileName: string) {
   }, []);
 }
 
-export const Calibrate: FC = () => {
+export const Calibrate = () => {
   const entry = useHistoryEntryFromParam();
 
   if (!entry) return null;

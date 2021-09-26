@@ -1,5 +1,4 @@
 import { BreachProtocolResultJSON, DaemonsRawData } from '@/core';
-import { FC } from 'react';
 import styled from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -26,11 +25,11 @@ interface DaemonsViewerProps {
   onHighlight?: (highlight: Highlight) => void;
 }
 
-export const DaemonsViewer: FC<DaemonsViewerProps> = ({
+export const DaemonsViewer = ({
   daemons,
   result,
   onHighlight,
-}) => {
+}: DaemonsViewerProps) => {
   const { parts } = result.resolvedSequence;
   const s = result.resolvedSequence.value.join('');
 

@@ -1,7 +1,7 @@
 import { BreachProtocolStatus } from '@/electron/common';
 import { MdClose } from '@react-icons/all-files/md/MdClose';
 import { MdDone } from '@react-icons/all-files/md/MdDone';
-import { FC, useContext } from 'react';
+import { useContext } from 'react';
 import {
   NavLink,
   Redirect,
@@ -54,10 +54,13 @@ const HistoryListItem = styled(NavLink)`
   }
 `;
 
-const HistoryListItemIcon: FC<{
+const HistoryListItemIcon = ({
+  status,
+  size,
+}: {
   status: BreachProtocolStatus;
   size: React.ReactText;
-}> = ({ status, size }) => {
+}) => {
   if (status === BreachProtocolStatus.Resolved) {
     return <MdDone size="2rem" color="var(--success)" />;
   }
@@ -92,7 +95,7 @@ const H2 = styled.h2`
   font-weight: 600;
 `;
 
-export const History: FC = () => {
+export const History = () => {
   const { history } = useContext(StateContext);
   const { path } = useRouteMatch();
 

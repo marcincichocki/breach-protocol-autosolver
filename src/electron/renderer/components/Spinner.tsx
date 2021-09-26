@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const rotate = keyframes`
@@ -15,7 +14,7 @@ const SpinningSvg = styled.svg`
   animation: ${rotate} 2s linear infinite;
 `;
 
-export const Spinner: FC = () => (
+export const Spinner = () => (
   <SpinningSvg width="54" height="54" fill="none">
     <path
       fillRule="evenodd"

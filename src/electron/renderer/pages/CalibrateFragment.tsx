@@ -4,7 +4,7 @@ import {
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { asyncRequestDispatcher, fromCamelCase } from '../common';
 import {
@@ -49,7 +49,7 @@ function capitalize(s: string) {
   return s[0].toUpperCase() + s.slice(1);
 }
 
-export const CalibrateFragment: FC<CalibrateFragmentProps> = ({ entry }) => {
+export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
   const { fileName } = entry;
   const result = entry.fragments.find((f) => f.id === fragmentId);

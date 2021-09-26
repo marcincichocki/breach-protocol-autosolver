@@ -1,5 +1,4 @@
 import { BreachProtocolResultJSON, BufferSize } from '@/core';
-import { FC } from 'react';
 import styled from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -35,11 +34,11 @@ interface BufferSizeViewerProps {
   onHighlight?: (highlight: Highlight) => void;
 }
 
-export const BufferSizeViewer: FC<BufferSizeViewerProps> = ({
+export const BufferSizeViewer = ({
   bufferSize,
   result,
   onHighlight,
-}) => {
+}: BufferSizeViewerProps) => {
   return (
     <BufferSizeWrapper onMouseLeave={() => onHighlight(null)}>
       {Array.from({ length: bufferSize }, (s, i) => {

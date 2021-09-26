@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import styled from 'styled-components';
 
 const RawDataPreviewWrapper = styled.pre`
@@ -14,12 +13,8 @@ const RawDataPreviewWrapper = styled.pre`
   flex-grow: 1;
 `;
 
-export const RawDataPreview: FC<{
-  rawData: any;
-}> = ({ rawData }) => {
-  return (
-    <RawDataPreviewWrapper>
-      {JSON.stringify(rawData, null, 2)}
-    </RawDataPreviewWrapper>
-  );
-};
+export const RawDataPreview = ({ rawData }: { rawData: any }) => (
+  <RawDataPreviewWrapper>
+    {JSON.stringify(rawData, null, 2)}
+  </RawDataPreviewWrapper>
+);
