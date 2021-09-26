@@ -9,7 +9,7 @@ if (A_Args[1] = "move") {
 
 if (A_Args[1] = "send") {
   key := A_Args[2]
-  Send {vk%key%}
+  Send {%key%}
 }
 
 if (A_Args[1] = "click") {

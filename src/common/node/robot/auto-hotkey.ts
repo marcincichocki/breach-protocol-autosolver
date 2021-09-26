@@ -6,6 +6,15 @@ export class AutoHotkeyRobot extends WindowsRobot {
   protected readonly binPath = this.settings.ahkBinPath;
   private readonly scriptPath = './resources/win32/ahk/robot.ahk';
 
+  // Autohotkey sends wrong scan code to GeForceNow 0x4B instead of 0x14B
+  // causing it to recive wrong keys. This object defines fallback to use.
+  private readonly vkeyFallback: Record<string, string> = {
+    25: 'Left',
+    26: 'Up',
+    27: 'Right',
+    28: 'Down',
+  };
+
   override async bin(command: string) {
     const args = [this.scriptPath, ...command.split(' ')];
     const data = await this.execBin(args);
@@ -27,6 +36,10 @@ export class AutoHotkeyRobot extends WindowsRobot {
   }
 
   pressKey(key: BreachProtocolRobotKeys) {
-    return this.bin(`send 0x${this.getMappedKey(key)}`);
+    const vkey = this.getMappedKey(key);
+    const keyCode =
+      vkey in this.vkeyFallback ? this.vkeyFallback[vkey] : `vk0x${vkey}`;
+
+    return this.bin(`send ${keyCode}`);
   }
 }
