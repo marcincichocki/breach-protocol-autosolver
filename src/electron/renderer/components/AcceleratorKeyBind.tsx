@@ -110,7 +110,7 @@ const INVERSE_KEY_MAP = new Map(
   keys.map(([code, electron]) => [electron, code] as const)
 );
 
-const acceleratorTransformer: Transformer<Electron.Accelerator, string[]> = {
+const acceleratorTransformer: Transformer = {
   toUniversal(input: Electron.Accelerator) {
     return input.split('+').map((k) => INVERSE_KEY_MAP.get(k));
   },

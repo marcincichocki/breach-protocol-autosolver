@@ -1,5 +1,5 @@
 import {
-  AhkRobot,
+  AutoHotkeyRobot,
   BreachProtocolRobot,
   NirCmdRobot,
   SharpImageContainer,
@@ -207,7 +207,7 @@ export class BreachProtocolWorker {
     if (BUILD_PLATFORM === 'win32') {
       switch (this.settings.engine) {
         case 'ahk':
-          return new AhkRobot(this.settings);
+          return new AutoHotkeyRobot(this.settings);
         case 'nircmd':
           const { activeDisplayId } = this.settings;
           const { dpiScale } = this.displays.find(

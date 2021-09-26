@@ -18,6 +18,7 @@ export * from './RawDataPreview';
 export * from './RecognitionSettings';
 export * from './ReleaseNotesDialog';
 export * from './Select';
+export * from './ShallowKeyBind';
 export * from './Spinner';
 export * from './StatusBar';
 export * from './Switch';

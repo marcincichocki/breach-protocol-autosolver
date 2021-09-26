@@ -4,6 +4,7 @@ import { File } from './File';
 import { Field, Label, useForm } from './Form';
 import { Section } from './Section';
 import { Select } from './Select';
+import { ShallowKeyBind } from './ShallowKeyBind';
 import { Switch } from './Switch';
 
 const inputDeviceOptions = [
@@ -106,11 +107,38 @@ export const AutoSolverSettings = () => {
           onBeforeValueChange={notifyAboutInputDevice}
         />
       </Field>
-      {values.outputDevice === 'mouse' && (
+      {values.outputDevice === 'mouse' ? (
         <Field name="useScaling">
           <Label>Use display scaling</Label>
           <Switch />
         </Field>
+      ) : (
+        <>
+          <Field name="keySelect">
+            <Label>"Select" key</Label>
+            <ShallowKeyBind />
+          </Field>
+          <Field name="keyExit">
+            <Label>"Exit" key</Label>
+            <ShallowKeyBind />
+          </Field>
+          <Field name="keyNavigateUp">
+            <Label>"Navigate up" key</Label>
+            <ShallowKeyBind />
+          </Field>
+          <Field name="keyNavigateDown">
+            <Label>"Navigate down" key</Label>
+            <ShallowKeyBind />
+          </Field>
+          <Field name="keyNavigateLeft">
+            <Label>"Navigate left" key</Label>
+            <ShallowKeyBind />
+          </Field>
+          <Field name="keyNavigateRight">
+            <Label>"Navigate right" key</Label>
+            <ShallowKeyBind />
+          </Field>
+        </>
       )}
     </Section>
   );
