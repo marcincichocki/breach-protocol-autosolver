@@ -27,7 +27,7 @@ You **must** set the same navigation keys in _BPA_ and in _Cyberpunk 2077_. Othe
 
 Yes, although not directly. You must use external tool like [AntiMicro](https://github.com/AntiMicro/antimicro) for gamepad, or [X-Mouse Button Control](https://www.highrez.co.uk/downloads/XMouseButtonControl.htm) for mouse. Simply bind gamepad/mouse to output _BPA_'s key bind. **Just make sure that selected gamepad/mouse bind does not interfere with Breach Protocol!**
 
-### What is the difference between "solve" and "solve with priority"
+### What is the difference between "solve" and "solve with priority"?
 
 Both will solve _BP_, but the difference is which daemons will be solved.
 
