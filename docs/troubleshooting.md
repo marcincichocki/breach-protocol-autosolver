@@ -21,6 +21,8 @@ This can be quite common behavior, and may depend on variety of factors:
 This is caused most likely by selecting incorrect engine/input device to the platform you are running Cyberpunk 2077 on.
 
 - If playing through streaming service on _Windows_, use _AutoHotkey_ as the engine, with keyboard as input device.
+- If you changed default UI navigation keys(either by settings in game or other mods), set the same keys in _BPA_ settings. By default _BPA_ is using <kbd>Enter</kbd> for selecting code, <kbd>Escape</kbd> for exiting _BP_ and arrow keys <kbd>Up</kbd>, <kbd>Down</kbd>, <kbd>Left</kbd>, <kbd>Right</kbd> for navigation on the grid.
+- Prior to version 2.1.0, _AutoHotkey_ **must** be installed in default directory(_C:/Program Files/AutoHotkey/AutoHotkey.exe_).
 - When using 1360x768 resolution, there is a bizzare bug in _BP_ where keyboard doesn't work while cursor is at the top of the screen. To fix it, change resolution to **1366**x768.
 - Setting _BPA_ and _AutoHotkey_ or _NirCmd_ to "run as administrator" might help. There is known issue were _AutoHotkey_ can't send input to elevated windows, until itself is elevated.
 
@@ -34,7 +36,8 @@ Use keyboard as input device, mouse input is discouraged, as it's tricky to work
 
 ### Simulated sequence is not correct!
 
-This can be caused either by:
+This can be caused by:
 
-- using your peripherals(mouse, keyboard, gamepad) while _BPA_ is working.
-- starting _BPA_ to quickly. For more information consult [Breach Protocol bugs page](bugs.md)
+- using your peripherals(mouse, keyboard, gamepad) while _BPA_ is working;
+- starting _BPA_ to quickly. For more information consult [Breach Protocol bugs page](bugs.md);
+- setting delay to very low value(this might be more likely on platforms with high latency/low fps like streaming).

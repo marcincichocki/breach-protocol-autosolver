@@ -11,13 +11,37 @@ It's [open source](https://github.com/marcincichocki/breach-protocol-autosolver)
 ### How do I change default key bind?
 
 1. go to the settings;
-2. in _AutoSolver_ section click on key bind input;
+2. find key bind input and click on it;
 3. press desired key combination.
 4. **Only on versions below 2.1.0**: Confirm your choice with <kbd>Enter</kbd>.
+
+### I changed UI navigation keybindings in the game, will _BPA_ work with it?
+
+You **must** set the same navigation keys in _BPA_ and in _Cyberpunk 2077_. Otherwise _BP_ will not be solved.
+
+1. go to the settings;
+2. in _AutoSolver_ section find key bind inputs and click on desired field;
+3. press key that you selected in the game.
 
 ### I'm playing on gamepad, is it possible to bind _BPA_ to it?
 
 Yes, although not directly. You must use external tool like [AntiMicro](https://github.com/AntiMicro/antimicro) for gamepad, or [X-Mouse Button Control](https://www.highrez.co.uk/downloads/XMouseButtonControl.htm) for mouse. Simply bind gamepad/mouse to output _BPA_'s key bind. **Just make sure that selected gamepad/mouse bind does not interfere with Breach Protocol!**
+
+### What is the difference between "solve" and "solve with priority"
+
+Both will solve _BP_, but the difference is which daemons will be solved.
+
+"solve" will order daemons by their index, meaning that those are at the bottom of the list will be more valuable than those at the top.
+
+"solve with priority" will prioritize on one specific daemon and than fallback to index for anything else.
+
+> Please note that indexes are counted **without** daemon solved by "Head Start" perk!
+>
+> Example:
+>
+> ~~BD BD~~ <- index: none, already solved by "Head Start" perk\
+> 7A 7A BD <- index: 1, "solve with priority 1" will focus this daemon\
+> BD 7A 1C <- index: 2, "solve with priority 2" will focus this daemon
 
 ### I have found a bug! How do I report it?
 
