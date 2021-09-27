@@ -33,7 +33,7 @@ Both will solve _BP_, but the difference is which daemons will be solved.
 
 "solve" will order daemons by their index, meaning that those are at the bottom of the list will be more valuable than those at the top.
 
-"solve with priority" will prioritize on one specific daemon and than fallback to index for anything else.
+"solve with priority" will prioritize on one specific daemon and then fallback to index for anything else.
 
 > Please note that indexes are counted **without** daemon solved by "Head Start" perk!
 >
