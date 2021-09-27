@@ -6,6 +6,7 @@ import {
 } from '@/electron/common';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { asyncRequestDispatcher, fromCamelCase } from '../common';
 import {
   Col,
@@ -21,6 +22,15 @@ import {
   Switch,
   useField,
 } from '../components';
+
+const Title = styled.h3`
+  color: var(--primary);
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0;
+`;
 
 interface CalibrateFormValues {
   showBoxes: boolean;
@@ -103,7 +113,13 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
       }}
     >
       <Col style={{ gap: '1rem', flexGrow: 1 }}>
-        <RawDataPreview rawData={testResult.rawData} />
+        <Col style={{ overflowY: 'auto', flex: 1 }}>
+          <Title>Raw data</Title>
+          <RawDataPreview
+            rawData={testResult.rawData}
+            status={testResult.status}
+          />
+        </Col>
         <Form<CalibrateFormValues>
           initialValues={{ showBoxes, testThreshold }}
           onSubmit={handleSubmit}
@@ -131,25 +147,27 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
           </FlatButton>
         </Form>
       </Col>
-      <Col
-        style={{
-          width: '600px',
-          overflowY: 'auto',
-          justifyContent: loading ? 'center' : 'flex-start',
-          alignItems: 'center',
-          flexShrink: 0,
-        }}
-      >
-        {loading ? (
-          <Spinner />
-        ) : (
-          <FragmentPreview
-            image={testResult.image}
-            boxes={testResult.source?.boxes}
-            showBoxes={showBoxes}
-            format={entry.settings.format}
-          />
-        )}
+      <Col style={{ width: '600px', flexShrink: 0 }}>
+        <Title>Fragment preview</Title>
+        <Col
+          style={{
+            justifyContent: loading ? 'center' : 'flex-start',
+            alignItems: 'center',
+            overflowY: 'auto',
+            flexGrow: 1,
+          }}
+        >
+          {loading ? (
+            <Spinner />
+          ) : (
+            <FragmentPreview
+              image={testResult.image}
+              boxes={testResult.source?.boxes}
+              showBoxes={showBoxes}
+              format={entry.settings.format}
+            />
+          )}
+        </Col>
       </Col>
     </Row>
   );

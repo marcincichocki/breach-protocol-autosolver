@@ -1,13 +1,18 @@
-import { memo } from 'react';
-import { NavLink as RouterNavLink } from 'react-router-dom';
+import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
+import {
+  Link,
+  NavLink as RouterNavLink,
+  useRouteMatch,
+} from 'react-router-dom';
 import styled from 'styled-components';
 
 const Nav = styled.nav`
   display: flex;
   justify-content: center;
-  margin: 24px 0;
+  margin: 24px 1rem;
   user-select: none;
   flex-shrink: 0;
+  position: relative;
 `;
 
 const List = styled.ul`
@@ -32,20 +37,39 @@ export const NavLink = styled(RouterNavLink)`
   }
 `;
 
-export const Navigation = memo(() => (
-  <Nav>
-    <List>
-      <ListItem>
-        <NavLink exact to="/">
-          Dashboard
-        </NavLink>
-      </ListItem>
-      <ListItem>
-        <NavLink to="/history">History</NavLink>
-      </ListItem>
-      <ListItem>
-        <NavLink to="/settings">Settings</NavLink>
-      </ListItem>
-    </List>
-  </Nav>
-));
+const GoBackLink = styled(Link)`
+  color: var(--accent);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  /* svg is an inline element by default. */
+  font-size: 0;
+`;
+
+export const Navigation = () => {
+  const match = useRouteMatch<{ entryId: string }>('/calibrate/:entryId');
+
+  return (
+    <Nav>
+      {match && (
+        <GoBackLink to={`/history/${match.params.entryId}`}>
+          <MdKeyboardBackspace size="2rem" />
+        </GoBackLink>
+      )}
+      <List>
+        <ListItem>
+          <NavLink exact to="/">
+            Dashboard
+          </NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/history">History</NavLink>
+        </ListItem>
+        <ListItem>
+          <NavLink to="/settings">Settings</NavLink>
+        </ListItem>
+      </List>
+    </Nav>
+  );
+};
