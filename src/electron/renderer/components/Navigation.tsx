@@ -43,6 +43,8 @@ const GoBackLink = styled(Link)`
   top: 50%;
   left: 0;
   transform: translateY(-50%);
+  /* svg is an inline element by default. */
+  font-size: 0;
 `;
 
 export const Navigation = () => {
@@ -52,7 +54,7 @@ export const Navigation = () => {
     <Nav>
       {match && (
         <GoBackLink to={`/history/${match.params.entryId}`}>
-          <MdKeyboardBackspace size="2rem" style={{ display: 'block' }} />
+          <MdKeyboardBackspace size="2rem" />
         </GoBackLink>
       )}
       <List>
