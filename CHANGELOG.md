@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0...v2.1.0) (2021-09-27)
+
+
+### Features
+
+* **client-electron:** add ability to change game bindings ([aedc3a5](https://github.com/marcincichocki/breach-protocol-autosolver/commit/aedc3a561e7b983d2436d9d33508e89922b2dc84)), closes [#208](https://github.com/marcincichocki/breach-protocol-autosolver/issues/208)
+* **client-electron:** add ability to remove key bind ([798f659](https://github.com/marcincichocki/breach-protocol-autosolver/commit/798f659e822adba70bc34905d9debc282a9da7a9))
+* **client-electron:** add auto save to key bind component ([7117a86](https://github.com/marcincichocki/breach-protocol-autosolver/commit/7117a868a8303a828ebaa336809ea96e2c8f6a0b))
+* **client-electron:** add new key binds ([9da55df](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9da55df9e4ba77e0f942574a302fbee54dce7263)), closes [#210](https://github.com/marcincichocki/breach-protocol-autosolver/issues/210)
+* **client-electron:** show fragment status in calibration page ([fee3c5f](https://github.com/marcincichocki/breach-protocol-autosolver/commit/fee3c5f8a7eb0ccc32a7ef2f2d4a7ed165a44f8e))
+* **core:** add ability to sort sequences by index of a daemon ([8970596](https://github.com/marcincichocki/breach-protocol-autosolver/commit/8970596117c9368bb3bc6b569e5a2fedb4a68e93))
+
+
+### Bug Fixes
+
+* **common:** use AutoHotkey path from settings ([c46f2b1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c46f2b1a585f506e1f05a272e329baee455b6c68))
+
+
+### Performance improvements
+
+* **client-electron:** remove unused robots ([efec24a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/efec24a2c57a34adfcee3ee489d73b689ef08d8b)), closes [#215](https://github.com/marcincichocki/breach-protocol-autosolver/issues/215)
+
 ## [2.0.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0-rc.1...v2.0.0) (2021-09-16)
 
 
