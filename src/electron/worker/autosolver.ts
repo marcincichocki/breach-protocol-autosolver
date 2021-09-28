@@ -13,6 +13,7 @@ import {
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
   FragmentId,
+  Sequence,
   SequenceCompareStrategy,
 } from '@/core';
 import {
@@ -50,7 +51,7 @@ export class BreachProtocolAutosolver {
     private readonly compareStrategy: SequenceCompareStrategy
   ) {}
 
-  async solve() {
+  async analyze() {
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
@@ -66,7 +67,17 @@ export class BreachProtocolAutosolver {
       this.recognitionResult.rawData,
       this.compareStrategy
     );
-    this.result = this.game.solve();
+  }
+
+  async solve(sequence?: Sequence) {
+    // only run this when it's clean state.
+    if (this.progress.has(BreachProtocolSolveProgress.Pending)) {
+      await this.analyze();
+    }
+
+    this.result = sequence
+      ? this.game.solveForSequence(sequence)
+      : this.game.solve();
 
     if (!this.result) {
       return this.reject();
@@ -106,7 +117,7 @@ export class BreachProtocolAutosolver {
     }
   }
 
-  private toJSON(): HistoryEntry {
+  toJSON(): HistoryEntry {
     return {
       ...this.getBaseState(),
       ...this.getFragmentsValidState(),
@@ -187,7 +198,7 @@ export class BreachProtocolAutosolver {
     };
   }
 
-  async recognize() {
+  private async recognize() {
     const image = sharp(this.fileName);
     const { downscaleSource } = this.settings;
     const container = await SharpImageContainer.create(image, {

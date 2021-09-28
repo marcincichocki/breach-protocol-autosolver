@@ -160,6 +160,7 @@ export class Store {
       status: WorkerStatus.Bootstrap,
       updateStatus: null,
       stats: this.stats.store,
+      analyzedEntry: null,
     };
   }
 

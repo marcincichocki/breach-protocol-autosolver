@@ -12,6 +12,8 @@ import {
   BreachProtocolGridFragment,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
+  Sequence,
+  SequenceCompareStrategy,
 } from '@/core';
 import {
   Action,
@@ -21,6 +23,7 @@ import {
   BreachProtocolStatus,
   Request,
   Response,
+  SetAnalyzedEntry,
   SetDisplaysAction,
   SetStatusAction,
   State,
@@ -50,6 +53,9 @@ export class BreachProtocolWorker {
   private settings: AppSettings = this.getSettings();
 
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
+
+  // reference to bpa used to anazyling.
+  private bpa: BreachProtocolAutosolver = null;
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
 
@@ -133,6 +139,7 @@ export class BreachProtocolWorker {
 
   async dispose() {
     ipc.removeAllListeners('worker:solve');
+    ipc.removeAllListeners('worker:analyze');
     ipc.removeAllListeners('worker:state');
     ipc.removeAllListeners('worker:async-request');
 
@@ -143,6 +150,7 @@ export class BreachProtocolWorker {
 
   private registerListeners() {
     ipc.on('worker:solve', this.onWorkerSolve.bind(this));
+    ipc.on('worker:analyze', this.onWorkerAnazyle.bind(this));
     ipc.on('worker:state', this.onStateChanged.bind(this));
     ipc.on('worker:async-request', this.asyncRequestListener.bind(this));
   }
@@ -154,22 +162,56 @@ export class BreachProtocolWorker {
     event.sender.send('main:async-response', res);
   }
 
-  private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
+  private getAutosolver(compareStrategy?: SequenceCompareStrategy) {
+    return new BreachProtocolAutosolver(
+      this.settings,
+      this.getRobot(),
+      this.player,
+      compareStrategy ?? this.getCompareStrategy()
+    );
+  }
+
+  private async onWorkerAnazyle() {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
 
     this.updateStatus(WorkerStatus.Working);
 
-    const robot = this.getRobot();
+    this.bpa = this.getAutosolver();
+    const err = await this.bpa.analyze();
+
+    if (err) {
+      this.dispatch(new AddHistoryEntryAction(err));
+    }
+
+    const data = this.bpa.toJSON();
+
+    this.dispatch(new SetAnalyzedEntry(data));
+
+    this.updateStatus(WorkerStatus.Ready);
+  }
+
+  private async onWorkerSolve(
+    e: IpcRendererEvent,
+    index?: number,
+    sequence?: Sequence
+  ) {
+    if (this.status !== WorkerStatus.Ready) {
+      return;
+    }
+
+    this.updateStatus(WorkerStatus.Working);
+
     const compareStrategy = this.getCompareStrategy(index);
-    const bpa = new BreachProtocolAutosolver(
-      this.settings,
-      robot,
-      this.player,
-      compareStrategy
-    );
-    const entry = await bpa.solve();
+    // if analyze is active use saved bpa, create new one otherwise
+    const bpa = this.bpa || this.getAutosolver(compareStrategy);
+    const entry = await bpa.solve(sequence);
+
+    // Clear analisis if it exists
+    if (this.bpa) {
+      this.bpa = null;
+    }
 
     if (entry.status === BreachProtocolStatus.Rejected) {
       this.focusRendererWindow();
@@ -236,8 +278,14 @@ export class BreachProtocolWorker {
         return this.disposeTestThreshold();
       case 'TEST_THRESHOLD':
         return this.testThreshold(req);
+      case 'CLEAR_ANALYZE':
+        return this.clearAnalyze();
       default:
     }
+  }
+
+  private clearAnalyze() {
+    this.bpa = null;
   }
 
   private async initTestThreshold(req: Request<string>) {

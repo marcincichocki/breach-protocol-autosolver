@@ -19,6 +19,7 @@ const commands: Record<keyof KeyBindsConfig, BreachProtocolCommands> = {
   keyBindWithPriority3: 'worker:solve.withPriority3',
   keyBindWithPriority4: 'worker:solve.withPriority4',
   keyBindWithPriority5: 'worker:solve.withPriority5',
+  keyBindAnalyze: 'worker:analyze',
 };
 
 function changeKeyBind(accelerator: Accelerator, name: keyof KeyBindsConfig) {
@@ -118,6 +119,15 @@ export const KeyBindsSettings = ({ status }: { status: WorkerStatus }) => {
       </Field>
       <Field name="keyBindWithPriority5" onValueChange={changeKeyBind}>
         <Label>Solve with priority 5</Label>
+        <AcceleratorKeyBind
+          allowRemove
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onBeforeValueChange={validateKeyBind}
+        />
+      </Field>
+      <Field name="keyBindAnalyze" onValueChange={changeKeyBind}>
+        <Label>Analyze</Label>
         <AcceleratorKeyBind
           allowRemove
           onFocus={onFocus}

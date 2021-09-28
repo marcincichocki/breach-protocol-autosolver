@@ -1,3 +1,4 @@
+export * from './Analyze';
 export * from './Calibrate';
 export * from './CalibrateFragment';
 export * from './Dashboard';

@@ -149,7 +149,10 @@ export class Main {
       .register('worker:solve.withPriority2', () => this.onWorkerSolve(1))
       .register('worker:solve.withPriority3', () => this.onWorkerSolve(2))
       .register('worker:solve.withPriority4', () => this.onWorkerSolve(3))
-      .register('worker:solve.withPriority5', () => this.onWorkerSolve(4));
+      .register('worker:solve.withPriority5', () => this.onWorkerSolve(4))
+      .register('worker:analyze', () => {
+        this.worker.webContents.send('worker:analyze');
+      });
   }
 
   private getKeybindings(): {
@@ -163,6 +166,7 @@ export class Main {
       keyBindWithPriority3,
       keyBindWithPriority4,
       keyBindWithPriority5,
+      keyBindAnalyze,
     } = this.getSettings();
 
     return [
@@ -172,6 +176,7 @@ export class Main {
       { id: 'worker:solve.withPriority3', accelerator: keyBindWithPriority3 },
       { id: 'worker:solve.withPriority4', accelerator: keyBindWithPriority4 },
       { id: 'worker:solve.withPriority5', accelerator: keyBindWithPriority5 },
+      { id: 'worker:analyze', accelerator: keyBindAnalyze },
     ];
   }
 

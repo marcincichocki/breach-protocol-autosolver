@@ -15,6 +15,7 @@ export const ActionTypes = {
   REMOVE_LAST_N_HISTORY_ENTRIES: 'REMOVE_LAST_N_HISTORY_ENTRIES',
   REMOVE_HISTORY_ENTRY: 'REMOVE_HISTORY_ENTRY',
   SET_UPDATE_STATUS: 'SET_UPDATE_STATUS',
+  SET_ANALYZED_ENTRY: 'SET_ANALYZED_ENTRY',
 } as const;
 
 export class SetStatusAction implements Action {
@@ -60,4 +61,11 @@ export class SetUpdateStatusAction implements Action {
   readonly type = ActionTypes.SET_UPDATE_STATUS;
 
   constructor(public readonly payload: UpdateStatus) {}
+}
+
+export class SetAnalyzedEntry implements Action {
+  readonly type = ActionTypes.SET_ANALYZED_ENTRY;
+  readonly origin = 'worker';
+
+  constructor(public readonly payload: HistoryEntry) {}
 }

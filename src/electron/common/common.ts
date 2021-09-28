@@ -50,6 +50,7 @@ export interface KeyBindsConfig {
   keyBindWithPriority3: Accelerator;
   keyBindWithPriority4: Accelerator;
   keyBindWithPriority5: Accelerator;
+  keyBindAnalyze: Accelerator;
 }
 
 export interface AppSettings
@@ -115,6 +116,7 @@ export interface State {
   status: WorkerStatus;
   updateStatus: UpdateStatus;
   stats: AppStats;
+  analyzedEntry: HistoryEntry;
 }
 
 export interface Action<T = any> {
@@ -194,7 +196,8 @@ export type BreachProtocolCommands =
   | 'worker:solve.withPriority2'
   | 'worker:solve.withPriority3'
   | 'worker:solve.withPriority4'
-  | 'worker:solve.withPriority5';
+  | 'worker:solve.withPriority5'
+  | 'worker:analyze';
 
 export interface KeyBindValidationErrors {
   isValidAccelerator: boolean;
