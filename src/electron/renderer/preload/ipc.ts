@@ -5,11 +5,11 @@ const onChannels = [
   'renderer:show-release-notes',
   'renderer:download-progress',
   'renderer:third-party-licenses',
+  'renderer:state',
+  'renderer:async-response',
   ActionTypes.UPDATE_SETTINGS,
   ActionTypes.ADD_HISTORY_ENTRY,
   ActionTypes.REMOVE_HISTORY_ENTRY,
-  'renderer:state',
-  'renderer:async-response',
 ] as const;
 
 export type IpcOnChannels = typeof onChannels[number];
