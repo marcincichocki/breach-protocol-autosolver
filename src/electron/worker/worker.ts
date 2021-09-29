@@ -64,7 +64,6 @@ export class BreachProtocolWorker {
     this.dispatch(
       new UpdateSettingsAction(
         { activeDisplayId: this.displays[0].id },
-        'worker',
         { notify: false }
       )
     );

@@ -137,5 +137,5 @@ export function asyncRequestDispatcher<TRes, TReq = any>(
 }
 
 export function updateWorkerStatus(status: WorkerStatus) {
-  api.dispatch(new SetStatusAction(status, 'renderer'));
+  api.dispatch(new SetStatusAction(status));
 }

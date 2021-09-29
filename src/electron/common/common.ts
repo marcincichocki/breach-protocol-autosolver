@@ -121,7 +121,6 @@ export type Origin = 'worker' | 'renderer';
 export interface Action<T = any> {
   type: string;
   payload?: T;
-  origin: Origin;
   meta?: Record<string, any>;
 }
 

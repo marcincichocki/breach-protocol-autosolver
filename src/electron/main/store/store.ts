@@ -117,7 +117,7 @@ export class Store {
       const { length } = history;
 
       if (length >= settings.historySize) {
-        this.dispatch(new RemoveLastNHistoryEntriesAction(1, 'worker'));
+        this.dispatch(new RemoveLastNHistoryEntriesAction(1));
       }
     }
   }
