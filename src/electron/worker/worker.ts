@@ -35,16 +35,18 @@ import { BreachProtocolAutosolver } from './autosolver';
 import { nativeDialog } from './dialog';
 import { BreachProtocolSoundPlayer } from './sound-player';
 
+interface BreachProtocolFragments {
+  grid: BreachProtocolGridFragment<sharp.Sharp>;
+  daemons: BreachProtocolDaemonsFragment<sharp.Sharp>;
+  bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
+}
+
 export class BreachProtocolWorker {
   private displays: ScreenshotDisplayOutput[] = null;
 
-  private fragments: {
-    grid: BreachProtocolGridFragment<sharp.Sharp>;
-    daemons: BreachProtocolDaemonsFragment<sharp.Sharp>;
-    bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
-  } = null;
+  private fragments: BreachProtocolFragments = null;
 
-  private settings: AppSettings = ipc.sendSync('main:get-state').settings;
+  private settings: AppSettings = this.getSettings();
 
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
@@ -87,7 +89,11 @@ export class BreachProtocolWorker {
     await WasmBreachProtocolRecognizer.initScheduler(langPath);
   }
 
-  private getResourcesPath() {
+  private getSettings(): AppSettings {
+    return ipc.sendSync('main:get-state').settings;
+  }
+
+  private getResourcesPath(): string {
     return ipc.sendSync('main:get-resources-path');
   }
 
