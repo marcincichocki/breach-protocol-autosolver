@@ -85,7 +85,7 @@ export function useIpcState() {
     setState(payload);
   }
 
-  useIpcEvent(['state'], handleEvent);
+  useIpcEvent(['renderer:state'], handleEvent);
 
   return state;
 }
@@ -110,7 +110,7 @@ export function createRootElement(id: string) {
 
 class RendererNativeDialog extends NativeDialog {
   protected showMessageBox(options: Electron.MessageBoxOptions) {
-    return api.invoke('renderer:show-message-box', options);
+    return api.invoke('main:show-message-box', options);
   }
 }
 
@@ -126,13 +126,13 @@ export function asyncRequestDispatcher<TRes, TReq = any>(
     function onAsyncResponse(e: IpcRendererEvent, res: Response<TRes>) {
       if (res.uuid !== uuid) return;
 
-      api.removeListener('async-response', onAsyncResponse);
+      api.removeListener('renderer:async-response', onAsyncResponse);
 
       resolve(res.data);
     }
 
-    api.on('async-response', onAsyncResponse);
-    api.send('async-request', req);
+    api.on('renderer:async-response', onAsyncResponse);
+    api.send('main:async-request', req);
   });
 }
 

@@ -73,16 +73,16 @@ const IconButton = styled.button<{ close?: boolean }>`
 
 export const TitleBar = memo(() => (
   <StyledTitleBar>
-    <IconButton onClick={() => api.send('renderer:show-help-menu')}>
+    <IconButton onClick={() => api.send('main:show-help-menu')}>
       <MenuIcon></MenuIcon>
     </IconButton>
-    <IconButton onClick={() => api.send('renderer:minimize')}>
+    <IconButton onClick={() => api.send('main:minimize')}>
       <MinimizeIcon />
     </IconButton>
-    <IconButton onClick={() => api.send('renderer:maximize')}>
+    <IconButton onClick={() => api.send('main:maximize')}>
       <DownIcon />
     </IconButton>
-    <IconButton close onClick={() => api.send('renderer:close')}>
+    <IconButton close onClick={() => api.send('main:close')}>
       <CloseIcon />
     </IconButton>
   </StyledTitleBar>

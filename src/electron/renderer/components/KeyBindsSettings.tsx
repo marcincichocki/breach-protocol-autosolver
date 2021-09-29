@@ -24,7 +24,7 @@ const commands: Record<keyof KeyBindsConfig, BreachProtocolCommands> = {
 function changeKeyBind(accelerator: Accelerator, name: keyof KeyBindsConfig) {
   const id = commands[name];
 
-  api.send('renderer:key-bind-change', id, accelerator);
+  api.send('main:key-bind-change', id, accelerator);
 }
 
 const messages: Record<keyof KeyBindValidationErrors, string> = {
@@ -45,7 +45,7 @@ async function validateKeyBind(
   next: (reset?: boolean) => void
 ) {
   const errors = await api.invoke<KeyBindValidationErrors>(
-    'renderer:validate-key-bind',
+    'main:validate-key-bind',
     value
   );
 

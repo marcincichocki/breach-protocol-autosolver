@@ -35,7 +35,7 @@ const OpenInExplorer = ({ fileName }: { fileName: string }) => {
 };
 
 const SaveSnapshot = ({ entryId }: { entryId: string }) => (
-  <LinkButton onClick={() => api.send('renderer:save-snapshot', entryId)}>
+  <LinkButton onClick={() => api.send('main:save-snapshot', entryId)}>
     Save snapshot
   </LinkButton>
 );

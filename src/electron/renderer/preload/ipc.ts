@@ -1,35 +1,34 @@
-import type { Action, State } from '@/electron/common';
+import { Action, ActionTypes, State } from '@/electron/common';
 import { ipcRenderer } from 'electron';
 
 const onChannels = [
-  'main:show-release-notes',
-  'main:download-progress',
-  'main:third-party-licenses',
-  'SET_SETTINGS',
-  'UPDATE_SETTINGS',
-  'ADD_HISTORY_ENTRY',
-  'REMOVE_HISTORY_ENTRY',
-  'state',
-  'async-response',
+  'renderer:show-release-notes',
+  'renderer:download-progress',
+  'renderer:third-party-licenses',
+  ActionTypes.UPDATE_SETTINGS,
+  ActionTypes.ADD_HISTORY_ENTRY,
+  ActionTypes.REMOVE_HISTORY_ENTRY,
+  'renderer:state',
+  'renderer:async-response',
 ] as const;
 
 export type IpcOnChannels = typeof onChannels[number];
 
 const invokeChannels = [
-  'renderer:show-message-box',
-  'renderer:validate-key-bind',
+  'main:show-message-box',
+  'main:validate-key-bind',
 ] as const;
 
 export type IpcInvokeChannels = typeof invokeChannels[number];
 
 const sendChannels = [
-  'renderer:show-help-menu',
-  'renderer:minimize',
-  'renderer:maximize',
-  'renderer:close',
-  'renderer:key-bind-change',
-  'renderer:save-snapshot',
-  'async-request',
+  'main:show-help-menu',
+  'main:minimize',
+  'main:maximize',
+  'main:close',
+  'main:key-bind-change',
+  'main:save-snapshot',
+  'main:async-request',
 ] as const;
 
 export type IpcSendChannels = typeof sendChannels[number];
@@ -70,7 +69,7 @@ export function invoke<T = any>(channel: IpcInvokeChannels, ...args: any[]) {
 
 /** Wrapper around {@link ipcRenderer.removeListener}. Accepts only curated list of channels. */
 export function removeListener(
-  channel: string,
+  channel: IpcOnChannels,
   listener: (...args: any[]) => void
 ) {
   validateChannel(channel, onChannels);
@@ -79,9 +78,9 @@ export function removeListener(
 }
 
 export function getState(): State {
-  return ipcRenderer.sendSync('get-state');
+  return ipcRenderer.sendSync('main:get-state');
 }
 
 export function dispatch(action: Action) {
-  ipcRenderer.send('state', action);
+  ipcRenderer.send('main:state', action);
 }
