@@ -1,6 +1,8 @@
 import { BreachProtocolResultJSON, isDaemonsFragment } from '@/core';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+import { asyncRequestDispatcher } from '../common';
 import {
   Col,
   FlatButton,
@@ -56,18 +58,44 @@ function toUniqueValue(result: BreachProtocolResultJSON) {
   return result?.sequence.value.join('');
 }
 
+function useFetchResults() {
+  const [results, setResults] = useState<BreachProtocolResultJSON[]>([]);
+
+  useEffect(() => {
+    asyncRequestDispatcher<BreachProtocolResultJSON[]>({
+      type: 'ANALYZE_INIT',
+    }).then(setResults);
+  }, []);
+
+  return results;
+}
+
 export const Analyze = () => {
   const { analyzedEntry } = useContext(StateContext);
-  const [results, setResults] = useState<BreachProtocolResultJSON[]>([]);
+  const results = useFetchResults();
   const [activeResult, setActiveResult] =
     useState<BreachProtocolResultJSON>(null);
   const { rawData: daemons } = analyzedEntry.fragments.find(isDaemonsFragment);
+  const history = useHistory();
 
   function isActiveSequence(result: BreachProtocolResultJSON) {
     const a = toUniqueValue(activeResult);
     const b = toUniqueValue(result);
 
     return a === b;
+  }
+
+  async function discard() {
+    await asyncRequestDispatcher({ type: 'ANALYZE_DISCARD' });
+
+    history.replace('/');
+  }
+
+  async function resolve() {
+    await asyncRequestDispatcher({
+      type: 'ANALYZE_RESOLVE',
+      data: activeResult,
+    });
   }
 
   return (
@@ -105,9 +133,13 @@ export const Analyze = () => {
         <Col>
           <HistoryViewer entry={analyzedEntry} customResult={activeResult} />
           <Row>
-            <FlatButton color="primary">Discard</FlatButton>
+            <FlatButton color="primary" onClick={discard}>
+              Discard
+            </FlatButton>
             <Spacer />
-            <FlatButton color="accent">Solve for selected sequence</FlatButton>
+            <FlatButton color="accent" onClick={resolve}>
+              Solve for selected sequence
+            </FlatButton>
           </Row>
         </Col>
       </Row>

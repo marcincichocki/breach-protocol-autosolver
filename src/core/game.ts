@@ -142,6 +142,11 @@ export class BreachProtocol {
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }
 
+  /** Solve grid with every sequence. */
+  solveAll(sequences: Sequence[] = this.sequences) {
+    return sequences.map((s) => this.solveForSequence(s));
+  }
+
   /**
    * Try to solve current grid with provided sequences or
    * sequences produced from daemons.

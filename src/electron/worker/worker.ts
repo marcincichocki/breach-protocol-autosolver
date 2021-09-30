@@ -10,9 +10,9 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
+  BreachProtocolResultJSON,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
-  Sequence,
   SequenceCompareStrategy,
 } from '@/core';
 import {
@@ -179,24 +179,18 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Working);
 
     this.bpa = this.getAutosolver();
-    const err = await this.bpa.analyze();
+    const entry = await this.bpa.analyze(true);
 
-    if (err) {
-      this.dispatch(new AddHistoryEntryAction(err));
+    if (entry.status === BreachProtocolStatus.Rejected) {
+      this.dispatch(new AddHistoryEntryAction(entry));
     }
 
-    const data = this.bpa.toJSON();
-
-    this.dispatch(new SetAnalyzedEntry(data));
-
+    this.dispatch(new SetAnalyzedEntry(entry));
     this.updateStatus(WorkerStatus.Ready);
+    this.focusRendererWindow();
   }
 
-  private async onWorkerSolve(
-    e: IpcRendererEvent,
-    index?: number,
-    sequence?: Sequence
-  ) {
+  private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
@@ -205,15 +199,18 @@ export class BreachProtocolWorker {
 
     const compareStrategy = this.getCompareStrategy(index);
     // if analyze is active use saved bpa, create new one otherwise
-    const bpa = this.bpa || this.getAutosolver(compareStrategy);
-    const entry = await bpa.solve(sequence);
+    const bpa = this.getAutosolver(compareStrategy);
+    const entry = await bpa.solve();
 
     // Clear analisis if it exists
     if (this.bpa) {
       this.bpa = null;
     }
 
-    if (entry.status === BreachProtocolStatus.Rejected) {
+    if (
+      entry.status === BreachProtocolStatus.Rejected &&
+      this.settings.focusOnError
+    ) {
       this.focusRendererWindow();
     }
 
@@ -222,9 +219,7 @@ export class BreachProtocolWorker {
   }
 
   private focusRendererWindow() {
-    if (this.settings.focusOnError) {
-      ipc.send('main:focus-renderer');
-    }
+    ipc.send('main:focus-renderer');
   }
 
   private getCompareStrategy(index?: number) {
@@ -278,14 +273,40 @@ export class BreachProtocolWorker {
         return this.disposeTestThreshold();
       case 'TEST_THRESHOLD':
         return this.testThreshold(req);
-      case 'CLEAR_ANALYZE':
+      case 'ANALYZE_INIT':
+        return this.analyzeInit();
+      case 'ANALYZE_DISPOSE':
         return this.clearAnalyze();
+      case 'ANALYZE_RESOLVE':
+        return this.resolve(req);
       default:
     }
   }
 
+  private analyzeInit() {
+    return this.bpa.results.map((r) => r?.toJSON()).filter(Boolean);
+  }
+
   private clearAnalyze() {
     this.bpa = null;
+  }
+
+  private async resolve({ data }: Request<BreachProtocolResultJSON>) {
+    if (this.status !== WorkerStatus.Ready) {
+      return;
+    }
+
+    this.updateStatus(WorkerStatus.Working);
+
+    const entry = await this.bpa.solve(data);
+
+    // Clear analisis if it exists
+    if (this.bpa) {
+      this.bpa = null;
+    }
+
+    this.dispatch(new AddHistoryEntryAction(entry));
+    this.updateStatus(WorkerStatus.Ready);
   }
 
   private async initTestThreshold(req: Request<string>) {

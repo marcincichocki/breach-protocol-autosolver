@@ -12,8 +12,8 @@ import {
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
+  BreachProtocolResultJSON,
   FragmentId,
-  Sequence,
   SequenceCompareStrategy,
 } from '@/core';
 import {
@@ -37,12 +37,15 @@ export class BreachProtocolAutosolver {
 
   private recognitionResult: BreachProtocolRecognitionResult;
   private game: BreachProtocol;
-  private result: BreachProtocolResult;
+  private result: BreachProtocolResultJSON;
 
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
   private resolveDelay: Promise<unknown>;
+
+  /** All potential results. */
+  results: BreachProtocolResult[];
 
   constructor(
     private readonly settings: AppSettings,
@@ -51,7 +54,7 @@ export class BreachProtocolAutosolver {
     private readonly compareStrategy: SequenceCompareStrategy
   ) {}
 
-  async analyze() {
+  async analyze(solve?: boolean) {
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
@@ -67,17 +70,21 @@ export class BreachProtocolAutosolver {
       this.recognitionResult.rawData,
       this.compareStrategy
     );
+
+    if (solve) {
+      this.results = this.game.solveAll();
+
+      return this.toJSON();
+    }
   }
 
-  async solve(sequence?: Sequence) {
+  async solve(result?: BreachProtocolResultJSON) {
     // only run this when it's clean state.
     if (this.progress.has(BreachProtocolSolveProgress.Pending)) {
       await this.analyze();
     }
 
-    this.result = sequence
-      ? this.game.solveForSequence(sequence)
-      : this.game.solve();
+    this.result = result || this.game.solve().toJSON();
 
     if (!this.result) {
       return this.reject();
@@ -106,7 +113,7 @@ export class BreachProtocolAutosolver {
   private async resolveBreachProtocol({
     path,
     exitStrategy,
-  }: BreachProtocolResult) {
+  }: BreachProtocolResultJSON) {
     const resolver = this.getResolver();
 
     await this.resolveDelay;
@@ -151,7 +158,7 @@ export class BreachProtocolAutosolver {
     const bool = this.progress.has(BreachProtocolSolveProgress.SolutionFound);
 
     return {
-      result: bool ? this.result.toJSON() : null,
+      result: bool ? this.result : null,
     };
   }
 
