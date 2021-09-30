@@ -42,12 +42,17 @@ export abstract class BreachProtocolRobot {
 
   protected abstract readonly binPath: string;
 
+  protected gameWindowTitle = 'Cyberpunk 2077';
+
   constructor(
     protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
   protected abstract getMappedKey(key: BreachProtocolRobotKeys): string;
+
+  /** Focus Cyberpunk 2077 window. */
+  abstract activateGameWindow(): Promise<any>;
 
   /** Click with left mouse button. */
   abstract click(): Promise<any>;

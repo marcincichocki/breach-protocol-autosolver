@@ -7,6 +7,10 @@ export class NirCmdRobot extends WindowsRobot {
 
   protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
 
+  activateGameWindow() {
+    return this.bin(`win activate stitle ${this.gameWindowTitle}`);
+  }
+
   click() {
     return this.bin('sendmouse left click');
   }

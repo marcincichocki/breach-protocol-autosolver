@@ -52,6 +52,7 @@ class TestRobot extends BreachProtocolRobot {
   getMappedKey() {
     return '';
   }
+  async activateGameWindow() {}
   async click() {}
   async move() {}
   async pressKey() {}
