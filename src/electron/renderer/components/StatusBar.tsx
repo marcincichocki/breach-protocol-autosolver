@@ -1,4 +1,4 @@
-import { UpdateStatus, WorkerStatus } from '@/electron/common';
+import { ActionTypes, UpdateStatus, WorkerStatus } from '@/electron/common';
 import { ProgressInfo } from 'electron-updater';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -71,7 +71,7 @@ function useSettingsChangeListener(delay = 2000) {
   const [show, setShow] = useState(false);
   let id: any = null;
 
-  useIpcEvent(['UPDATE_SETTINGS'], (e, { meta }: any) => {
+  useIpcEvent([ActionTypes.UPDATE_SETTINGS], (e, { meta }: any) => {
     if (meta?.notify === false) {
       return;
     }
