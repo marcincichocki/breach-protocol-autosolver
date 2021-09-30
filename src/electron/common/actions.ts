@@ -65,7 +65,6 @@ export class SetUpdateStatusAction implements Action {
 
 export class SetAnalyzedEntry implements Action {
   readonly type = ActionTypes.SET_ANALYZED_ENTRY;
-  readonly origin = 'worker';
 
   constructor(public readonly payload: HistoryEntry) {}
 }
