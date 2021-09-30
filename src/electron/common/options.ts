@@ -89,6 +89,11 @@ export const options: BreachProtocolOption[] = [
     defaultValue: 'Alt+5',
   },
   {
+    id: 'keyBindAnalyze',
+    description: 'Analyze breach protocol and display available sequences.',
+    defaultValue: '',
+  },
+  {
     id: 'preserveSourceOnSuccess',
     description: 'Preserve source image after successful breach protocol.',
     defaultValue: true,
