@@ -5,10 +5,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { getDisplayName, useIpcEvent } from '../common';
 import { StateContext } from '../state';
-
-const Spacer = styled.div`
-  flex-grow: 1;
-`;
+import { Spacer } from './Flex';
 
 const StatusBarItem = styled.div<{ warn?: boolean }>`
   height: 100%;
