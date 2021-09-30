@@ -49,6 +49,10 @@ const GoBackLink = styled(Link)`
 
 export const Navigation = () => {
   const match = useRouteMatch<{ entryId: string }>('/calibrate/:entryId');
+  const isAnalyzePage = useRouteMatch('/analyze');
+
+  // Navigation is removed so user must discard or solve BP.
+  if (isAnalyzePage) return null;
 
   return (
     <Nav>
