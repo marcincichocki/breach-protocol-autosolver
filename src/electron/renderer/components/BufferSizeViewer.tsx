@@ -30,7 +30,7 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
 
 interface BufferSizeViewerProps {
   bufferSize: BufferSize;
-  result: BreachProtocolResultJSON;
+  result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }
 
@@ -40,21 +40,20 @@ export const BufferSizeViewer = ({
   onHighlight,
 }: BufferSizeViewerProps) => {
   return (
-    <BufferSizeWrapper onMouseLeave={() => onHighlight(null)}>
+    <BufferSizeWrapper onMouseLeave={onHighlight && (() => onHighlight(null))}>
       {Array.from({ length: bufferSize }, (s, i) => {
-        const isActive = i < result.path.length;
+        const isActive = result && i < result.path.length;
 
         return (
           <BufferSizeItem
             key={i}
             active={isActive}
             onMouseEnter={
-              onHighlight
-                ? () => onHighlight(isActive ? { from: 0, to: i } : null)
-                : undefined
+              onHighlight &&
+              (() => onHighlight(isActive ? { from: 0, to: i } : null))
             }
           >
-            {result.resolvedSequence.value[i]}
+            {result?.resolvedSequence.value[i]}
           </BufferSizeItem>
         );
       })}

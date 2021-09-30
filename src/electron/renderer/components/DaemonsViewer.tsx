@@ -21,7 +21,7 @@ const Daemon = styled.div<{ active: boolean }>`
 
 interface DaemonsViewerProps {
   daemons: DaemonsRawData;
-  result: BreachProtocolResultJSON;
+  result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }
 
@@ -30,27 +30,25 @@ export const DaemonsViewer = ({
   result,
   onHighlight,
 }: DaemonsViewerProps) => {
-  const { parts } = result.resolvedSequence;
-  const s = result.resolvedSequence.value.join('');
+  const { parts } = result?.resolvedSequence || {};
+  const s = result?.resolvedSequence.value.join('');
 
   return (
     <DaemonsWrapper>
       {daemons.map((d, i) => {
         const ds = d.join('');
-        const from = s.indexOf(ds) / 2;
-        const to = from + d.length - 1;
-        const active = parts.includes(i);
+        const from = result && s.indexOf(ds) / 2;
+        const to = result && from + d.length - 1;
+        const active = result && parts.includes(i);
 
         return (
           <Daemon
             key={i}
             active={active}
             onMouseEnter={
-              active && onHighlight
-                ? () => onHighlight({ from, to })
-                : undefined
+              active && onHighlight && (() => onHighlight({ from, to }))
             }
-            onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+            onMouseLeave={onHighlight && (() => onHighlight(null))}
           >
             {d.map((s, j) => (
               <span key={j}>{s}</span>
