@@ -20,4 +20,8 @@ if (A_Args[1] = "reset") {
   MouseMove, -9999, -9999, 0
 }
 
+if (A_Args[1] = "activate") {
+  WinActivate, Cyberpunk 2077
+}
+
 ExitApp

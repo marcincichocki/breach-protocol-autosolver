@@ -90,6 +90,12 @@ export class XDoToolRobot extends BreachProtocolRobot {
     return XDoToolRobot.VK_MAP.get(code).toString(16);
   }
 
+  activateGameWindow() {
+    return this.bin(
+      `search --name ${this.gameWindowTitle} windowactivate --sync`
+    );
+  }
+
   move(x: number, y: number) {
     return this.bin(`mousemove ${x} ${y}`);
   }

@@ -23,6 +23,10 @@ export class AutoHotkeyRobot extends WindowsRobot {
     return data;
   }
 
+  activateGameWindow() {
+    return this.bin('activate');
+  }
+
   move(x: number, y: number) {
     return this.bin(`move ${x} ${y}`);
   }
