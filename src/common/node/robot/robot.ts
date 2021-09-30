@@ -51,6 +51,7 @@ export abstract class BreachProtocolRobot {
 
   protected abstract getMappedKey(key: BreachProtocolRobotKeys): string;
 
+  /** Focus Cyberpunk 2077 window. */
   abstract activateGameWindow(): Promise<any>;
 
   /** Click with left mouse button. */
