@@ -9,7 +9,7 @@ export const ReleaseNotesDialog = () => {
     isOpen,
     close,
     data: updateInfo,
-  } = useIpcEventDialog<UpdateInfo>('main:show-release-notes');
+  } = useIpcEventDialog<UpdateInfo>('renderer:show-release-notes');
 
   if (!updateInfo) {
     return null;

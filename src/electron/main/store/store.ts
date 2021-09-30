@@ -95,10 +95,10 @@ export class Store {
       removeSync(this.state.settings.screenshotDir);
     }
 
-    ipc.removeAllListeners('state');
-    ipc.removeAllListeners('async-request');
-    ipc.removeAllListeners('async-response');
-    ipc.removeAllListeners('get-state');
+    ipc.removeAllListeners('main:state');
+    ipc.removeAllListeners('main:get-state');
+    ipc.removeAllListeners('main:async-request');
+    ipc.removeAllListeners('main:async-response');
   }
 
   private attachMiddlewares(parentMiddlewares: Middleware[]) {
@@ -117,7 +117,7 @@ export class Store {
       const { length } = history;
 
       if (length >= settings.historySize) {
-        this.dispatch(new RemoveLastNHistoryEntriesAction(1, 'worker'));
+        this.dispatch(new RemoveLastNHistoryEntriesAction(1));
       }
     }
   }
@@ -164,9 +164,9 @@ export class Store {
   }
 
   private registerStoreListeners() {
-    ipc.on('state', this.onState.bind(this));
-    ipc.on('get-state', this.onGetState.bind(this));
-    ipc.on('async-request', this.onAsyncRequest.bind(this));
+    ipc.on('main:state', this.onState.bind(this));
+    ipc.on('main:get-state', this.onGetState.bind(this));
+    ipc.on('main:async-request', this.onAsyncRequest.bind(this));
   }
 
   private applyMiddleware(action: Action) {
@@ -182,8 +182,8 @@ export class Store {
   private notify(action: Action) {
     const stateAction = { ...action, payload: this.state };
 
-    this.worker.send('state', stateAction);
-    this.renderer.send('state', stateAction);
+    this.worker.send('worker:state', stateAction);
+    this.renderer.send('renderer:state', stateAction);
 
     this.worker.send(action.type, stateAction);
     this.renderer.send(action.type, stateAction);
@@ -197,20 +197,14 @@ export class Store {
     function onAsyncResponse(e: IpcMainEvent, res: Response) {
       if (res.uuid !== req.uuid) return;
 
-      ipc.removeListener('async-response', onAsyncResponse);
+      ipc.removeListener('main:async-response', onAsyncResponse);
 
-      event.sender.send('async-response', res);
+      event.sender.send('renderer:async-response', res);
     }
 
-    ipc.on('async-response', onAsyncResponse);
+    ipc.on('main:async-response', onAsyncResponse);
 
-    const dest = this.getDest(req);
-
-    dest.send('async-request', req);
-  }
-
-  private getDest(action: Action) {
-    return action.origin === 'worker' ? this.renderer : this.worker;
+    this.worker.send('worker:async-request', req);
   }
 
   private preserveState() {

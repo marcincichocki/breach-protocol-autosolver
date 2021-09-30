@@ -3,7 +3,6 @@ import {
   Action,
   AppSettings,
   HistoryEntry,
-  Origin,
   UpdateStatus,
   WorkerStatus,
 } from './common';
@@ -21,15 +20,11 @@ export const ActionTypes = {
 export class SetStatusAction implements Action {
   readonly type = ActionTypes.SET_STATUS;
 
-  constructor(
-    public readonly payload: WorkerStatus,
-    public readonly origin: Origin = 'worker'
-  ) {}
+  constructor(public readonly payload: WorkerStatus) {}
 }
 
 export class SetDisplaysAction implements Action {
   readonly type = ActionTypes.SET_DISPLAYS;
-  readonly origin = 'worker';
 
   constructor(public readonly payload: ScreenshotDisplayOutput[]) {}
 }
@@ -39,14 +34,12 @@ export class UpdateSettingsAction implements Action {
 
   constructor(
     public readonly payload: Partial<AppSettings>,
-    public readonly origin: Origin = 'renderer',
     public readonly meta?: Record<string, any>
   ) {}
 }
 
 export class AddHistoryEntryAction implements Action {
   readonly type = ActionTypes.ADD_HISTORY_ENTRY;
-  readonly origin = 'worker';
 
   constructor(public readonly payload: HistoryEntry) {}
 }
@@ -54,22 +47,17 @@ export class AddHistoryEntryAction implements Action {
 export class RemoveLastNHistoryEntriesAction implements Action {
   readonly type = ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES;
 
-  constructor(
-    public readonly payload: number,
-    public readonly origin: Origin = 'renderer'
-  ) {}
+  constructor(public readonly payload: number) {}
 }
 
 export class RemoveHistoryEntryAction implements Action {
   readonly type = ActionTypes.REMOVE_HISTORY_ENTRY;
-  readonly origin = 'renderer';
 
   constructor(public readonly payload: string) {}
 }
 
 export class SetUpdateStatusAction implements Action {
   readonly type = ActionTypes.SET_UPDATE_STATUS;
-  readonly origin: Origin = null;
 
   constructor(public readonly payload: UpdateStatus) {}
 }

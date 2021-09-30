@@ -197,15 +197,15 @@ export class Main {
   }
 
   private registerListeners() {
-    ipc.on('renderer:close', this.onAppClose.bind(this));
-    ipc.on('renderer:minimize', this.onAppMinimize.bind(this));
-    ipc.on('renderer:maximize', this.onAppMaximize.bind(this));
-    ipc.on('renderer:show-help-menu', this.onShowHelpMenu.bind(this));
-    ipc.on('renderer:key-bind-change', this.onKeyBindChange.bind(this));
-    ipc.on('renderer:save-snapshot', this.onSaveSnapshot.bind(this));
-    ipc.on('worker:get-resources-path', this.onGetResourcesPath.bind(this));
-    ipc.handle('renderer:show-message-box', this.onShowMessageBox);
-    ipc.handle('renderer:validate-key-bind', this.onValidateKeyBind.bind(this));
+    ipc.on('main:close', this.onAppClose.bind(this));
+    ipc.on('main:minimize', this.onAppMinimize.bind(this));
+    ipc.on('main:maximize', this.onAppMaximize.bind(this));
+    ipc.on('main:show-help-menu', this.onShowHelpMenu.bind(this));
+    ipc.on('main:key-bind-change', this.onKeyBindChange.bind(this));
+    ipc.on('main:save-snapshot', this.onSaveSnapshot.bind(this));
+    ipc.on('main:get-resources-path', this.onGetResourcesPath.bind(this));
+    ipc.handle('main:show-message-box', this.onShowMessageBox);
+    ipc.handle('main:validate-key-bind', this.onValidateKeyBind.bind(this));
 
     this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
@@ -407,7 +407,7 @@ export class Main {
     );
 
     this.renderer.webContents.send(
-      'main:third-party-licenses',
+      'renderer:third-party-licenses',
       contents.flat()
     );
   }

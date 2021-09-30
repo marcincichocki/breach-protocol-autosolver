@@ -35,18 +35,18 @@ import { BreachProtocolAutosolver } from './autosolver';
 import { nativeDialog } from './dialog';
 import { BreachProtocolSoundPlayer } from './sound-player';
 
-export class BreachProtocolWorker {
-  private disposeAsyncRequestListener: () => void = null;
+interface BreachProtocolFragments {
+  grid: BreachProtocolGridFragment<sharp.Sharp>;
+  daemons: BreachProtocolDaemonsFragment<sharp.Sharp>;
+  bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
+}
 
+export class BreachProtocolWorker {
   private displays: ScreenshotDisplayOutput[] = null;
 
-  private fragments: {
-    grid: BreachProtocolGridFragment<sharp.Sharp>;
-    daemons: BreachProtocolDaemonsFragment<sharp.Sharp>;
-    bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
-  } = null;
+  private fragments: BreachProtocolFragments = null;
 
-  private settings: AppSettings = ipc.sendSync('get-state').settings;
+  private settings: AppSettings = this.getSettings();
 
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
@@ -64,7 +64,6 @@ export class BreachProtocolWorker {
     this.dispatch(
       new UpdateSettingsAction(
         { activeDisplayId: this.displays[0].id },
-        'worker',
         { notify: false }
       )
     );
@@ -89,8 +88,12 @@ export class BreachProtocolWorker {
     await WasmBreachProtocolRecognizer.initScheduler(langPath);
   }
 
-  private getResourcesPath() {
-    return ipc.sendSync('worker:get-resources-path');
+  private getSettings(): AppSettings {
+    return ipc.sendSync('main:get-state').settings;
+  }
+
+  private getResourcesPath(): string {
+    return ipc.sendSync('main:get-resources-path');
   }
 
   private validateExternalDependencies() {
@@ -129,9 +132,9 @@ export class BreachProtocolWorker {
 
   async dispose() {
     ipc.removeAllListeners('worker:solve');
-    ipc.removeAllListeners('state');
+    ipc.removeAllListeners('worker:state');
+    ipc.removeAllListeners('worker:async-request');
 
-    this.disposeAsyncRequestListener();
     this.disposeTestThreshold();
 
     await WasmBreachProtocolRecognizer.terminateScheduler();
@@ -139,24 +142,15 @@ export class BreachProtocolWorker {
 
   private registerListeners() {
     ipc.on('worker:solve', this.onWorkerSolve.bind(this));
-    ipc.on('state', this.onStateChanged.bind(this));
-
-    this.disposeAsyncRequestListener = this.asyncRequestListener(
-      this.handleAsyncRequest.bind(this)
-    );
+    ipc.on('worker:state', this.onStateChanged.bind(this));
+    ipc.on('worker:async-request', this.asyncRequestListener.bind(this));
   }
 
-  private asyncRequestListener(handler: (req: Request) => Promise<any>) {
-    ipc.on('async-request', async (event: any, req: Request) => {
-      const data = await handler(req);
-      const res: Response = { data, uuid: req.uuid, origin: 'worker' };
+  private async asyncRequestListener(event: IpcRendererEvent, req: Request) {
+    const data = await this.handleAsyncRequest(req);
+    const res: Response = { data, uuid: req.uuid, origin: 'worker' };
 
-      event.sender.send('async-response', res);
-    });
-
-    return () => {
-      ipc.removeAllListeners('async-request');
-    };
+    event.sender.send('main:async-response', res);
   }
 
   private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
@@ -265,6 +259,6 @@ export class BreachProtocolWorker {
   }
 
   private dispatch(action: Action) {
-    ipc.send('state', action);
+    ipc.send('main:state', action);
   }
 }

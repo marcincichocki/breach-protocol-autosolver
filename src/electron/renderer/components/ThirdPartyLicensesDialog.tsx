@@ -27,7 +27,7 @@ export const ThirdPartyLicensesDialog = () => {
     isOpen,
     close,
     data: contents,
-  } = useIpcEventDialog<PackageDetails[]>('main:third-party-licenses');
+  } = useIpcEventDialog<PackageDetails[]>('renderer:third-party-licenses');
 
   if (!contents) {
     return null;
