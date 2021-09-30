@@ -54,6 +54,10 @@ export const GeneralSettings = ({ historySize }: { historySize: number }) => {
         <Label>Auto update</Label>
         <Switch />
       </Field>
+      <Field name="focusOnError">
+        <Label>Focus on error</Label>
+        <Switch />
+      </Field>
     </Section>
   );
 };

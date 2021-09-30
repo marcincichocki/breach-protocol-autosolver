@@ -18,6 +18,7 @@ import {
   ActionTypes,
   AddHistoryEntryAction,
   AppSettings,
+  BreachProtocolStatus,
   Request,
   Response,
   SetDisplaysAction,
@@ -170,8 +171,18 @@ export class BreachProtocolWorker {
     );
     const entry = await bpa.solve();
 
+    if (entry.status === BreachProtocolStatus.Rejected) {
+      this.focusRendererWindow();
+    }
+
     this.dispatch(new AddHistoryEntryAction(entry));
     this.updateStatus(WorkerStatus.Ready);
+  }
+
+  private focusRendererWindow() {
+    if (this.settings.focusOnError) {
+      ipc.send('main:focus-renderer');
+    }
   }
 
   private getCompareStrategy(index?: number) {

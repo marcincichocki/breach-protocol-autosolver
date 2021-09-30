@@ -209,6 +209,11 @@ export const options: BreachProtocolOption[] = [
     description: 'Key that is used to navigate right in the grid.',
     defaultValue: VK_ARROW_RIGHT,
   },
+  {
+    id: 'focusOnError',
+    description: 'Focus BPA window on recognition error.',
+    defaultValue: true,
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {

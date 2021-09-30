@@ -72,6 +72,7 @@ export interface AppSettings
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
   resolveDelay: number;
+  focusOnError: boolean;
 }
 
 export interface AppStats {
