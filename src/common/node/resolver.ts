@@ -102,7 +102,6 @@ export class BreachProtocolMouseResolver extends BreachProtocolResolver {
   }
 
   async resolve(path: string[]) {
-    await this.robot.activateGameWindow();
     await this.robot.moveAway();
 
     for (const square of path) {
