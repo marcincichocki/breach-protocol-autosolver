@@ -2,7 +2,11 @@ import { app } from 'electron';
 import { Main } from './main';
 
 app.once('ready', () => {
-  const main = new Main();
+  if (app.requestSingleInstanceLock()) {
+    const main = new Main();
 
-  main.init();
+    main.init();
+  } else {
+    app.exit();
+  }
 });

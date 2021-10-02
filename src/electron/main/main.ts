@@ -204,7 +204,7 @@ export class Main {
     ipc.on('main:key-bind-change', this.onKeyBindChange.bind(this));
     ipc.on('main:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.on('main:get-resources-path', this.onGetResourcesPath.bind(this));
-    ipc.on('main:focus-renderer', this.onFocusRenderer.bind(this));
+    ipc.on('main:focus-renderer', this.showRenderer.bind(this));
     ipc.handle('main:show-message-box', this.onShowMessageBox);
     ipc.handle('main:validate-key-bind', this.onValidateKeyBind.bind(this));
 
@@ -216,10 +216,12 @@ export class Main {
       'will-navigate',
       this.onWillNavigate.bind(this)
     );
+
+    app.on('second-instance', this.showRenderer.bind(this));
   }
 
-  private onFocusRenderer() {
-    this.renderer.focus();
+  private showRenderer() {
+    this.renderer.show();
   }
 
   private onValidateKeyBind(e: IpcMainEvent, input: string) {
@@ -257,7 +259,6 @@ export class Main {
     this.tray = this.createTray();
 
     this.renderer.setSkipTaskbar(true);
-    this.renderer.hide();
   }
 
   private onRendererRestore() {
@@ -265,7 +266,6 @@ export class Main {
       return;
     }
 
-    this.renderer.show();
     this.renderer.setSkipTaskbar(false);
 
     this.tray.destroy();
