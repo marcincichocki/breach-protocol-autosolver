@@ -10,7 +10,6 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
-  BreachProtocolResultJSON,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
   SequenceCompareStrategy,
@@ -179,9 +178,10 @@ export class BreachProtocolWorker {
     this.updateStatus(WorkerStatus.Working);
 
     this.bpa = this.getAutosolver();
-    const entry = await this.bpa.analyze(true);
+    const entry = await this.bpa.analyze();
 
     if (entry.status === BreachProtocolStatus.Rejected) {
+      this.clearAnalyze();
       this.dispatch(new AddHistoryEntryAction(entry));
     }
 
@@ -196,16 +196,12 @@ export class BreachProtocolWorker {
     }
 
     this.updateStatus(WorkerStatus.Working);
+    this.clearAnalyze();
 
     const compareStrategy = this.getCompareStrategy(index);
     // if analyze is active use saved bpa, create new one otherwise
     const bpa = this.getAutosolver(compareStrategy);
     const entry = await bpa.solve();
-
-    // Clear analisis if it exists
-    if (this.bpa) {
-      this.bpa = null;
-    }
 
     if (
       entry.status === BreachProtocolStatus.Rejected &&
@@ -291,20 +287,16 @@ export class BreachProtocolWorker {
     this.bpa = null;
   }
 
-  private async resolve({ data }: Request<BreachProtocolResultJSON>) {
+  private async resolve({ data }: Request<string>) {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
 
     this.updateStatus(WorkerStatus.Working);
 
-    const entry = await this.bpa.solve(data);
+    const entry = await this.bpa.solve(data, true);
 
-    // Clear analisis if it exists
-    if (this.bpa) {
-      this.bpa = null;
-    }
-
+    this.clearAnalyze();
     this.dispatch(new AddHistoryEntryAction(entry));
     this.updateStatus(WorkerStatus.Ready);
   }

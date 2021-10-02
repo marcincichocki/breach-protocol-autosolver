@@ -12,7 +12,6 @@ import {
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
   BreachProtocolResult,
-  BreachProtocolResultJSON,
   FragmentId,
   SequenceCompareStrategy,
 } from '@/core';
@@ -37,7 +36,7 @@ export class BreachProtocolAutosolver {
 
   private recognitionResult: BreachProtocolRecognitionResult;
   private game: BreachProtocol;
-  private result: BreachProtocolResultJSON;
+  private result: BreachProtocolResult;
 
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
@@ -54,7 +53,7 @@ export class BreachProtocolAutosolver {
     private readonly compareStrategy: SequenceCompareStrategy
   ) {}
 
-  async analyze(solve?: boolean) {
+  async analyze(solveAll = true) {
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
@@ -71,20 +70,20 @@ export class BreachProtocolAutosolver {
       this.compareStrategy
     );
 
-    if (solve) {
+    if (solveAll) {
       this.results = this.game.solveAll();
 
       return this.toJSON();
     }
   }
 
-  async solve(result?: BreachProtocolResultJSON) {
+  async solve(id?: string, focusGame: boolean = false) {
     // only run this when it's clean state.
-    if (this.progress.has(BreachProtocolSolveProgress.Pending)) {
-      await this.analyze();
+    if (!this.progress.has(BreachProtocolSolveProgress.FragmentsValid)) {
+      await this.analyze(false);
     }
 
-    this.result = result || this.game.solve().toJSON();
+    this.result = this.getBreachProtocolResult(id);
 
     if (!this.result) {
       return this.reject();
@@ -92,9 +91,19 @@ export class BreachProtocolAutosolver {
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
 
+    if (focusGame) {
+      await this.robot.activateGameWindow();
+    }
+
     await this.resolveBreachProtocol(this.result);
 
     return this.resolve();
+  }
+
+  getBreachProtocolResult(id?: string) {
+    return id && this.results
+      ? this.results.find((r) => r.path.join('') === id)
+      : this.game.solve();
   }
 
   private getResolveDelayPromise() {
@@ -113,7 +122,7 @@ export class BreachProtocolAutosolver {
   private async resolveBreachProtocol({
     path,
     exitStrategy,
-  }: BreachProtocolResultJSON) {
+  }: BreachProtocolResult) {
     const resolver = this.getResolver();
 
     await this.resolveDelay;
@@ -158,7 +167,7 @@ export class BreachProtocolAutosolver {
     const bool = this.progress.has(BreachProtocolSolveProgress.SolutionFound);
 
     return {
-      result: bool ? this.result : null,
+      result: bool ? this.result.toJSON() : null,
     };
   }
 

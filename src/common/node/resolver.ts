@@ -83,7 +83,6 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
   }
 
   private async init() {
-    await this.robot.activateGameWindow();
     // If pointer is hovering over grid next commands can be uncertain.
     await this.robot.moveAway();
     // Select "A1" square.

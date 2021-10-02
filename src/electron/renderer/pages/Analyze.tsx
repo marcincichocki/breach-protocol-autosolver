@@ -94,7 +94,7 @@ export const Analyze = () => {
   async function resolve() {
     await asyncRequestDispatcher({
       type: 'ANALYZE_RESOLVE',
-      data: activeResult,
+      data: activeResult.path.join(''),
     });
   }
 
