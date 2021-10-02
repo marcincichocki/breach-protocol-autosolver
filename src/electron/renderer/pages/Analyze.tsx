@@ -132,7 +132,7 @@ export const Analyze = () => {
         </Col>
         <Col>
           <HistoryViewer entry={analyzedEntry} customResult={activeResult} />
-          <Row>
+          <Row style={{ marginTop: 'auto' }}>
             <FlatButton color="primary" onClick={discard}>
               Discard
             </FlatButton>

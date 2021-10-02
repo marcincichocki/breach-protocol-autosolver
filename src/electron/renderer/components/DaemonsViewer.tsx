@@ -46,9 +46,11 @@ export const DaemonsViewer = ({
             key={i}
             active={active}
             onMouseEnter={
-              active && onHighlight && (() => onHighlight({ from, to }))
+              active && onHighlight
+                ? () => onHighlight({ from, to })
+                : undefined
             }
-            onMouseLeave={onHighlight && (() => onHighlight(null))}
+            onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
             {d.map((s, j) => (
               <span key={j}>{s}</span>

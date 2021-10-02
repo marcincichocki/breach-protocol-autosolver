@@ -40,7 +40,9 @@ export const BufferSizeViewer = ({
   onHighlight,
 }: BufferSizeViewerProps) => {
   return (
-    <BufferSizeWrapper onMouseLeave={onHighlight && (() => onHighlight(null))}>
+    <BufferSizeWrapper
+      onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+    >
       {Array.from({ length: bufferSize }, (s, i) => {
         const isActive = result && i < result.path.length;
 
@@ -49,8 +51,9 @@ export const BufferSizeViewer = ({
             key={i}
             active={isActive}
             onMouseEnter={
-              onHighlight &&
-              (() => onHighlight(isActive ? { from: 0, to: i } : null))
+              onHighlight
+                ? () => onHighlight(isActive ? { from: 0, to: i } : null)
+                : undefined
             }
           >
             {result?.resolvedSequence.value[i]}
