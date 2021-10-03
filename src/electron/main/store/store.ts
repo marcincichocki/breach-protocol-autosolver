@@ -37,6 +37,24 @@ export class Store {
           store.set(result.id, '');
         }
       },
+      '>=2.2.0': (store) => {
+        const option = options.find((o) => o.id === 'keyBindAnalyze');
+        const value = normalize(option.defaultValue as string);
+        const conflict = [
+          'keyBind',
+          'keyBindWithPriority1',
+          'keyBindWithPriority2',
+          'keyBindWithPriority3',
+          'keyBindWithPriority4',
+          'keyBindWithPriority5',
+        ]
+          .map((k) => normalize(store.get(k)))
+          .some((v) => v === value);
+
+        if (conflict) {
+          store.set(option.id, '');
+        }
+      },
     },
   });
 

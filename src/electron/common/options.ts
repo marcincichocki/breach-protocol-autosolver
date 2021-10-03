@@ -91,7 +91,7 @@ export const options: BreachProtocolOption[] = [
   {
     id: 'keyBindAnalyze',
     description: 'Analyze breach protocol and display available sequences.',
-    defaultValue: '',
+    defaultValue: 'CommandOrControl+`',
   },
   {
     id: 'preserveSourceOnSuccess',
