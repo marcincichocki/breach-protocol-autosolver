@@ -94,7 +94,7 @@ export const Analyze = () => {
   async function resolve() {
     await asyncRequestDispatcher({
       type: 'ANALYZE_RESOLVE',
-      data: activeResult.path.join(''),
+      data: activeResult,
     });
   }
 
@@ -138,7 +138,7 @@ export const Analyze = () => {
             </FlatButton>
             <Spacer />
             <FlatButton color="accent" onClick={resolve}>
-              Solve for selected sequence
+              Solve with selected sequence
             </FlatButton>
           </Row>
         </Col>

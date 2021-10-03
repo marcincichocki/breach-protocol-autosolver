@@ -10,6 +10,7 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
+  BreachProtocolResultJSON,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
   SequenceCompareStrategy,
@@ -292,14 +293,15 @@ export class BreachProtocolWorker {
     this.bpa = null;
   }
 
-  private async resolve({ data }: Request<string>) {
+  private async resolve({ data }: Request<BreachProtocolResultJSON>) {
     if (this.status !== WorkerStatus.Ready) {
       return;
     }
 
     this.updateStatus(WorkerStatus.Working);
 
-    const entry = await this.bpa.solve(data, true);
+    const id = data.path.join('');
+    const entry = await this.bpa.solve(id, true);
 
     this.clearAnalyze();
     this.dispatch(new AddHistoryEntryAction(entry));
