@@ -29,7 +29,7 @@ export const Row = styled.div.attrs({ axis: 'horizontal' })`
   ${applyFlexProps};
 `;
 
-export const Col = styled(Row)`
+export const Col = styled(Row).attrs({ axis: 'vertical' })`
   flex-direction: column;
 `;
 
