@@ -183,11 +183,17 @@ export class BreachProtocolWorker {
     if (entry.status === BreachProtocolStatus.Rejected) {
       this.clearAnalyze();
       this.dispatch(new AddHistoryEntryAction(entry));
+
+      if (this.settings.focusOnError) {
+        this.focusRendererWindow();
+      }
+    } else {
+      this.dispatch(new SetAnalyzedEntry(entry));
+
+      this.focusRendererWindow();
     }
 
-    this.dispatch(new SetAnalyzedEntry(entry));
     this.updateStatus(WorkerStatus.Ready);
-    this.focusRendererWindow();
   }
 
   private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
@@ -199,7 +205,6 @@ export class BreachProtocolWorker {
     this.clearAnalyze();
 
     const compareStrategy = this.getCompareStrategy(index);
-    // if analyze is active use saved bpa, create new one otherwise
     const bpa = this.getAutosolver(compareStrategy);
     const entry = await bpa.solve();
 

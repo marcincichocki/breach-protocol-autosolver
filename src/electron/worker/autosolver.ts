@@ -133,7 +133,7 @@ export class BreachProtocolAutosolver {
     }
   }
 
-  toJSON(): HistoryEntry {
+  private toJSON(): HistoryEntry {
     return {
       ...this.getBaseState(),
       ...this.getFragmentsValidState(),
