@@ -137,7 +137,11 @@ export const Analyze = () => {
               Discard
             </FlatButton>
             <Spacer />
-            <FlatButton color="accent" onClick={resolve}>
+            <FlatButton
+              color="accent"
+              onClick={resolve}
+              disabled={!activeResult}
+            >
               Solve with selected sequence
             </FlatButton>
           </Row>
