@@ -39,7 +39,7 @@ const Sequence = styled.li<{ active?: boolean }>`
   border-color: ${(p) => (p.active ? 'var(--accent)' : 'var(--primary)')};
   padding: 1rem;
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
   display: flex;
   gap: 0.5rem;

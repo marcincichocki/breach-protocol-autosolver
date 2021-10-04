@@ -10,7 +10,7 @@ const BufferSizeWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 16px;
+  gap: 0.5rem;
 `;
 
 const BufferSizeItem = styled.div<{ active: boolean }>`
