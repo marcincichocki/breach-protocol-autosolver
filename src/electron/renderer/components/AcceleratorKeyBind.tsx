@@ -2,8 +2,8 @@ import * as k from '@/common/keyboard';
 import { KeyBind, KeyBindProps, Transformer } from './KeyBind';
 
 const keys: [string, string][] = [
-  [k.VK_CONTROL_RIGHT, 'CommandOrControl'],
   [k.VK_CONTROL_LEFT, 'CommandOrControl'],
+  [k.VK_CONTROL_RIGHT, 'CommandOrControl'],
   [k.VK_ALT_LEFT, 'Alt'],
   [k.VK_ALT_RIGHT, 'AltGr'],
   [k.VK_SHIFT_LEFT, 'Shift'],
