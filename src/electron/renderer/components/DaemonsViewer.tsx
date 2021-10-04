@@ -8,6 +8,7 @@ const DaemonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  gap: 0.5rem;
 `;
 
 const Daemon = styled.div<{ active: boolean }>`
@@ -15,6 +16,7 @@ const Daemon = styled.div<{ active: boolean }>`
   background: var(--background);
   display: inline-flex;
   gap: 0.5rem;
+  padding: 1rem;
   font-size: 1.5rem;
   color: ${({ active }) => (active ? 'var(--accent)' : '#1a2424')};
 `;
