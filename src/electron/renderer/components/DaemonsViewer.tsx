@@ -1,21 +1,21 @@
 import { BreachProtocolResultJSON, DaemonsRawData } from '@/core';
 import styled from 'styled-components';
+import { Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
 
 const DaemonsWrapper = styled.div`
-  border: 1px solid var(--primary);
-  background: var(--background);
-  padding: 10px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
 `;
 
 const Daemon = styled.div<{ active: boolean }>`
+  border: 1px solid var(--primary);
+  background: var(--background);
   display: inline-flex;
-  gap: 1rem;
-  font-size: 2rem;
+  gap: 0.5rem;
+  font-size: 1.5rem;
   color: ${({ active }) => (active ? 'var(--accent)' : '#1a2424')};
 `;
 
@@ -55,6 +55,8 @@ export const DaemonsViewer = ({
             {d.map((s, j) => (
               <span key={j}>{s}</span>
             ))}
+            <Spacer />
+            <span>#{i + 1}</span>
           </Daemon>
         );
       })}
