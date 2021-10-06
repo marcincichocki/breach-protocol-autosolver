@@ -1,3 +1,4 @@
+import { uniqueWith } from '@/common';
 import {
   AutoHotkeyRobot,
   BreachProtocolRobot,
@@ -286,7 +287,10 @@ export class BreachProtocolWorker {
   }
 
   private analyzeInit() {
-    return this.bpa.results.map((r) => r?.toJSON()).filter(Boolean);
+    return this.bpa.results
+      .filter(Boolean)
+      .map((r) => r.toJSON())
+      .filter(uniqueWith((r) => r.sequence.parts.sort().join('')));
   }
 
   private clearAnalyze() {
