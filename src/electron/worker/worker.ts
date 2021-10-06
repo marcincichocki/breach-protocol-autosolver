@@ -287,6 +287,7 @@ export class BreachProtocolWorker {
   }
 
   private analyzeInit() {
+    // NOTE: This filter does not guarantee that shortest sequence will be preserved.
     return this.bpa.results
       .filter(Boolean)
       .map((r) => r.toJSON())

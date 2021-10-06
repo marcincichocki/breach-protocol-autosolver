@@ -46,7 +46,11 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
   justify-content: center;
   align-items: center;
   color: ${({ active, highlight }) =>
-    active ? (highlight ? 'var(--background)' : 'var(--accent)') : '#1a2424'};
+    active
+      ? highlight
+        ? 'var(--background)'
+        : 'var(--accent)'
+      : 'var(--accent-darker)'};
   width: var(--square);
   height: var(--square);
   font-size: 24px;

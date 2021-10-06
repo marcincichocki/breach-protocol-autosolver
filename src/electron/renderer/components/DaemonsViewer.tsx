@@ -18,7 +18,8 @@ const Daemon = styled.div<{ active: boolean }>`
   gap: 0.5rem;
   padding: 1rem;
   font-size: 1.5rem;
-  color: ${({ active }) => (active ? 'var(--accent)' : '#1a2424')};
+  font-weight: 500;
+  color: ${({ active }) => (active ? 'var(--accent)' : 'var(--accent-darker)')};
 `;
 
 interface DaemonsViewerProps {

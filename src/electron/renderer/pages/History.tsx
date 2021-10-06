@@ -17,14 +17,13 @@ import { HistoryDetails } from './HistoryDetails';
 
 const HistoryList = styled.ul`
   overflow-y: auto;
-  width: 250px;
-  flex-shrink: 0;
   padding: 0;
   margin: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1 0 250px;
 `;
 
 const HistoryWrapper = styled.div`
@@ -120,7 +119,7 @@ export const History = () => {
           );
         })}
       </HistoryList>
-      <Col style={{ flexGrow: 1 }}>
+      <Col>
         <Switch>
           <Route path={`${path}/:entryId`} component={HistoryDetails} />
           <Redirect to={`/history/${history[0].uuid}`} />

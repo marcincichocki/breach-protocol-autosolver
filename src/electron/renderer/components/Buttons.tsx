@@ -79,6 +79,6 @@ export const ClearButton = styled.button`
   &:hover {
     color: var(--accent);
     border-color: var(--accent);
-    background: #367c7f;
+    background: var(--accent-dark);
   }
 `;

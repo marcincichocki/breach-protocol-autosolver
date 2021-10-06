@@ -33,16 +33,16 @@ const SequenceList = styled.ul`
 `;
 
 const Sequence = styled.li<{ active?: boolean }>`
-  background: ${(p) => (p.active ? '#367c7f' : 'var(--background)')};
+  background: ${(p) => (p.active ? 'var(--accent-dark)' : 'var(--background)')};
   color: var(--accent);
   border: 1px solid;
   border-color: ${(p) => (p.active ? 'var(--accent)' : 'var(--primary)')};
   padding: 1rem;
   font-weight: 500;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   cursor: pointer;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
 
   ${(p) =>
     !p.active &&

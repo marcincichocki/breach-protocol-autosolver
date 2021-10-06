@@ -39,7 +39,7 @@ const KeyBindContainer = styled.div`
   }
 
   &:focus-within {
-    background: #367c7f;
+    background: var(--accent-dark);
     border-color: var(--accent);
     color: var(--accent);
   }
