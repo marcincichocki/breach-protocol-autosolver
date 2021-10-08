@@ -8,27 +8,29 @@ import {
 } from './ocr';
 import { Daemon, Sequence } from './sequence';
 
-export const HEX_NUMBERS = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
-export type HexNumber = typeof HEX_NUMBERS[number];
 export const BUFFER_SIZE_MIN = 4;
 export const BUFFER_SIZE_MAX = 9;
 
-const values = HEX_NUMBERS.map((x, i) => String.fromCharCode(i + 97));
-const HEX_MAP = new Map(HEX_NUMBERS.map((k, i) => [k, values[i]]));
+export const HEX_CODES = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
+export type HexCode = typeof HEX_CODES[number];
 
 export type BufferSize = 4 | 5 | 6 | 7 | 8 | 9;
-export type GridRawData = HexNumber[];
-export type DaemonRawData = HexNumber[];
+export type GridRawData = HexCode[];
+export type DaemonRawData = HexCode[];
 export type DaemonsRawData = DaemonRawData[];
 
+const codesIterable = HEX_CODES.map(
+  (x, i) => [x, String.fromCharCode(i + 97)] as const
+);
+const regularHexMap = new Map(codesIterable);
+const inverseHexMap = new Map(codesIterable.map(([c, s]) => [s, c]));
+
 export function toHex(value: string) {
-  for (let [k, v] of HEX_MAP.entries()) {
-    if (v === value) return k;
-  }
+  return inverseHexMap.get(value);
 }
 
-export function fromHex(key: HexNumber) {
-  return HEX_MAP.get(key);
+export function fromHex(key: HexCode) {
+  return regularHexMap.get(key);
 }
 
 export const ROWS: string = 'ABCDEFGHI';

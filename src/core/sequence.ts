@@ -6,7 +6,7 @@ import {
   DaemonRawData,
   DaemonsRawData,
   fromHex,
-  HexNumber,
+  HexCode,
   toHex,
 } from './common';
 import {
@@ -75,7 +75,7 @@ export const memoizedFindOverlap = memoize(findOverlap);
 
 // interface will lose its index signature.
 export type SequenceJSON = {
-  value: HexNumber[];
+  value: HexCode[];
   parts: number[];
 };
 
@@ -91,7 +91,7 @@ export class Sequence implements Serializable {
     .map((d) => 2 * d.index + 1)
     .reduce((a, b) => a + b, 0);
 
-  constructor(public value: HexNumber[], public readonly parts: Daemon[]) {}
+  constructor(public value: HexCode[], public readonly parts: Daemon[]) {}
 
   toJSON(): SequenceJSON {
     return {

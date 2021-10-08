@@ -4,8 +4,8 @@ import {
   BufferSize,
   BUFFER_SIZE_MAX,
   BUFFER_SIZE_MIN,
-  HexNumber,
-  HEX_NUMBERS,
+  HexCode,
+  HEX_CODES,
 } from '../common';
 import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
@@ -150,7 +150,7 @@ export abstract class BreachProtocolOCRFragment<
 > extends BreachProtocolFragment<TData, TImage, TId> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
-  public static readonly correctionMap = new Map<string, HexNumber>([
+  public static readonly correctionMap = new Map<string, HexCode>([
     ['1E', '1C'],
     ['EE', '1C'],
     ['DE', '1C'],
@@ -204,7 +204,7 @@ export abstract class BreachProtocolOCRFragment<
       return BreachProtocolOCRFragment.correctionMap.get(symbol);
     }
 
-    return symbol as HexNumber;
+    return symbol as HexCode;
   }
 
   protected parseLine(line: string) {
@@ -223,7 +223,7 @@ export abstract class BreachProtocolOCRFragment<
 
     return symbols
       .filter(unique)
-      .every((s) => HEX_NUMBERS.includes(s as HexNumber));
+      .every((s) => HEX_CODES.includes(s as HexCode));
   }
 
   /** Get closest treshold value for given resolution. */

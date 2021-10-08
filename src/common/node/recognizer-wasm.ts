@@ -1,4 +1,4 @@
-import { BreachProtocolRecognizer, HEX_NUMBERS } from '@/core';
+import { BreachProtocolRecognizer, HEX_CODES } from '@/core';
 import { createScheduler, createWorker } from 'tesseract.js';
 
 export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
@@ -40,7 +40,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     await w.loadLanguage(lang);
     await w.initialize(lang);
     await w.setParameters({
-      tessedit_char_whitelist: HEX_NUMBERS.join(''),
+      tessedit_char_whitelist: HEX_CODES.join(''),
     });
 
     return w;
