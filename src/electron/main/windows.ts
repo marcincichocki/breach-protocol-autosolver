@@ -20,10 +20,16 @@ const workerOptions: BrowserWindowConstructorOptions = {
   },
 };
 
+const DEFAULT_WIDTH = 1280;
+const DEFAULT_HEIGHT = 720;
+
 const rendererOptions: BrowserWindowConstructorOptions = {
   show: false,
-  minWidth: 1280,
-  minHeight: 720,
+  minWidth: DEFAULT_WIDTH,
+  minHeight: DEFAULT_HEIGHT,
+  // In dev mode make more space for docked devtools.
+  width: process.env.NODE_ENV === 'development' ? 2000 : DEFAULT_WIDTH,
+  height: DEFAULT_HEIGHT,
   // Maximize and drag does not work on wsl2.
   frame: process.env.NODE_ENV === 'development' && isWsl,
   icon: join(__dirname, icon),
@@ -36,10 +42,6 @@ const rendererOptions: BrowserWindowConstructorOptions = {
 export function createBrowserWindows() {
   const worker = createWindow('worker', workerOptions);
   const renderer = createWindow('renderer', rendererOptions);
-
-  if (process.env.NODE_ENV === 'development') {
-    renderer.webContents.openDevTools();
-  }
 
   return { worker, renderer };
 }

@@ -46,6 +46,9 @@ export class Main {
   /** Hidden "worker" window, does all the heavy lifting(ocr, solving). */
   private worker: BrowserWindow = null;
 
+  /** Worker devtools. */
+  private devtools: BrowserWindow = null;
+
   private updater: BreachProtocolAutosolverUpdater = null;
 
   private readonly commandManager = this.registerCommands();
@@ -123,8 +126,20 @@ export class Main {
     this.renderer = renderer;
     this.worker = worker;
 
+    if (process.env.NODE_ENV === 'development') {
+      this.openDevTools();
+    }
+
     this.registerKeyBinds();
     this.registerListeners();
+  }
+
+  private openDevTools() {
+    this.devtools = new BrowserWindow();
+    this.worker.webContents.setDevToolsWebContents(this.devtools.webContents);
+
+    this.worker.webContents.openDevTools({ mode: 'detach' });
+    this.renderer.webContents.openDevTools();
   }
 
   private registerCommands() {
