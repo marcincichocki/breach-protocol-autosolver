@@ -60,28 +60,32 @@ describe('utils', () => {
   });
 
   it('should correctly recognize flags in bit mask', () => {
-    const mask = new BitMask(4); // 100
+    const mask = new BitMask(1); // 001
 
-    // M 100
-    // F 000
-    expect(mask.has(0)).toBe(false);
+    // M 001
+    expect(mask.has(1)).toBe(true);
+    expect(mask.has(2)).toBe(false);
+    expect(mask.has(4)).toBe(false);
 
-    mask.add(1);
+    // M 011
+    mask.add(2);
 
-    // M 101
-    // F 111
-    expect(mask.has(7)).toBe(true);
+    expect(mask.has(1)).toBe(true);
+    expect(mask.has(2)).toBe(true);
+    expect(mask.has(4)).toBe(false);
 
-    mask.delete(3);
+    // M 111
+    mask.add(4);
 
-    // M 010
-    // F 000
-    expect(mask.has(0)).toBe(false);
+    expect(mask.has(1)).toBe(true);
+    expect(mask.has(2)).toBe(true);
+    expect(mask.has(4)).toBe(true);
 
-    const m2 = new BitMask(0);
+    // M 011
+    mask.delete(4);
 
-    // M 000
-    // F 001
-    expect(m2.has(1)).toBe(false);
+    expect(mask.has(1)).toBe(true);
+    expect(mask.has(2)).toBe(true);
+    expect(mask.has(4)).toBe(false);
   });
 });

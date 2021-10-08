@@ -102,11 +102,11 @@ export class BitMask {
   constructor(public mask: number) {}
 
   has(flag: number) {
-    return (this.mask & flag) !== 0;
+    return (this.mask & flag) === flag;
   }
 
   add(flag: number) {
-    this.mask = this.mask | flag;
+    this.mask |= flag;
 
     return this;
   }
