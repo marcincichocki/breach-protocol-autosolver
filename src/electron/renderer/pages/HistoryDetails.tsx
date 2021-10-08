@@ -3,7 +3,7 @@ import {
   HistoryEntry,
   RemoveHistoryEntryAction,
 } from '@/electron/common';
-import { differenceInMilliseconds as diff, formatDuration } from 'date-fns';
+import { formatDuration } from 'date-fns';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
@@ -74,7 +74,7 @@ export const HistoryDetails = () => {
     return <HistoryDetailsError entry={entry} />;
   }
 
-  const seconds = diff(entry.finishedAt, entry.startedAt) / 1000;
+  const seconds = (entry.finishedAt - entry.startedAt) / 1000;
   const duration = formatDuration({ seconds });
 
   return (

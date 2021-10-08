@@ -46,7 +46,7 @@ function getStatsFromHistoryEntry(
     daemonsCount,
     daemonsSolvedCount,
   }: AppStats,
-  { status, fragments, result }: HistoryEntry
+  { status, fragments, result, startedAt, finishedAt }: HistoryEntry
 ) {
   if (status === BreachProtocolStatus.Resolved) {
     countSuccessSession += 1;
@@ -58,8 +58,12 @@ function getStatsFromHistoryEntry(
     // Add 5 seconds for every daemon and 2 seconds for every square.
     const sequenceDuration = daemonsSize * 5;
     const gridDuration = result.resolvedSequence.value.length * 2;
+    const timeElapsed = Math.round((finishedAt - startedAt) / 1000);
+    const timeSaved = sequenceDuration + gridDuration - timeElapsed;
 
-    approxDuration += sequenceDuration + gridDuration;
+    if (timeSaved > 0) {
+      approxDuration += timeSaved;
+    }
 
     daemonsCount += daemonsSize;
     daemonsSolvedCount += result.sequence.parts.length;
