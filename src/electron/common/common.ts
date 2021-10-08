@@ -117,8 +117,6 @@ export interface State {
   stats: AppStats;
 }
 
-export type Origin = 'worker' | 'renderer';
-
 export interface Action<T = any> {
   type: string;
   payload?: T;
@@ -129,13 +127,11 @@ export interface Request<T = any> {
   type: string;
   data?: T;
   uuid: string;
-  origin: Origin;
 }
 
 export interface Response<T = any> {
   data: T;
   uuid: string;
-  origin: Origin;
 }
 
 export interface TestThresholdData {

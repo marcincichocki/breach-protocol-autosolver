@@ -117,11 +117,11 @@ class RendererNativeDialog extends NativeDialog {
 export const nativeDialog = new RendererNativeDialog();
 
 export function asyncRequestDispatcher<TRes, TReq = any>(
-  action: Omit<Request<TReq>, 'origin' | 'uuid'>
+  action: Omit<Request<TReq>, 'uuid'>
 ) {
   return new Promise<TRes>((resolve) => {
     const uuid = uuidv4();
-    const req: Request<TReq> = { ...action, origin: 'renderer', uuid };
+    const req: Request<TReq> = { ...action, uuid };
 
     function onAsyncResponse(e: IpcRendererEvent, res: Response<TRes>) {
       if (res.uuid !== uuid) return;

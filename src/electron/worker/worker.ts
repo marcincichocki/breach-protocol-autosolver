@@ -149,7 +149,7 @@ export class BreachProtocolWorker {
 
   private async asyncRequestListener(event: IpcRendererEvent, req: Request) {
     const data = await this.handleAsyncRequest(req);
-    const res: Response = { data, uuid: req.uuid, origin: 'worker' };
+    const res: Response = { data, uuid: req.uuid };
 
     event.sender.send('main:async-response', res);
   }
