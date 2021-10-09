@@ -107,7 +107,7 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
 });
 
 const setUpdateStatus = createSetHandler<UpdateStatus>('updateStatus');
-const setAnalyzedEntry = createSetHandler<HistoryEntry>('analysis');
+const setAnalysis = createSetHandler<HistoryEntry>('analysis');
 
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
@@ -117,6 +117,6 @@ export const appReducer = createReducer<State>({
   [ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES]: removeLastNHistoryEntries,
   [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
   [ActionTypes.SET_UPDATE_STATUS]: setUpdateStatus,
-  [ActionTypes.SET_ANALYSIS]: setAnalyzedEntry,
-  [ActionTypes.CLEAR_ANALYSIS]: setAnalyzedEntry,
+  [ActionTypes.SET_ANALYSIS]: setAnalysis,
+  [ActionTypes.CLEAR_ANALYSIS]: setAnalysis,
 });
