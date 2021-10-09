@@ -109,9 +109,16 @@ export enum UpdateStatus {
   UpdateDownloaded,
 }
 
+export type AnalysisOrigin = 'file' | 'screenshot';
+
+export interface AnalysisOptions {
+  origin: AnalysisOrigin;
+}
+
 export interface Analysis {
   entry: HistoryEntry;
   results: BreachProtocolResultJSON[];
+  options: AnalysisOptions;
 }
 
 export interface State {

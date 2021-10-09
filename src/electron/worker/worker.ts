@@ -19,6 +19,7 @@ import {
   Action,
   ActionTypes,
   AddHistoryEntryAction,
+  AnalysisOptions,
   AppSettings,
   BreachProtocolStatus,
   ClearAnalysisAction,
@@ -68,6 +69,7 @@ export class BreachProtocolWorker {
       TEST_THRESHOLD: this.testThreshold.bind(this),
       ANALYZE_DISCARD: this.discardAnalyze.bind(this),
       ANALYZE_RESOLVE: this.createTask(this.analyzeResolve),
+      ANALYZE_FILE: this.createTask(this.analyzeFile),
     };
 
   private async loadAndSetActiveDisplay() {
@@ -215,7 +217,8 @@ export class BreachProtocolWorker {
       }
     } else {
       const results = this.bpa.getResults();
-      this.dispatch(new SetAnalysisAction({ entry, results }));
+      const options = this.getAnalysisOptions(file);
+      this.dispatch(new SetAnalysisAction({ entry, results, options }));
 
       this.focusRendererWindow();
     }
@@ -235,6 +238,12 @@ export class BreachProtocolWorker {
 
     this.dispatch(new AddHistoryEntryAction(entry));
     this.discardAnalysis();
+  }
+
+  private getAnalysisOptions(file?: string): AnalysisOptions {
+    const origin = file ? 'file' : 'screenshot';
+
+    return { origin };
   }
 
   private focusRendererWindow() {
@@ -297,6 +306,10 @@ export class BreachProtocolWorker {
 
   private async discardAnalyze() {
     this.discardAnalysis();
+  }
+
+  private async analyzeFile({ data }: Request<string>) {
+    await this.onWorkerAnazyle(null, data);
   }
 
   private async analyzeResolve({ data }: Request<BreachProtocolResultJSON>) {
