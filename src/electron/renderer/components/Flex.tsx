@@ -3,8 +3,6 @@ import styled from 'styled-components';
 interface FlexProps {
   gap?: boolean;
   grow?: boolean;
-  justifyContent?: string;
-  alignItems?: string;
   scroll?: boolean;
 }
 
@@ -17,8 +15,6 @@ function applyFlexProps(p: FlexProps & FlexAttrs) {
 
   if (p.gap) css += 'gap: 1rem;';
   if (p.grow) css += 'flex-grow: 1;';
-  if (p.justifyContent) css += `justify-content: ${p.justifyContent};`;
-  if (p.alignItems) css += `align-items: ${p.justifyContent};`;
   if (p.scroll) css += 'overflow-y: auto;';
 
   return css;
