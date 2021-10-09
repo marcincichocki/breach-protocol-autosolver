@@ -6,19 +6,17 @@ import { AnalyzeDetails } from './AnalyzeDetails';
 import { SelectSequence } from './SelectSequence';
 
 export const Analyze = () => {
-  const {
-    analysis: { entry, results },
-  } = useContext(StateContext);
+  const { analysis } = useContext(StateContext);
 
   return (
     <Col grow>
       <Row gap grow scroll>
         <Switch>
           <Route path="/analyze/select">
-            <SelectSequence entry={entry} results={results} />
+            <SelectSequence {...analysis} />
           </Route>
           <Route path="/analyze/details">
-            <AnalyzeDetails entry={entry} />
+            <AnalyzeDetails entry={analysis.entry} />
           </Route>
           <Redirect to="/analyze/select" />
         </Switch>
