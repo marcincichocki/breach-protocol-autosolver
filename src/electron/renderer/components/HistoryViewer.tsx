@@ -1,4 +1,5 @@
 import {
+  BreachProtocolResultJSON,
   isBufferSizeFragment,
   isDaemonsFragment,
   isGridFragment,
@@ -17,27 +18,28 @@ export interface Highlight {
 
 interface HistoryViewerProps {
   entry: HistoryEntry;
+  customResult?: BreachProtocolResultJSON;
 }
 
-export const HistoryViewer = ({ entry }: HistoryViewerProps) => {
+export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
   const { rawData: grid } = entry.fragments.find(isGridFragment);
   const { rawData: bufferSize } = entry.fragments.find(isBufferSizeFragment);
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
-  const { path } = entry.result;
+  const result = customResult || entry.result;
 
   return (
     <Row style={{ gap: '1rem' }}>
-      <GridViewer grid={grid} path={path} highlight={highlight} />
+      <GridViewer grid={grid} path={result?.path} highlight={highlight} />
       <Col style={{ flexGrow: 1, gap: '1rem' }}>
         <BufferSizeViewer
           bufferSize={bufferSize}
-          result={entry.result}
+          result={result}
           onHighlight={setHighlight}
         />
         <DaemonsViewer
           daemons={daemons}
-          result={entry.result}
+          result={result}
           onHighlight={setHighlight}
         />
       </Col>

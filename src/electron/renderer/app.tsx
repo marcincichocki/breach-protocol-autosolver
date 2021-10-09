@@ -1,7 +1,7 @@
 import { ActionTypes } from '@/electron/common';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useHistoryRedirect, useIpcState } from './common';
+import { useIpcEvent, useIpcState } from './common';
 import {
   Navigation,
   ReleaseNotesDialog,
@@ -9,7 +9,7 @@ import {
   ThirdPartyLicensesDialog,
   TitleBar,
 } from './components';
-import { Calibrate, Dashboard, History, Settings } from './pages';
+import { Analyze, Calibrate, Dashboard, History, Settings } from './pages';
 import { StateContext } from './state';
 
 const Main = styled.main`
@@ -19,15 +19,20 @@ const Main = styled.main`
   padding: 0 1rem;
 `;
 
+function useActionRedirect() {
+  const history = useHistory();
+
+  useIpcEvent([ActionTypes.SET_ANALYSIS], () => history.replace('/analyze'));
+  useIpcEvent(
+    [ActionTypes.ADD_HISTORY_ENTRY, ActionTypes.REMOVE_HISTORY_ENTRY],
+    () => history.replace('/history')
+  );
+}
+
 export const App = () => {
   const state = useIpcState();
 
-  // Change route when new history entry has been added.
-  // TODO: investigate re-renders
-  useHistoryRedirect([
-    ActionTypes.ADD_HISTORY_ENTRY,
-    ActionTypes.REMOVE_HISTORY_ENTRY,
-  ]);
+  useActionRedirect();
 
   return (
     <StateContext.Provider value={state}>
@@ -38,6 +43,7 @@ export const App = () => {
           <Route path="/history" component={History} />
           <Route path="/calibrate/:entryId" component={Calibrate} />
           <Route path="/settings" component={Settings} />
+          <Route path="/analyze" component={Analyze} />
           <Route path="/" component={Dashboard} />
         </Switch>
       </Main>

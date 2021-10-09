@@ -46,7 +46,11 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
   justify-content: center;
   align-items: center;
   color: ${({ active, highlight }) =>
-    active ? (highlight ? 'var(--background)' : 'var(--accent)') : '#1a2424'};
+    active
+      ? highlight
+        ? 'var(--background)'
+        : 'var(--accent)'
+      : 'var(--accent-darker)'};
   width: var(--square);
   height: var(--square);
   font-size: 24px;
@@ -138,7 +142,7 @@ const Line = styled.div<LineProps>`
 
 interface GridViewerProps {
   grid: GridRawData;
-  path: string[];
+  path?: string[];
   highlight?: Highlight;
 }
 
@@ -150,8 +154,8 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
     <GridWrapper size={size}>
       {squares.map((s, i) => {
         const value = grid[i];
-        const index = path.indexOf(s);
-        const isActive = index !== -1;
+        const index = path ? path.indexOf(s) : 0;
+        const isActive = path && index !== -1;
         const shouldRenderLine = index > 0;
         const shouldHighlight =
           highlight != null

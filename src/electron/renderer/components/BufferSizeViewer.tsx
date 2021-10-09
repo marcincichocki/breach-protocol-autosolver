@@ -1,21 +1,33 @@
-import { BreachProtocolResultJSON, BufferSize } from '@/core';
+import { BreachProtocolResultJSON, BufferSize, BUFFER_SIZE_MAX } from '@/core';
 import styled from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
-// TODO: extract Square and use it here.
+function getBufferSizeWrapperWidth() {
+  const square = `${BUFFER_SIZE_MAX} * var(--size)`;
+  const gap = `${BUFFER_SIZE_MAX - 1} * var(--gap)`;
+  const padding = `2 * var(--padding)`;
+
+  return [square, gap, padding].join(' + ');
+}
+
 const BufferSizeWrapper = styled.div`
+  --size: 40px;
+  --gap: 0.5rem;
+  --padding: 1rem;
+
   border: 1px solid var(--primary);
   background: var(--background);
-  padding: 16px;
+  padding: var(--padding);
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 16px;
+  gap: var(--gap);
+  width: calc(${getBufferSizeWrapperWidth()});
 `;
 
 const BufferSizeItem = styled.div<{ active: boolean }>`
-  width: 40px;
-  height: 40px;
+  width: var(--size);
+  height: var(--size);
   border: 1px
     ${({ active }) =>
       active ? 'solid var(--accent)' : 'dashed var(--primary)'};
@@ -30,7 +42,7 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
 
 interface BufferSizeViewerProps {
   bufferSize: BufferSize;
-  result: BreachProtocolResultJSON;
+  result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }
 
@@ -40,9 +52,11 @@ export const BufferSizeViewer = ({
   onHighlight,
 }: BufferSizeViewerProps) => {
   return (
-    <BufferSizeWrapper onMouseLeave={() => onHighlight(null)}>
+    <BufferSizeWrapper
+      onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+    >
       {Array.from({ length: bufferSize }, (s, i) => {
-        const isActive = i < result.path.length;
+        const isActive = result && i < result.path.length;
 
         return (
           <BufferSizeItem
@@ -54,7 +68,7 @@ export const BufferSizeViewer = ({
                 : undefined
             }
           >
-            {result.resolvedSequence.value[i]}
+            {result?.resolvedSequence.value[i]}
           </BufferSizeItem>
         );
       })}

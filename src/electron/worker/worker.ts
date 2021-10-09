@@ -10,8 +10,10 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
+  BreachProtocolResultJSON,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
+  SequenceCompareStrategy,
 } from '@/core';
 import {
   Action,
@@ -19,8 +21,10 @@ import {
   AddHistoryEntryAction,
   AppSettings,
   BreachProtocolStatus,
+  ClearAnalysisAction,
   Request,
   Response,
+  SetAnalysisAction,
   SetDisplaysAction,
   SetStatusAction,
   State,
@@ -42,6 +46,8 @@ interface BreachProtocolFragments {
   bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
 }
 
+type AsyncRequestListener = (req: Request) => Promise<any>;
+
 export class BreachProtocolWorker {
   private displays: ScreenshotDisplayOutput[] = null;
 
@@ -51,7 +57,18 @@ export class BreachProtocolWorker {
 
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
+  private bpa: BreachProtocolAutosolver = null;
+
   private status: WorkerStatus = WorkerStatus.Bootstrap;
+
+  private readonly asyncRequestListeners: Record<string, AsyncRequestListener> =
+    {
+      TEST_THRESHOLD_INIT: this.initTestThreshold.bind(this),
+      TEST_THRESHOLD_DISPOSE: this.disposeTestThreshold.bind(this),
+      TEST_THRESHOLD: this.testThreshold.bind(this),
+      ANALYZE_DISCARD: this.discardAnalyze.bind(this),
+      ANALYZE_RESOLVE: this.createTask(this.analyzeResolve),
+    };
 
   private async loadAndSetActiveDisplay() {
     this.displays = await listDisplays();
@@ -133,56 +150,95 @@ export class BreachProtocolWorker {
 
   async dispose() {
     ipc.removeAllListeners('worker:solve');
+    ipc.removeAllListeners('worker:analyze');
     ipc.removeAllListeners('worker:state');
     ipc.removeAllListeners('worker:async-request');
 
+    this.discardAnalysis();
     this.disposeTestThreshold();
 
     await WasmBreachProtocolRecognizer.terminateScheduler();
   }
 
   private registerListeners() {
-    ipc.on('worker:solve', this.onWorkerSolve.bind(this));
+    ipc.on('worker:solve', this.createTask(this.onWorkerSolve));
+    ipc.on('worker:analyze', this.createTask(this.onWorkerAnazyle));
     ipc.on('worker:state', this.onStateChanged.bind(this));
     ipc.on('worker:async-request', this.asyncRequestListener.bind(this));
   }
 
+  /** Wrap callback and return new task. */
+  private createTask<T extends (...args: any[]) => Promise<void>>(callback: T) {
+    return async (...args: any[]) => {
+      if (this.status !== WorkerStatus.Ready) {
+        return;
+      }
+
+      this.updateStatus(WorkerStatus.Working);
+
+      await callback.apply(this, args);
+
+      this.updateStatus(WorkerStatus.Ready);
+    };
+  }
+
   private async asyncRequestListener(event: IpcRendererEvent, req: Request) {
-    const data = await this.handleAsyncRequest(req);
+    const data = await this.asyncRequestListeners[req.type](req);
     const res: Response = { data, uuid: req.uuid };
 
     event.sender.send('main:async-response', res);
   }
 
-  private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
-    if (this.status !== WorkerStatus.Ready) {
-      return;
-    }
-
-    this.updateStatus(WorkerStatus.Working);
-
-    const robot = this.getRobot();
-    const compareStrategy = this.getCompareStrategy(index);
-    const bpa = new BreachProtocolAutosolver(
+  private getAutosolver(compareStrategy?: SequenceCompareStrategy) {
+    return new BreachProtocolAutosolver(
       this.settings,
-      robot,
+      this.getRobot(),
       this.player,
-      compareStrategy
+      compareStrategy ?? this.getCompareStrategy()
     );
-    const entry = await bpa.solve();
+  }
+
+  private async onWorkerAnazyle() {
+    this.discardAnalysis(true);
+    this.bpa = this.getAutosolver();
+
+    await this.bpa.analyze();
+
+    const entry = this.bpa.toHistoryEntry();
 
     if (entry.status === BreachProtocolStatus.Rejected) {
+      this.bpa = null;
+      this.dispatch(new AddHistoryEntryAction(entry));
+
+      if (this.settings.focusOnError) {
+        this.focusRendererWindow();
+      }
+    } else {
+      const results = this.bpa.getResults();
+      this.dispatch(new SetAnalysisAction({ entry, results }));
+
+      this.focusRendererWindow();
+    }
+  }
+
+  private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
+    const compareStrategy = this.getCompareStrategy(index);
+    const bpa = this.getAutosolver(compareStrategy);
+    const entry = await bpa.solve();
+
+    if (
+      entry.status === BreachProtocolStatus.Rejected &&
+      this.settings.focusOnError
+    ) {
       this.focusRendererWindow();
     }
 
     this.dispatch(new AddHistoryEntryAction(entry));
-    this.updateStatus(WorkerStatus.Ready);
+    this.discardAnalysis();
   }
 
   private focusRendererWindow() {
-    if (this.settings.focusOnError) {
-      ipc.send('main:focus-renderer');
-    }
+    ipc.send('main:focus-renderer');
   }
 
   private getCompareStrategy(index?: number) {
@@ -228,16 +284,30 @@ export class BreachProtocolWorker {
     }
   }
 
-  private async handleAsyncRequest(req: Request) {
-    switch (req.type) {
-      case 'TEST_THRESHOLD_INIT':
-        return this.initTestThreshold(req);
-      case 'TEST_THRESHOLD_DISPOSE':
-        return this.disposeTestThreshold();
-      case 'TEST_THRESHOLD':
-        return this.testThreshold(req);
-      default:
+  private discardAnalysis(skipClean?: boolean) {
+    if (this.bpa) {
+      this.bpa.dispose();
+      this.bpa = null;
+
+      if (!skipClean) {
+        this.dispatch(new ClearAnalysisAction());
+      }
     }
+  }
+
+  private async discardAnalyze() {
+    this.discardAnalysis();
+  }
+
+  private async analyzeResolve({ data }: Request<BreachProtocolResultJSON>) {
+    await this.bpa.resolve(data);
+
+    const entry = this.bpa.toHistoryEntry();
+
+    this.bpa = null;
+
+    this.dispatch(new AddHistoryEntryAction(entry));
+    this.dispatch(new ClearAnalysisAction());
   }
 
   private async initTestThreshold(req: Request<string>) {
@@ -255,7 +325,7 @@ export class BreachProtocolWorker {
     };
   }
 
-  private disposeTestThreshold() {
+  private async disposeTestThreshold() {
     this.fragments = null;
   }
 

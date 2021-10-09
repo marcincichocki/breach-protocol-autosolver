@@ -9,6 +9,8 @@ export const GlobalStyles = createGlobalStyle`
     --background: #161220;
     --background-disabled: #0c0c14;
     --accent: #5ff6ff;
+    --accent-dark: #367c7f;
+    --accent-darker: #213d3d;
     --success: #1bd676;
     --disabled: #bb9a95;
   }

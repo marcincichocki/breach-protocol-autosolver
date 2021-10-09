@@ -1,27 +1,30 @@
 import { BreachProtocolResultJSON, DaemonsRawData } from '@/core';
 import styled from 'styled-components';
+import { Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
 
 const DaemonsWrapper = styled.div`
-  border: 1px solid var(--primary);
-  background: var(--background);
-  padding: 10px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
+  gap: 0.5rem;
 `;
 
 const Daemon = styled.div<{ active: boolean }>`
+  border: 1px solid var(--primary);
+  background: var(--background);
   display: inline-flex;
-  gap: 1rem;
-  font-size: 2rem;
-  color: ${({ active }) => (active ? 'var(--accent)' : '#1a2424')};
+  gap: 0.5rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: ${({ active }) => (active ? 'var(--accent)' : 'var(--accent-darker)')};
 `;
 
 interface DaemonsViewerProps {
   daemons: DaemonsRawData;
-  result: BreachProtocolResultJSON;
+  result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }
 
@@ -30,16 +33,16 @@ export const DaemonsViewer = ({
   result,
   onHighlight,
 }: DaemonsViewerProps) => {
-  const { parts } = result.resolvedSequence;
-  const s = result.resolvedSequence.value.join('');
+  const { parts } = result?.resolvedSequence || {};
+  const s = result?.resolvedSequence.value.join('');
 
   return (
     <DaemonsWrapper>
       {daemons.map((d, i) => {
         const ds = d.join('');
-        const from = s.indexOf(ds) / 2;
-        const to = from + d.length - 1;
-        const active = parts.includes(i);
+        const from = result && s.indexOf(ds) / 2;
+        const to = result && from + d.length - 1;
+        const active = result && parts.includes(i);
 
         return (
           <Daemon
@@ -55,6 +58,8 @@ export const DaemonsViewer = ({
             {d.map((s, j) => (
               <span key={j}>{s}</span>
             ))}
+            <Spacer />
+            <span>#{i + 1}</span>
           </Daemon>
         );
       })}

@@ -49,7 +49,14 @@ const RemoveEntry = ({ entryId }: { entryId: string }) => (
 );
 
 const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
-  <Col style={{ margin: 'auto', alignItems: 'center', gap: '1rem' }}>
+  <Col
+    style={{
+      margin: 'auto',
+      alignItems: 'center',
+      gap: '1rem',
+      width: '916px',
+    }}
+  >
     <Heading2>Error while trying to gather data</Heading2>
     <FlatButton color="accent" as={Link} to={`/calibrate/${entry.uuid}/grid`}>
       Recalibrate

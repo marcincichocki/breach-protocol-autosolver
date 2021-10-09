@@ -26,15 +26,12 @@ export function createReducer<S = State>(
   };
 }
 
-const setDisplays: Handler<ScreenshotDisplayOutput[]> = (
-  state,
-  { payload }
-) => ({ ...state, displays: payload });
+function createSetHandler<T = any>(prop: keyof State): Handler<T, State> {
+  return (state, { payload }) => ({ ...state, [prop]: payload });
+}
 
-const setStatus: Handler<WorkerStatus> = (state, { payload }) => ({
-  ...state,
-  status: payload,
-});
+const setDisplays = createSetHandler<ScreenshotDisplayOutput[]>('displays');
+const setStatus = createSetHandler<WorkerStatus>('status');
 
 function getStatsFromHistoryEntry(
   {
@@ -109,10 +106,8 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
   history: state.history.filter((e) => e.uuid !== payload),
 });
 
-const setUpdateStatus: Handler<UpdateStatus> = (state, { payload }) => ({
-  ...state,
-  updateStatus: payload,
-});
+const setUpdateStatus = createSetHandler<UpdateStatus>('updateStatus');
+const setAnalysis = createSetHandler<HistoryEntry>('analysis');
 
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
@@ -122,4 +117,6 @@ export const appReducer = createReducer<State>({
   [ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES]: removeLastNHistoryEntries,
   [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
   [ActionTypes.SET_UPDATE_STATUS]: setUpdateStatus,
+  [ActionTypes.SET_ANALYSIS]: setAnalysis,
+  [ActionTypes.CLEAR_ANALYSIS]: setAnalysis,
 });
