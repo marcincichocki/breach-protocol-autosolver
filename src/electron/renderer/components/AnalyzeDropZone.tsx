@@ -39,8 +39,8 @@ const DropZoneTitle = styled.h1`
 `;
 
 const getErrorDetail = createErrorMessageDispenser({
-  isImage: 'File should be an image.',
-  isSupportedFormat: 'File should be in png or jpg format.',
+  isImage: 'File must be an image.',
+  isSupportedFormat: 'File must be in png or jpg format.',
 });
 
 function useDrag() {
