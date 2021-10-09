@@ -109,6 +109,11 @@ export enum UpdateStatus {
   UpdateDownloaded,
 }
 
+export interface Analysis {
+  entry: HistoryEntry;
+  results: BreachProtocolResultJSON[];
+}
+
 export interface State {
   history: HistoryEntry[];
   displays: ScreenshotDisplayOutput[];
@@ -116,7 +121,7 @@ export interface State {
   status: WorkerStatus;
   updateStatus: UpdateStatus;
   stats: AppStats;
-  analyzedEntry: HistoryEntry;
+  analysis: Analysis;
 }
 
 export interface Action<T = any> {

@@ -24,7 +24,7 @@ import {
   BreachProtocolStatus,
   Request,
   Response,
-  SetAnalyzedEntry,
+  SetAnalysisAction,
   SetDisplaysAction,
   SetStatusAction,
   State,
@@ -190,7 +190,7 @@ export class BreachProtocolWorker {
         this.focusRendererWindow();
       }
     } else {
-      this.dispatch(new SetAnalyzedEntry(entry));
+      this.dispatch(new SetAnalysisAction({ entry, results: [] }));
 
       this.focusRendererWindow();
     }

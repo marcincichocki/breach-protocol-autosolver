@@ -71,11 +71,13 @@ function useFetchResults() {
 }
 
 export const Analyze = () => {
-  const { analyzedEntry } = useContext(StateContext);
+  const {
+    analysis: { entry },
+  } = useContext(StateContext);
   const results = useFetchResults();
   const [activeResult, setActiveResult] =
     useState<BreachProtocolResultJSON>(null);
-  const { rawData: daemons } = analyzedEntry.fragments.find(isDaemonsFragment);
+  const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const history = useHistory();
 
   function isActiveSequence(result: BreachProtocolResultJSON) {
@@ -131,7 +133,7 @@ export const Analyze = () => {
           )}
         </Col>
         <Col>
-          <HistoryViewer entry={analyzedEntry} customResult={activeResult} />
+          <HistoryViewer entry={entry} customResult={activeResult} />
           <Row style={{ marginTop: 'auto' }}>
             <FlatButton color="primary" onClick={discard}>
               Discard

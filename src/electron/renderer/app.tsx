@@ -22,9 +22,7 @@ const Main = styled.main`
 function useActionRedirect() {
   const history = useHistory();
 
-  useIpcEvent([ActionTypes.SET_ANALYZED_ENTRY], () =>
-    history.replace('/analyze')
-  );
+  useIpcEvent([ActionTypes.SET_ANALYSIS], () => history.replace('/analyze'));
   useIpcEvent(
     [ActionTypes.ADD_HISTORY_ENTRY, ActionTypes.REMOVE_HISTORY_ENTRY],
     () => history.replace('/history')

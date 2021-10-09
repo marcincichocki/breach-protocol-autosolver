@@ -10,7 +10,7 @@ const onChannels = [
   ActionTypes.UPDATE_SETTINGS,
   ActionTypes.ADD_HISTORY_ENTRY,
   ActionTypes.REMOVE_HISTORY_ENTRY,
-  ActionTypes.SET_ANALYZED_ENTRY,
+  ActionTypes.SET_ANALYSIS,
 ] as const;
 
 export type IpcOnChannels = typeof onChannels[number];
