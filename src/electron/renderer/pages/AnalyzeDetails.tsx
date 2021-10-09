@@ -1,6 +1,6 @@
 import { FragmentId } from '@/core';
 import { HistoryEntry } from '@/electron/common';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import styled from 'styled-components';
 import { fromCamelCase } from '../common';
 import { Col, FragmentPreview, Row, Spacer } from '../components';
@@ -37,7 +37,7 @@ export const AnalyzeDetails = ({ entry }: { entry: HistoryEntry }) => {
   const [fragmentId, setFragmentId] = useState<FragmentId>('grid');
   const fragment = entry.fragments.find((f) => f.id === fragmentId);
 
-  function changeEntry(event: any, id: FragmentId) {
+  function changeEntry(event: MouseEvent, id: FragmentId) {
     event.preventDefault();
 
     setFragmentId(id);
