@@ -1,4 +1,5 @@
 export * from './AcceleratorKeyBind';
+export * from './AnalyzeDropZone';
 export * from './AutoSolverSettings';
 export * from './BufferSizeViewer';
 export * from './Buttons';
