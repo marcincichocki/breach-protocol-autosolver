@@ -211,9 +211,18 @@ export type BreachProtocolCommands =
   | 'worker:solve.withPriority5'
   | 'worker:analyze';
 
-export interface KeyBindValidationErrors {
+interface ValidationErrors {
+  [key: string]: boolean;
+}
+
+export interface KeyBindValidationErrors extends ValidationErrors {
   isValidAccelerator: boolean;
   isUnique: boolean;
+}
+
+export interface DropZoneFileValidationErrors extends ValidationErrors {
+  isSupportedFormat: boolean;
+  isImage: boolean;
 }
 
 export function normalizeAccelerator(input: Accelerator): Accelerator {

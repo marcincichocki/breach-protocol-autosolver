@@ -18,6 +18,7 @@ export type IpcOnChannels = typeof onChannels[number];
 const invokeChannels = [
   'main:show-message-box',
   'main:validate-key-bind',
+  'main:validate-file',
 ] as const;
 
 export type IpcInvokeChannels = typeof invokeChannels[number];
@@ -30,7 +31,6 @@ const sendChannels = [
   'main:key-bind-change',
   'main:save-snapshot',
   'main:async-request',
-  'main:analyze-file',
 ] as const;
 
 export type IpcSendChannels = typeof sendChannels[number];

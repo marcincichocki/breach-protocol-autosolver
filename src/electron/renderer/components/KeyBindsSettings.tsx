@@ -5,7 +5,11 @@ import {
   WorkerStatus,
 } from '@/electron/common';
 import type { Accelerator } from 'electron';
-import { nativeDialog, updateWorkerStatus } from '../common';
+import {
+  createErrorMessageDispenser,
+  nativeDialog,
+  updateWorkerStatus,
+} from '../common';
 import { AcceleratorKeyBind } from './AcceleratorKeyBind';
 import { Field, Label } from './Form';
 import { Section } from './Section';
@@ -28,18 +32,11 @@ function changeKeyBind(accelerator: Accelerator, name: keyof KeyBindsConfig) {
   api.send('main:key-bind-change', id, accelerator);
 }
 
-const messages: Record<keyof KeyBindValidationErrors, string> = {
+const getErrorDetail = createErrorMessageDispenser({
   isValidAccelerator:
     'Key bind can contain multiple modifiers and a single key code.',
   isUnique: 'Key bind must be unique.',
-};
-
-function getErrorDetail(errors: KeyBindValidationErrors) {
-  const keys = Object.keys(errors) as (keyof KeyBindValidationErrors)[];
-  const key = keys.find((k) => !errors[k]);
-
-  return messages[key];
-}
+});
 
 async function validateKeyBind(
   value: Electron.Accelerator,

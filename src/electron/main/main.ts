@@ -27,6 +27,7 @@ import {
   Action,
   ActionTypes,
   BreachProtocolCommands,
+  DropZoneFileValidationErrors,
   PackageDetails,
   WorkerStatus,
 } from '../common';
@@ -223,9 +224,9 @@ export class Main {
     ipc.on('main:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.on('main:get-resources-path', this.onGetResourcesPath.bind(this));
     ipc.on('main:focus-renderer', this.showRenderer.bind(this));
-    ipc.on('main:analyze-file', this.onAnalyzeFile.bind(this));
     ipc.handle('main:show-message-box', this.onShowMessageBox);
     ipc.handle('main:validate-key-bind', this.onValidateKeyBind.bind(this));
+    ipc.handle('main:validate-file', this.onValidateFile.bind(this));
 
     this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
@@ -239,8 +240,15 @@ export class Main {
     app.on('second-instance', this.showRenderer.bind(this));
   }
 
-  private onAnalyzeFile(e: IpcMainEvent, file: string) {
-    this.onWorkerAnalyze(file);
+  private onValidateFile(
+    e: IpcMainEvent,
+    mime: string
+  ): DropZoneFileValidationErrors {
+    const [type, subtype] = mime.split('/');
+    const isImage = type === 'image';
+    const isSupportedFormat = subtype === 'jpeg' || subtype === 'png';
+
+    return isImage && isSupportedFormat ? null : { isImage, isSupportedFormat };
   }
 
   private showRenderer() {
