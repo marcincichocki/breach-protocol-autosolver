@@ -222,8 +222,6 @@ export class BreachProtocolWorker {
   }
 
   private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
-    this.discardAnalysis();
-
     const compareStrategy = this.getCompareStrategy(index);
     const bpa = this.getAutosolver(compareStrategy);
     const entry = await bpa.solve();
@@ -236,6 +234,7 @@ export class BreachProtocolWorker {
     }
 
     this.dispatch(new AddHistoryEntryAction(entry));
+    this.discardAnalysis();
   }
 
   private focusRendererWindow() {
