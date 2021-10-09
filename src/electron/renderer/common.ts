@@ -10,7 +10,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import type { IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { v4 as uuidv4 } from 'uuid';
 import type { IpcOnChannels } from './preload/ipc';
@@ -92,12 +92,6 @@ export function useIpcState() {
 
 export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
-}
-
-export function useHistoryRedirect(channels: IpcOnChannels[]) {
-  const history = useHistory();
-
-  useIpcEvent(channels, () => history.replace('/history'));
 }
 
 export function createRootElement(id: string) {
