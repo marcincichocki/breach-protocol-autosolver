@@ -1,4 +1,4 @@
-import { BitMask, sleep } from '@/common';
+import { BitMask, sleep, uniqueWith } from '@/common';
 import {
   BreachProtocolKeyboardResolver,
   BreachProtocolMouseResolver,
@@ -11,7 +11,7 @@ import {
   BreachProtocol,
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
-  BreachProtocolResult,
+  BreachProtocolResultJSON,
   FragmentId,
   SequenceCompareStrategy,
 } from '@/core';
@@ -36,15 +36,12 @@ export class BreachProtocolAutosolver {
 
   private recognitionResult: BreachProtocolRecognitionResult;
   private game: BreachProtocol;
-  private result: BreachProtocolResult;
+  private result: BreachProtocolResultJSON;
 
   private status: BreachProtocolStatus = BreachProtocolStatus.Pending;
   private progress = new BitMask(BreachProtocolSolveProgress.Pending);
 
   private resolveDelay: Promise<unknown>;
-
-  /** All potential results. */
-  results: BreachProtocolResult[];
 
   constructor(
     private readonly settings: AppSettings,
@@ -53,7 +50,46 @@ export class BreachProtocolAutosolver {
     private readonly compareStrategy: SequenceCompareStrategy
   ) {}
 
-  async analyze(solveAll = true) {
+  toHistoryEntry(): HistoryEntry {
+    return {
+      ...this.getBaseState(),
+      ...this.getFragmentsValidState(),
+      ...this.getSolutionFoundState(),
+    };
+  }
+
+  dispose() {
+    this.removeSourceImage();
+
+    if (this.status === BreachProtocolStatus.Pending) {
+      this.finishWithStatus(BreachProtocolStatus.Rejected);
+    }
+  }
+
+  /** Get every unique result. */
+  getResults() {
+    return this.progress.has(BreachProtocolSolveProgress.FragmentsValid)
+      ? this.game
+          .solveAll()
+          // Not every sequence have a solution.
+          .filter(Boolean)
+          .map((r) => r.toJSON())
+          // This filter does not guarantee that shortest sequence will be preserved.
+          .filter(uniqueWith((r) => r.sequence.parts.sort().join('')))
+      : [];
+  }
+
+  async solve() {
+    await this.analyze();
+    await this.findSolution();
+    await this.resolve();
+
+    return this.toHistoryEntry();
+  }
+
+  async analyze() {
+    if (this.status !== BreachProtocolStatus.Pending) return;
+
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
@@ -61,49 +97,49 @@ export class BreachProtocolAutosolver {
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.isValid) {
-      return this.reject();
+      return this.rejectJob();
     }
 
-    this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
     this.game = new BreachProtocol(
       this.recognitionResult.rawData,
       this.compareStrategy
     );
 
-    if (solveAll) {
-      this.results = this.game.solveAll();
-
-      return this.toJSON();
-    }
+    this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
   }
 
-  async solve(id?: string, focusGame: boolean = false) {
-    // only run this when it's clean state.
-    if (!this.progress.has(BreachProtocolSolveProgress.FragmentsValid)) {
-      await this.analyze(false);
-    }
+  async resolve(result?: BreachProtocolResultJSON) {
+    if (this.status !== BreachProtocolStatus.Pending) return;
 
-    this.result = this.getBreachProtocolResult(id);
+    if (result) {
+      this.progress.add(BreachProtocolSolveProgress.SolutionFound);
+      this.result = result;
 
-    if (!this.result) {
-      return this.reject();
-    }
-
-    this.progress.add(BreachProtocolSolveProgress.SolutionFound);
-
-    if (focusGame) {
       await this.robot.activateGameWindow();
     }
 
-    await this.resolveBreachProtocol(this.result);
+    const resolver = this.getResolver();
 
-    return this.resolve();
+    await this.resolveDelay;
+    await resolver.resolve(this.result.path);
+
+    if (this.settings.autoExit) {
+      await resolver.handleExit(this.result.exitStrategy);
+    }
+
+    this.resolveJob();
   }
 
-  getBreachProtocolResult(id?: string) {
-    return id && this.results
-      ? this.results.find((r) => r.path.join('') === id)
-      : this.game.solve();
+  private async findSolution() {
+    if (this.status !== BreachProtocolStatus.Pending) return;
+
+    this.result = this.game.solve().toJSON();
+
+    if (!this.result) {
+      return this.rejectJob();
+    }
+
+    this.progress.add(BreachProtocolSolveProgress.SolutionFound);
   }
 
   private getResolveDelayPromise() {
@@ -117,28 +153,6 @@ export class BreachProtocolAutosolver {
           this.robot,
           this.recognitionResult.positionSquareMap
         );
-  }
-
-  private async resolveBreachProtocol({
-    path,
-    exitStrategy,
-  }: BreachProtocolResult) {
-    const resolver = this.getResolver();
-
-    await this.resolveDelay;
-    await resolver.resolve(path);
-
-    if (this.settings.autoExit) {
-      await resolver.handleExit(exitStrategy);
-    }
-  }
-
-  private toJSON(): HistoryEntry {
-    return {
-      ...this.getBaseState(),
-      ...this.getFragmentsValidState(),
-      ...this.getSolutionFoundState(),
-    };
   }
 
   private getBaseState() {
@@ -167,17 +181,17 @@ export class BreachProtocolAutosolver {
     const bool = this.progress.has(BreachProtocolSolveProgress.SolutionFound);
 
     return {
-      result: bool ? this.result.toJSON() : null,
+      result: bool ? this.result : null,
     };
   }
 
-  private async reject() {
+  private async rejectJob() {
     await this.player.play('error');
 
     return this.finishWithStatus(BreachProtocolStatus.Rejected);
   }
 
-  private resolve() {
+  private resolveJob() {
     if (!this.settings.preserveSourceOnSuccess) {
       this.removeSourceImage();
     }
@@ -188,8 +202,6 @@ export class BreachProtocolAutosolver {
   private finishWithStatus(status: BreachProtocolStatus) {
     this.status = status;
     this.finishedAt = Date.now();
-
-    return this.toJSON();
   }
 
   private removeSourceImage() {
@@ -214,8 +226,8 @@ export class BreachProtocolAutosolver {
     };
   }
 
-  private async recognize() {
-    const image = sharp(this.fileName);
+  private async recognize(input: string | Buffer = this.fileName) {
+    const image = sharp(input);
     const { downscaleSource } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,
