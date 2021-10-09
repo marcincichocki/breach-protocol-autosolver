@@ -110,7 +110,7 @@ class RendererNativeDialog extends NativeDialog {
 
 export const nativeDialog = new RendererNativeDialog();
 
-export function asyncRequestDispatcher<TRes, TReq = any>(
+export function dispatchAsyncRequest<TRes, TReq = any>(
   action: Omit<Request<TReq>, 'uuid'>
 ) {
   return new Promise<TRes>((resolve) => {
@@ -132,4 +132,15 @@ export function asyncRequestDispatcher<TRes, TReq = any>(
 
 export function updateWorkerStatus(status: WorkerStatus) {
   api.dispatch(new SetStatusAction(status));
+}
+
+export function createErrorMessageDispenser<T extends Record<string, string>>(
+  messages: T
+) {
+  return (errors: Record<keyof T, boolean>) => {
+    const keys = Object.keys(errors);
+    const key = keys.find((k) => !errors[k]);
+
+    return messages[key];
+  };
 }

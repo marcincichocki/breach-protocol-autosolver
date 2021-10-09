@@ -3,6 +3,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useIpcEvent, useIpcState } from './common';
 import {
+  AnalyzeDropZone,
   Navigation,
   ReleaseNotesDialog,
   StatusBar,
@@ -49,6 +50,7 @@ export const App = () => {
       </Main>
       <ReleaseNotesDialog />
       <ThirdPartyLicensesDialog />
+      <AnalyzeDropZone />
       <StatusBar />
     </StateContext.Provider>
   );

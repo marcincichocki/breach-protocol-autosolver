@@ -18,6 +18,7 @@ export type IpcOnChannels = typeof onChannels[number];
 const invokeChannels = [
   'main:show-message-box',
   'main:validate-key-bind',
+  'main:validate-file',
 ] as const;
 
 export type IpcInvokeChannels = typeof invokeChannels[number];

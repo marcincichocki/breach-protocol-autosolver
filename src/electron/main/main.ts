@@ -27,6 +27,7 @@ import {
   Action,
   ActionTypes,
   BreachProtocolCommands,
+  DropZoneFileValidationErrors,
   PackageDetails,
   WorkerStatus,
 } from '../common';
@@ -150,9 +151,7 @@ export class Main {
       .register('worker:solve.withPriority3', () => this.onWorkerSolve(2))
       .register('worker:solve.withPriority4', () => this.onWorkerSolve(3))
       .register('worker:solve.withPriority5', () => this.onWorkerSolve(4))
-      .register('worker:analyze', () => {
-        this.worker.webContents.send('worker:analyze');
-      });
+      .register('worker:analyze', () => this.onWorkerAnalyze());
   }
 
   private getKeybindings(): {
@@ -227,6 +226,7 @@ export class Main {
     ipc.on('main:focus-renderer', this.showRenderer.bind(this));
     ipc.handle('main:show-message-box', this.onShowMessageBox);
     ipc.handle('main:validate-key-bind', this.onValidateKeyBind.bind(this));
+    ipc.handle('main:validate-file', this.onValidateFile.bind(this));
 
     this.renderer.once('ready-to-show', this.onRendererReadyToShow.bind(this));
     this.renderer.once('closed', this.onRendererClosed.bind(this));
@@ -238,6 +238,17 @@ export class Main {
     );
 
     app.on('second-instance', this.showRenderer.bind(this));
+  }
+
+  private onValidateFile(
+    e: IpcMainEvent,
+    mime: string
+  ): DropZoneFileValidationErrors {
+    const [type, subtype] = mime.split('/');
+    const isImage = type === 'image';
+    const isSupportedFormat = subtype === 'jpeg' || subtype === 'png';
+
+    return isImage && isSupportedFormat ? null : { isImage, isSupportedFormat };
   }
 
   private showRenderer() {
@@ -296,6 +307,10 @@ export class Main {
 
     this.renderer.removeAllListeners();
     this.worker.removeAllListeners();
+  }
+
+  private onWorkerAnalyze(file?: string) {
+    this.worker.webContents.send('worker:analyze', file);
   }
 
   private onWorkerSolve(index?: number) {

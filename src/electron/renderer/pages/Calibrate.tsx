@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Route, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-  asyncRequestDispatcher,
+  dispatchAsyncRequest,
   fromCamelCase,
   transformTimestamp,
   useHistoryEntryFromParam,
@@ -22,10 +22,10 @@ const Heading = styled.h1`
 function useContainerInit(fileName: string) {
   useEffect(() => {
     // FIXME: tiny race condition. Disable button until fragments are ready.
-    asyncRequestDispatcher({ type: 'TEST_THRESHOLD_INIT', data: fileName });
+    dispatchAsyncRequest({ type: 'TEST_THRESHOLD_INIT', data: fileName });
 
     return () => {
-      asyncRequestDispatcher({ type: 'TEST_THRESHOLD_DISPOSE' });
+      dispatchAsyncRequest({ type: 'TEST_THRESHOLD_DISPOSE' });
     };
   }, []);
 }

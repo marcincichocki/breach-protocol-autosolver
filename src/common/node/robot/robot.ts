@@ -99,7 +99,7 @@ export abstract class BreachProtocolRobot {
     return screenshot({ format, screen, filename }) as Promise<string>;
   }
 
-  private getScreenShotPath(ext: string) {
+  getScreenShotPath(ext: string) {
     const now = new Date().toString();
     const name = sanitize(now, { replacement: ' ' });
 

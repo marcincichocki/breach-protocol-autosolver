@@ -3,7 +3,7 @@ import { Analysis, WorkerStatus } from '@/electron/common';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { asyncRequestDispatcher } from '../common';
+import { dispatchAsyncRequest } from '../common';
 import { Col, FlatButton, HistoryViewer, Row, Spacer } from '../components';
 import { StateContext } from '../state';
 
@@ -46,13 +46,18 @@ function toUniqueValue(result: BreachProtocolResultJSON) {
 
 interface SelectSequenceProps extends Analysis {}
 
-export const SelectSequence = ({ entry, results }: SelectSequenceProps) => {
+export const SelectSequence = ({
+  entry,
+  results,
+  options,
+}: SelectSequenceProps) => {
   const { status } = useContext(StateContext);
   const [activeResult, setActiveResult] =
     useState<BreachProtocolResultJSON>(null);
   const history = useHistory();
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const isWorking = status === WorkerStatus.Working;
+  const fromFile = options.origin === 'file';
 
   useEffect(() => {
     setActiveResult(null);
@@ -68,11 +73,11 @@ export const SelectSequence = ({ entry, results }: SelectSequenceProps) => {
   async function discard() {
     history.replace('/');
 
-    await asyncRequestDispatcher({ type: 'ANALYZE_DISCARD' });
+    await dispatchAsyncRequest({ type: 'ANALYZE_DISCARD' });
   }
 
   async function resolve() {
-    await asyncRequestDispatcher({
+    await dispatchAsyncRequest({
       type: 'ANALYZE_RESOLVE',
       data: activeResult,
     });
@@ -104,13 +109,15 @@ export const SelectSequence = ({ entry, results }: SelectSequenceProps) => {
             Discard
           </FlatButton>
           <Spacer />
-          <FlatButton
-            color="accent"
-            onClick={resolve}
-            disabled={!activeResult || isWorking}
-          >
-            Solve with selected sequence
-          </FlatButton>
+          {!fromFile && (
+            <FlatButton
+              color="accent"
+              onClick={resolve}
+              disabled={!activeResult || isWorking}
+            >
+              Solve with selected sequence
+            </FlatButton>
+          )}
         </Row>
       </Col>
     </>
