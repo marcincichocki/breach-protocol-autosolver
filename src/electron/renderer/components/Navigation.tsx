@@ -51,9 +51,6 @@ export const Navigation = () => {
   const match = useRouteMatch<{ entryId: string }>('/calibrate/:entryId');
   const isAnalyzePage = useRouteMatch('/analyze');
 
-  // Navigation is removed so user must discard or solve BP.
-  if (isAnalyzePage) return null;
-
   return (
     <Nav>
       {match && (
@@ -61,19 +58,30 @@ export const Navigation = () => {
           <MdKeyboardBackspace size="2rem" />
         </GoBackLink>
       )}
-      <List>
-        <ListItem>
-          <NavLink exact to="/">
-            Dashboard
-          </NavLink>
-        </ListItem>
-        <ListItem>
-          <NavLink to="/history">History</NavLink>
-        </ListItem>
-        <ListItem>
-          <NavLink to="/settings">Settings</NavLink>
-        </ListItem>
-      </List>
+      {isAnalyzePage ? (
+        <List>
+          <ListItem>
+            <NavLink to="/analyze/select">Select sequence</NavLink>
+          </ListItem>
+          <ListItem>
+            <NavLink to="/analyze/details">Details</NavLink>
+          </ListItem>
+        </List>
+      ) : (
+        <List>
+          <ListItem>
+            <NavLink exact to="/">
+              Dashboard
+            </NavLink>
+          </ListItem>
+          <ListItem>
+            <NavLink to="/history">History</NavLink>
+          </ListItem>
+          <ListItem>
+            <NavLink to="/settings">Settings</NavLink>
+          </ListItem>
+        </List>
+      )}
     </Nav>
   );
 };
