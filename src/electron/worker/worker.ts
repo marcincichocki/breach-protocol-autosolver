@@ -198,11 +198,11 @@ export class BreachProtocolWorker {
     );
   }
 
-  private async onWorkerAnazyle() {
+  private async onWorkerAnazyle(e: IpcRendererEvent, file?: string) {
     this.discardAnalysis(true);
     this.bpa = this.getAutosolver();
 
-    await this.bpa.analyze();
+    await this.bpa.analyze(file);
 
     const entry = this.bpa.toHistoryEntry();
 

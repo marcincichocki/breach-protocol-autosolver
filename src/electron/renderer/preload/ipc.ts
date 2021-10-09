@@ -30,6 +30,7 @@ const sendChannels = [
   'main:key-bind-change',
   'main:save-snapshot',
   'main:async-request',
+  'main:analyze-file',
 ] as const;
 
 export type IpcSendChannels = typeof sendChannels[number];

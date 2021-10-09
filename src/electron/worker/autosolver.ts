@@ -21,7 +21,8 @@ import {
   BreachProtocolStatus,
   HistoryEntry,
 } from '@/electron/common';
-import { remove } from 'fs-extra';
+import { copyFile, remove } from 'fs-extra';
+import { extname } from 'path';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import { BreachProtocolSoundPlayer } from './sound-player';
@@ -87,13 +88,13 @@ export class BreachProtocolAutosolver {
     return this.toHistoryEntry();
   }
 
-  async analyze() {
+  async analyze(file?: string) {
     if (this.status !== BreachProtocolStatus.Pending) return;
 
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
-    this.fileName = await this.robot.captureScreen();
+    this.fileName = await this.getBreachProtocolImage(file);
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.isValid) {
@@ -128,6 +129,19 @@ export class BreachProtocolAutosolver {
     }
 
     this.resolveJob();
+  }
+
+  private async getBreachProtocolImage(file?: string) {
+    if (file) {
+      const ext = extname(file).substr(1);
+      const dest = this.robot.getScreenShotPath(ext);
+
+      await copyFile(file, dest);
+
+      return dest;
+    }
+
+    return this.robot.captureScreen();
   }
 
   private async findSolution() {
