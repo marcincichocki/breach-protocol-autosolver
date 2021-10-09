@@ -3,7 +3,7 @@ import { Analysis, WorkerStatus } from '@/electron/common';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { asyncRequestDispatcher } from '../common';
+import { dispatchAsyncRequest } from '../common';
 import { Col, FlatButton, HistoryViewer, Row, Spacer } from '../components';
 import { StateContext } from '../state';
 
@@ -73,11 +73,11 @@ export const SelectSequence = ({
   async function discard() {
     history.replace('/');
 
-    await asyncRequestDispatcher({ type: 'ANALYZE_DISCARD' });
+    await dispatchAsyncRequest({ type: 'ANALYZE_DISCARD' });
   }
 
   async function resolve() {
-    await asyncRequestDispatcher({
+    await dispatchAsyncRequest({
       type: 'ANALYZE_RESOLVE',
       data: activeResult,
     });

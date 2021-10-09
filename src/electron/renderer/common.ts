@@ -110,7 +110,7 @@ class RendererNativeDialog extends NativeDialog {
 
 export const nativeDialog = new RendererNativeDialog();
 
-export function asyncRequestDispatcher<TRes, TReq = any>(
+export function dispatchAsyncRequest<TRes, TReq = any>(
   action: Omit<Request<TReq>, 'uuid'>
 ) {
   return new Promise<TRes>((resolve) => {

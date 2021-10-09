@@ -2,8 +2,8 @@ import { DropZoneFileValidationErrors } from '@/electron/common';
 import { DragEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
-  asyncRequestDispatcher,
   createErrorMessageDispenser,
+  dispatchAsyncRequest,
   nativeDialog,
 } from '../common';
 import { Spinner } from './Spinner';
@@ -78,7 +78,7 @@ export const AnalyzeDropZone = () => {
     );
 
     if (!errors) {
-      await asyncRequestDispatcher({ type: 'ANALYZE_FILE', data: file.path });
+      await dispatchAsyncRequest({ type: 'ANALYZE_FILE', data: file.path });
     } else {
       const message = 'Invalid input format.';
       const detail = getErrorDetail(errors);

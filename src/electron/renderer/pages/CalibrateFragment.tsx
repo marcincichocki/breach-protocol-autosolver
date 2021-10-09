@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { asyncRequestDispatcher, fromCamelCase } from '../common';
+import { dispatchAsyncRequest, fromCamelCase } from '../common';
 import {
   Col,
   Field,
@@ -82,7 +82,7 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   async function onTestThreshold(threshold: number) {
     setLoading(true);
 
-    const result = await asyncRequestDispatcher<
+    const result = await dispatchAsyncRequest<
       BreachProtocolFragmentResults[number],
       TestThresholdData
     >({
