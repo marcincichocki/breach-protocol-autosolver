@@ -116,6 +116,7 @@ export const appReducer = createReducer<State>({
   [ActionTypes.UPDATE_SETTINGS]: updateSettings,
   [ActionTypes.REMOVE_LAST_N_HISTORY_ENTRIES]: removeLastNHistoryEntries,
   [ActionTypes.REMOVE_HISTORY_ENTRY]: removeHistoryEntry,
-  [ActionTypes.SET_ANALYSIS]: setUpdateStatus,
+  [ActionTypes.SET_UPDATE_STATUS]: setUpdateStatus,
+  [ActionTypes.SET_ANALYSIS]: setAnalyzedEntry,
   [ActionTypes.CLEAR_ANALYSIS]: setAnalyzedEntry,
 });
