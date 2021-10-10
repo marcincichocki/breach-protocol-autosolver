@@ -480,7 +480,7 @@ export class Main {
     } else {
       // Only jpeg is supported at the moment when analyzing from clipboard since
       // png takes 100x times longer to encode it and raw data requires channel info.
-      this.onWorkerAnalyze(image.toJPEG(95));
+      this.onWorkerAnalyze(image.toJPEG(100));
     }
   }
 
