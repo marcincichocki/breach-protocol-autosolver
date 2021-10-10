@@ -47,7 +47,7 @@ function useDrag() {
   const [active, setActive] = useState(false);
   const hideDropZone = () => setActive(false);
   const showDropZone = (event: DragEvent) => {
-    // isplay dropzone only when dragging files.
+    // Display dropzone only when dragging files.
     if (event.dataTransfer.types.includes('Files')) {
       setActive(true);
     }
