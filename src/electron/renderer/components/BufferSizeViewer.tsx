@@ -23,6 +23,7 @@ const BufferSizeWrapper = styled.div`
   justify-content: start;
   gap: var(--gap);
   width: calc(${getBufferSizeWrapperWidth()});
+  cursor: default;
 `;
 
 const BufferSizeItem = styled.div<{ active: boolean }>`

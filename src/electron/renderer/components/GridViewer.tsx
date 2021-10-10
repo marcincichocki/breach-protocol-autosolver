@@ -8,6 +8,7 @@ import {
   GridRawData,
   ROWS,
 } from '@/core';
+import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -31,9 +32,36 @@ const GridWrapper = styled.div<{ size: number }>`
   grid-template-rows: repeat(${(props) => props.size}, max-content);
   position: relative;
   z-index: 0;
+  cursor: default;
 `;
 
-const Square = styled.div<{ active: boolean; highlight: boolean }>`
+interface SquareProps {
+  active: boolean;
+  highlight: boolean;
+  spotlight: boolean;
+  pathIndex: number;
+}
+
+function getSquarePathIndex({ active, highlight, pathIndex }: SquareProps) {
+  return (
+    active &&
+    `
+      &::after {
+        ${!highlight && `content: '${pathIndex + 1}';`}
+        position: absolute;
+        background: var(--background);
+        color: var(--primary);
+        bottom: -12px;
+        right: -5px;
+        padding-left: 3px;
+        line-height: 1;
+        font-size: 1.4rem;
+      }
+    `
+  );
+}
+
+const Square = styled.div<SquareProps>`
   ${(p) =>
     p.highlight &&
     css`
@@ -41,12 +69,16 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
       --size: ${cssVarsHighlight.size}px;
     `}
 
+  ${getSquarePathIndex}
+
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({ active, highlight }) =>
-    active
+  color: ${({ active, highlight, spotlight }) =>
+    spotlight
+      ? 'var(--primary)'
+      : active
       ? highlight
         ? 'var(--background)'
         : 'var(--accent)'
@@ -56,11 +88,13 @@ const Square = styled.div<{ active: boolean; highlight: boolean }>`
   font-size: 24px;
   font-weight: 500;
   position: relative;
-  z-index: ${({ active }) => (active ? 'auto' : '-3')};
+  z-index: ${({ active, spotlight }) =>
+    spotlight ? 'auto' : active ? 'auto' : '-3'};
   background: ${({ highlight }) =>
     highlight ? 'var(--accent)' : 'var(--background)'};
   border: var(--border) solid
-    ${({ active }) => (active ? 'var(--accent)' : 'transparent')};
+    ${({ active, spotlight }) =>
+      active ? 'var(--accent)' : spotlight ? 'var(--primary)' : 'transparent'};
 `;
 
 function getArrowBorderFor(d: GapDirection) {
@@ -147,11 +181,12 @@ interface GridViewerProps {
 }
 
 export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
+  const [spotlight, setSpotlight] = useState(null);
   const size = Math.sqrt(grid.length);
   const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
 
   return (
-    <GridWrapper size={size}>
+    <GridWrapper size={size} onMouseLeave={() => setSpotlight(null)}>
       {squares.map((s, i) => {
         const value = grid[i];
         const index = path ? path.indexOf(s) : 0;
@@ -165,7 +200,14 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
           highlight != null ? index === highlight.from : false;
 
         return (
-          <Square key={s} active={isActive} highlight={shouldHighlight}>
+          <Square
+            key={s}
+            active={isActive}
+            highlight={shouldHighlight}
+            spotlight={value === spotlight}
+            pathIndex={index}
+            onMouseEnter={() => setSpotlight(value)}
+          >
             {shouldRenderLine && (
               <Line
                 {...getRegularGap(path[index - 1], path[index])}

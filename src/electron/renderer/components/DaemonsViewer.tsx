@@ -9,6 +9,7 @@ const DaemonsWrapper = styled.div`
   flex-direction: column;
   align-items: stretch;
   gap: 0.5rem;
+  cursor: default;
 `;
 
 const Daemon = styled.div<{ active: boolean }>`
