@@ -459,7 +459,7 @@ export class Main {
 
   private async analyzeFromFile() {
     const data = await dialog.showOpenDialog(this.renderer, {
-      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
+      filters: [{ name: 'Image', extensions: ['jpg', 'jpeg', 'png'] }],
       properties: ['openFile'],
       title: 'Analyze breach protocol from file',
     });
