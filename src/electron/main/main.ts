@@ -26,6 +26,7 @@ import icon from '../../../resources/icon.png';
 import {
   Action,
   ActionTypes,
+  AnalysisInput,
   BreachProtocolCommands,
   DropZoneFileValidationErrors,
   PackageDetails,
@@ -329,7 +330,7 @@ export class Main {
     this.worker.removeAllListeners();
   }
 
-  private onWorkerAnalyze(file?: string | Buffer) {
+  private onWorkerAnalyze(file?: AnalysisInput) {
     this.worker.webContents.send('worker:analyze', file);
   }
 
