@@ -1,5 +1,5 @@
 import { DropZoneFileValidationErrors } from '@/electron/common';
-import { DragEvent, useEffect, useState } from 'react';
+import { DragEvent as ReactDragEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   createErrorMessageDispenser,
@@ -46,8 +46,13 @@ const getErrorDetail = createErrorMessageDispenser({
 function useDrag() {
   const [active, setActive] = useState(false);
   const hideDropZone = () => setActive(false);
-  const showDropZone = () => setActive(true);
-  const allowDrag = (event: DragEvent) => {
+  const showDropZone = (event: DragEvent) => {
+    // Display dropzone only when dragging files.
+    if (event.dataTransfer.types.includes('Files')) {
+      setActive(true);
+    }
+  };
+  const allowDrag = (event: ReactDragEvent) => {
     event.dataTransfer.dropEffect = 'copy';
     event.preventDefault();
   };
@@ -67,7 +72,7 @@ export const AnalyzeDropZone = () => {
   const { active, hideDropZone, allowDrag } = useDrag();
   const [loading, setLoading] = useState(false);
 
-  async function handleDrop(event: DragEvent) {
+  async function handleDrop(event: ReactDragEvent) {
     event.preventDefault();
     setLoading(true);
 
