@@ -19,6 +19,7 @@ import {
   Action,
   ActionTypes,
   AddHistoryEntryAction,
+  AnalysisInput,
   AnalysisOptions,
   AppSettings,
   BreachProtocolStatus,
@@ -200,11 +201,11 @@ export class BreachProtocolWorker {
     );
   }
 
-  private async onWorkerAnazyle(e: IpcRendererEvent, file?: string) {
+  private async onWorkerAnazyle(e: IpcRendererEvent, input?: AnalysisInput) {
     this.discardAnalysis(true);
     this.bpa = this.getAutosolver();
 
-    await this.bpa.analyze(file);
+    await this.bpa.analyze(input);
 
     const entry = this.bpa.toHistoryEntry();
 
@@ -217,7 +218,7 @@ export class BreachProtocolWorker {
       }
     } else {
       const results = this.bpa.getResults();
-      const options = this.getAnalysisOptions(file);
+      const options = this.getAnalysisOptions(input);
       this.dispatch(new SetAnalysisAction({ entry, results, options }));
 
       this.focusRendererWindow();
@@ -240,8 +241,12 @@ export class BreachProtocolWorker {
     this.discardAnalysis();
   }
 
-  private getAnalysisOptions(file?: string): AnalysisOptions {
-    const origin = file ? 'file' : 'screenshot';
+  private getAnalysisOptions(input?: AnalysisInput): AnalysisOptions {
+    const origin = input
+      ? typeof input === 'string'
+        ? 'file'
+        : 'clipboard'
+      : 'screenshot';
 
     return { origin };
   }

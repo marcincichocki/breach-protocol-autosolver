@@ -16,6 +16,7 @@ import {
   SequenceCompareStrategy,
 } from '@/core';
 import {
+  AnalysisInput,
   AppSettings,
   BreachProtocolSolveProgress,
   BreachProtocolStatus,
@@ -88,13 +89,13 @@ export class BreachProtocolAutosolver {
     return this.toHistoryEntry();
   }
 
-  async analyze(file?: string) {
+  async analyze(input?: AnalysisInput) {
     if (this.status !== BreachProtocolStatus.Pending) return;
 
     this.resolveDelay = this.getResolveDelayPromise();
     await this.player.play('start');
 
-    this.fileName = await this.getBreachProtocolImage(file);
+    this.fileName = await this.getBreachProtocolImage(input);
     this.recognitionResult = await this.recognize();
 
     if (!this.recognitionResult.isValid) {
@@ -131,14 +132,24 @@ export class BreachProtocolAutosolver {
     this.resolveJob();
   }
 
-  private async getBreachProtocolImage(file?: string) {
-    if (file) {
-      const ext = extname(file).substr(1);
-      const dest = this.robot.getScreenShotPath(ext);
+  private async getBreachProtocolImage(input?: AnalysisInput) {
+    if (input) {
+      if (typeof input === 'string') {
+        const ext = extname(input).substr(1);
+        const dest = this.robot.getScreenShotPath(ext);
 
-      await copyFile(file, dest);
+        await copyFile(input, dest);
 
-      return dest;
+        return dest;
+      } else {
+        // Only jpeg format is suported when analyzing BP from clipboard.
+        const dest = this.robot.getScreenShotPath('jpg');
+        const buffer = input instanceof Buffer ? input : Buffer.from(input);
+
+        await sharp(buffer).toFormat('jpeg').toFile(dest);
+
+        return dest;
+      }
     }
 
     return this.robot.captureScreen();
@@ -240,8 +251,8 @@ export class BreachProtocolAutosolver {
     };
   }
 
-  private async recognize(input: string | Buffer = this.fileName) {
-    const image = sharp(input);
+  private async recognize() {
+    const image = sharp(this.fileName);
     const { downscaleSource } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,

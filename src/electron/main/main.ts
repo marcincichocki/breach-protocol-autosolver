@@ -32,6 +32,7 @@ import {
   WorkerStatus,
 } from '../common';
 import { CommandManager } from './command-manager';
+import { nativeDialog } from './dialog';
 import { KeyBindManager } from './key-bind-manager';
 import { Store } from './store/store';
 import { BreachProtocolAutosolverUpdater } from './updater';
@@ -63,7 +64,7 @@ export class Main {
   /** Only allow to externally open websites from this list. */
   private readonly originWhitelist = ['https://github.com'];
 
-  private helpMenuTemplate: MenuItemConstructorOptions[] = [
+  private menu = Menu.buildFromTemplate([
     {
       label: 'About',
       click: () => {
@@ -75,6 +76,22 @@ export class Main {
       click() {
         shell.openExternal(HOMEPAGE_URL);
       },
+    },
+    { type: 'separator' },
+    {
+      label: 'Analyze',
+      submenu: [
+        {
+          label: 'From file',
+          click: this.analyzeFromFile.bind(this),
+          accelerator: 'CommandOrControl+Shift+O',
+        },
+        {
+          label: 'From clipboard',
+          click: this.analyzeFromClipboard.bind(this),
+          accelerator: 'CommandOrControl+Shift+V',
+        },
+      ],
     },
     { type: 'separator' },
     {
@@ -94,7 +111,7 @@ export class Main {
         this.updater.checkForUpdates();
       },
     },
-  ];
+  ]);
 
   private trayMenu: MenuItemConstructorOptions[] = [
     {
@@ -119,6 +136,9 @@ export class Main {
       app.setAppUserModelId(APP_ID);
     }
 
+    // Required to register local accelerators.
+    Menu.setApplicationMenu(this.menu);
+
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents, [
       this.toggleKeyBind.bind(this),
@@ -136,7 +156,7 @@ export class Main {
   }
 
   private openDevTools() {
-    this.devtools = new BrowserWindow();
+    this.devtools = new BrowserWindow({ autoHideMenuBar: true });
     this.worker.webContents.setDevToolsWebContents(this.devtools.webContents);
 
     this.worker.webContents.openDevTools({ mode: 'detach' });
@@ -309,7 +329,7 @@ export class Main {
     this.worker.removeAllListeners();
   }
 
-  private onWorkerAnalyze(file?: string) {
+  private onWorkerAnalyze(file?: string | Buffer) {
     this.worker.webContents.send('worker:analyze', file);
   }
 
@@ -365,9 +385,7 @@ export class Main {
   }
 
   private onShowHelpMenu() {
-    const menu = Menu.buildFromTemplate(this.helpMenuTemplate);
-
-    menu.popup();
+    this.menu.popup();
   }
 
   private onRendererClosed() {
@@ -436,6 +454,33 @@ export class Main {
 
   private onGetResourcesPath(event: IpcMainEvent) {
     event.returnValue = this.getResourcesPath();
+  }
+
+  private async analyzeFromFile() {
+    const data = await dialog.showOpenDialog(this.renderer, {
+      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
+      properties: ['openFile'],
+      title: 'Analyze breach protocol from file',
+    });
+
+    if (data.canceled) return;
+
+    this.onWorkerAnalyze(data.filePaths[0]);
+  }
+
+  private async analyzeFromClipboard() {
+    const image = clipboard.readImage();
+
+    if (image.isEmpty()) {
+      nativeDialog.alert({
+        message: 'Clipboard is empty!',
+        detail: 'Save breach protocol image to clipboard and try again.',
+      });
+    } else {
+      // Only jpeg is supported at the moment when analyzing from clipboard since
+      // png takes 100x times longer to encode it and raw data requires channel info.
+      this.onWorkerAnalyze(image.toJPEG(95));
+    }
   }
 
   private async showThridPartyLicesnsesDialog() {
