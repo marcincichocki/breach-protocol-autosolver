@@ -57,7 +57,7 @@ export const SelectSequence = ({
   const history = useHistory();
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const isWorking = status === WorkerStatus.Working;
-  const fromFile = options.origin === 'file';
+  const fromScreenShot = options.origin === 'screenshot';
 
   useEffect(() => {
     setActiveResult(null);
@@ -109,7 +109,7 @@ export const SelectSequence = ({
             Discard
           </FlatButton>
           <Spacer />
-          {!fromFile && (
+          {fromScreenShot && (
             <FlatButton
               color="accent"
               onClick={resolve}

@@ -109,7 +109,9 @@ export enum UpdateStatus {
   UpdateDownloaded,
 }
 
-export type AnalysisOrigin = 'file' | 'screenshot';
+export type AnalysisOrigin = 'file' | 'screenshot' | 'clipboard';
+
+export type AnalysisInput = string | Uint8Array | Buffer;
 
 export interface AnalysisOptions {
   origin: AnalysisOrigin;
