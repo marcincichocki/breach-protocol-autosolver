@@ -11,6 +11,12 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
 import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
+import {
+  BreachProtocolRecognizer,
+  BreachProtocolRecognizerBox,
+  BreachProtocolRecognizerResult,
+  BreachProtocolRecognizerWord,
+} from './recognizer';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -27,11 +33,7 @@ export interface BreachProtocolFragmentBoundingBox {
 
 export interface BreachProtocolSource {
   text: string;
-  boxes: Tesseract.Bbox[];
-}
-
-export interface BreachProtocolRecognizer {
-  recognize(image: Buffer): Promise<BreachProtocolSource>;
+  boxes: BreachProtocolRecognizerBox[];
 }
 
 export enum BreachProtocolFragmentStatus {
@@ -161,12 +163,21 @@ export abstract class BreachProtocolOCRFragment<
     ['ED', 'BD'],
   ]);
 
+  // prettier-ignore
+  private static readonly validCodes = Array
+    .from(BreachProtocolOCRFragment.correctionMap.keys())
+    .concat(HEX_CODES);
+
+  /** Max size in pixels by which height of squares can deviate. */
+  private static readonly maxHeightDeviation = 4;
+
   /** Map containing cropped heights and threshold values. */
   abstract readonly thresholds: Map<number, number>;
 
   constructor(
     container: ImageContainer<TImage>,
-    private recognizer: BreachProtocolRecognizer
+    private recognizer: BreachProtocolRecognizer,
+    private readonly filterRecognizerResults?: boolean
   ) {
     super(container);
   }
@@ -187,9 +198,64 @@ export abstract class BreachProtocolOCRFragment<
   async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
-    const source = await this.recognizer.recognize(buffer);
+    const results = await this.recognizer.recognize(buffer);
+    const source = this.getSource(results);
 
     return { buffer, source };
+  }
+
+  private byWordHeight(base: number, word: BreachProtocolRecognizerWord) {
+    const height = this.getWordHeight(word);
+    const diviation = Math.abs(base - height);
+
+    return diviation <= BreachProtocolOCRFragment.maxHeightDeviation;
+  }
+
+  private getWordHeight({ bbox }: BreachProtocolRecognizerWord) {
+    return bbox.y1 - bbox.y0;
+  }
+
+  private codesToSource(
+    codes: BreachProtocolRecognizerWord[][]
+  ): BreachProtocolSource {
+    const boxes = codes.flatMap((code) => code.map((w) => w.bbox));
+    const text = codes
+      .map((words) => words.map((w) => w.text).join(' '))
+      .join('\n');
+
+    return { boxes, text };
+  }
+
+  private getSource({
+    lines,
+  }: BreachProtocolRecognizerResult): BreachProtocolSource {
+    if (!this.filterRecognizerResults) {
+      return this.codesToSource(lines);
+    }
+
+    const base = lines
+      .flat()
+      .find((w) => BreachProtocolOCRFragment.validCodes.includes(w.text));
+
+    // There is no valid code, this is most likely not a BP image, or
+    // threshold is completely off target.
+    if (!base) {
+      return this.codesToSource(lines);
+    }
+
+    // Validating by text is bad because some codes can be connected
+    // with each other(in some languages). This could cause false negatives
+    // to be recognized, and would cause lots of issues down the road.
+    //
+    // Validating by code height is better, since font size is constant
+    // across the fragment(max deviation is 2px mostly caused by threshold).
+    // This method doesn't depend on resolution or language.
+    const baseHeight = this.getWordHeight(base);
+    const filteredLines = lines.map((l) =>
+      l.filter((w) => this.byWordHeight(baseHeight, w))
+    );
+
+    return this.codesToSource(filteredLines);
   }
 
   protected chunkLine(line: string) {

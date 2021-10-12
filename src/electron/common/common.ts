@@ -74,6 +74,7 @@ export interface AppSettings
   engine: 'nircmd' | 'ahk' | 'xdotool';
   resolveDelay: number;
   focusOnError: boolean;
+  filterRecognizerResults: boolean;
 }
 
 export interface AppStats {

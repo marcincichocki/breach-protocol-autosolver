@@ -7,16 +7,13 @@ import {
   isGridFragment,
   ROWS,
 } from '../common';
-import {
-  BreachProtocolFragmentResults,
-  BreachProtocolRecognizer,
-  FragmentId,
-} from './base';
+import { BreachProtocolFragmentResults, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
+import { BreachProtocolRecognizer } from './recognizer';
 
 export class BreachProtocolRecognitionResult {
   readonly positionSquareMap = this.getPositionSquareMap();
@@ -65,17 +62,25 @@ export class BreachProtocolRecognitionResult {
   }
 }
 
+interface BreachProtocolOCROptions {
+  thresholds?: Partial<Record<FragmentId, number>>;
+  experimentalBufferSizeRecognition?: boolean;
+  filterRecognizerResults?: boolean;
+}
+
 export async function breachProtocolOCR<TImage>(
   container: ImageContainer<TImage>,
   recognizer: BreachProtocolRecognizer,
-  thresholds?: Partial<Record<FragmentId, number>>,
-  experimentalBufferSizeRecognition?: boolean
+  {
+    thresholds,
+    experimentalBufferSizeRecognition,
+    filterRecognizerResults,
+  }: BreachProtocolOCROptions
 ) {
-  const gridFragment = new BreachProtocolGridFragment(container, recognizer);
-  const daemonsFragment = new BreachProtocolDaemonsFragment(
-    container,
-    recognizer
-  );
+  // prettier-ignore
+  const gridFragment = new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults);
+  // prettier-ignore
+  const daemonsFragment = new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults);
   const bufferSizeFragment = experimentalBufferSizeRecognition
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);

@@ -219,6 +219,12 @@ export const options: BreachProtocolOption[] = [
     description: 'Focus BPA window on recognition error.',
     defaultValue: true,
   },
+  {
+    id: 'filterRecognizerResults',
+    description:
+      'Remove results from optical character recognition that do not look like codes.',
+    defaultValue: true,
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {

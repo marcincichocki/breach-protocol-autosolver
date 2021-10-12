@@ -4,3 +4,4 @@ export * from './daemons';
 export * from './grid';
 export * from './image-container';
 export * from './ocr';
+export * from './recognizer';

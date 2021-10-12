@@ -37,7 +37,7 @@ export class BreachProtocolDaemonsFragment<
   }
 
   private isCorrectSize(rawData: DaemonsRawData) {
-    return rawData.every(({ length }) => length && length <= 6);
+    return rawData.every(({ length }) => length >= 2 && length <= 6);
   }
 
   getStatus(rawData: DaemonsRawData) {

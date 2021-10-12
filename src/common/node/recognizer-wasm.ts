@@ -17,12 +17,10 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
   }
 
   async recognize(image: Buffer) {
-    const {
-      data: { text, words },
-    } = await this.scheduleRecognizeJob(image);
-    const boxes = words.map((w) => w.bbox);
+    const { data } = await this.scheduleRecognizeJob(image);
+    const lines = data.lines.map(({ words }) => words);
 
-    return { text, boxes };
+    return { lines };
   }
 
   private scheduleRecognizeJob(image: Buffer) {

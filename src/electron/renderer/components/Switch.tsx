@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { useField } from './Form';
+import { OnBeforeValueChange, useField } from './Form';
 
 interface SwitchProps {
   disabled?: boolean;
+  onBeforeValueChange?: OnBeforeValueChange<boolean>;
 }
 
 const SwitchWrapper = styled.div`
@@ -56,8 +57,20 @@ const On = styled(SwitchButton)`
   }
 `;
 
-export const Switch = ({ disabled }: SwitchProps) => {
+export const Switch = ({ disabled, onBeforeValueChange }: SwitchProps) => {
   const { value, setValue, onChange } = useField<boolean>();
+
+  function toggle(newValue: boolean) {
+    if (value === newValue) return;
+
+    const next = () => setValue(newValue);
+
+    if (onBeforeValueChange) {
+      onBeforeValueChange(value, next);
+    } else {
+      next();
+    }
+  }
 
   return (
     <SwitchWrapper>
@@ -68,10 +81,10 @@ export const Switch = ({ disabled }: SwitchProps) => {
         disabled={disabled}
         hidden
       />
-      <Off disabled={disabled} active={value} onClick={() => setValue(false)}>
+      <Off disabled={disabled} active={value} onClick={() => toggle(false)}>
         Off
       </Off>
-      <On disabled={disabled} active={value} onClick={() => setValue(true)}>
+      <On disabled={disabled} active={value} onClick={() => toggle(true)}>
         On
       </On>
     </SwitchWrapper>

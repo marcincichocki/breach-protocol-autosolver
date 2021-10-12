@@ -9,17 +9,14 @@ import {
   DaemonsRawData,
   GridRawData,
 } from '../common';
-import {
-  BreachProtocolFragmentStatus,
-  BreachProtocolRecognizer,
-  FragmentId,
-} from './base';
+import { BreachProtocolFragmentStatus, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
+import { BreachProtocolRecognizer } from './recognizer';
 
 interface RegistryEntry extends BreachProtocolRawData {
   /** Source path relative to registry.json */
@@ -288,7 +285,7 @@ async function recognizeRegistryEntry(
   const recognizer = new WasmBreachProtocolRecognizer();
 
   return Promise.all([
-    breachProtocolOCR(container, recognizer, thresholds),
+    breachProtocolOCR(container, recognizer, { thresholds }),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
