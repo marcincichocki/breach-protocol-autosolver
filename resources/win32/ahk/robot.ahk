@@ -1,6 +1,5 @@
 #NoEnv
 #NoTrayIcon
-SendMode Input
 CoordMode, Mouse, Relative
 
 if (A_Args[1] = "move") {
@@ -17,8 +16,8 @@ if (A_Args[1] = "click") {
 }
 
 if (A_Args[1] = "reset") {
-  MouseMove, 9999, 9999, 0
-  MouseMove, 0, 0, 0
+  MouseMove, 9999, 9999
+  MouseMove, 0, 0
 }
 
 if (A_Args[1] = "activate") {
