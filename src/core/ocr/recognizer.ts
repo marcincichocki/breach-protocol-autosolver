@@ -5,13 +5,13 @@ export interface BreachProtocolRecognizerBox {
   y1: number;
 }
 
-export interface BreachProtocolRecognizerCode {
+export interface BreachProtocolRecognizerWord {
   text: string;
   bbox: BreachProtocolRecognizerBox;
 }
 
 export interface BreachProtocolRecognizerResult {
-  lines: BreachProtocolRecognizerCode[][];
+  lines: BreachProtocolRecognizerWord[][];
 }
 
 export interface BreachProtocolRecognizer {

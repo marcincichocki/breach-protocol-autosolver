@@ -14,8 +14,8 @@ import { ImageContainer } from './image-container';
 import {
   BreachProtocolRecognizer,
   BreachProtocolRecognizerBox,
-  BreachProtocolRecognizerCode,
   BreachProtocolRecognizerResult,
+  BreachProtocolRecognizerWord,
 } from './recognizer';
 
 export type FragmentId = keyof BreachProtocolRawData;
@@ -204,19 +204,19 @@ export abstract class BreachProtocolOCRFragment<
     return { buffer, source };
   }
 
-  private byCodeHeight(base: number, code: BreachProtocolRecognizerCode) {
-    const height = this.getCodeHeight(code);
+  private byWordHeight(base: number, word: BreachProtocolRecognizerWord) {
+    const height = this.getWordHeight(word);
     const diviation = Math.abs(base - height);
 
     return diviation <= BreachProtocolOCRFragment.maxHeightDeviation;
   }
 
-  private getCodeHeight({ bbox }: BreachProtocolRecognizerCode) {
+  private getWordHeight({ bbox }: BreachProtocolRecognizerWord) {
     return bbox.y1 - bbox.y0;
   }
 
   private codesToSource(
-    codes: BreachProtocolRecognizerCode[][]
+    codes: BreachProtocolRecognizerWord[][]
   ): BreachProtocolSource {
     const boxes = codes.flatMap((code) => code.map((w) => w.bbox));
     const text = codes
@@ -250,9 +250,9 @@ export abstract class BreachProtocolOCRFragment<
     // Validating by code height is better, since font size is constant
     // across the fragment(max deviation is 2px mostly caused by threshold).
     // This method doesn't depend on resolution or language.
-    const baseHeight = this.getCodeHeight(base);
+    const baseHeight = this.getWordHeight(base);
     const filteredLines = lines.map((l) =>
-      l.filter((w) => this.byCodeHeight(baseHeight, w))
+      l.filter((w) => this.byWordHeight(baseHeight, w))
     );
 
     return this.codesToSource(filteredLines);
