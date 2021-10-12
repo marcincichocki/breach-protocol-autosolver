@@ -101,14 +101,8 @@ export class KeyBindManager<T> {
   private isUniqueAccelerator(input: Accelerator) {
     const a = normalizeAccelerator(input);
 
-    for (const { accelerator } of this.registry.values()) {
-      const b = normalizeAccelerator(accelerator);
-
-      if (a === b) {
-        return false;
-      }
-    }
-
-    return true;
+    return Array.from(this.registry.values())
+      .map((k) => normalizeAccelerator(k.accelerator))
+      .every((b) => a !== b);
   }
 }
