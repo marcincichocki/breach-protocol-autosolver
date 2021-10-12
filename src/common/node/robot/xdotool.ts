@@ -1,4 +1,5 @@
 import * as k from '@/common/keyboard';
+import { sleep } from '@/common/util';
 import {
   BreachProtocolRobot,
   BreachProtocolRobotKeys,
@@ -90,10 +91,17 @@ export class XDoToolRobot extends BreachProtocolRobot {
     return XDoToolRobot.VK_MAP.get(code).toString(16);
   }
 
-  activateGameWindow() {
-    return this.bin(
-      `search --name ${this.gameWindowTitle} windowactivate --sync`
-    );
+  async activateGameWindow() {
+    const data = await this.execBin([
+      'search',
+      '--name',
+      this.gameWindowTitle,
+      'windowactivate',
+      '--sync',
+    ]);
+    await sleep(this.settings.delay);
+
+    return data;
   }
 
   move(x: number, y: number) {
