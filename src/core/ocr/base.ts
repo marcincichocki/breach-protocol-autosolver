@@ -11,6 +11,12 @@ import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
 import { BreachProtocolDaemonsFragmentResult } from './daemons';
 import { BreachProtocolGridFragmentResult } from './grid';
 import { ImageContainer } from './image-container';
+import {
+  BreachProtocolRecognizer,
+  BreachProtocolRecognizerBox,
+  BreachProtocolRecognizerCode,
+  BreachProtocolRecognizerResult,
+} from './recognizer';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -27,11 +33,7 @@ export interface BreachProtocolFragmentBoundingBox {
 
 export interface BreachProtocolSource {
   text: string;
-  boxes: Tesseract.Bbox[];
-}
-
-export interface BreachProtocolRecognizer {
-  recognize(image: Buffer): Promise<BreachProtocolSource>;
+  boxes: BreachProtocolRecognizerBox[];
 }
 
 export enum BreachProtocolFragmentStatus {
@@ -188,9 +190,29 @@ export abstract class BreachProtocolOCRFragment<
   async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
-    const source = await this.recognizer.recognize(buffer);
+    const results = await this.recognizer.recognize(buffer);
+    const source = this.getSource(results);
 
     return { buffer, source };
+  }
+
+  private codesToSource(
+    codes: BreachProtocolRecognizerCode[][]
+  ): BreachProtocolSource {
+    const boxes = codes.flatMap((code) => code.map((w) => w.bbox));
+    const text = codes
+      .map((words) => words.map((w) => w.text).join(' '))
+      .join('\n');
+
+    return { boxes, text };
+  }
+
+  private getSource({
+    lines,
+  }: BreachProtocolRecognizerResult): BreachProtocolSource {
+    if (!this.filterRecognizerResults) {
+      return this.codesToSource(lines);
+    }
   }
 
   protected chunkLine(line: string) {
