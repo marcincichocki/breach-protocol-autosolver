@@ -80,6 +80,10 @@ export const RecognitionSettings = ({
           disabled={displayOptions.length === 1}
         />
       </Field>
+      <Field name="filterRecognizerResults">
+        <Label>Filter OCR results</Label>
+        <Switch />
+      </Field>
       <ThresholdField
         name="thresholdGrid"
         switchName="thresholdGridAuto"

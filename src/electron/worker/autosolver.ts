@@ -253,17 +253,20 @@ export class BreachProtocolAutosolver {
 
   private async recognize() {
     const image = sharp(this.fileName);
-    const { downscaleSource } = this.settings;
+    const {
+      downscaleSource,
+      experimentalBufferSizeRecognition,
+      filterRecognizerResults,
+    } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,
     });
     const recognizer = new WasmBreachProtocolRecognizer();
 
-    return breachProtocolOCR(
-      container,
-      recognizer,
-      this.getFixedThresholds(),
-      this.settings.experimentalBufferSizeRecognition
-    );
+    return breachProtocolOCR(container, recognizer, {
+      thresholds: this.getFixedThresholds(),
+      experimentalBufferSizeRecognition,
+      filterRecognizerResults,
+    });
   }
 }

@@ -330,15 +330,17 @@ export class BreachProtocolWorker {
 
   private async initTestThreshold(req: Request<string>) {
     const instance = sharp(req.data);
-    const { downscaleSource } = this.settings;
+    const { downscaleSource, filterRecognizerResults } = this.settings;
     const container = await SharpImageContainer.create(instance, {
       downscaleSource,
     });
     const recognizer = new WasmBreachProtocolRecognizer();
 
     this.fragments = {
-      grid: new BreachProtocolGridFragment(container, recognizer),
-      daemons: new BreachProtocolDaemonsFragment(container, recognizer),
+      // prettier-ignore
+      grid: new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults),
+      // prettier-ignore
+      daemons: new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults),
       bufferSize: new BreachProtocolBufferSizeFragment(container),
     };
   }

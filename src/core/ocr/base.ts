@@ -166,7 +166,8 @@ export abstract class BreachProtocolOCRFragment<
 
   constructor(
     container: ImageContainer<TImage>,
-    private recognizer: BreachProtocolRecognizer
+    private recognizer: BreachProtocolRecognizer,
+    private readonly filterRecognizerResults?: boolean
   ) {
     super(container);
   }

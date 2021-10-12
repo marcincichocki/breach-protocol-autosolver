@@ -65,17 +65,25 @@ export class BreachProtocolRecognitionResult {
   }
 }
 
+interface BreachProtocolOCROptions {
+  thresholds?: Partial<Record<FragmentId, number>>;
+  experimentalBufferSizeRecognition?: boolean;
+  filterRecognizerResults?: boolean;
+}
+
 export async function breachProtocolOCR<TImage>(
   container: ImageContainer<TImage>,
   recognizer: BreachProtocolRecognizer,
-  thresholds?: Partial<Record<FragmentId, number>>,
-  experimentalBufferSizeRecognition?: boolean
+  {
+    thresholds,
+    experimentalBufferSizeRecognition,
+    filterRecognizerResults,
+  }: BreachProtocolOCROptions
 ) {
-  const gridFragment = new BreachProtocolGridFragment(container, recognizer);
-  const daemonsFragment = new BreachProtocolDaemonsFragment(
-    container,
-    recognizer
-  );
+  // prettier-ignore
+  const gridFragment = new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults);
+  // prettier-ignore
+  const daemonsFragment = new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults);
   const bufferSizeFragment = experimentalBufferSizeRecognition
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);

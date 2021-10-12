@@ -288,7 +288,7 @@ async function recognizeRegistryEntry(
   const recognizer = new WasmBreachProtocolRecognizer();
 
   return Promise.all([
-    breachProtocolOCR(container, recognizer, thresholds),
+    breachProtocolOCR(container, recognizer, { thresholds }),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
