@@ -105,15 +105,9 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   }
 
   return (
-    <Row
-      style={{
-        gap: '1rem',
-        flexGrow: 1,
-        overflowY: 'auto',
-      }}
-    >
-      <Col style={{ gap: '1rem', flexGrow: 1 }}>
-        <Col style={{ overflowY: 'auto', flex: 1 }}>
+    <Row gap grow scroll>
+      <Col gap grow>
+        <Col grow scroll>
           <Title>Raw data</Title>
           <RawDataPreview
             rawData={testResult.rawData}
@@ -150,11 +144,11 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
       <Col style={{ width: '600px', flexShrink: 0 }}>
         <Title>Fragment preview</Title>
         <Col
+          grow
+          scroll
           style={{
             justifyContent: loading ? 'center' : 'flex-start',
             alignItems: 'center',
-            overflowY: 'auto',
-            flexGrow: 1,
           }}
         >
           {loading ? (

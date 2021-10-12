@@ -111,7 +111,7 @@ export const Dashboard = memo(() => {
   const timeSaved = getAmountOfTimeSaved(stats.approxDuration);
 
   return (
-    <Row style={{ gap: '1rem', flexGrow: 1, padding: '2rem' }}>
+    <Row gap grow style={{ padding: '2rem' }}>
       <Stats>
         <Stat
           title={stats.countSuccessSession}

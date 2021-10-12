@@ -29,9 +29,9 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const result = customResult || entry.result;
 
   return (
-    <Row style={{ gap: '1rem' }}>
+    <Row gap>
       <GridViewer grid={grid} path={result?.path} highlight={highlight} />
-      <Col style={{ flexGrow: 1, gap: '1rem' }}>
+      <Col gap grow>
         <BufferSizeViewer
           bufferSize={bufferSize}
           result={result}

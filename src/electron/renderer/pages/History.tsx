@@ -76,7 +76,7 @@ const Heading = styled.h2`
 
 const NoHistory = () => {
   return (
-    <Col style={{ margin: 'auto', gap: '1rem' }}>
+    <Col gap style={{ margin: 'auto' }}>
       <Heading>No breach protocols solved</Heading>
     </Col>
   );

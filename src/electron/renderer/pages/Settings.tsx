@@ -60,8 +60,8 @@ export const Settings = () => {
         <>
           <FieldDescription name={activeField} />
           <Col
+            scroll
             style={{
-              overflowY: 'auto',
               padding: '0 1rem',
             }}
           >

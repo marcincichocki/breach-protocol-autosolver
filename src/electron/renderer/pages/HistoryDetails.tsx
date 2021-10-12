@@ -50,10 +50,10 @@ const RemoveEntry = ({ entryId }: { entryId: string }) => (
 
 const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
   <Col
+    gap
     style={{
       margin: 'auto',
       alignItems: 'center',
-      gap: '1rem',
       width: '916px',
     }}
   >
@@ -85,7 +85,7 @@ export const HistoryDetails = () => {
   const duration = formatDuration({ seconds });
 
   return (
-    <Col style={{ gap: '1rem' }}>
+    <Col gap>
       <HistoryViewer entry={entry} />
       <Row style={{ justifyContent: 'space-between' }}>
         <Col>

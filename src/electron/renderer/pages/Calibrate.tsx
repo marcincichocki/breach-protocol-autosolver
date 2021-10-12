@@ -7,7 +7,7 @@ import {
   transformTimestamp,
   useHistoryEntryFromParam,
 } from '../common';
-import { Col, NavLink, Row } from '../components';
+import { Col, NavLink, Row, Spacer } from '../components';
 import { CalibrateFragment } from './CalibrateFragment';
 
 const Heading = styled.h1`
@@ -40,14 +40,14 @@ export const Calibrate = () => {
   const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
-    <Col style={{ flexGrow: 1 }}>
+    <Col grow>
       <Row style={{ gap: '2rem' }}>
         {entry.fragments.map((f) => (
           <NavLink key={f.id} to={f.id}>
             {fromCamelCase(f.id)}
           </NavLink>
         ))}
-        <span style={{ flexGrow: 1 }} />
+        <Spacer />
         <Heading>
           {time} - {distance}
         </Heading>

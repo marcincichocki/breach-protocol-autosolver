@@ -44,7 +44,7 @@ type RawDataPreviewProps = Pick<
 >;
 
 export const RawDataPreview = ({ status, rawData }: RawDataPreviewProps) => (
-  <Col style={{ position: 'relative', overflowY: 'auto', flex: 1 }}>
+  <Col scroll grow style={{ position: 'relative' }}>
     <RawDataPreviewWrapper>
       {JSON.stringify(rawData, null, 2)}
     </RawDataPreviewWrapper>
