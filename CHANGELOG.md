@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.1.0...v2.2.0) (2021-10-12)
+
+
+### Features
+
+* **client-electron:** add ability to analyze BP ([bd17efd](https://github.com/marcincichocki/breach-protocol-autosolver/commit/bd17efd8779444108cb1c82f208b05f5ea47033f)), closes [#222](https://github.com/marcincichocki/breach-protocol-autosolver/issues/222) [#223](https://github.com/marcincichocki/breach-protocol-autosolver/issues/223)
+* **client-electron:** add ability to analyze BP from clipboard ([2d04803](https://github.com/marcincichocki/breach-protocol-autosolver/commit/2d0480380204bfc9fd63f0d23902dfa694d5569f)), closes [#234](https://github.com/marcincichocki/breach-protocol-autosolver/issues/234)
+* **client-electron:** add ability to analyze from file ([f7acc83](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f7acc83fcab0e3b7934e56e6b86d9b9374192261)), closes [#231](https://github.com/marcincichocki/breach-protocol-autosolver/issues/231)
+* **client-electron:** add ability to spotlight squares in the grid ([88aba00](https://github.com/marcincichocki/breach-protocol-autosolver/commit/88aba008e4c53060d349a50f29e8a226ef28d48d))
+* **client-electron:** focus renderer on recognition error ([2201964](https://github.com/marcincichocki/breach-protocol-autosolver/commit/2201964a52dabeef69dafe01a21e408c29edc5e0))
+* **common:** add ability to activate game window ([7d6bdac](https://github.com/marcincichocki/breach-protocol-autosolver/commit/7d6bdac702f9d32821a52f5b04934d143fbf8342)), closes [#224](https://github.com/marcincichocki/breach-protocol-autosolver/issues/224)
+* **core:** add ability to filter recognizer results ([0b5179b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/0b5179bfb2117eab234fe9c7581508505ed7775d)), closes [#235](https://github.com/marcincichocki/breach-protocol-autosolver/issues/235)
+
+
+### Bug Fixes
+
+* **client-electron:** improve time saved approximation ([18a415b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/18a415be75e0732cd5068c510f92810d30aea06a))
+* **client-electron:** prevent multiple instances ([ac8f6a0](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ac8f6a0ec1d0a73e60aa3e73d920556af2ec21ec)), closes [#229](https://github.com/marcincichocki/breach-protocol-autosolver/issues/229)
+* **client-electron:** show dropzone only on file drag ([57ae17a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/57ae17a84fce51881349fc93bbf5e8ba3b569174))
+* **common:** always move cursor on ahk engine ([428f5fe](https://github.com/marcincichocki/breach-protocol-autosolver/commit/428f5fec8b520b30f9a1797363e0e955be0de179))
+* **common:** send correct window title on linux ([eee9a9e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/eee9a9e4e9d71b4ab6f00a8f5142793aa8684027))
+* **common:** update bitmask implementation ([4f1206d](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4f1206da00b9f2a38b4c70425cedb7e911b24966))
+
+
+### Performance improvements
+
+* **core:** add reverse hex codes map ([e349fa9](https://github.com/marcincichocki/breach-protocol-autosolver/commit/e349fa9c700d551737cd1875312f2e94e58ea5b6))
+
 ## [2.1.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.0.0...v2.1.0) (2021-09-27)
 
 
