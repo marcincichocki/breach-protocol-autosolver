@@ -1,7 +1,6 @@
 #NoEnv
 #NoTrayIcon
-SendMode Input
-CoordMode, Mouse, Screen
+CoordMode, Mouse, Relative
 
 if (A_Args[1] = "move") {
   MouseMove, A_Args[2], A_Args[3], 0
@@ -9,7 +8,7 @@ if (A_Args[1] = "move") {
 
 if (A_Args[1] = "send") {
   key := A_Args[2]
-  Send {%key%}
+  SendInput {%key%}
 }
 
 if (A_Args[1] = "click") {
@@ -17,7 +16,8 @@ if (A_Args[1] = "click") {
 }
 
 if (A_Args[1] = "reset") {
-  MouseMove, -9999, -9999, 0
+  MouseMove, 9999, 9999
+  MouseMove, 0, 0
 }
 
 if (A_Args[1] = "activate") {
