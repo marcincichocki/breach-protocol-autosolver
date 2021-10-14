@@ -1,7 +1,9 @@
 import {
   BreachProtocolCommands,
-  KeyBindsConfig,
+  BreachProtocolKeyBinds,
+  COMMANDS,
   KeyBindValidationErrors,
+  KEY_BINDS,
   WorkerStatus,
 } from '@/electron/common';
 import type { Accelerator } from 'electron';
@@ -16,17 +18,13 @@ import { Section } from './Section';
 
 let prevWorkerSatus: WorkerStatus = null;
 
-const commands: Record<keyof KeyBindsConfig, BreachProtocolCommands> = {
-  keyBind: 'worker:solve',
-  keyBindWithPriority1: 'worker:solve.withPriority1',
-  keyBindWithPriority2: 'worker:solve.withPriority2',
-  keyBindWithPriority3: 'worker:solve.withPriority3',
-  keyBindWithPriority4: 'worker:solve.withPriority4',
-  keyBindWithPriority5: 'worker:solve.withPriority5',
-  keyBindAnalyze: 'worker:analyze',
-};
+const enteries = KEY_BINDS.map((k, i) => [k, COMMANDS[i]] as const);
+const commands = Object.fromEntries(enteries) as Record<
+  BreachProtocolKeyBinds,
+  BreachProtocolCommands
+>;
 
-function changeKeyBind(accelerator: Accelerator, name: keyof KeyBindsConfig) {
+function changeKeyBind(accelerator: Accelerator, name: BreachProtocolKeyBinds) {
   const id = commands[name];
 
   api.send('main:key-bind-change', id, accelerator);

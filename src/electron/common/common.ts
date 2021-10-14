@@ -43,15 +43,31 @@ export interface HistoryEntry {
   result: BreachProtocolResultJSON;
 }
 
-export interface KeyBindsConfig {
-  keyBind: Accelerator;
-  keyBindWithPriority1: Accelerator;
-  keyBindWithPriority2: Accelerator;
-  keyBindWithPriority3: Accelerator;
-  keyBindWithPriority4: Accelerator;
-  keyBindWithPriority5: Accelerator;
-  keyBindAnalyze: Accelerator;
-}
+// NOTE: KEY_BINDS and COMMAND indexes match exactly.
+export const KEY_BINDS = [
+  'keyBind',
+  'keyBindWithPriority1',
+  'keyBindWithPriority2',
+  'keyBindWithPriority3',
+  'keyBindWithPriority4',
+  'keyBindWithPriority5',
+  'keyBindAnalyze',
+] as const;
+
+export type BreachProtocolKeyBinds = typeof KEY_BINDS[number];
+export type KeyBindsConfig = Record<BreachProtocolKeyBinds, Accelerator>;
+
+export const COMMANDS = [
+  'worker:solve',
+  'worker:solve.withPriority1',
+  'worker:solve.withPriority2',
+  'worker:solve.withPriority3',
+  'worker:solve.withPriority4',
+  'worker:solve.withPriority5',
+  'worker:analyze',
+] as const;
+
+export type BreachProtocolCommands = typeof COMMANDS[number];
 
 export interface AppSettings
   extends RobotSettings,
@@ -204,15 +220,6 @@ export interface PackageDetails {
   license: string;
   licenseText: string;
 }
-
-export type BreachProtocolCommands =
-  | 'worker:solve'
-  | 'worker:solve.withPriority1'
-  | 'worker:solve.withPriority2'
-  | 'worker:solve.withPriority3'
-  | 'worker:solve.withPriority4'
-  | 'worker:solve.withPriority5'
-  | 'worker:analyze';
 
 interface ValidationErrors {
   [key: string]: boolean;
