@@ -28,8 +28,12 @@ import {
   ActionTypes,
   AnalysisInput,
   BreachProtocolCommands,
+  BreachProtocolKeyBinds,
+  COMMANDS,
   DropZoneFileValidationErrors,
+  KEY_BINDS,
   PackageDetails,
+  UpdateSettingsAction,
   WorkerStatus,
 } from '../common';
 import { CommandManager } from './command-manager';
@@ -175,39 +179,47 @@ export class Main {
       .register('worker:analyze', () => this.onWorkerAnalyze());
   }
 
-  private getKeybindings(): {
-    id: BreachProtocolCommands;
-    accelerator: Accelerator;
-  }[] {
-    const {
-      keyBind,
-      keyBindWithPriority1,
-      keyBindWithPriority2,
-      keyBindWithPriority3,
-      keyBindWithPriority4,
-      keyBindWithPriority5,
-      keyBindAnalyze,
-    } = this.getSettings();
-
-    return [
-      { id: 'worker:solve', accelerator: keyBind },
-      { id: 'worker:solve.withPriority1', accelerator: keyBindWithPriority1 },
-      { id: 'worker:solve.withPriority2', accelerator: keyBindWithPriority2 },
-      { id: 'worker:solve.withPriority3', accelerator: keyBindWithPriority3 },
-      { id: 'worker:solve.withPriority4', accelerator: keyBindWithPriority4 },
-      { id: 'worker:solve.withPriority5', accelerator: keyBindWithPriority5 },
-      { id: 'worker:analyze', accelerator: keyBindAnalyze },
-    ];
+  private getKeybindings() {
+    // prettier-ignore
+    return COMMANDS
+      .map((id, i) => ({ id, optionId: KEY_BINDS[i] }))
+      .map((ids) => ({ ...ids, accelerator: this.getSettings()[ids.optionId] }));
   }
 
   private registerKeyBinds() {
     const keybindings = this.getKeybindings();
+    const conflicts: BreachProtocolKeyBinds[] = [];
 
-    for (const { id, accelerator } of keybindings) {
+    for (const { accelerator, id, optionId } of keybindings) {
       if (accelerator) {
-        this.keyBindManager.register(id, accelerator);
+        const errors = this.keyBindManager.validate(accelerator as string);
+
+        if (!errors) {
+          this.keyBindManager.register(id, accelerator);
+        } else {
+          conflicts.push(optionId);
+        }
       }
     }
+
+    if (conflicts.length) {
+      const payload = this.getInvalidKeyBindsPayload(conflicts);
+      this.store.dispatch(new UpdateSettingsAction(payload), true);
+
+      const message = "Some key bindings couldn't be bound.";
+      const detail = 'Visit settings to bind them manually.';
+
+      nativeDialog.alert({ message, detail });
+    }
+  }
+
+  private getInvalidKeyBindsPayload(conflicts: BreachProtocolKeyBinds[]) {
+    const enteries = conflicts.map((id) => [id, ''] as const);
+
+    return Object.fromEntries(enteries) as Record<
+      BreachProtocolKeyBinds,
+      string
+    >;
   }
 
   private async updateApp() {

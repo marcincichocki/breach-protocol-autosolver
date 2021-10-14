@@ -122,3 +122,6 @@ export class BitMask {
 export function sleep(delay: number) {
   return delay ? new Promise((r) => setTimeout(r, delay)) : Promise.resolve();
 }
+
+/** Does nothing. */
+export const noop = () => {};
