@@ -105,7 +105,11 @@ export class KeyBindManager<T> {
     let result = false;
 
     if (isValid) {
-      result = globalShortcut.register(input, noop);
+      try {
+        result = globalShortcut.register(input, noop);
+      } catch {
+        // Register can fail silently or throw an error.
+      }
 
       if (result) {
         globalShortcut.unregister(input);
