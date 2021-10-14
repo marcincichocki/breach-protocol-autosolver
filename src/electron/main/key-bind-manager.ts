@@ -1,3 +1,4 @@
+import { noop } from '@/common';
 import { Accelerator, globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
 import { KeyBindValidationErrors, normalizeAccelerator } from '../common';
@@ -89,16 +90,32 @@ export class KeyBindManager<T> {
   validate(input: string): KeyBindValidationErrors {
     const isValidAccelerator = isAccelerator(input);
     const isUnique = this.isUniqueAccelerator(input);
+    const canRegister = this.canRegisterAccelerator(input, isValidAccelerator);
 
     return isValidAccelerator && isUnique
       ? null
       : {
           isValidAccelerator,
           isUnique,
+          canRegister,
         };
   }
 
-  private isUniqueAccelerator(input: Accelerator) {
+  private canRegisterAccelerator(input: string, isValid: boolean) {
+    let result = false;
+
+    if (isValid) {
+      result = globalShortcut.register(input, noop);
+
+      if (result) {
+        globalShortcut.unregister(input);
+      }
+    }
+
+    return result;
+  }
+
+  private isUniqueAccelerator(input: string) {
     const a = normalizeAccelerator(input);
 
     return Array.from(this.registry.values())

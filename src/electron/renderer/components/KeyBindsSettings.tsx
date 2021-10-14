@@ -36,6 +36,7 @@ const getErrorDetail = createErrorMessageDispenser({
   isValidAccelerator:
     'Key bind can contain multiple modifiers and a single key code.',
   isUnique: 'Key bind must be unique.',
+  canRegister: 'Key bind is alredy registered in other application.',
 });
 
 async function validateKeyBind(

@@ -221,6 +221,7 @@ interface ValidationErrors {
 export interface KeyBindValidationErrors extends ValidationErrors {
   isValidAccelerator: boolean;
   isUnique: boolean;
+  canRegister: boolean;
 }
 
 export interface DropZoneFileValidationErrors extends ValidationErrors {
