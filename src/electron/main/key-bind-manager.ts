@@ -92,7 +92,7 @@ export class KeyBindManager<T> {
     const isUnique = this.isUniqueAccelerator(input);
     const canRegister = this.canRegisterAccelerator(input, isValidAccelerator);
 
-    return isValidAccelerator && isUnique
+    return isValidAccelerator && isUnique && canRegister
       ? null
       : {
           isValidAccelerator,
