@@ -187,7 +187,7 @@ describe('raw data validation', () => {
 
 describe('ocr', () => {
   beforeAll(async () => {
-    await WasmBreachProtocolRecognizer.init('./resources/tessdata', null);
+    await WasmBreachProtocolRecognizer.init('./resources/tessdata', 'eng');
   }, 30000);
 
   afterAll(async () => {
@@ -286,7 +286,10 @@ async function recognizeRegistryEntry(
   const recognizer = new WasmBreachProtocolRecognizer(null);
 
   return Promise.all([
-    breachProtocolOCR(container, recognizer, { thresholds }),
+    breachProtocolOCR(container, recognizer, {
+      thresholds,
+      skipTypesFragment: true,
+    }),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
@@ -307,7 +310,7 @@ class NoopImageContainer extends ImageContainer<any> {
 }
 
 class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
-  lang: BreachProtocolLanguages = null;
+  lang: BreachProtocolLanguages = 'eng';
   // @ts-ignore
   async recognizeCode(): any {}
   // @ts-ignore

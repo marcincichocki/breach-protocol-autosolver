@@ -116,12 +116,13 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
   /**
    * Terminate tesseract.js scheduler.
    */
-  static terminate() {
+  static async terminate() {
     if (!this.scheduler) {
       throw new Error('Scheduler is not initialized.');
     }
 
-    return this.scheduler.terminate();
+    await this.textWorker.terminate();
+    await this.scheduler.terminate();
   }
 
   static loadedLang: BreachProtocolLanguages = null;
