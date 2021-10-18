@@ -11,22 +11,26 @@ import { BreachProtocolFragmentResults, FragmentId } from './base';
 import { BreachProtocolBufferSizeFragment } from './buffer-size';
 import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
 import { BreachProtocolDaemonsFragment } from './daemons';
+import { BreachProtocolTypesFragment } from './daemons-types';
 import { BreachProtocolGridFragment } from './grid';
 import { ImageContainer } from './image-container';
 import { BreachProtocolRecognizer } from './recognizer';
 
 export class BreachProtocolRecognitionResult {
+  public readonly results = this.unsafeResults.filter(
+    Boolean
+  ) as BreachProtocolFragmentResults;
+
   readonly positionSquareMap = this.getPositionSquareMap();
 
   readonly rawData = this.reduceToRawData();
 
-  readonly isValid = this.results.every((r) => r.isValid);
+  readonly isValid = this.results
+    // daemon types can be undedected
+    .filter((r) => r.id !== 'types')
+    .every((r) => r.isValid);
 
-  constructor(public readonly results: BreachProtocolFragmentResults) {}
-
-  getInvalidFragmentIds() {
-    return this.results.filter((r) => !r.isValid).map((r) => r.id);
-  }
+  constructor(private readonly unsafeResults: BreachProtocolFragmentResults) {}
 
   private reduceToRawData(): BreachProtocolRawData {
     return this.results.reduce(
@@ -66,6 +70,7 @@ interface BreachProtocolOCROptions {
   thresholds?: Partial<Record<FragmentId, number>>;
   experimentalBufferSizeRecognition?: boolean;
   filterRecognizerResults?: boolean;
+  skipTypesFragment?: boolean;
 }
 
 export async function breachProtocolOCR<TImage>(
@@ -75,6 +80,7 @@ export async function breachProtocolOCR<TImage>(
     thresholds,
     experimentalBufferSizeRecognition,
     filterRecognizerResults,
+    skipTypesFragment,
   }: BreachProtocolOCROptions
 ) {
   // prettier-ignore
@@ -84,11 +90,15 @@ export async function breachProtocolOCR<TImage>(
   const bufferSizeFragment = experimentalBufferSizeRecognition
     ? new BreachProtocolBufferSizeTrimFragment(container)
     : new BreachProtocolBufferSizeFragment(container);
+  const typesFragment = skipTypesFragment
+    ? null
+    : new BreachProtocolTypesFragment(container, recognizer);
 
   const results = await Promise.all([
     gridFragment.recognize(thresholds?.grid),
     daemonsFragment.recognize(thresholds?.daemons),
     bufferSizeFragment.recognize(thresholds?.bufferSize),
+    typesFragment?.recognize(thresholds?.types),
   ]);
 
   return new BreachProtocolRecognitionResult(results);

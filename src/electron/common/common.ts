@@ -1,3 +1,4 @@
+import { BreachProtocolLanguages } from '@/common';
 import type { RobotSettings, SharpImageContainerConfig } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
@@ -83,6 +84,8 @@ export interface AppSettings
   thresholdGridAuto: boolean;
   thresholdDaemons: number;
   thresholdDaemonsAuto: boolean;
+  thresholdTypes: number;
+  thresholdTypesAuto: boolean;
   thresholdBufferSize: number;
   thresholdBufferSizeAuto: boolean;
   experimentalBufferSizeRecognition: boolean;
@@ -91,6 +94,8 @@ export interface AppSettings
   resolveDelay: number;
   focusOnError: boolean;
   filterRecognizerResults: boolean;
+  gameLang: BreachProtocolLanguages;
+  skipTypesFragment: boolean;
 }
 
 export interface AppStats {

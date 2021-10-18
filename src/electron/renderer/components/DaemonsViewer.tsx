@@ -1,7 +1,15 @@
-import { BreachProtocolResultJSON, DaemonsRawData } from '@/core';
+import { eng } from '@/common';
+import {
+  BreachProtocolResultJSON,
+  BreachProtocolTypesFragmentResult,
+  DaemonsRawData,
+} from '@/core';
 import styled from 'styled-components';
-import { Spacer } from './Flex';
+import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
+
+/** DaemonId to english name. */
+const DAEMONS_DICT = new Map(eng.daemons.map((d) => [d.id, d.value] as const));
 
 const DaemonsWrapper = styled.div`
   flex-grow: 1;
@@ -12,25 +20,40 @@ const DaemonsWrapper = styled.div`
   cursor: default;
 `;
 
-const Daemon = styled.div<{ active: boolean }>`
+const DaemonType = styled.h3`
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.2rem;
+`;
+
+const DaemonSequence = styled(Row)`
+  gap: 0.5rem;
+`;
+
+const Daemon = styled(Col)<{ active: boolean }>`
   border: 1px solid var(--primary);
   background: var(--background);
-  display: inline-flex;
-  gap: 0.5rem;
   padding: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  color: ${({ active }) => (active ? 'var(--accent)' : 'var(--accent-darker)')};
+  line-height: 1;
+  color: ${(p) => (p.active ? 'var(--accent)' : 'var(--accent-darker)')};
+
+  > ${DaemonType} {
+    color: ${(p) => (p.active ? 'var(--primary)' : 'var(--accent-darker)')};
+  }
 `;
 
 interface DaemonsViewerProps {
   daemons: DaemonsRawData;
+  types?: BreachProtocolTypesFragmentResult;
   result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }
 
 export const DaemonsViewer = ({
   daemons,
+  types,
   result,
   onHighlight,
 }: DaemonsViewerProps) => {
@@ -56,11 +79,20 @@ export const DaemonsViewer = ({
             }
             onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
-            {d.map((s, j) => (
-              <span key={j}>{s}</span>
-            ))}
-            <Spacer />
-            <span>#{i + 1}</span>
+            {types && (
+              <DaemonType>
+                {types?.isValid
+                  ? DAEMONS_DICT.get(types.rawData[i])
+                  : 'UNKNOWN'}
+              </DaemonType>
+            )}
+            <DaemonSequence>
+              {d.map((s, j) => (
+                <span key={j}>{s}</span>
+              ))}
+              <Spacer />
+              <span>#{i + 1}</span>
+            </DaemonSequence>
           </Daemon>
         );
       })}

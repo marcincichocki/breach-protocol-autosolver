@@ -240,6 +240,8 @@ export class BreachProtocolAutosolver {
       thresholdGridAuto,
       thresholdDaemons,
       thresholdDaemonsAuto,
+      thresholdTypes,
+      thresholdTypesAuto,
       thresholdBufferSize,
       thresholdBufferSizeAuto,
     } = this.settings;
@@ -247,6 +249,7 @@ export class BreachProtocolAutosolver {
     return {
       grid: thresholdGridAuto ? undefined : thresholdGrid,
       daemons: thresholdDaemonsAuto ? undefined : thresholdDaemons,
+      types: thresholdTypesAuto ? undefined : thresholdTypes,
       bufferSize: thresholdBufferSizeAuto ? undefined : thresholdBufferSize,
     };
   }
@@ -257,16 +260,19 @@ export class BreachProtocolAutosolver {
       downscaleSource,
       experimentalBufferSizeRecognition,
       filterRecognizerResults,
+      gameLang,
+      skipTypesFragment,
     } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,
     });
-    const recognizer = new WasmBreachProtocolRecognizer();
+    const recognizer = new WasmBreachProtocolRecognizer(gameLang);
 
     return breachProtocolOCR(container, recognizer, {
       thresholds: this.getFixedThresholds(),
       experimentalBufferSizeRecognition,
       filterRecognizerResults,
+      skipTypesFragment,
     });
   }
 }

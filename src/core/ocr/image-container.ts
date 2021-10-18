@@ -16,6 +16,10 @@ export abstract class ImageContainer<T> {
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
 
+  abstract processTypesFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
+
   abstract processBufferSizeFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
@@ -27,7 +31,7 @@ export abstract class ImageContainer<T> {
   }>;
 
   /** Apply threshold to given fragment. */
-  abstract threshold(instance: T, threshold: number): T;
+  abstract threshold(instance: T, threshold: number, grayscale?: boolean): T;
 
   abstract toBuffer(instance: T): Promise<Buffer>;
 

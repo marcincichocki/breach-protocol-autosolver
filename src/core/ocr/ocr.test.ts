@@ -1,3 +1,4 @@
+import { BreachProtocolLanguages } from '@/common';
 import { SharpImageContainer, SharpImageContainerConfig } from '@/common/node';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import { join } from 'path';
@@ -186,11 +187,11 @@ describe('raw data validation', () => {
 
 describe('ocr', () => {
   beforeAll(async () => {
-    await WasmBreachProtocolRecognizer.initScheduler('./resources');
+    await WasmBreachProtocolRecognizer.init('./resources/tessdata', null);
   }, 30000);
 
   afterAll(async () => {
-    await WasmBreachProtocolRecognizer.terminateScheduler();
+    await WasmBreachProtocolRecognizer.terminate();
   });
 
   it.each(getRegistryFor('custom'))(
@@ -282,7 +283,7 @@ async function recognizeRegistryEntry(
     downscaleSource,
   });
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
-  const recognizer = new WasmBreachProtocolRecognizer();
+  const recognizer = new WasmBreachProtocolRecognizer(null);
 
   return Promise.all([
     breachProtocolOCR(container, recognizer, { thresholds }),
@@ -306,6 +307,9 @@ class NoopImageContainer extends ImageContainer<any> {
 }
 
 class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
+  lang: BreachProtocolLanguages = null;
   // @ts-ignore
-  async recognize(): any {}
+  async recognizeCode(): any {}
+  // @ts-ignore
+  async recognizeText(): any {}
 }

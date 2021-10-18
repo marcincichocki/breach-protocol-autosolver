@@ -1,3 +1,5 @@
+import { BreachProtocolLanguages } from '@/common';
+
 export interface BreachProtocolRecognizerBox {
   x0: number;
   y0: number;
@@ -11,9 +13,17 @@ export interface BreachProtocolRecognizerWord {
 }
 
 export interface BreachProtocolRecognizerResult {
+  text: string;
   lines: BreachProtocolRecognizerWord[][];
 }
 
 export interface BreachProtocolRecognizer {
-  recognize(image: Buffer): Promise<BreachProtocolRecognizerResult>;
+  /** Current language. */
+  lang: BreachProtocolLanguages;
+
+  /** Recognize BP codes. */
+  recognizeCode(image: Buffer): Promise<BreachProtocolRecognizerResult>;
+
+  /** Recognize daemon type. */
+  recognizeText(image: Buffer): Promise<BreachProtocolRecognizerResult>;
 }

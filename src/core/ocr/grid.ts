@@ -1,9 +1,9 @@
 import { Point } from '@/common';
 import { GridRawData } from '../common';
 import {
+  BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
   BreachProtocolFragmentStatus,
-  BreachProtocolOCRFragment,
 } from './base';
 
 export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
@@ -13,7 +13,7 @@ export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
 
 export class BreachProtocolGridFragment<
   TImage
-> extends BreachProtocolOCRFragment<GridRawData, TImage, 'grid'> {
+> extends BreachProtocolCodeFragment<GridRawData, TImage, 'grid'> {
   readonly thresholds = new Map([
     [1080, 120],
     [1440, 120],

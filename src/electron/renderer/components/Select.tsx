@@ -150,8 +150,8 @@ export const Select = ({
   return (
     <SelectWrapper disabled={disabled}>
       <select hidden value={value} onChange={onChange}>
-        {options.map(({ value }) => (
-          <option key={value} value={value}></option>
+        {options.map(({ value }, i) => (
+          <option key={i} value={value}></option>
         ))}
       </select>
       <SelectButton onClick={prev} disabled={disabled}>

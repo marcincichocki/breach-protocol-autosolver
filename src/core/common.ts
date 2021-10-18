@@ -1,9 +1,10 @@
-import { getClosest, uniqueBy } from '@/common';
+import { DaemonId, getClosest, uniqueBy } from '@/common';
 import {
   BreachProtocolBufferSizeFragmentResult,
   BreachProtocolDaemonsFragmentResult,
   BreachProtocolFragmentResult,
   BreachProtocolGridFragmentResult,
+  BreachProtocolTypesFragmentResult,
   FragmentId,
 } from './ocr';
 import { Daemon, Sequence } from './sequence';
@@ -18,6 +19,7 @@ export type BufferSize = 4 | 5 | 6 | 7 | 8 | 9;
 export type GridRawData = HexCode[];
 export type DaemonRawData = HexCode[];
 export type DaemonsRawData = DaemonRawData[];
+export type TypesRawData = DaemonId[];
 
 const codesIterable = HEX_CODES.map(
   (x, i) => [x, String.fromCharCode(i + 97)] as const
@@ -97,6 +99,7 @@ export function byUniqueValue() {
 export interface BreachProtocolRawData {
   grid: GridRawData;
   daemons: DaemonsRawData;
+  types?: TypesRawData;
   bufferSize: BufferSize;
 }
 
@@ -117,6 +120,8 @@ export const isBufferSizeFragment =
   isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
 export const isDaemonsFragment =
   isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
+export const isTypesFragment =
+  isFragment<BreachProtocolTypesFragmentResult>('types');
 
 function getDir(orientation: GapOrientation, offset: number): GapDirection {
   switch (orientation) {
