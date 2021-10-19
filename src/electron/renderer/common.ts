@@ -52,10 +52,10 @@ export function useIpcEvent<T>(
   callback: (value: T) => void
 ) {
   useEffect(() => {
-    const subscriptions = channels.map((c) => api.on(c, callback));
+    const unsubscriptions = channels.map((c) => api.on(c, callback));
 
     return () => {
-      subscriptions.forEach((u) => u());
+      unsubscriptions.forEach((u) => u());
     };
   }, []);
 }

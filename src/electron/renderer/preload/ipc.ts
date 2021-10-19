@@ -55,9 +55,7 @@ export function on(channel: IpcOnChannels, listener: (...args: any[]) => void) {
   ipcRenderer.on(channel, safeListener);
 
   return () => {
-    console.log('remove listener for ', channel);
-
-    // Funciton passed to preload will be wrapped in a proxy and its
+    // Function passed to preload will be wrapped in a proxy and its
     // reference will be lost. Creating local version of the listener will
     // allow to free memory later on.
     ipcRenderer.removeListener(channel, safeListener);
