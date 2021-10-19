@@ -1,23 +1,16 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import {
-  BreachProtocolRawData,
-  BufferSize,
-  BUFFER_SIZE_MAX,
-  BUFFER_SIZE_MIN,
-  HexCode,
-  HEX_CODES,
-} from '../common';
-import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
-import { BreachProtocolDaemonsFragmentResult } from './daemons';
-import { BreachProtocolTypesFragmentResult } from './daemons-types';
-import { BreachProtocolGridFragmentResult } from './grid';
-import { ImageContainer } from './image-container';
+import { BreachProtocolRawData, HexCode, HEX_CODES } from '../../common';
+import { ImageContainer } from '../image-container';
 import {
   BreachProtocolRecognizer,
   BreachProtocolRecognizerBox,
   BreachProtocolRecognizerResult,
   BreachProtocolRecognizerWord,
-} from './recognizer';
+} from '../recognizer';
+import { BreachProtocolBufferSizeFragmentResult } from './buffer-size-fragment';
+import { BreachProtocolDaemonsFragmentResult } from './daemons-fragment';
+import { BreachProtocolGridFragmentResult } from './grid-fragment';
+import { BreachProtocolTypesFragmentResult } from './types-fragment';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -312,36 +305,5 @@ export abstract class BreachProtocolCodeFragment<
     return symbols
       .filter(unique)
       .every((s) => HEX_CODES.includes(s as HexCode));
-  }
-}
-
-export abstract class BreachProtocolBufferSizeBase<
-  TImage
-> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
-  readonly id = 'bufferSize';
-
-  readonly p1 = new Point(0.42, 0.167);
-
-  readonly p2 = new Point(0.8, 0.225);
-
-  readonly boundingBox = this.getFragmentBoundingBox();
-
-  readonly fragment = this.container.process(this.boundingBox);
-
-  /** Percentage that padding in buffer box takes. */
-  protected readonly padding = 0.00937;
-
-  /** Percentage that buffer square takes. */
-  protected readonly square = 0.0164;
-
-  /** Percentage that gap between buffer squares takes. */
-  protected readonly gap = 0.00546;
-
-  getStatus(n: number) {
-    if (!Number.isInteger(n) || n < BUFFER_SIZE_MIN || n > BUFFER_SIZE_MAX) {
-      return BreachProtocolFragmentStatus.InvalidSize;
-    }
-
-    return BreachProtocolFragmentStatus.Valid;
   }
 }

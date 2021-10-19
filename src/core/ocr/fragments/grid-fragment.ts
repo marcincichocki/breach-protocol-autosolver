@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { GridRawData } from '../common';
+import { GridRawData } from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,

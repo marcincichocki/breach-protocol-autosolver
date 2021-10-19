@@ -1,4 +1,4 @@
-import { BreachProtocolFragmentBoundingBox } from './base';
+import { BreachProtocolFragmentBoundingBox } from './fragments/base';
 
 export abstract class ImageContainer<T> {
   abstract readonly instance: T;

@@ -7,14 +7,14 @@ import {
   similarity,
   unique,
 } from '@/common';
-import { TypesRawData } from '../common';
+import { TypesRawData } from '../../common';
+import { ImageContainer } from '../image-container';
+import { BreachProtocolRecognizer } from '../recognizer';
 import {
   BreachProtocolFragmentResult,
   BreachProtocolFragmentStatus,
   BreachProtocolOCRFragment,
 } from './base';
-import { ImageContainer } from './image-container';
-import { BreachProtocolRecognizer } from './recognizer';
 
 export type BreachProtocolTypesFragmentResult = BreachProtocolFragmentResult<
   TypesRawData,

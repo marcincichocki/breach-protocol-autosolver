@@ -7,12 +7,15 @@ import {
   isGridFragment,
   ROWS,
 } from '../common';
-import { BreachProtocolFragmentResults, FragmentId } from './base';
-import { BreachProtocolBufferSizeFragment } from './buffer-size';
-import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
-import { BreachProtocolDaemonsFragment } from './daemons';
-import { BreachProtocolTypesFragment } from './daemons-types';
-import { BreachProtocolGridFragment } from './grid';
+import {
+  BreachProtocolBufferSizeFragment,
+  BreachProtocolBufferSizeTrimFragment,
+  BreachProtocolDaemonsFragment,
+  BreachProtocolFragmentResults,
+  BreachProtocolGridFragment,
+  BreachProtocolTypesFragment,
+  FragmentId,
+} from './fragments';
 import { ImageContainer } from './image-container';
 import { BreachProtocolRecognizer } from './recognizer';
 

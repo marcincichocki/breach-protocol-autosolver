@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { DaemonsRawData } from '../common';
+import { DaemonsRawData } from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,

@@ -10,11 +10,14 @@ import {
   DaemonsRawData,
   GridRawData,
 } from '../common';
-import { BreachProtocolFragmentStatus, FragmentId } from './base';
-import { BreachProtocolBufferSizeFragment } from './buffer-size';
-import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
-import { BreachProtocolDaemonsFragment } from './daemons';
-import { BreachProtocolGridFragment } from './grid';
+import {
+  BreachProtocolBufferSizeFragment,
+  BreachProtocolBufferSizeTrimFragment,
+  BreachProtocolDaemonsFragment,
+  BreachProtocolFragmentStatus,
+  BreachProtocolGridFragment,
+  FragmentId,
+} from './fragments';
 import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
 import { BreachProtocolRecognizer } from './recognizer';
