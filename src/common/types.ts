@@ -121,4 +121,4 @@ export const langData = {
   rus,
 };
 
-export type BreachProtocolLanguages = keyof typeof langData;
+export type BreachProtocolLanguage = keyof typeof langData;

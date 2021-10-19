@@ -1,4 +1,4 @@
-import { BreachProtocolLanguages } from '@/common';
+import { BreachProtocolLanguage } from '@/common';
 import type { RobotSettings, SharpImageContainerConfig } from '@/common/node';
 import {
   BreachProtocolFragmentResults,
@@ -94,7 +94,7 @@ export interface AppSettings
   resolveDelay: number;
   focusOnError: boolean;
   filterRecognizerResults: boolean;
-  gameLang: BreachProtocolLanguages;
+  gameLang: BreachProtocolLanguage;
   skipTypesFragment: boolean;
 }
 

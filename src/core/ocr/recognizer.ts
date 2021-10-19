@@ -1,4 +1,4 @@
-import { BreachProtocolLanguages } from '@/common';
+import { BreachProtocolLanguage } from '@/common';
 
 export interface BreachProtocolRecognizerBox {
   x0: number;
@@ -19,7 +19,7 @@ export interface BreachProtocolRecognizerResult {
 
 export interface BreachProtocolRecognizer {
   /** Current language. */
-  lang: BreachProtocolLanguages;
+  lang: BreachProtocolLanguage;
 
   /** Recognize BP codes. */
   recognizeCode(image: Buffer): Promise<BreachProtocolRecognizerResult>;

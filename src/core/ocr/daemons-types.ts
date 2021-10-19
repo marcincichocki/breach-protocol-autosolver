@@ -1,5 +1,5 @@
 import {
-  BreachProtocolLanguages,
+  BreachProtocolLanguage,
   DaemonId,
   DAEMON_UNKNOWN,
   langData,
@@ -35,8 +35,8 @@ export class BreachProtocolTypesFragment<
   );
 
   readonly thresholds = new Map([
-    [1080, 120],
-    [1440, 90],
+    [1080, 100],
+    [1440, 55],
     [2160, 30],
   ]);
 
@@ -44,7 +44,7 @@ export class BreachProtocolTypesFragment<
   private static daemonDict: Map<string, DaemonId> = null;
 
   /** Language of current dictionary. */
-  private static daemonDictLang: BreachProtocolLanguages = null;
+  private static daemonDictLang: BreachProtocolLanguage = null;
 
   constructor(
     container: ImageContainer<TImage>,

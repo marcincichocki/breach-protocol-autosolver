@@ -1,9 +1,10 @@
 import { BreachProtocolRecognizer, HEX_CODES } from '@/core';
 import Tesseract, { createScheduler, createWorker } from 'tesseract.js';
-import { BreachProtocolLanguages } from '../types';
+import { BreachProtocolLanguage, langData } from '../types';
+import { unique } from '../util';
 
 export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
-  constructor(public readonly lang: BreachProtocolLanguages) {
+  constructor(public readonly lang: BreachProtocolLanguage) {
     /**
      * Initializing workers takes a lot of time. Loading them every time
      * when class is instantiated is a big performance bottleneck.
@@ -79,12 +80,23 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     return worker;
   }
 
-  private static async initTextWorker(lang: string) {
+  private static async initTextWorker(lang: BreachProtocolLanguage) {
     const worker = await this.initWorker(lang);
 
-    // TODO: get daemon data and set as whitelist
+    await worker.setParameters({
+      tessedit_char_whitelist: this.getLangWhitelist(lang),
+    });
 
     return worker;
+  }
+
+  private static getLangWhitelist(lang: BreachProtocolLanguage) {
+    const { daemons } = langData[lang];
+
+    return daemons
+      .flatMap((d) => d.value.split(''))
+      .filter(unique)
+      .join('');
   }
 
   /**
@@ -92,7 +104,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
    *
    * @param langPath Path to folder where BreachProtocol.traineddata can be found. Relative to process.cwd() or absolute.
    */
-  static async init(langPath: string, gameLang: BreachProtocolLanguages) {
+  static async init(langPath: string, gameLang: BreachProtocolLanguage) {
     if (this.scheduler) {
       throw new Error('Scheduler is alredy initialized.');
     }
@@ -125,7 +137,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     await this.scheduler.terminate();
   }
 
-  static loadedLang: BreachProtocolLanguages = null;
+  static loadedLang: BreachProtocolLanguage = null;
 
   private static langPath: string = null;
 

@@ -1,4 +1,4 @@
-import { BreachProtocolLanguages } from '@/common';
+import { BreachProtocolLanguage } from '@/common';
 import { SharpImageContainer, SharpImageContainerConfig } from '@/common/node';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import { join } from 'path';
@@ -310,7 +310,7 @@ class NoopImageContainer extends ImageContainer<any> {
 }
 
 class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
-  lang: BreachProtocolLanguages = 'eng';
+  lang: BreachProtocolLanguage = 'eng';
   // @ts-ignore
   async recognizeCode(): any {}
   // @ts-ignore
