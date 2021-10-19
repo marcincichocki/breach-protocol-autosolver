@@ -8,7 +8,6 @@ import {
   WorkerStatus,
 } from '@/electron/common';
 import { format, formatDistanceToNow } from 'date-fns';
-import type { IpcRendererEvent } from 'electron';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ScreenshotDisplayOutput } from 'screenshot-desktop';
@@ -50,17 +49,13 @@ export function transformTimestamp(timestamp: number) {
 
 export function useIpcEvent<T>(
   channels: IpcOnChannels[],
-  callback: (event: IpcRendererEvent, value: T) => void
+  callback: (value: T) => void
 ) {
   useEffect(() => {
-    channels.forEach((c) => {
-      api.on(c, callback);
-    });
+    const subscriptions = channels.map((c) => api.on(c, callback));
 
     return () => {
-      channels.forEach((c) => {
-        api.removeListener(c, callback);
-      });
+      subscriptions.forEach((u) => u());
     };
   }, []);
 }
@@ -70,7 +65,7 @@ export function useIpcEventDialog<T>(channel: IpcOnChannels) {
   const [data, setData] = useState<T>(null);
   const close = () => setIsOpen(false);
 
-  useIpcEvent([channel], (e, data: T) => {
+  useIpcEvent([channel], (data: T) => {
     setData(data);
     setIsOpen(true);
   });
@@ -81,7 +76,7 @@ export function useIpcEventDialog<T>(channel: IpcOnChannels) {
 export function useIpcState() {
   const [state, setState] = useState<State>(api.getState());
 
-  function handleEvent(e: IpcRendererEvent, { payload }: Action<State>) {
+  function handleEvent({ payload }: Action<State>) {
     setState(payload);
   }
 
@@ -116,16 +111,17 @@ export function dispatchAsyncRequest<TRes, TReq = any>(
   return new Promise<TRes>((resolve) => {
     const uuid = uuidv4();
     const req: Request<TReq> = { ...action, uuid };
+    let removeListener: () => void = null;
 
-    function onAsyncResponse(e: IpcRendererEvent, res: Response<TRes>) {
+    function onAsyncResponse(res: Response<TRes>) {
       if (res.uuid !== uuid) return;
 
-      api.removeListener('renderer:async-response', onAsyncResponse);
+      removeListener();
 
       resolve(res.data);
     }
 
-    api.on('renderer:async-response', onAsyncResponse);
+    removeListener = api.on('renderer:async-response', onAsyncResponse);
     api.send('main:async-request', req);
   });
 }
