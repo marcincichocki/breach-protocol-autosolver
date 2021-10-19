@@ -46,13 +46,20 @@ function validateChannel(input: string, whitelist: readonly string[]) {
 }
 
 /** Wrapper around {@link ipcRenderer.on}. Accepts only curated list of channels. */
-export function on(
-  channel: IpcOnChannels,
-  listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
-) {
+export function on(channel: IpcOnChannels, listener: (...args: any[]) => void) {
   validateChannel(channel, onChannels);
 
-  ipcRenderer.on(channel, listener);
+  // Intentionally remove event from parameters.
+  const safeListener = (e: any, ...args: any[]) => listener(...args);
+
+  ipcRenderer.on(channel, safeListener);
+
+  return () => {
+    // Function passed to preload will be wrapped in a proxy and its
+    // reference will be lost. Creating local version of the listener will
+    // allow to free memory later on.
+    ipcRenderer.removeListener(channel, safeListener);
+  };
 }
 
 /** Wrapper around {@link ipcRenderer.send}. Accepts only curated list of channels. */
@@ -67,16 +74,6 @@ export function invoke<T = any>(channel: IpcInvokeChannels, ...args: any[]) {
   validateChannel(channel, invokeChannels);
 
   return ipcRenderer.invoke(channel, ...args) as Promise<T>;
-}
-
-/** Wrapper around {@link ipcRenderer.removeListener}. Accepts only curated list of channels. */
-export function removeListener(
-  channel: IpcOnChannels,
-  listener: (...args: any[]) => void
-) {
-  validateChannel(channel, onChannels);
-
-  ipcRenderer.removeListener(channel, listener);
 }
 
 export function getState(): State {

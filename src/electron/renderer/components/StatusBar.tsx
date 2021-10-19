@@ -68,7 +68,7 @@ function useSettingsChangeListener(delay = 2000) {
   const [show, setShow] = useState(false);
   let id: any = null;
 
-  useIpcEvent([ActionTypes.UPDATE_SETTINGS], (e, { meta }: any) => {
+  useIpcEvent([ActionTypes.UPDATE_SETTINGS], ({ meta }: any) => {
     if (meta?.notify === false) {
       return;
     }
@@ -90,7 +90,7 @@ function useSettingsChangeListener(delay = 2000) {
 function useDownloadProgress() {
   const [progress, setProgress] = useState(0);
 
-  useIpcEvent(['renderer:download-progress'], (e, info: ProgressInfo) => {
+  useIpcEvent(['renderer:download-progress'], (info: ProgressInfo) => {
     setProgress(info.percent);
   });
 
