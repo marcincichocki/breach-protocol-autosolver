@@ -46,6 +46,8 @@ export class BreachProtocolTypesFragment<
   /** Language of current dictionary. */
   private static daemonDictLang: BreachProtocolLanguage = null;
 
+  private static minAcceptableSimilarity = 0.9;
+
   constructor(
     container: ImageContainer<TImage>,
     private readonly recognizer: BreachProtocolRecognizer
@@ -108,11 +110,16 @@ export class BreachProtocolTypesFragment<
       const similarities = keys.map((k) => similarity(t, k));
       const max = Math.max(...similarities);
 
-      return max > 0.9
-        ? BreachProtocolTypesFragment.daemonDict.get(
-            keys[similarities.indexOf(max)]
-          )
-        : DAEMON_UNKNOWN;
+      if (max > BreachProtocolTypesFragment.minAcceptableSimilarity) {
+        const index = similarities.indexOf(max);
+        const value = keys[index];
+        // Remove used value as it can not appear twice.
+        keys.splice(index, 1);
+
+        return BreachProtocolTypesFragment.daemonDict.get(value);
+      }
+
+      return DAEMON_UNKNOWN;
     });
   }
 }
