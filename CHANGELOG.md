@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.2.0...v2.2.1) (2021-10-19)
+
+
+### Bug Fixes
+
+* **client-electron:** check if key bind can be registered ([f43f616](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f43f616fd93dff23a50e91e087d591f2ddf74b0a)), closes [#240](https://github.com/marcincichocki/breach-protocol-autosolver/issues/240)
+* **client-electron:** prevent memory leak in preload ([182db5a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/182db5a2db95e27759dfdb1278a6c8204675cd71))
+
 ## [2.2.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.1.0...v2.2.0) (2021-10-12)
 
 
