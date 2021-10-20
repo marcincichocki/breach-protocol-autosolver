@@ -248,7 +248,7 @@ export abstract class BreachProtocolCodeFragment<
   private getSource({
     lines,
   }: BreachProtocolRecognizerResult): BreachProtocolSource {
-    if (!this.filterRecognizerResults || this.id === 'daemons') {
+    if (!this.filterRecognizerResults) {
       return this.codesToSource(lines);
     }
 
