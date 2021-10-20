@@ -8,7 +8,8 @@ export type BreachProtocolLanguage =
   | 'deu'
   | 'fra'
   | 'por'
-  | 'chi_sim';
+  | 'chi_sim'
+  | 'spa';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -134,6 +135,24 @@ export const chi_sim: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '数据挖掘: 制作规范',
 };
 
+export const spa: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'MINERÍA DE DATOS_V1',
+  [d.DAEMON_DATAMINE_V2]: 'MINERÍA DE DATOS_V2',
+  [d.DAEMON_DATAMINE_V3]: 'MINERÍA DE DATOS_V3',
+  [d.DAEMON_ICEPICK]: 'DESHIELO',
+  [d.DAEMON_MASS_VULNERABILITY]: 'VULNERABILIDAD MASIVA',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'APAGADO DE CÁMARA',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'TORRETAS ALIADAS',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'APAGADO DE TORRETA',
+  [d.DAEMON_OPTICS_JAMMER]: 'INHIBIDOR DE ÓPTICAS',
+  [d.DAEMON_WEAPONS_JAMMER]: 'INHIBIDOR DE ARMAS',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'MINERÍA DE DATOS: COPIAR MALWARE',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALIZAR MALWARE',
+  [d.DAEMON_GAIN_ACCESS]: 'OBTENER ACCESO',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
+    'MINERÍA DE DATOS: ESPECIFICACIONES DE CREACIÓN',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -142,4 +161,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   fra,
   por,
   chi_sim,
+  spa,
 };
