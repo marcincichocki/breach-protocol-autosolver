@@ -39,7 +39,7 @@ export class BreachProtocolTypesFragment<
   /** Language of current dictionary. */
   private static daemonDictLang: BreachProtocolLanguage = null;
 
-  private static minAcceptableSimilarity = 0.9;
+  private static minAcceptableSimilarity = 0.85;
 
   constructor(
     container: ImageContainer<TImage>,
