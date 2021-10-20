@@ -1,5 +1,6 @@
 import { Point, similarity, unique } from '@/common';
 import { DaemonId, TypesRawData } from '../../common';
+import { DAEMON_ICEPICK } from '../../daemons';
 import { BreachProtocolLanguage, daemonsI18n } from '../../daemons-i18n';
 import { ImageContainer } from '../image-container';
 import { BreachProtocolRecognizer } from '../recognizer';
@@ -40,6 +41,17 @@ export class BreachProtocolTypesFragment<
   private static daemonDictLang: BreachProtocolLanguage = null;
 
   private static minAcceptableSimilarity = 0.85;
+
+  // Some non latin languages contain latin characters in daemon names.
+  // This can cause invalid characters to be recognized by tesseract.
+  // Extending unicharset is not possible on fast integer lstm models(per docs) and
+  // using 2 langs at once will cause performance issues.
+  // Training 18 models from scratch is out of the question.
+  // Therefore simple map with edge cases is sufficient to work around this problem,
+  // as sequence based algorithm approach doesn't work well for short strings.
+  private static edgeCases = new Map<string, DaemonId>([
+    ['1픽', DAEMON_ICEPICK],
+  ]);
 
   constructor(
     container: ImageContainer<TImage>,
@@ -101,6 +113,10 @@ export class BreachProtocolTypesFragment<
     const keys = Object.keys(BreachProtocolTypesFragment.daemonDict);
 
     return lines.map((t) => {
+      if (BreachProtocolTypesFragment.edgeCases.has(t)) {
+        return BreachProtocolTypesFragment.edgeCases.get(t);
+      }
+
       const similarities = keys.map((k) => similarity(t, k));
       const max = Math.max(...similarities);
 

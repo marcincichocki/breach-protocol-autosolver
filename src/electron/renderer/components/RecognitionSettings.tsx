@@ -20,7 +20,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'Deutsch', value: 'deu' },
   // NOTE: LA uses same traineddata as base spanish
   { name: 'Español (AL)', value: 'spa' },
-  // { name: '한국어', value: 'kor' },
+  { name: '한국어', value: 'kor' },
   { name: '中文(简体)', value: 'chi_sim' },
   { name: 'русский', value: 'rus' },
   { name: 'Português do Brasil', value: 'por' },

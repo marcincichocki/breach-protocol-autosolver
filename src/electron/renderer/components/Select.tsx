@@ -36,7 +36,7 @@ const SelectButton = styled.button.attrs({
   background: none;
   color: inherit;
   font-size: 2.5em;
-  padding: 0 2rem;
+  padding: 0 1rem;
   display: ${(p) => (p.disabled ? 'none' : 'flex')};
   align-items: center;
   outline: none;
@@ -73,11 +73,11 @@ const SelectViewerValue = styled.span`
 
 const SelectViewerOptions = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 0.5rem;
 `;
 
 const SelectViewerOption = styled.div<{ active: boolean }>`
-  width: 25px;
+  width: 1.2rem;
   height: 4px;
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;
