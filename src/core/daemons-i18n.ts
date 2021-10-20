@@ -9,7 +9,8 @@ export type BreachProtocolLanguage =
   | 'fra'
   | 'por'
   | 'chi_sim'
-  | 'spa';
+  | 'spa'
+  | 'ita';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -153,6 +154,24 @@ export const spa: DaemonDict = {
     'MINERÍA DE DATOS: ESPECIFICACIONES DE CREACIÓN',
 };
 
+export const ita: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'ESTRAZIONE DATI_V1',
+  [d.DAEMON_DATAMINE_V2]: 'ESTRAZIONE DATI_V2',
+  [d.DAEMON_DATAMINE_V3]: 'ESTRAZIONE DATI_V3',
+  [d.DAEMON_ICEPICK]: 'SPEZZAICE',
+  [d.DAEMON_MASS_VULNERABILITY]: 'VULNERABILITÀ GENERALE',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'SPEGNIMENTO TELECAMERA',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'TORRETTE ALLEATE',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'SPEGNIMENTO TORRETTA',
+  [d.DAEMON_OPTICS_JAMMER]: 'JAMMER OTTICHE',
+  [d.DAEMON_WEAPONS_JAMMER]: 'JAMMER ARMI',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'ESTRAZIONE DATI: COPIA MALWARE',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALIZZA MALWARE',
+  [d.DAEMON_GAIN_ACCESS]: 'OTTIENI ACCESSO',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
+    'ESTRAZIONE DATI: ISTRUZIONI DI CREAZIONE',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -162,4 +181,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   por,
   chi_sim,
   spa,
+  ita,
 };
