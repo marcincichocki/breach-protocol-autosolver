@@ -7,7 +7,8 @@ export type BreachProtocolLanguage =
   | 'rus'
   | 'deu'
   | 'fra'
-  | 'por';
+  | 'por'
+  | 'chi_sim';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -116,6 +117,23 @@ export const por: DaemonDict = {
     'MINERAÇÃO DE DADOS: ESPECIALIZAÇÕES DE CRIAÇÃO',
 };
 
+export const chi_sim: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: '数据挖掘_V1',
+  [d.DAEMON_DATAMINE_V2]: '数据挖掘_V2',
+  [d.DAEMON_DATAMINE_V3]: '数据挖掘_V3',
+  [d.DAEMON_ICEPICK]: '冰锥',
+  [d.DAEMON_MASS_VULNERABILITY]: '集体薄弱',
+  [d.DAEMON_CAMERA_SHUTDOWN]: '摄像头关闭',
+  [d.DAEMON_FRIENDLY_TURRETS]: '友方炮塔',
+  [d.DAEMON_TURRET_SHUTDOWN]: '炮塔关闭',
+  [d.DAEMON_OPTICS_JAMMER]: '义眼妨碍',
+  [d.DAEMON_WEAPONS_JAMMER]: '武器妨害',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: '数据挖掘: 病毒复制',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: '清除恶意软件',
+  [d.DAEMON_GAIN_ACCESS]: '获取权限',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '数据挖掘: 制作规范',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -123,4 +141,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   deu,
   fra,
   por,
+  chi_sim,
 };
