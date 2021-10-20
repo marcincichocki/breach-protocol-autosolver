@@ -107,7 +107,6 @@ export class BreachProtocolWorker {
   }
 
   private async initTesseractScheduler() {
-    // TODO: check if this folder works when launching bpa from AppImage.
     const langPath = join(this.getResourcesPath(), 'tessdata');
 
     await WasmBreachProtocolRecognizer.init(langPath, this.settings.gameLang);
