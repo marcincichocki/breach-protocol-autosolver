@@ -1,7 +1,7 @@
 import { DaemonId } from './common';
 import * as d from './daemons';
 
-export type BreachProtocolLanguage = 'eng' | 'pol' | 'rus';
+export type BreachProtocolLanguage = 'eng' | 'pol' | 'rus' | 'deu';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -58,8 +58,26 @@ export const rus: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ДОБЫЧА ДАННЫХ: ДОКУМЕНТАЦИЯ',
 };
 
+export const deu: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'DATA-MINING_V1',
+  [d.DAEMON_DATAMINE_V2]: 'DATA-MINING_V2',
+  [d.DAEMON_DATAMINE_V3]: 'DATA-MINING_V3',
+  [d.DAEMON_ICEPICK]: 'EISBRECHER',
+  [d.DAEMON_MASS_VULNERABILITY]: 'MASSEN-VERWUNDBARKEIT',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'KAMERA-STILLLEGUNG',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'VERBÜNDETE GESCHÜTZTÜRME',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'GESCHÜTZTURM-SHUTDOWN',
+  [d.DAEMON_OPTICS_JAMMER]: 'OPTIK-STÖRSENDER',
+  [d.DAEMON_WEAPONS_JAMMER]: 'WAFFEN-STÖRSENDER',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'DATA-MINING: MALWARE KOPIEREN',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'MALWARE NEUTRALISIEREN',
+  [d.DAEMON_GAIN_ACCESS]: 'ZUGRIFF VERSCHAFFEN',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATA-MINING: SCHEMA',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
   rus,
+  deu,
 };
