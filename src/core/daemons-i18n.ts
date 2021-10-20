@@ -1,7 +1,13 @@
 import { DaemonId } from './common';
 import * as d from './daemons';
 
-export type BreachProtocolLanguage = 'eng' | 'pol' | 'rus' | 'deu' | 'fra';
+export type BreachProtocolLanguage =
+  | 'eng'
+  | 'pol'
+  | 'rus'
+  | 'deu'
+  | 'fra'
+  | 'por';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -92,10 +98,29 @@ export const fra: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATA MINING : PLAN DE FABRICATION',
 };
 
+export const por: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'MINERAÇÃO_V1',
+  [d.DAEMON_DATAMINE_V2]: 'MINERAÇÃO_V2',
+  [d.DAEMON_DATAMINE_V3]: 'MINERAÇÃO_V3',
+  [d.DAEMON_ICEPICK]: 'CAICAI',
+  [d.DAEMON_MASS_VULNERABILITY]: 'VULNERABILIDADE EM MASSA',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'DESLIGAMENTO DE CÂMERA',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'TORRETAS ALIADAS',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'DESLIGAMENTO DE TORRETA',
+  [d.DAEMON_OPTICS_JAMMER]: 'INTERFERIDOR DE ÓPTICA',
+  [d.DAEMON_WEAPONS_JAMMER]: 'INTERFERIDOR DE ARMAS',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'MINERAÇÃO DE DADOS: COPIAR MALWARE',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALIZAR MALWARE',
+  [d.DAEMON_GAIN_ACCESS]: 'OBTER ACESSO',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
+    'MINERAÇÃO DE DADOS: ESPECIALIZAÇÕES DE CRIAÇÃO',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
   rus,
   deu,
   fra,
+  por,
 };

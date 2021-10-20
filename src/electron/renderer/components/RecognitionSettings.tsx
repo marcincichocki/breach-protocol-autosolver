@@ -23,7 +23,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   // { name: '한국어', value: 'kor' },
   // { name: '中文(简体)', value: 'chi_sim' },
   { name: 'русский', value: 'rus' },
-  // { name: 'Português do Brasil', value: 'por' },
+  { name: 'Português do Brasil', value: 'por' },
   // { name: '日本語', value: 'jpn' },
   // { name: '中文(繁體)', value: 'chi_tra' },
   // { name: 'العربية', value: 'ara' },
