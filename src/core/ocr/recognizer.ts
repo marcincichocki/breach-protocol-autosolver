@@ -1,4 +1,4 @@
-import { BreachProtocolLanguage } from '@/common';
+import { BreachProtocolLanguage } from '../daemons-i18n';
 
 export interface BreachProtocolRecognizerBox {
   x0: number;

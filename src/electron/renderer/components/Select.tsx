@@ -82,8 +82,8 @@ const SelectViewerOption = styled.div<{ active: boolean }>`
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;
 
-interface SelectOption {
-  value: string;
+export interface SelectOption<T = any> {
+  value: T;
   name: string;
 }
 

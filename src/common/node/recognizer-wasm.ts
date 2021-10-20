@@ -1,13 +1,18 @@
-import { BreachProtocolRecognizer, HEX_CODES } from '@/core';
+import {
+  BreachProtocolLanguage,
+  BreachProtocolRecognizer,
+  daemonsI18n,
+  HEX_CODES,
+} from '@/core';
 import {
   createScheduler,
   createWorker,
+  Page,
   RecognizeResult,
   Scheduler,
   Worker,
   WorkerParams,
 } from 'tesseract.js';
-import { BreachProtocolLanguage, langData } from '../types';
 import { unique } from '../util';
 
 export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
@@ -39,18 +44,20 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
       WasmBreachProtocolRecognizer.loadedLang = this.lang;
     }
 
-    const {
-      data: { text, lines },
-    } = await WasmBreachProtocolRecognizer.textWorker.recognize(image);
+    const { data } = await WasmBreachProtocolRecognizer.textWorker.recognize(
+      image
+    );
 
-    return { lines: lines.map((l) => l.words), text };
+    return this.toResult(data);
   }
 
   async recognizeCode(image: Buffer) {
-    const {
-      data: { lines, text },
-    } = await this.scheduleRecognizeJob(image);
+    const { data } = await this.scheduleRecognizeJob(image);
 
+    return this.toResult(data);
+  }
+
+  private toResult({ lines, text }: Page) {
     return { lines: lines.map(({ words }) => words), text };
   }
 
@@ -94,10 +101,8 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
   }
 
   private static getLangWhitelist(lang: BreachProtocolLanguage) {
-    const { daemons } = langData[lang];
-
-    return daemons
-      .flatMap((d) => d.value.split(''))
+    return Object.values(daemonsI18n[lang])
+      .flatMap((d) => d.split(''))
       .filter(unique)
       .join('');
   }

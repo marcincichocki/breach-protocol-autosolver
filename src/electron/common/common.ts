@@ -1,5 +1,5 @@
-import { BreachProtocolLanguage } from '@/common';
 import type { RobotSettings, SharpImageContainerConfig } from '@/common/node';
+import type { BreachProtocolLanguage } from '@/core';
 import {
   BreachProtocolFragmentResults,
   BreachProtocolResultJSON,

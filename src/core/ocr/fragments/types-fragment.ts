@@ -1,13 +1,6 @@
-import {
-  BreachProtocolLanguage,
-  DaemonId,
-  DAEMON_UNKNOWN,
-  langData,
-  Point,
-  similarity,
-  unique,
-} from '@/common';
-import { TypesRawData } from '../../common';
+import { Point, similarity, unique } from '@/common';
+import { DaemonId, TypesRawData } from '../../common';
+import { BreachProtocolLanguage, daemonsI18n } from '../../daemons-i18n';
 import { ImageContainer } from '../image-container';
 import { BreachProtocolRecognizer } from '../recognizer';
 import {
@@ -41,7 +34,7 @@ export class BreachProtocolTypesFragment<
   ]);
 
   /** Dictionary for daemon types. */
-  private static daemonDict: Map<string, DaemonId> = null;
+  private static daemonDict: Record<string, DaemonId> = null;
 
   /** Language of current dictionary. */
   private static daemonDictLang: BreachProtocolLanguage = null;
@@ -60,10 +53,11 @@ export class BreachProtocolTypesFragment<
   private setDaemonDict() {
     if (this.recognizer.lang !== BreachProtocolTypesFragment.daemonDictLang) {
       const { lang } = this.recognizer;
-      const { daemons } = langData[lang];
-      const entries = daemons.map((d) => [d.value, d.id] as const);
+      const entries = Object.entries(daemonsI18n[lang]).map(
+        ([k, v]: [DaemonId, string]) => [v, k] as const
+      );
 
-      BreachProtocolTypesFragment.daemonDict = new Map(entries);
+      BreachProtocolTypesFragment.daemonDict = Object.fromEntries(entries);
       BreachProtocolTypesFragment.daemonDictLang = lang;
     }
   }
@@ -71,7 +65,7 @@ export class BreachProtocolTypesFragment<
   getStatus(rawData: TypesRawData) {
     const { length } = rawData.filter(unique);
     const hasDuplicates = length !== rawData.length;
-    const hasUnknown = rawData.some((t) => t === DAEMON_UNKNOWN);
+    const hasUnknown = rawData.some((t) => !t);
 
     if (hasDuplicates || hasUnknown) {
       return BreachProtocolFragmentStatus.InvalidSymbols;
@@ -104,7 +98,7 @@ export class BreachProtocolTypesFragment<
   }
 
   protected getRawData(lines: string[]) {
-    const keys = Array.from(BreachProtocolTypesFragment.daemonDict.keys());
+    const keys = Object.keys(BreachProtocolTypesFragment.daemonDict);
 
     return lines.map((t) => {
       const similarities = keys.map((k) => similarity(t, k));
@@ -116,10 +110,10 @@ export class BreachProtocolTypesFragment<
         // Remove used value as it can not appear twice.
         keys.splice(index, 1);
 
-        return BreachProtocolTypesFragment.daemonDict.get(value);
+        return BreachProtocolTypesFragment.daemonDict[value];
       }
 
-      return DAEMON_UNKNOWN;
+      return null;
     });
   }
 }

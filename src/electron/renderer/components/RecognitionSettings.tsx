@@ -1,3 +1,4 @@
+import type { BreachProtocolLanguage } from '@/core/daemons-i18n';
 import { AppSettings } from '@/electron/common';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -6,11 +7,11 @@ import { getDisplayName } from '../common';
 import { Field, Label, useForm } from './Form';
 import { ThresholdSlider } from './RangeSlider';
 import { Section } from './Section';
-import { Select } from './Select';
+import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
 
 // Unsuported languages are commented.
-const gameLanguageOptions = [
+const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
   { name: 'English', value: 'eng' },
   // { name: 'español', value: 'spa' },

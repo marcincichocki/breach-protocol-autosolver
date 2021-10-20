@@ -1,4 +1,5 @@
-import { DaemonId, getClosest, uniqueBy } from '@/common';
+import { getClosest, uniqueBy } from '@/common';
+import * as daemons from './daemons';
 import {
   BreachProtocolBufferSizeFragmentResult,
   BreachProtocolDaemonsFragmentResult,
@@ -14,6 +15,8 @@ export const BUFFER_SIZE_MAX = 9;
 
 export const HEX_CODES = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexCode = typeof HEX_CODES[number];
+
+export type DaemonId = keyof typeof daemons;
 
 export type BufferSize = 4 | 5 | 6 | 7 | 8 | 9;
 export type GridRawData = HexCode[];

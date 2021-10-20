@@ -1,6 +1,6 @@
-import { BreachProtocolLanguage } from '@/common';
 import { SharpImageContainer, SharpImageContainerConfig } from '@/common/node';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
+import type { BreachProtocolLanguage } from '@/core';
 import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';

@@ -1,0 +1,65 @@
+import { DaemonId } from './common';
+import * as d from './daemons';
+
+export type BreachProtocolLanguage = 'eng' | 'pol' | 'rus';
+
+type DaemonDict = Record<DaemonId, string>;
+
+export const eng: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'DATAMINE_V1',
+  [d.DAEMON_DATAMINE_V2]: 'DATAMINE_V2',
+  [d.DAEMON_DATAMINE_V3]: 'DATAMINE_V3',
+  [d.DAEMON_ICEPICK]: 'ICEPICK',
+  [d.DAEMON_MASS_VULNERABILITY]: 'MASS VULNERABILITY',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'CAMERA SHUTDOWN',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'FRIENDLY TURRETS',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'TURRET SHUTDOWN',
+  [d.DAEMON_OPTICS_JAMMER]: 'OPTICS JAMMER',
+  [d.DAEMON_WEAPONS_JAMMER]: 'WEAPONS JAMMER',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'DATAMINE: COPY MALWARE',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALIZE MALWARE',
+  [d.DAEMON_GAIN_ACCESS]: 'GAIN ACCESS',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATAMINE: CRAFTING SPECS',
+};
+
+export const pol: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'EKSPLORACJA_DANYCH_V1',
+  [d.DAEMON_DATAMINE_V2]: 'EKSPLORACJA_DANYCH_V2',
+  [d.DAEMON_DATAMINE_V3]: 'EKSPLORACJA_DANYCH_V3',
+  [d.DAEMON_ICEPICK]: 'LODOŁAMACZ',
+  [d.DAEMON_MASS_VULNERABILITY]: 'ZBIOROWE ODSŁONIĘCIE',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'WYŁĄCZENIE KAMERY',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'PRZYJAZNE WIEŻYCZKI',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'WYŁĄCZENIE WIEŻYCZKI',
+  [d.DAEMON_OPTICS_JAMMER]: 'BLOKER OPTYCZNY',
+  [d.DAEMON_WEAPONS_JAMMER]: 'BLOKER SPUSTU',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]:
+    'EKSPLORACJA DANYCH: KOPIA WROGIEGO OPROGRAMOWANIA',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'ZNEUTRALIZUJ WROGIE OPROGRAMOWANIE',
+  [d.DAEMON_GAIN_ACCESS]: 'UZYSKAJ DOSTĘP',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
+    'EKSPLORACJA DANYCH: SCHEMATY WYTWARZANIA',
+};
+
+export const rus: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'ДОБЫЧА_ДАННЫХ_1',
+  [d.DAEMON_DATAMINE_V2]: 'ДОБЫЧА_ДАННЫХ_2',
+  [d.DAEMON_DATAMINE_V3]: 'ДОБЫЧА_ДАННЫХ_3',
+  [d.DAEMON_ICEPICK]: 'ОТПРАВИТЬ «ЛЕДОКОЛ»',
+  [d.DAEMON_MASS_VULNERABILITY]: 'ВЫЗВАТЬ МАССОВУЮ УЯЗВИМОСТЬ',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'ОТКЛЮЧИТЬ КАМЕРУ',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'СДЕЛАТЬ ТУРЕЛИ ДРУЖЕСТВЕННЫМИ',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'ОТКЛЮЧИТЬ ТУРЕЛЬ',
+  [d.DAEMON_OPTICS_JAMMER]: 'БЛОКИРОВАТЬ ОПТИКУ',
+  [d.DAEMON_WEAPONS_JAMMER]: 'БЛОКИРОВАТЬ ОРУЖИЕ',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'ДОБЫЧА ДАННЫХ: КОПИИ ВИРУСОВ',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'ОБЕЗВРЕДИТЬ ВИРУС',
+  [d.DAEMON_GAIN_ACCESS]: 'ПОЛУЧИТЬ ДОСТУП',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ДОБЫЧА ДАННЫХ: ДОКУМЕНТАЦИЯ',
+};
+
+export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
+  eng,
+  pol,
+  rus,
+};

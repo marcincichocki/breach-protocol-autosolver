@@ -1,15 +1,12 @@
-import { eng } from '@/common';
 import {
   BreachProtocolResultJSON,
   BreachProtocolTypesFragmentResult,
   DaemonsRawData,
+  eng,
 } from '@/core';
 import styled from 'styled-components';
 import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
-
-/** DaemonId to english name. */
-const DAEMONS_DICT = new Map(eng.daemons.map((d) => [d.id, d.value] as const));
 
 const DaemonsWrapper = styled.div`
   flex-grow: 1;
@@ -81,9 +78,7 @@ export const DaemonsViewer = ({
           >
             {types && (
               <DaemonType>
-                {types?.isValid
-                  ? DAEMONS_DICT.get(types.rawData[i])
-                  : 'UNKNOWN'}
+                {types?.isValid ? eng[types.rawData[i]] : 'UNKNOWN'}
               </DaemonType>
             )}
             <DaemonSequence>
