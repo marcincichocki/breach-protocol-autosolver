@@ -15,7 +15,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
   { name: 'English', value: 'eng' },
   // { name: 'español', value: 'spa' },
-  // { name: 'français', value: 'fra' },
+  { name: 'français', value: 'fra' },
   // { name: 'italiano', value: 'ita' },
   { name: 'Deutsch', value: 'deu' },
   // NOTE: LA uses same traineddata as base spanish
