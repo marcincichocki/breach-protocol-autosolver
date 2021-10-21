@@ -12,7 +12,8 @@ export type BreachProtocolLanguage =
   | 'spa'
   | 'ita'
   | 'kor'
-  | 'jpn';
+  | 'jpn'
+  | 'tha+eng';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -208,6 +209,23 @@ export const jpn: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'データマイニング: クラフト用設計図',
 };
 
+export const tha: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'ดาต้าไมน์ V1',
+  [d.DAEMON_DATAMINE_V2]: 'ดาต้าไมน์ V2',
+  [d.DAEMON_DATAMINE_V3]: 'ดาต้าไมน์ V3',
+  [d.DAEMON_ICEPICK]: 'ICEPICK',
+  [d.DAEMON_MASS_VULNERABILITY]: 'เปราะบางทั้งคณะ',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'ปิดกล้อง',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'ป้อมปืนฝ่ายตัวเอง',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'ปิดป้อมปืน',
+  [d.DAEMON_OPTICS_JAMMER]: 'ตัวกวนสัญญาณดวงตา',
+  [d.DAEMON_WEAPONS_JAMMER]: 'ตัวกวนสัญญาณอาวุธ',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'ดาต้าไมน์: ก๊อปปี้มัลแวร',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'กําจัดมัลแวร์',
+  [d.DAEMON_GAIN_ACCESS]: 'ขอสิทธิ์เข้าถึง',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ดาต้าไมน์: สูตรการคราฟต์',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -220,4 +238,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   ita,
   kor,
   jpn,
+  'tha+eng': tha,
 };

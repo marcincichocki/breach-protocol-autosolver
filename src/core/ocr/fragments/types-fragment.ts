@@ -20,7 +20,7 @@ export class BreachProtocolTypesFragment<
 > extends BreachProtocolOCRFragment<TypesRawData, TImage, 'types'> {
   readonly id = 'types';
   readonly p1 = new Point(0.679, 0.312);
-  readonly p2 = new Point(0.963, 0.598);
+  readonly p2 = new Point(0.963, 0.6);
 
   readonly boundingBox = this.getFragmentBoundingBox();
 

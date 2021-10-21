@@ -30,7 +30,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   // { name: 'český', value: 'ces' },
   // { name: 'magyar', value: 'hun' },
   // { name: 'Türkçe', value: 'tur' },
-  // { name: 'ไทย', value: 'tha' },
+  { name: 'ไทย', value: 'tha+eng' },
 ];
 
 function useDisplayOptionScrollTo<T extends HTMLDivElement>() {
