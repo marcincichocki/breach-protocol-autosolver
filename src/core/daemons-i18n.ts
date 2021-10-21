@@ -13,7 +13,8 @@ export type BreachProtocolLanguage =
   | 'ita'
   | 'kor'
   | 'jpn'
-  | 'tha+eng';
+  | 'tha+eng'
+  | 'tur';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -226,6 +227,23 @@ export const tha: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ดาต้าไมน์: สูตรการคราฟต์',
 };
 
+export const tur: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'VERİMADENİ_V1',
+  [d.DAEMON_DATAMINE_V2]: 'VERİMADENİ_V2',
+  [d.DAEMON_DATAMINE_V3]: 'VERİMADENİ_V3',
+  [d.DAEMON_ICEPICK]: 'BUZKIRICI',
+  [d.DAEMON_MASS_VULNERABILITY]: 'TOPLU SAVUNMASIZLIK',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'KAMERA KAPATMA',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'DOST TARETLER',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'TARET KAPATMA',
+  [d.DAEMON_OPTICS_JAMMER]: 'OPTİK SİNYAL BOZUCUSU',
+  [d.DAEMON_WEAPONS_JAMMER]: 'SİLAH BOZUCU',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'VERİ MADENİ: KÖTÜ AMAÇLI YAZILIM KOPYALA',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'KÖTÜ AMAÇLI YAZILIMI ORTADAN KALDIR',
+  [d.DAEMON_GAIN_ACCESS]: 'ERİŞİM SAĞLA',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'VERİ MADENİ: ÜRETİM KILAVUZLARI',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -239,4 +257,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   kor,
   jpn,
   'tha+eng': tha,
+  tur,
 };

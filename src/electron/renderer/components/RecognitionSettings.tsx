@@ -29,7 +29,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   // { name: 'العربية', value: 'ara' },
   // { name: 'český', value: 'ces' },
   // { name: 'magyar', value: 'hun' },
-  // { name: 'Türkçe', value: 'tur' },
+  { name: 'Türkçe', value: 'tur' },
   { name: 'ไทย', value: 'tha+eng' },
 ];
 
