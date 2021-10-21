@@ -17,7 +17,8 @@ export type BreachProtocolLanguage =
   | 'tur'
   | 'ara'
   | 'chi_tra'
-  | 'ces';
+  | 'ces'
+  | 'hun';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -298,6 +299,24 @@ export const ces: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'TĚŽBA DAT: VÝROBNÍ SPECIFIKACE',
 };
 
+export const hun: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'ADATBÁNYÁSZAT_V1',
+  [d.DAEMON_DATAMINE_V2]: 'ADATBÁNYÁSZAT_V2',
+  [d.DAEMON_DATAMINE_V3]: 'ADATBÁNYÁSZAT_V3',
+  [d.DAEMON_ICEPICK]: 'JÉGCSÁKÁNY',
+  [d.DAEMON_MASS_VULNERABILITY]: 'TÖMEGES SEBEZHETŐSÉG',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'KAMERA LEÁLLÍTÁSA',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'BARÁTI LÖVEGEK',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'LÖVEGLEÁLLÍTÁS',
+  [d.DAEMON_OPTICS_JAMMER]: 'OPTIKAZAVARÓ',
+  [d.DAEMON_WEAPONS_JAMMER]: 'FEGYVERZAVARÓ',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]:
+    'ADATBÁNYÁSZAT: ROSSZINDULATÚ SZOFTVER MÁSOLÁSA',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'ROSSZINDULATÚ SZOFTVER HATÁSTALANÍTÁSA',
+  [d.DAEMON_GAIN_ACCESS]: 'HOZZÁFÉRÉS MEGSZERZÉSE',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ADATBÁNYÁSZAT: TÁRGYKÉSZÍTÉSI ÁBRA',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -315,4 +334,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   ara,
   chi_tra,
   ces,
+  hun,
 };

@@ -10,7 +10,6 @@ import { Section } from './Section';
 import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
 
-// Unsuported languages are commented.
 const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
   { name: 'English', value: 'eng' },
@@ -28,7 +27,7 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: '中文(繁體)', value: 'chi_tra' },
   { name: 'العربية', value: 'ara' },
   { name: 'český', value: 'ces' },
-  // { name: 'magyar', value: 'hun' },
+  { name: 'magyar', value: 'hun' },
   { name: 'Türkçe', value: 'tur' },
   { name: 'ไทย', value: 'tha+eng' },
 ];
