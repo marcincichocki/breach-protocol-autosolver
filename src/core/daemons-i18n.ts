@@ -16,7 +16,8 @@ export type BreachProtocolLanguage =
   | 'tha+eng'
   | 'tur'
   | 'ara'
-  | 'chi_tra';
+  | 'chi_tra'
+  | 'ces';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -280,6 +281,23 @@ export const chi_tra: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '資料探勘 : 製作需求',
 };
 
+export const ces: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'TĚŽBA DAT_V1',
+  [d.DAEMON_DATAMINE_V2]: 'TĚŽBA DAT_V2',
+  [d.DAEMON_DATAMINE_V3]: 'TĚŽBA DAT_V3',
+  [d.DAEMON_ICEPICK]: 'LEDŇÁČEK',
+  [d.DAEMON_MASS_VULNERABILITY]: 'HROMADNÁ ZRANITELNOST',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'VYPNUTÍ KAMERY',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'PŘÁTELSKÉ VĚŽE',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'VYPNUTÍ VĚŽE',
+  [d.DAEMON_OPTICS_JAMMER]: 'RUŠIČKA OPTIKY',
+  [d.DAEMON_WEAPONS_JAMMER]: 'RUŠIČKA ZBRANÍ',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'TĚŽBA DAT: ZKOPÍROVAT MALWARE',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'ZNEŠKODNIT MALWARE',
+  [d.DAEMON_GAIN_ACCESS]: 'ZÍSKAT PŘÍSTUP',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'TĚŽBA DAT: VÝROBNÍ SPECIFIKACE',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -296,4 +314,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   tur,
   ara,
   chi_tra,
+  ces,
 };
