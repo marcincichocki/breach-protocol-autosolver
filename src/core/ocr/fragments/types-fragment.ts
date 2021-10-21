@@ -1,6 +1,11 @@
 import { Point, similarity, unique } from '@/common';
 import { DaemonId, TypesRawData } from '../../common';
-import { DAEMON_ICEPICK } from '../../daemons';
+import {
+  DAEMON_DATAMINE_V1,
+  DAEMON_DATAMINE_V2,
+  DAEMON_DATAMINE_V3,
+  DAEMON_ICEPICK,
+} from '../../daemons';
 import { BreachProtocolLanguage, daemonsI18n } from '../../daemons-i18n';
 import { ImageContainer } from '../image-container';
 import { BreachProtocolRecognizer } from '../recognizer';
@@ -46,11 +51,20 @@ export class BreachProtocolTypesFragment<
   // This can cause invalid characters to be recognized by tesseract.
   // Extending unicharset is not possible on fast integer lstm models(per docs) and
   // using 2 langs at once will cause performance issues.
-  // Training 18 models from scratch is out of the question.
+  // Training models from scratch is out of the question.
   // Therefore simple map with edge cases is sufficient to work around this problem,
   // as sequence based algorithm approach doesn't work well for short strings.
   private static edgeCases = new Map<string, DaemonId>([
     ['1픽', DAEMON_ICEPICK],
+    ['منجم بيانات 1لا', DAEMON_DATAMINE_V1],
+    ['منجم بيانات 2لا', DAEMON_DATAMINE_V2],
+    ['منجم بيانات 3لا', DAEMON_DATAMINE_V3],
+    ['منجم_بيانات_1لا', DAEMON_DATAMINE_V1],
+    ['منجم_بيانات_2لا', DAEMON_DATAMINE_V2],
+    ['منجم_بيانات_3لا', DAEMON_DATAMINE_V3],
+    ['عنجم بيانات 1لا', DAEMON_DATAMINE_V1],
+    ['عنجم بيانات 2لا', DAEMON_DATAMINE_V2],
+    ['عنجم بيانات 3لا', DAEMON_DATAMINE_V3],
   ]);
 
   constructor(

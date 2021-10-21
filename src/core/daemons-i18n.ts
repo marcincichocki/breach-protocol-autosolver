@@ -14,7 +14,8 @@ export type BreachProtocolLanguage =
   | 'kor'
   | 'jpn'
   | 'tha+eng'
-  | 'tur';
+  | 'tur'
+  | 'ara';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -244,6 +245,23 @@ export const tur: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'VERİ MADENİ: ÜRETİM KILAVUZLARI',
 };
 
+export const ara: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'V1_منجم_بيانات',
+  [d.DAEMON_DATAMINE_V2]: 'V2_منجم_بيانات',
+  [d.DAEMON_DATAMINE_V3]: 'V3_منجم_بيانات',
+  [d.DAEMON_ICEPICK]: 'مخترق النظام الأمني',
+  [d.DAEMON_MASS_VULNERABILITY]: 'ثغرات شاملة',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'توقف الكاميرا',
+  [d.DAEMON_FRIENDLY_TURRETS]: 'أبراج مدافع صديقة',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'توقف برج المدفع',
+  [d.DAEMON_OPTICS_JAMMER]: 'فشوش البصريات',
+  [d.DAEMON_WEAPONS_JAMMER]: 'فعطل الاسلحة',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'منجم البيانات: نسخ البرنامج الخبيث',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'اقض على البرنامج الخبيث',
+  [d.DAEMON_GAIN_ACCESS]: 'تمكن من الوصول',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'منجم بيانات: مواصفات التصنيع',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -258,4 +276,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   jpn,
   'tha+eng': tha,
   tur,
+  ara,
 };
