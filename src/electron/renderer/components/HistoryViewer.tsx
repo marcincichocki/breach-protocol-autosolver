@@ -11,6 +11,7 @@ import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
 import { GridViewer } from './GridViewer';
+import { TypesFragmentStatus } from './TypesFragmentStatus';
 
 export interface Highlight {
   from: number;
@@ -45,6 +46,7 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
           result={result}
           onHighlight={setHighlight}
         />
+        <TypesFragmentStatus types={typesFragment} />
       </Col>
     </Row>
   );

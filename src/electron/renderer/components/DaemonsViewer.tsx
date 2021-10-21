@@ -76,11 +76,7 @@ export const DaemonsViewer = ({
             }
             onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
-            {types && (
-              <DaemonType>
-                {types?.isValid ? eng[types.rawData[i]] : 'UNKNOWN'}
-              </DaemonType>
-            )}
+            {types?.isValid && <DaemonType>{eng[types.rawData[i]]}</DaemonType>}
             <DaemonSequence>
               {d.map((s, j) => (
                 <span key={j}>{s}</span>

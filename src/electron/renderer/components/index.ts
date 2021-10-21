@@ -25,3 +25,4 @@ export * from './StatusBar';
 export * from './Switch';
 export * from './ThirdPartyLicensesDialog';
 export * from './TitleBar';
+export * from './TypesFragmentStatus';
