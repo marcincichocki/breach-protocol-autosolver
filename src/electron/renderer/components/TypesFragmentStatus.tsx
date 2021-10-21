@@ -27,7 +27,7 @@ export const TypesFragmentStatus = ({ types }: TypesFragmentStatusProps) => {
     <Col>
       <Row style={{ alignItems: 'center' }}>
         <MdWarning size="2rem" color="var(--accent)" />
-        <WarningTitle>Warning: unknown daemons</WarningTitle>
+        <WarningTitle>Warning: unknown types</WarningTitle>
       </Row>
       <WarningSubTitle>
         Select correct game language, change threshold or disable this feature.

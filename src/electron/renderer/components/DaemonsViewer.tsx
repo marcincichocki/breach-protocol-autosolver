@@ -9,10 +9,8 @@ import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
 
 const DaemonsWrapper = styled.div`
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   gap: 0.5rem;
   cursor: default;
 `;

@@ -54,7 +54,7 @@ const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
     style={{
       margin: 'auto',
       alignItems: 'center',
-      width: '916px',
+      width: '884px',
     }}
   >
     <Heading2>Error while trying to gather data</Heading2>
