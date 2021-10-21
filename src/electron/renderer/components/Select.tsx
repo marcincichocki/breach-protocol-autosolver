@@ -73,11 +73,11 @@ const SelectViewerValue = styled.span`
 
 const SelectViewerOptions = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
 `;
 
 const SelectViewerOption = styled.div<{ active: boolean }>`
-  width: 1.2rem;
+  width: 1.1rem;
   height: 4px;
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;

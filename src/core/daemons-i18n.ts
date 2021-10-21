@@ -15,7 +15,8 @@ export type BreachProtocolLanguage =
   | 'jpn'
   | 'tha+eng'
   | 'tur'
-  | 'ara';
+  | 'ara'
+  | 'chi_tra';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -262,6 +263,23 @@ export const ara: DaemonDict = {
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'منجم بيانات: مواصفات التصنيع',
 };
 
+export const chi_tra: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: '資料探勘_V1',
+  [d.DAEMON_DATAMINE_V2]: '資料探勘_V2',
+  [d.DAEMON_DATAMINE_V3]: '資料探勘_V3',
+  [d.DAEMON_ICEPICK]: '反入侵降載',
+  [d.DAEMON_MASS_VULNERABILITY]: '全體示弱',
+  [d.DAEMON_CAMERA_SHUTDOWN]: '攝影機關機',
+  [d.DAEMON_FRIENDLY_TURRETS]: '無害機槍塔',
+  [d.DAEMON_TURRET_SHUTDOWN]: '機槍塔關機',
+  [d.DAEMON_OPTICS_JAMMER]: '視覺癱瘓',
+  [d.DAEMON_WEAPONS_JAMMER]: '武器癱瘓',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: '資料探勘 : 複製惡意軟體',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: '制止惡意軟體',
+  [d.DAEMON_GAIN_ACCESS]: '取得存取權',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '資料探勘 : 製作需求',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -277,4 +295,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   'tha+eng': tha,
   tur,
   ara,
+  chi_tra,
 };
