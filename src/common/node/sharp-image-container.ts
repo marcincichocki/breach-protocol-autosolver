@@ -44,9 +44,9 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
     return this.instance
       .clone()
-      .removeAlpha()
       .extract(fragmentBoundingBox)
-      .negate({ alpha: false } as any) // TODO: update typings.
+      .removeAlpha()
+      .negate()
       .toColorspace('b-w')
       .png({ colors: 2 });
   }
@@ -58,7 +58,10 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   processDaemonsFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ) {
-    return this.processWithOptionalDownscaling(fragmentBoundingBox, 450);
+    return this.processWithOptionalDownscaling(
+      fragmentBoundingBox,
+      450
+    ).extractChannel('blue');
   }
 
   processTypesFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
@@ -85,7 +88,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   }
 
   threshold(instance: sharp.Sharp, threshold: number, grayscale = true) {
-    return instance.clone().threshold(threshold, { grayscale });
+    return instance.threshold(threshold, { grayscale });
   }
 
   toBuffer(instance: sharp.Sharp) {
