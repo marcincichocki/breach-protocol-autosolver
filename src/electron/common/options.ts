@@ -238,7 +238,7 @@ export const options: BreachProtocolOption[] = [
   {
     id: 'gameLang',
     description:
-      'Game language. Selecting incorrect language will result in UNKNOWN deamons types.',
+      'Language in which game is running. Changing this option will cause next recognition to be slower.',
     defaultValue: 'eng',
   },
   {
