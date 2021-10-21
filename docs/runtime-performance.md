@@ -6,6 +6,7 @@ To make _BPA_ as fast as possible use these settings in performance section:
 - `Downscale source image`: On
 - `Delay`: 0ms
 - `Resolve delay`: 0ms
+- `Skip types fragment`: On
 
 > `Engine` and `Input device` options can also affect performance, but since they are platform dependant, they are not included here.
 
