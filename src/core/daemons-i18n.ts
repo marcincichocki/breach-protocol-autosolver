@@ -10,7 +10,9 @@ export type BreachProtocolLanguage =
   | 'por'
   | 'chi_sim'
   | 'spa'
-  | 'ita';
+  | 'ita'
+  | 'kor'
+  | 'jpn';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -172,6 +174,40 @@ export const ita: DaemonDict = {
     'ESTRAZIONE DATI: ISTRUZIONI DI CREAZIONE',
 };
 
+export const kor: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: '데이터마이닝_V1',
+  [d.DAEMON_DATAMINE_V2]: '데이터마이닝_V2',
+  [d.DAEMON_DATAMINE_V3]: '데이터마이닝_V3',
+  [d.DAEMON_ICEPICK]: 'ICE픽',
+  [d.DAEMON_MASS_VULNERABILITY]: '대규모 취약성',
+  [d.DAEMON_CAMERA_SHUTDOWN]: '카메라 정지',
+  [d.DAEMON_FRIENDLY_TURRETS]: '우호적인 포탑',
+  [d.DAEMON_TURRET_SHUTDOWN]: '포탑 정지',
+  [d.DAEMON_OPTICS_JAMMER]: '안구 재머',
+  [d.DAEMON_WEAPONS_JAMMER]: '무기 재머',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: '데이터마이닝: 멀웨어 복사',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: '멀웨어 무력화',
+  [d.DAEMON_GAIN_ACCESS]: '액세스 권한 획득',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '데이터마이닝: 제작 사양서',
+};
+
+export const jpn: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: 'データマイニング_V1',
+  [d.DAEMON_DATAMINE_V2]: 'データマイニング_V2',
+  [d.DAEMON_DATAMINE_V3]: 'データマイニング_V3',
+  [d.DAEMON_ICEPICK]: 'ICEピック',
+  [d.DAEMON_MASS_VULNERABILITY]: '集団脆弱性',
+  [d.DAEMON_CAMERA_SHUTDOWN]: 'カメラ停止',
+  [d.DAEMON_FRIENDLY_TURRETS]: '味方タレット',
+  [d.DAEMON_TURRET_SHUTDOWN]: 'タレット停止',
+  [d.DAEMON_OPTICS_JAMMER]: 'オプティクス・ジャマー',
+  [d.DAEMON_WEAPONS_JAMMER]: 'ウェポン・ジャマー',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'データマイニング: マルウェアコピー',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'マルウェアを無力化する',
+  [d.DAEMON_GAIN_ACCESS]: 'アクセス取得',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'データマイニング: クラフト用設計図',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -182,4 +218,6 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   chi_sim,
   spa,
   ita,
+  kor,
+  jpn,
 };
