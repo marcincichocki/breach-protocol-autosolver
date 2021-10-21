@@ -17,7 +17,7 @@ export const GlobalStyles = createGlobalStyle`
 
   html,
   body {
-    font-family: Rajdhani;
+    font-family: Rajdhani, sans-serif;
     color: #fff;
     letter-spacing: -0.5px;
   }

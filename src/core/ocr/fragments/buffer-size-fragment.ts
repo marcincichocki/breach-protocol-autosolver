@@ -1,9 +1,41 @@
-import { BufferSize } from '../common';
+import { Point } from '@/common';
+import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../../common';
 import {
-  BreachProtocolBufferSizeBase,
+  BreachProtocolFragment,
   BreachProtocolFragmentResult,
   BreachProtocolFragmentStatus,
 } from './base';
+
+export abstract class BreachProtocolBufferSizeBase<
+  TImage
+> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
+  readonly id = 'bufferSize';
+
+  readonly p1 = new Point(0.42, 0.167);
+
+  readonly p2 = new Point(0.8, 0.225);
+
+  readonly boundingBox = this.getFragmentBoundingBox();
+
+  readonly fragment = this.container.process(this.boundingBox);
+
+  /** Percentage that padding in buffer box takes. */
+  protected readonly padding = 0.00937;
+
+  /** Percentage that buffer square takes. */
+  protected readonly square = 0.0164;
+
+  /** Percentage that gap between buffer squares takes. */
+  protected readonly gap = 0.00546;
+
+  getStatus(n: number) {
+    if (!Number.isInteger(n) || n < BUFFER_SIZE_MIN || n > BUFFER_SIZE_MAX) {
+      return BreachProtocolFragmentStatus.InvalidSize;
+    }
+
+    return BreachProtocolFragmentStatus.Valid;
+  }
+}
 
 class BufferSizeControlGroup {
   /** Thickness of control group in pixels. */
@@ -140,6 +172,50 @@ export class BreachProtocolBufferSizeFragment<
   private getBufferSizeFromPixels(pixels: Buffer) {
     const { width, innerWidth } = this.boundingBox;
     let size = this.getSizeOfBufferBox(pixels, width) / innerWidth;
+    let bufferSize = 0;
+
+    size -= 2 * this.padding;
+
+    while (size > 0) {
+      size -= this.square + this.gap;
+      bufferSize += 1;
+    }
+
+    return bufferSize as BufferSize;
+  }
+}
+
+export class BreachProtocolBufferSizeTrimFragment<
+  TImage
+> extends BreachProtocolBufferSizeBase<TImage> {
+  override readonly fragment = this.container.processBufferSizeFragment(
+    this.boundingBox
+  );
+
+  // Ensure compatibility with current api.
+  async recognize(
+    threshold?: number
+  ): Promise<BreachProtocolBufferSizeFragmentResult> {
+    const { buffer, width } = await this.trimFragment();
+    const bufferSize = await this.getBufferSizeFromPixels(width);
+
+    return this.getFragmentResult(null, bufferSize, buffer, null);
+  }
+
+  private async trimFragment() {
+    try {
+      return await this.container.trim(this.fragment);
+    } catch (e) {
+      const buffer = await this.container.toBuffer(this.fragment);
+
+      return { buffer, width: 0 };
+    }
+  }
+
+  private async getBufferSizeFromPixels(width: number) {
+    const { innerWidth } = this.boundingBox;
+
+    let size = width / innerWidth;
     let bufferSize = 0;
 
     size -= 2 * this.padding;

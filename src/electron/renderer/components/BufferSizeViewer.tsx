@@ -5,19 +5,17 @@ import { Highlight } from './HistoryViewer';
 function getBufferSizeWrapperWidth() {
   const square = `${BUFFER_SIZE_MAX} * var(--size)`;
   const gap = `${BUFFER_SIZE_MAX - 1} * var(--gap)`;
-  const padding = `2 * var(--padding)`;
 
-  return [square, gap, padding].join(' + ');
+  return [square, gap].join(' + ');
 }
 
 const BufferSizeWrapper = styled.div`
   --size: 40px;
   --gap: 0.5rem;
-  --padding: 1rem;
 
   border: 1px solid var(--primary);
   background: var(--background);
-  padding: var(--padding);
+  padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: start;

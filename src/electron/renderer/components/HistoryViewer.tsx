@@ -3,6 +3,7 @@ import {
   isBufferSizeFragment,
   isDaemonsFragment,
   isGridFragment,
+  isTypesFragment,
 } from '@/core';
 import { HistoryEntry } from '@/electron/common';
 import { useState } from 'react';
@@ -10,6 +11,7 @@ import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
 import { GridViewer } from './GridViewer';
+import { TypesFragmentStatus } from './TypesFragmentStatus';
 
 export interface Highlight {
   from: number;
@@ -26,6 +28,7 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const { rawData: grid } = entry.fragments.find(isGridFragment);
   const { rawData: bufferSize } = entry.fragments.find(isBufferSizeFragment);
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
+  const typesFragment = entry.fragments.find(isTypesFragment);
   const result = customResult || entry.result;
 
   return (
@@ -38,10 +41,12 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
           onHighlight={setHighlight}
         />
         <DaemonsViewer
+          types={typesFragment}
           daemons={daemons}
           result={result}
           onHighlight={setHighlight}
         />
+        <TypesFragmentStatus types={typesFragment} />
       </Col>
     </Row>
   );

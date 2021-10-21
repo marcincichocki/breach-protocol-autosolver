@@ -1,85 +1,161 @@
-import { BreachProtocolRecognizer, HEX_CODES } from '@/core';
-import { createScheduler, createWorker } from 'tesseract.js';
+import {
+  BreachProtocolLanguage,
+  BreachProtocolRecognizer,
+  daemonsI18n,
+  HEX_CODES,
+} from '@/core';
+import {
+  createScheduler,
+  createWorker,
+  Page,
+  RecognizeResult,
+  Scheduler,
+  Worker,
+  WorkerParams,
+} from 'tesseract.js';
+import { unique } from '../util';
 
 export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
-  constructor() {
+  constructor(public readonly lang: BreachProtocolLanguage) {
     /**
      * Initializing workers takes a lot of time. Loading them every time
      * when class is instantiated is a big performance bottleneck.
-     * Instead call {@link WasmBreachProtocolRecognizer.initScheduler}
+     * Instead call {@link WasmBreachProtocolRecognizer.init}
      * during bootstrap to init tesseract workers and
-     * {@link WasmBreachProtocolRecognizer.terminateScheduler} during exit
+     * {@link WasmBreachProtocolRecognizer.terminate} during exit
      * to terminated them.
      */
-    if (!WasmBreachProtocolRecognizer.scheduler) {
-      throw new Error('Scheduler is not initialized!');
+    if (!WasmBreachProtocolRecognizer.initialized) {
+      throw new Error(
+        'Recognizer is not initialized, call WasmBreachProtocolRecognizer.init first.'
+      );
     }
   }
 
-  async recognize(image: Buffer) {
-    const { data } = await this.scheduleRecognizeJob(image);
-    const lines = data.lines.map(({ words }) => words);
+  async recognizeText(image: Buffer) {
+    if (this.lang !== WasmBreachProtocolRecognizer.loadedLang) {
+      await WasmBreachProtocolRecognizer.textWorker.terminate();
 
-    return { lines };
+      const worker = await WasmBreachProtocolRecognizer.initTextWorker(
+        this.lang
+      );
+
+      WasmBreachProtocolRecognizer.textWorker = worker;
+      WasmBreachProtocolRecognizer.loadedLang = this.lang;
+    }
+
+    const { data } = await WasmBreachProtocolRecognizer.textWorker.recognize(
+      image
+    );
+
+    return this.toResult(data);
+  }
+
+  async recognizeCode(image: Buffer) {
+    const { data } = await this.scheduleRecognizeJob(image);
+
+    return this.toResult(data);
+  }
+
+  private toResult({ lines, text }: Page) {
+    return { lines: lines.map(({ words }) => words), text };
   }
 
   private scheduleRecognizeJob(image: Buffer) {
     return WasmBreachProtocolRecognizer.scheduler.addJob(
       'recognize',
       image
-    ) as Promise<Tesseract.RecognizeResult>;
+    ) as Promise<RecognizeResult>;
   }
 
-  private static async initWorker(options: Partial<Tesseract.WorkerOptions>) {
-    const lang = 'BreachProtocol';
-    const w = createWorker(options);
-
-    await w.load();
-    await w.loadLanguage(lang);
-    await w.initialize(lang);
-    await w.setParameters({
-      tessedit_char_whitelist: HEX_CODES.join(''),
+  private static async initWorker(
+    lang: string,
+    params?: Partial<WorkerParams>
+  ) {
+    const worker = createWorker({
+      cacheMethod: 'none',
+      langPath: this.langPath,
     });
 
-    return w;
+    await worker.load();
+    await worker.loadLanguage(lang);
+    await worker.initialize(lang);
+
+    if (params) {
+      await worker.setParameters(params);
+    }
+
+    return worker;
+  }
+
+  private static initCodeWorker() {
+    return this.initWorker('BreachProtocol', {
+      tessedit_char_whitelist: HEX_CODES.join(''),
+    });
+  }
+
+  private static initTextWorker(lang: BreachProtocolLanguage) {
+    return this.initWorker(lang, {
+      tessedit_char_whitelist: this.getLangWhitelist(lang),
+    });
+  }
+
+  private static getLangWhitelist(lang: BreachProtocolLanguage) {
+    return Object.values(daemonsI18n[lang])
+      .flatMap((d) => d.split(''))
+      .filter(unique)
+      .join('');
   }
 
   /**
-   * Initialize tesseract.js scheduler.
+   * Load and initialize workers with correct tessdata.
    *
-   * @param langPath Path to folder where BreachProtocol.traineddata can be found. Relative to process.cwd() or absolute.
+   * @param langPath Path to directory with tessdata.
+   * @param gameLang Game language to initialize with.
    */
-  static async initScheduler(langPath: string) {
-    if (WasmBreachProtocolRecognizer.scheduler) {
-      throw new Error('Scheduler is alredy initialized.');
+  static async init(langPath: string, gameLang: BreachProtocolLanguage) {
+    if (this.initialized) {
+      throw new Error('Recognizer can be initialized only once.');
     }
 
-    const options: Partial<Tesseract.WorkerOptions> = {
-      cacheMethod: 'none',
-      gzip: false,
-      langPath,
-    };
-    const w1 = await WasmBreachProtocolRecognizer.initWorker(options);
-    const w2 = await WasmBreachProtocolRecognizer.initWorker(options);
+    this.langPath = langPath;
+
+    const w1 = await this.initCodeWorker();
+    const w2 = await this.initCodeWorker();
+    const textWorker = await this.initTextWorker(gameLang);
 
     const scheduler = createScheduler();
 
     scheduler.addWorker(w1);
     scheduler.addWorker(w2);
 
-    WasmBreachProtocolRecognizer.scheduler = scheduler;
+    this.textWorker = textWorker;
+    this.scheduler = scheduler;
+    this.loadedLang = gameLang;
+    this.initialized = true;
   }
 
-  /**
-   * Terminate tesseract.js scheduler.
-   */
-  static terminateScheduler() {
-    if (!WasmBreachProtocolRecognizer.scheduler) {
-      throw new Error('Scheduler is not initialized.');
+  /** Terminate tesseract workers. */
+  static async terminate() {
+    if (!this.initialized) {
+      throw new Error('Recognizer is not initialized.');
     }
 
-    return WasmBreachProtocolRecognizer.scheduler.terminate();
+    await this.textWorker.terminate();
+    await this.scheduler.terminate();
   }
 
-  private static scheduler: Tesseract.Scheduler;
+  /** Language of text worker that is currently loaded. */
+  private static loadedLang: BreachProtocolLanguage = null;
+
+  /** Directory with tessdata */
+  private static langPath: string = null;
+
+  /** Scheduler for code workers. */
+  private static scheduler: Scheduler;
+
+  private static textWorker: Worker;
+
+  /** Whether recognizer was initialized. */
+  private static initialized = false;
 }

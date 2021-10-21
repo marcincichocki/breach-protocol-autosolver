@@ -1,8 +1,9 @@
+import type { BreachProtocolRecognizerBox } from '@/core';
 import { useEffect, useRef } from 'react';
 import { ScreenshotFormat } from 'screenshot-desktop';
 
 function getStrokeRectCords(
-  box: Tesseract.Bbox,
+  box: BreachProtocolRecognizerBox,
   scale: number,
   lineWidth: number
 ) {
@@ -51,7 +52,7 @@ function renderFragmentToCanvas({
 
 interface FragmentPreviewProps {
   image: string;
-  boxes: Tesseract.Bbox[];
+  boxes: BreachProtocolRecognizerBox[];
   showBoxes: boolean;
   format: ScreenshotFormat;
 }

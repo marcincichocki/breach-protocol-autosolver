@@ -1,5 +1,6 @@
 import { SharpImageContainer, SharpImageContainerConfig } from '@/common/node';
 import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
+import type { BreachProtocolLanguage } from '@/core';
 import { join } from 'path';
 import sharp from 'sharp';
 import registry from '../bp-registry/registry.json';
@@ -9,11 +10,14 @@ import {
   DaemonsRawData,
   GridRawData,
 } from '../common';
-import { BreachProtocolFragmentStatus, FragmentId } from './base';
-import { BreachProtocolBufferSizeFragment } from './buffer-size';
-import { BreachProtocolBufferSizeTrimFragment } from './buffer-size-trim';
-import { BreachProtocolDaemonsFragment } from './daemons';
-import { BreachProtocolGridFragment } from './grid';
+import {
+  BreachProtocolBufferSizeFragment,
+  BreachProtocolBufferSizeTrimFragment,
+  BreachProtocolDaemonsFragment,
+  BreachProtocolFragmentStatus,
+  BreachProtocolGridFragment,
+  FragmentId,
+} from './fragments';
 import { ImageContainer } from './image-container';
 import { breachProtocolOCR } from './ocr';
 import { BreachProtocolRecognizer } from './recognizer';
@@ -186,11 +190,11 @@ describe('raw data validation', () => {
 
 describe('ocr', () => {
   beforeAll(async () => {
-    await WasmBreachProtocolRecognizer.initScheduler('./resources');
+    await WasmBreachProtocolRecognizer.init('./resources/tessdata', 'eng');
   }, 30000);
 
   afterAll(async () => {
-    await WasmBreachProtocolRecognizer.terminateScheduler();
+    await WasmBreachProtocolRecognizer.terminate();
   });
 
   it.each(getRegistryFor('custom'))(
@@ -282,10 +286,13 @@ async function recognizeRegistryEntry(
     downscaleSource,
   });
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
-  const recognizer = new WasmBreachProtocolRecognizer();
+  const recognizer = new WasmBreachProtocolRecognizer(null);
 
   return Promise.all([
-    breachProtocolOCR(container, recognizer, { thresholds }),
+    breachProtocolOCR(container, recognizer, {
+      thresholds,
+      skipTypesFragment: true,
+    }),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),
   ]);
@@ -306,6 +313,9 @@ class NoopImageContainer extends ImageContainer<any> {
 }
 
 class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {
+  lang: BreachProtocolLanguage = 'eng';
   // @ts-ignore
-  async recognize(): any {}
+  async recognizeCode(): any {}
+  // @ts-ignore
+  async recognizeText(): any {}
 }

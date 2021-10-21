@@ -1,3 +1,4 @@
+import type { BreachProtocolLanguage } from '@/core/daemons-i18n';
 import { AppSettings } from '@/electron/common';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -6,8 +7,30 @@ import { getDisplayName } from '../common';
 import { Field, Label, useForm } from './Form';
 import { ThresholdSlider } from './RangeSlider';
 import { Section } from './Section';
-import { Select } from './Select';
+import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
+
+const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
+  { name: 'polski', value: 'pol' },
+  { name: 'English', value: 'eng' },
+  { name: 'español', value: 'spa' },
+  { name: 'français', value: 'fra' },
+  { name: 'italiano', value: 'ita' },
+  { name: 'Deutsch', value: 'deu' },
+  // NOTE: LA uses same traineddata as base spanish
+  { name: 'Español (AL)', value: 'spa' },
+  { name: '한국어', value: 'kor' },
+  { name: '中文(简体)', value: 'chi_sim' },
+  { name: 'русский', value: 'rus' },
+  { name: 'Português do Brasil', value: 'por' },
+  { name: '日本語', value: 'jpn' },
+  { name: '中文(繁體)', value: 'chi_tra' },
+  { name: 'العربية', value: 'ara' },
+  { name: 'český', value: 'ces' },
+  { name: 'magyar', value: 'hun' },
+  { name: 'Türkçe', value: 'tur' },
+  { name: 'ไทย', value: 'tha+eng' },
+];
 
 function useDisplayOptionScrollTo<T extends HTMLDivElement>() {
   const ref = useRef<T>();
@@ -80,6 +103,10 @@ export const RecognitionSettings = ({
           disabled={displayOptions.length === 1}
         />
       </Field>
+      <Field name="gameLang">
+        <Label>Game language</Label>
+        <Select options={gameLanguageOptions} />
+      </Field>
       <Field name="filterRecognizerResults">
         <Label>Filter OCR results</Label>
         <Switch />
@@ -95,6 +122,12 @@ export const RecognitionSettings = ({
         switchName="thresholdDaemonsAuto"
         label="Daemons threshold"
         switchLabel="Automatic daemons threshold"
+      />
+      <ThresholdField
+        name="thresholdTypes"
+        switchName="thresholdTypesAuto"
+        label="Types threshold"
+        switchLabel="Automatic types threshold"
       />
       <Field name="experimentalBufferSizeRecognition">
         <Label>Experimental buffer size recognition</Label>

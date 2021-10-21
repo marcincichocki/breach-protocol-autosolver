@@ -36,7 +36,7 @@ const SelectButton = styled.button.attrs({
   background: none;
   color: inherit;
   font-size: 2.5em;
-  padding: 0 2rem;
+  padding: 0 1rem;
   display: ${(p) => (p.disabled ? 'none' : 'flex')};
   align-items: center;
   outline: none;
@@ -73,17 +73,17 @@ const SelectViewerValue = styled.span`
 
 const SelectViewerOptions = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 0.3rem;
 `;
 
 const SelectViewerOption = styled.div<{ active: boolean }>`
-  width: 25px;
+  width: 1.1rem;
   height: 4px;
   background: ${({ active }) => (active ? 'var(--primary)' : '#411518')};
 `;
 
-interface SelectOption {
-  value: string;
+export interface SelectOption<T = any> {
+  value: T;
   name: string;
 }
 
@@ -150,8 +150,8 @@ export const Select = ({
   return (
     <SelectWrapper disabled={disabled}>
       <select hidden value={value} onChange={onChange}>
-        {options.map(({ value }) => (
-          <option key={value} value={value}></option>
+        {options.map(({ value }, i) => (
+          <option key={i} value={value}></option>
         ))}
       </select>
       <SelectButton onClick={prev} disabled={disabled}>

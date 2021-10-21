@@ -1,9 +1,9 @@
 import { Point } from '@/common';
-import { DaemonsRawData } from '../common';
+import { DaemonsRawData } from '../../common';
 import {
+  BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
   BreachProtocolFragmentStatus,
-  BreachProtocolOCRFragment,
 } from './base';
 
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
@@ -13,7 +13,7 @@ export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
 
 export class BreachProtocolDaemonsFragment<
   TImage
-> extends BreachProtocolOCRFragment<DaemonsRawData, TImage, 'daemons'> {
+> extends BreachProtocolCodeFragment<DaemonsRawData, TImage, 'daemons'> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],

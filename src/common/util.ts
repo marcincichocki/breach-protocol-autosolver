@@ -125,3 +125,58 @@ export function sleep(delay: number) {
 
 /** Does nothing. */
 export const noop = () => {};
+
+/** Check how similiar are 2 strings using Gestalt Pattern Matching algorithm. */
+// https://github.com/ben-yocum/gestalt-pattern-matcher/blob/master/gestalt-pattern-matcher.js
+export function similarity(s1: string, s2: string) {
+  const stack = [s1, s2];
+  let score = 0;
+
+  while (stack.length) {
+    const a = stack.pop();
+    const b = stack.pop();
+
+    let longestLength = 0;
+    let longestIndex1 = -1;
+    let longestIndex2 = -1;
+
+    for (let i = 0; i < a.length; i++) {
+      for (let j = 0; j < b.length; j++) {
+        let k = 0;
+
+        while (
+          i + k < a.length &&
+          j + k < b.length &&
+          a.charAt(i + k) === b.charAt(j + k)
+        ) {
+          k++;
+        }
+
+        if (k > longestLength) {
+          longestLength = k;
+          longestIndex1 = i;
+          longestIndex2 = j;
+        }
+      }
+    }
+
+    if (longestLength) {
+      score += longestLength * 2;
+
+      if (longestIndex1 !== 0 && longestIndex2 !== 0) {
+        stack.push(a.substring(0, longestIndex1));
+        stack.push(b.substring(0, longestIndex2));
+      }
+
+      if (
+        longestIndex1 + longestLength !== a.length &&
+        longestIndex2 + longestLength !== b.length
+      ) {
+        stack.push(a.substring(longestIndex1 + longestLength, a.length));
+        stack.push(b.substring(longestIndex2 + longestLength, b.length));
+      }
+    }
+  }
+
+  return score / (s1.length + s2.length);
+}

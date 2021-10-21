@@ -1,4 +1,4 @@
-import { BreachProtocolFragmentBoundingBox } from './base';
+import { BreachProtocolFragmentBoundingBox } from './fragments/base';
 
 export abstract class ImageContainer<T> {
   abstract readonly instance: T;
@@ -16,6 +16,10 @@ export abstract class ImageContainer<T> {
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
 
+  abstract processTypesFragment(
+    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+  ): T;
+
   abstract processBufferSizeFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ): T;
@@ -27,7 +31,7 @@ export abstract class ImageContainer<T> {
   }>;
 
   /** Apply threshold to given fragment. */
-  abstract threshold(instance: T, threshold: number): T;
+  abstract threshold(instance: T, threshold: number, grayscale?: boolean): T;
 
   abstract toBuffer(instance: T): Promise<Buffer>;
 
@@ -41,7 +45,6 @@ export abstract class ImageContainer<T> {
   /** Return aspect ratio for given resolution and handle edge cases. */
   getAspectRatio(x: number, y: number) {
     // WXGA, very close to 16:9
-    // TODO: test if this resolution correctly ocr buffer size.
     // https://en.wikipedia.org/wiki/Graphics_display_resolution#WXGA
     if (y === 768 && (x === 1366 || x === 1360)) {
       return ImageContainer.ASPECT_RATIO;

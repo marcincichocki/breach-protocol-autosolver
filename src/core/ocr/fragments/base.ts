@@ -1,22 +1,16 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import {
-  BreachProtocolRawData,
-  BufferSize,
-  BUFFER_SIZE_MAX,
-  BUFFER_SIZE_MIN,
-  HexCode,
-  HEX_CODES,
-} from '../common';
-import { BreachProtocolBufferSizeFragmentResult } from './buffer-size';
-import { BreachProtocolDaemonsFragmentResult } from './daemons';
-import { BreachProtocolGridFragmentResult } from './grid';
-import { ImageContainer } from './image-container';
+import { BreachProtocolRawData, HexCode, HEX_CODES } from '../../common';
+import { ImageContainer } from '../image-container';
 import {
   BreachProtocolRecognizer,
   BreachProtocolRecognizerBox,
   BreachProtocolRecognizerResult,
   BreachProtocolRecognizerWord,
-} from './recognizer';
+} from '../recognizer';
+import { BreachProtocolBufferSizeFragmentResult } from './buffer-size-fragment';
+import { BreachProtocolDaemonsFragmentResult } from './daemons-fragment';
+import { BreachProtocolGridFragmentResult } from './grid-fragment';
+import { BreachProtocolTypesFragmentResult } from './types-fragment';
 
 export type FragmentId = keyof BreachProtocolRawData;
 
@@ -69,7 +63,8 @@ export interface BreachProtocolFragmentResult<
 export type BreachProtocolFragmentResults = [
   BreachProtocolGridFragmentResult,
   BreachProtocolDaemonsFragmentResult,
-  BreachProtocolBufferSizeFragmentResult
+  BreachProtocolBufferSizeFragmentResult,
+  BreachProtocolTypesFragmentResult?
 ];
 
 export abstract class BreachProtocolFragment<
@@ -150,6 +145,35 @@ export abstract class BreachProtocolOCRFragment<
   TImage,
   TId extends FragmentId
 > extends BreachProtocolFragment<TData, TImage, TId> {
+  /** Map containing cropped heights and threshold values. */
+  abstract readonly thresholds: Map<number, number>;
+
+  protected abstract getRawData(lines: string[]): TData;
+
+  /** Gather data from fragment by optical character recognition. */
+  protected abstract ocr(
+    threshold: number
+  ): Promise<{ buffer: Buffer; source: BreachProtocolSource }>;
+
+  protected getLines(text: string) {
+    return text.split('\n').filter(Boolean);
+  }
+
+  /** Get closest treshold value for given resolution. */
+  protected getThreshold(thresholds: Map<number, number> = this.thresholds) {
+    const { innerHeight } = this.boundingBox;
+    const list = Array.from(thresholds.keys());
+    const value = getClosest(innerHeight, list);
+
+    return this.thresholds.get(value);
+  }
+}
+
+export abstract class BreachProtocolCodeFragment<
+  TData,
+  TImage,
+  TId extends FragmentId
+> extends BreachProtocolOCRFragment<TData, TImage, TId> {
   // Tesseract may report mixed symbols on smaller resolutions.
   // This map contains some common errors.
   public static readonly correctionMap = new Map<string, HexCode>([
@@ -165,14 +189,11 @@ export abstract class BreachProtocolOCRFragment<
 
   // prettier-ignore
   private static readonly validCodes = Array
-    .from(BreachProtocolOCRFragment.correctionMap.keys())
+    .from(BreachProtocolCodeFragment.correctionMap.keys())
     .concat(HEX_CODES);
 
   /** Max size in pixels by which height of squares can deviate. */
   private static readonly maxHeightDeviation = 4;
-
-  /** Map containing cropped heights and threshold values. */
-  abstract readonly thresholds: Map<number, number>;
 
   constructor(
     container: ImageContainer<TImage>,
@@ -181,8 +202,6 @@ export abstract class BreachProtocolOCRFragment<
   ) {
     super(container);
   }
-
-  protected abstract getRawData(lines: string[]): TData;
 
   async recognize(
     fixedThreshold?: number
@@ -195,10 +214,10 @@ export abstract class BreachProtocolOCRFragment<
     return this.getFragmentResult(source, rawData, buffer, threshold);
   }
 
-  async ocr(threshold: number) {
+  protected async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold);
     const buffer = await this.container.toBuffer(fragment);
-    const results = await this.recognizer.recognize(buffer);
+    const results = await this.recognizer.recognizeCode(buffer);
     const source = this.getSource(results);
 
     return { buffer, source };
@@ -208,7 +227,7 @@ export abstract class BreachProtocolOCRFragment<
     const height = this.getWordHeight(word);
     const diviation = Math.abs(base - height);
 
-    return diviation <= BreachProtocolOCRFragment.maxHeightDeviation;
+    return diviation <= BreachProtocolCodeFragment.maxHeightDeviation;
   }
 
   private getWordHeight({ bbox }: BreachProtocolRecognizerWord) {
@@ -235,7 +254,7 @@ export abstract class BreachProtocolOCRFragment<
 
     const base = lines
       .flat()
-      .find((w) => BreachProtocolOCRFragment.validCodes.includes(w.text));
+      .find((w) => BreachProtocolCodeFragment.validCodes.includes(w.text));
 
     // There is no valid code, this is most likely not a BP image, or
     // threshold is completely off target.
@@ -266,8 +285,8 @@ export abstract class BreachProtocolOCRFragment<
   }
 
   protected amendSymbol(symbol: string) {
-    if (BreachProtocolOCRFragment.correctionMap.has(symbol)) {
-      return BreachProtocolOCRFragment.correctionMap.get(symbol);
+    if (BreachProtocolCodeFragment.correctionMap.has(symbol)) {
+      return BreachProtocolCodeFragment.correctionMap.get(symbol);
     }
 
     return symbol as HexCode;
@@ -275,10 +294,6 @@ export abstract class BreachProtocolOCRFragment<
 
   protected parseLine(line: string) {
     return this.chunkLine(line).map((s) => this.amendSymbol(s));
-  }
-
-  protected getLines(text: string) {
-    return text.split('\n').filter(Boolean);
   }
 
   protected validateSymbols(symbols: string[]) {
@@ -290,45 +305,5 @@ export abstract class BreachProtocolOCRFragment<
     return symbols
       .filter(unique)
       .every((s) => HEX_CODES.includes(s as HexCode));
-  }
-
-  /** Get closest treshold value for given resolution. */
-  protected getThreshold() {
-    const { innerHeight } = this.boundingBox;
-    const list = [...this.thresholds.keys()];
-    const value = getClosest(innerHeight, list);
-
-    return this.thresholds.get(value);
-  }
-}
-
-export abstract class BreachProtocolBufferSizeBase<
-  TImage
-> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
-  readonly id = 'bufferSize';
-
-  readonly p1 = new Point(0.42, 0.167);
-
-  readonly p2 = new Point(0.8, 0.225);
-
-  readonly boundingBox = this.getFragmentBoundingBox();
-
-  readonly fragment = this.container.process(this.boundingBox);
-
-  /** Percentage that padding in buffer box takes. */
-  protected readonly padding = 0.00937;
-
-  /** Percentage that buffer square takes. */
-  protected readonly square = 0.0164;
-
-  /** Percentage that gap between buffer squares takes. */
-  protected readonly gap = 0.00546;
-
-  getStatus(n: number) {
-    if (!Number.isInteger(n) || n < BUFFER_SIZE_MIN || n > BUFFER_SIZE_MAX) {
-      return BreachProtocolFragmentStatus.InvalidSize;
-    }
-
-    return BreachProtocolFragmentStatus.Valid;
   }
 }

@@ -11,6 +11,7 @@ import {
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
   BreachProtocolResultJSON,
+  BreachProtocolTypesFragment,
   FocusDaemonSequenceCompareStrategy,
   IndexSequenceCompareStrategy,
   SequenceCompareStrategy,
@@ -36,6 +37,7 @@ import {
 } from '@/electron/common';
 import { execSync } from 'child_process';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { join } from 'path';
 import { listDisplays, ScreenshotDisplayOutput } from 'screenshot-desktop';
 import sharp from 'sharp';
 import { BreachProtocolAutosolver } from './autosolver';
@@ -46,6 +48,7 @@ interface BreachProtocolFragments {
   grid: BreachProtocolGridFragment<sharp.Sharp>;
   daemons: BreachProtocolDaemonsFragment<sharp.Sharp>;
   bufferSize: BreachProtocolBufferSizeFragment<sharp.Sharp>;
+  types: BreachProtocolTypesFragment<sharp.Sharp>;
 }
 
 type AsyncRequestListener = (req: Request) => Promise<any>;
@@ -104,9 +107,9 @@ export class BreachProtocolWorker {
   }
 
   private async initTesseractScheduler() {
-    const langPath = this.getResourcesPath();
+    const langPath = join(this.getResourcesPath(), 'tessdata');
 
-    await WasmBreachProtocolRecognizer.initScheduler(langPath);
+    await WasmBreachProtocolRecognizer.init(langPath, this.settings.gameLang);
   }
 
   private getSettings(): AppSettings {
@@ -160,7 +163,7 @@ export class BreachProtocolWorker {
     this.discardAnalysis();
     this.disposeTestThreshold();
 
-    await WasmBreachProtocolRecognizer.terminateScheduler();
+    await WasmBreachProtocolRecognizer.terminate();
   }
 
   private registerListeners() {
@@ -330,17 +333,19 @@ export class BreachProtocolWorker {
 
   private async initTestThreshold(req: Request<string>) {
     const instance = sharp(req.data);
-    const { downscaleSource, filterRecognizerResults } = this.settings;
+    const { downscaleSource, filterRecognizerResults, gameLang } =
+      this.settings;
     const container = await SharpImageContainer.create(instance, {
       downscaleSource,
     });
-    const recognizer = new WasmBreachProtocolRecognizer();
+    const recognizer = new WasmBreachProtocolRecognizer(gameLang);
 
     this.fragments = {
       // prettier-ignore
       grid: new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults),
       // prettier-ignore
       daemons: new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults),
+      types: new BreachProtocolTypesFragment(container, recognizer),
       bufferSize: new BreachProtocolBufferSizeFragment(container),
     };
   }

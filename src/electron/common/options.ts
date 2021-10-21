@@ -137,6 +137,16 @@ export const options: BreachProtocolOption[] = [
     defaultValue: true,
   },
   {
+    id: 'thresholdTypes',
+    description: 'Fixed threshold value for types fragment.',
+    defaultValue: 127,
+  },
+  {
+    id: 'thresholdTypesAuto',
+    description: 'Use automatic threshold for types fragment.',
+    defaultValue: true,
+  },
+  {
     id: 'thresholdGrid',
     description: 'Fixed threshold value for grid fragment.',
     defaultValue: 127,
@@ -224,6 +234,17 @@ export const options: BreachProtocolOption[] = [
     description:
       'Remove results from optical character recognition that do not look like codes.',
     defaultValue: true,
+  },
+  {
+    id: 'gameLang',
+    description:
+      'Language in which game is running. Changing this option will cause next recognition to be slower.',
+    defaultValue: 'eng',
+  },
+  {
+    id: 'skipTypesFragment',
+    description: 'Prevent daemon types from being recognized.',
+    defaultValue: false,
   },
 ];
 

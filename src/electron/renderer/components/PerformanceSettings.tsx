@@ -48,6 +48,10 @@ export const PerformanceSettings = () => {
         <Label>Resolve delay(ms)</Label>
         <RangeSlider min={0} max={1500} step={100} />
       </Field>
+      <Field name="skipTypesFragment">
+        <Label>Skip types fragment</Label>
+        <Switch />
+      </Field>
     </Section>
   );
 };

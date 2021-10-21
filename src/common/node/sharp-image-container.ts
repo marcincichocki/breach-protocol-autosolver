@@ -61,6 +61,10 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     return this.processWithOptionalDownscaling(fragmentBoundingBox, 450);
   }
 
+  processTypesFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+    return this.process(fragmentBoundingBox).extractChannel('blue');
+  }
+
   processBufferSizeFragment(
     fragmentBoundingBox: BreachProtocolFragmentBoundingBox
   ) {
@@ -80,8 +84,8 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     };
   }
 
-  threshold(instance: sharp.Sharp, threshold: number) {
-    return instance.clone().threshold(threshold);
+  threshold(instance: sharp.Sharp, threshold: number, grayscale = true) {
+    return instance.clone().threshold(threshold, { grayscale });
   }
 
   toBuffer(instance: sharp.Sharp) {
