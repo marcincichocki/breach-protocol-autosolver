@@ -215,7 +215,8 @@ export abstract class BreachProtocolCodeFragment<
   }
 
   protected async ocr(threshold: number) {
-    const fragment = this.container.threshold(this.fragment, threshold);
+    const gray = this.id === 'grid';
+    const fragment = this.container.threshold(this.fragment, threshold, gray);
     const buffer = await this.container.toBuffer(fragment);
     const results = await this.recognizer.recognizeCode(buffer);
     const source = this.getSource(results);
