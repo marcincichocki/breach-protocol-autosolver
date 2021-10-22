@@ -46,7 +46,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .clone()
       .extract(fragmentBoundingBox)
       .removeAlpha()
-      .negate()
+      .negate({ alpha: false })
       .toColorspace('b-w')
       .png({ colors: 2 });
   }
@@ -88,7 +88,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   }
 
   threshold(instance: sharp.Sharp, threshold: number, grayscale = true) {
-    return instance.threshold(threshold, { grayscale });
+    return instance.clone().threshold(threshold, { grayscale });
   }
 
   toBuffer(instance: sharp.Sharp) {
