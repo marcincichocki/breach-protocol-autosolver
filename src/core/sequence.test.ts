@@ -2,6 +2,7 @@ import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
 import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
 import {
+  Daemon,
   findOverlap,
   generateSequences,
   parseDaemons,
