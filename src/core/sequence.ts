@@ -86,6 +86,9 @@ export class Sequence implements Serializable {
 
   readonly indexes = this.parts.map((d) => d.index);
 
+  /** List of indexes on which it is safe to break sequence. */
+  readonly breaks = this.getSequenceBreaks();
+
   /** Strength is calculated by index of daemon. */
   readonly strength = this.parts
     .map((d) => 2 * d.index + 1)
@@ -113,6 +116,30 @@ export class Sequence implements Serializable {
       .filter(uniqueBy('index'));
 
     return new Sequence(value, parts);
+  }
+
+  // Sequence break is an index which doesn't have dameon attached.
+  // For example daemons: FF 7A and BD BD can create sequence FF 7A BD BD.
+  // At index 0 and 2 next daemon is not yet started and can be delayed if
+  // buffer allows it.
+  // It's not possible to break sequence on overlap. For example daemons:
+  // FF 7A and 7A BD BD can not be broken on index 2 because they share
+  // beggining and the end.
+  private getSequenceBreaks() {
+    return this.parts
+      .map((d) => {
+        const start = this.tValue.indexOf(d.tValue);
+        const end = start + d.length - 1;
+
+        return [start, end];
+      })
+      .filter(([s1], i, array) => {
+        const prev = array[i - 1];
+        const e2 = prev ? prev[1] : -1;
+
+        return s1 > e2;
+      })
+      .map(([start]) => start);
   }
 }
 

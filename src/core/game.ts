@@ -137,7 +137,7 @@ export class BreachProtocol {
   ) {}
 
   solveForSequence(sequence: Sequence) {
-    const path = this.findPath(sequence.tValue);
+    const path = this.bfs(sequence);
 
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }
@@ -227,5 +227,56 @@ export class BreachProtocol {
     }
 
     return null;
+  }
+
+  /**
+   * Find shortest path that fulfills given sequence using
+   * breadth first search. Supports sequence delagation on breaks.
+   */
+  bfs({ tValue, breaks }: Sequence) {
+    const { bufferSize } = this.rawData;
+    const queue = this.unitsMap.get('A1')[0].map((s) => ({
+      dir: 1,
+      path: [s],
+      sequence: this.gridMap.get(s) === tValue[0] ? tValue.slice(1) : tValue,
+    }));
+
+    while (queue.length) {
+      const { dir, path, sequence } = queue.shift();
+
+      if (!sequence.length) {
+        return path.reverse();
+      }
+
+      if (bufferSize - path.length < sequence.length) {
+        continue;
+      }
+
+      const [square] = path;
+      const unit = this.unitsMap.get(square)[dir];
+      const nextSquares = unit
+        .filter((s) => !path.includes(s))
+        .map((s) => {
+          const index = tValue.indexOf(sequence);
+          const canBreak = breaks.includes(index);
+          const match = this.gridMap.get(s) === sequence[0];
+          const matchFull = this.gridMap.get(s) === tValue[0];
+          const newSequence = match
+            ? sequence.slice(1)
+            : matchFull
+            ? tValue.slice(1)
+            : canBreak
+            ? sequence
+            : tValue;
+
+          return {
+            path: [s, ...path],
+            dir: dir ^ 1,
+            sequence: newSequence,
+          };
+        });
+
+      queue.push(...nextSquares);
+    }
   }
 }
