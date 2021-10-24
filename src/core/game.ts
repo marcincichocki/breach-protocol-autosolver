@@ -229,26 +229,65 @@ export class BreachProtocol {
     return null;
   }
 
+  private getInitialQueue(sequence: string) {
+    const startRow = this.unitsMap.get('A1')[0];
+
+    return startRow.map((s) => {
+      const match = this.gridMap.get(s) === sequence[0];
+      const tail = match ? sequence.slice(1) : sequence;
+
+      return { tail, dir: 1, path: [s] };
+    });
+  }
+
+  private findNewTail(
+    tail: string,
+    square: string,
+    { tValue, breaks }: Sequence
+  ) {
+    const value = this.gridMap.get(square);
+
+    // Match found, slice first element from tail.
+    if (value === tail[0]) {
+      return tail.slice(1);
+    }
+
+    const index = tValue.lastIndexOf(tail);
+
+    // Match was not found, but is possible to break the sequence.
+    // Use same tail for next iteration.
+    if (breaks.includes(index)) {
+      return tail;
+    }
+
+    // Start from the begining without first value if it matches.
+    if (value === tValue[0]) {
+      return tValue.slice(1);
+    }
+
+    // Worst case, nothing matches, start from the begining.
+    return tValue;
+  }
+
   /**
    * Find shortest path that fulfills given sequence using
    * breadth first search. Supports sequence delagation on breaks.
    */
-  bfs({ tValue, breaks }: Sequence) {
+  bfs(sequence: Sequence) {
     const { bufferSize } = this.rawData;
-    const queue = this.unitsMap.get('A1')[0].map((s) => ({
-      dir: 1,
-      path: [s],
-      sequence: this.gridMap.get(s) === tValue[0] ? tValue.slice(1) : tValue,
-    }));
+    const queue = this.getInitialQueue(sequence.tValue);
 
     while (queue.length) {
-      const { dir, path, sequence } = queue.shift();
+      // Get first element from queue.
+      const { dir, path, tail } = queue.shift();
 
-      if (!sequence.length) {
+      if (!tail.length) {
+        // Solution found, return path.
         return path.reverse();
       }
 
-      if (bufferSize - path.length < sequence.length) {
+      if (bufferSize - path.length < tail.length) {
+        // Not enough space in the buffer, skip this iteration.
         continue;
       }
 
@@ -256,25 +295,11 @@ export class BreachProtocol {
       const unit = this.unitsMap.get(square)[dir];
       const nextSquares = unit
         .filter((s) => !path.includes(s))
-        .map((s) => {
-          const index = tValue.indexOf(sequence);
-          const canBreak = breaks.includes(index);
-          const match = this.gridMap.get(s) === sequence[0];
-          const matchFull = this.gridMap.get(s) === tValue[0];
-          const newSequence = match
-            ? sequence.slice(1)
-            : matchFull
-            ? tValue.slice(1)
-            : canBreak
-            ? sequence
-            : tValue;
-
-          return {
-            path: [s, ...path],
-            dir: dir ^ 1,
-            sequence: newSequence,
-          };
-        });
+        .map((square) => ({
+          path: [square, ...path],
+          dir: dir ^ 1,
+          tail: this.findNewTail(tail, square, sequence),
+        }));
 
       queue.push(...nextSquares);
     }
