@@ -144,10 +144,12 @@ describe('sequences', () => {
     expect(s2.breaks).toEqual([0, 3]);
 
     // Full overlap
-    const s3 = new Sequence(
-      ['FF', '7A'],
-      [new Daemon(['FF', '7A'], 0), new Daemon(['FF', '7A'], 1)]
-    );
+    const child = new Daemon(['FF', '7A'], 0);
+    const parent = new Daemon(['FF', '7A'], 1);
+
+    parent.addChild(child);
+
+    const s3 = Sequence.fromPermutation([parent]);
 
     expect(s3.breaks).toEqual([0]);
   });
