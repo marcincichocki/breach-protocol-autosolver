@@ -137,7 +137,7 @@ export class BreachProtocol {
   ) {}
 
   solveForSequence(sequence: Sequence) {
-    const path = this.bfs(sequence);
+    const path = this.findShortestPath(sequence);
 
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }
@@ -166,67 +166,6 @@ export class BreachProtocol {
     } while (!result && ++i < sequences.length);
 
     return result;
-  }
-
-  private findPath(
-    sequence: string,
-    ignoreFound = false,
-    gridMap: Map<string, string> = this.gridMap,
-    square: string = 'A1',
-    dir: 0 | 1 = 0,
-    subPath: string[] = [],
-    bufferLeft: number = this.rawData.bufferSize,
-    fullSequence = ''
-  ): string[] {
-    if (bufferLeft - sequence.length < 0) return null;
-    if (!sequence) return subPath;
-    if (!fullSequence) {
-      fullSequence = sequence;
-    }
-
-    const unit = this.unitsMap.get(square)[dir];
-    const found = unit.filter((s) => String(gridMap.get(s)) === sequence[0]);
-    const useFound = found.length && !ignoreFound;
-    const newSquares = useFound
-      ? found
-      : unit.filter((s) => gridMap.get(s) !== null);
-
-    for (let newSquare of newSquares) {
-      const newPath = subPath.slice();
-      const newGrid = new Map(gridMap);
-
-      newPath.push(newSquare);
-      newGrid.set(newSquare, null);
-
-      const newSequence = useFound
-        ? sequence.slice(1)
-        : String(gridMap.get(newSquare)) === fullSequence[0]
-        ? fullSequence.slice(1)
-        : fullSequence;
-
-      const result = this.findPath(
-        newSequence,
-        false,
-        newGrid,
-        newSquare,
-        (dir ^ 1) as 0 | 1,
-        newPath,
-        bufferLeft - 1,
-        fullSequence
-      );
-
-      if (result) {
-        return result;
-      }
-    }
-
-    // If buffer is empty, but there are no results, restart
-    // search and match any square.
-    if (bufferLeft === this.rawData.bufferSize && !ignoreFound) {
-      return this.findPath(fullSequence, true);
-    }
-
-    return null;
   }
 
   private getInitialQueue(sequence: string) {
@@ -273,7 +212,7 @@ export class BreachProtocol {
    * Find shortest path that fulfills given sequence using
    * breadth first search. Supports sequence delagation on breaks.
    */
-  bfs(sequence: Sequence) {
+  private findShortestPath(sequence: Sequence) {
     const { bufferSize } = this.rawData;
     const queue = this.getInitialQueue(sequence.tValue);
 
