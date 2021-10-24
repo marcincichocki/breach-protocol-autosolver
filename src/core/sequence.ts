@@ -1,4 +1,4 @@
-import { memoize, permute, Serializable, uniqueWith } from '@/common';
+import { memoize, permute, Serializable, uniqueBy, uniqueWith } from '@/common';
 import {
   BreachProtocolRawData,
   byBufferSize,
@@ -108,7 +108,9 @@ export class Sequence implements Serializable {
     }
 
     const value = tValue.split('').map(toHex);
-    const parts = permutation.flatMap((d) => d.getParts());
+    const parts = permutation
+      .flatMap((d) => d.getParts())
+      .filter(uniqueBy('index'));
 
     return new Sequence(value, parts);
   }

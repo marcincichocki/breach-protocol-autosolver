@@ -109,6 +109,18 @@ describe('sequences', () => {
     expect(s3.length).toBe(4);
     expect(s3.value).toEqual(['1C', '1C', '1C', 'BD']);
     expect(s3.strength).toBe(9);
+
+    const [p4] = parseDaemons([
+      ['BD', 'BD'],
+      ['55', 'BD', 'BD'],
+      ['BD', 'BD', 'BD'],
+      ['FF', 'BD', 'BD'],
+    ]);
+
+    const s4 = Sequence.fromPermutation(p4);
+
+    expect(s4.length).toBe(7);
+    expect(s4.parts.length).toBe(4);
   });
 
   describe('generateSequences', () => {
