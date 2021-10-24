@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.2.1...v2.3.0) (2021-10-24)
+
+
+### Features
+
+* **client-electron:** add ability to recognize daemon type ([3683dac](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3683dac3dc0f5d519da01d84af2ea6e849463566)), closes [#242](https://github.com/marcincichocki/breach-protocol-autosolver/issues/242)
+* **common:** extract blue channel from daemon fragment ([c8f4256](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c8f42567df67d4efc05cab4d6a63c2bda8aeaa5b)), closes [#241](https://github.com/marcincichocki/breach-protocol-autosolver/issues/241)
+* **core:** add ability to break sequence between daemons ([7166855](https://github.com/marcincichocki/breach-protocol-autosolver/commit/716685561f2ff5f36c127f408376bc3e42da15b0))
+
+
+### Bug Fixes
+
+* **core:** filter sequence parts by index ([3e36f74](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3e36f74d261e5192d4e5f1a354880b9c0b994359))
+
 ### [2.2.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.2.0...v2.2.1) (2021-10-19)
 
 
