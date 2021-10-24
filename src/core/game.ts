@@ -137,7 +137,7 @@ export class BreachProtocol {
   ) {}
 
   solveForSequence(sequence: Sequence) {
-    const path = this.findPath(sequence.tValue);
+    const path = this.findShortestPath(sequence);
 
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }
@@ -168,64 +168,78 @@ export class BreachProtocol {
     return result;
   }
 
-  private findPath(
-    sequence: string,
-    ignoreFound = false,
-    gridMap: Map<string, string> = this.gridMap,
-    square: string = 'A1',
-    dir: 0 | 1 = 0,
-    subPath: string[] = [],
-    bufferLeft: number = this.rawData.bufferSize,
-    fullSequence = ''
-  ): string[] {
-    if (bufferLeft - sequence.length < 0) return null;
-    if (!sequence) return subPath;
-    if (!fullSequence) {
-      fullSequence = sequence;
+  private getInitialQueue(sequence: string) {
+    const startRow = this.unitsMap.get('A1')[0];
+
+    return startRow.map((s) => {
+      const match = this.gridMap.get(s) === sequence[0];
+      const tail = match ? sequence.slice(1) : sequence;
+
+      return { tail, path: [s] };
+    });
+  }
+
+  private findNewTail(
+    tail: string,
+    square: string,
+    { tValue, breaks }: Sequence
+  ) {
+    const value = this.gridMap.get(square);
+
+    // Match found, slice first element from tail.
+    if (value === tail[0]) {
+      return tail.slice(1);
     }
 
-    const unit = this.unitsMap.get(square)[dir];
-    const found = unit.filter((s) => String(gridMap.get(s)) === sequence[0]);
-    const useFound = found.length && !ignoreFound;
-    const newSquares = useFound
-      ? found
-      : unit.filter((s) => gridMap.get(s) !== null);
+    const index = tValue.lastIndexOf(tail);
 
-    for (let newSquare of newSquares) {
-      const newPath = subPath.slice();
-      const newGrid = new Map(gridMap);
+    // Match was not found, but is possible to break the sequence.
+    // Use same tail for next iteration.
+    if (breaks.includes(index)) {
+      return tail;
+    }
 
-      newPath.push(newSquare);
-      newGrid.set(newSquare, null);
+    // Start from the begining without first value if it matches.
+    if (value === tValue[0]) {
+      return tValue.slice(1);
+    }
 
-      const newSequence = useFound
-        ? sequence.slice(1)
-        : String(gridMap.get(newSquare)) === fullSequence[0]
-        ? fullSequence.slice(1)
-        : fullSequence;
+    // Worst case, nothing matches, start from the begining.
+    return tValue;
+  }
 
-      const result = this.findPath(
-        newSequence,
-        false,
-        newGrid,
-        newSquare,
-        (dir ^ 1) as 0 | 1,
-        newPath,
-        bufferLeft - 1,
-        fullSequence
-      );
+  /**
+   * Find shortest path that fulfills given sequence using
+   * breadth first search. Supports sequence delagation on breaks.
+   */
+  private findShortestPath(sequence: Sequence) {
+    const { bufferSize } = this.rawData;
+    const queue = this.getInitialQueue(sequence.tValue);
 
-      if (result) {
-        return result;
+    while (queue.length) {
+      // Get first element from queue.
+      const { path, tail } = queue.shift();
+
+      if (!tail.length) {
+        // Solution found, return path.
+        return path.reverse();
       }
-    }
 
-    // If buffer is empty, but there are no results, restart
-    // search and match any square.
-    if (bufferLeft === this.rawData.bufferSize && !ignoreFound) {
-      return this.findPath(fullSequence, true);
-    }
+      if (bufferSize - path.length < tail.length) {
+        // Not enough space in the buffer, skip this iteration.
+        continue;
+      }
 
-    return null;
+      const [square] = path;
+      const unit = this.unitsMap.get(square)[path.length % 2];
+      const nextSquares = unit
+        .filter((s) => !path.includes(s))
+        .map((square) => ({
+          path: [square, ...path],
+          tail: this.findNewTail(tail, square, sequence),
+        }));
+
+      queue.push(...nextSquares);
+    }
   }
 }

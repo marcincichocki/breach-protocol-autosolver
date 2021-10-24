@@ -202,56 +202,22 @@ describe('Breach protocol solve', () => {
 
   it('should slice path if it contains accidental daemons', () => {
     // prettier-ignore
-    const grid1: GridRawData = [
-      'BD', '1C', 'E9', '1C', '55',
-      '1C', '1C', '55', '55', 'BD',
-      '1C', '1C', '1C', '55', 'BD',
-      '1C', 'E9', '55', '55', '55',
-      '1C', '55', '1C', '1C', '1C',
+    const grid: GridRawData = [
+      'FF', '1C', 'FF', 'FF',
+      '1C', '55', 'FF', 'FF',
+      '55', 'FF', 'FF', 'FF',
+      'FF', 'FF', 'FF', 'FF',
     ]
-    const daemons1: DaemonsRawData = [
-      ['1C', '55', '55'],
+    const daemons: DaemonsRawData = [
       ['55', '1C'],
+      ['1C', '55'],
     ];
-    const bufferSize1: BufferSize = 7;
+    const bufferSize: BufferSize = 7;
+    const result = new BreachProtocol({ grid, daemons, bufferSize }).solve();
 
-    const data1 = {
-      grid: grid1,
-      daemons: daemons1,
-      bufferSize: bufferSize1,
-    };
-    const g1 = new BreachProtocol(data1);
-    const result1 = g1.solve();
-
-    expect(result1.path.length).toBeLessThan(result1.rawPath.length);
-    expect(result1.path).not.toEqual(result1.rawPath);
-    expectResolvedSequenceToContainDaemons(result1);
-
-    // prettier-ignore
-    const grid2: GridRawData = [
-      'E9', '1C', 'E9', '1C', 'BD',
-      'BD', 'BD', 'BD', '55', '1C',
-      '55', '1C', '1C', '55', '1C',
-      '1C', 'E9', '1C', 'BD', 'BD',
-      'E9', '1C', '55', 'BD', '55',
-    ]
-    const daemons2: DaemonsRawData = [
-      ['55', 'E9', 'BD'],
-      ['1C', '1C'],
-    ];
-    const bufferSize2: BufferSize = 7;
-
-    const data2 = {
-      grid: grid2,
-      daemons: daemons2,
-      bufferSize: bufferSize2,
-    };
-    const g2 = new BreachProtocol(data2);
-    const result2 = g2.solve();
-
-    expect(result2.path.length).toBeLessThan(result2.rawPath.length);
-    expect(result2.path).not.toEqual(result2.rawPath);
-    expectResolvedSequenceToContainDaemons(result2);
+    expect(result.path.length).toBeLessThan(result.rawPath.length);
+    expect(result.path).not.toEqual(result.rawPath);
+    expectResolvedSequenceToContainDaemons(result);
   });
 
   describe('forceful exit', () => {

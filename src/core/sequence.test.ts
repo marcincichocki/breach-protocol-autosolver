@@ -2,6 +2,7 @@ import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
 import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
 import {
+  Daemon,
   findOverlap,
   generateSequences,
   parseDaemons,
@@ -121,6 +122,36 @@ describe('sequences', () => {
 
     expect(s4.length).toBe(7);
     expect(s4.parts.length).toBe(4);
+  });
+
+  it('should find breaks in the sequence', () => {
+    // No overlaps
+    const s1 = Sequence.fromPermutation([
+      new Daemon(['FF', '7A'], 0),
+      new Daemon(['BD', '7A'], 1),
+      new Daemon(['1C', '1C'], 2),
+    ]);
+
+    expect(s1.breaks).toEqual([0, 2, 4]);
+
+    // Part overlap
+    const s2 = Sequence.fromPermutation([
+      new Daemon(['FF', '7A'], 0),
+      new Daemon(['7A', '7A'], 1),
+      new Daemon(['1C', '1C'], 2),
+    ]);
+
+    expect(s2.breaks).toEqual([0, 3]);
+
+    // Full overlap
+    const child = new Daemon(['FF', '7A'], 0);
+    const parent = new Daemon(['FF', '7A'], 1);
+
+    parent.addChild(child);
+
+    const s3 = Sequence.fromPermutation([parent]);
+
+    expect(s3.breaks).toEqual([0]);
   });
 
   describe('generateSequences', () => {
