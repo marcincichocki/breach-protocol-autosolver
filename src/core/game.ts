@@ -175,7 +175,7 @@ export class BreachProtocol {
       const match = this.gridMap.get(s) === sequence[0];
       const tail = match ? sequence.slice(1) : sequence;
 
-      return { tail, dir: 1, path: [s] };
+      return { tail, path: [s] };
     });
   }
 
@@ -218,7 +218,7 @@ export class BreachProtocol {
 
     while (queue.length) {
       // Get first element from queue.
-      const { dir, path, tail } = queue.shift();
+      const { path, tail } = queue.shift();
 
       if (!tail.length) {
         // Solution found, return path.
@@ -231,12 +231,11 @@ export class BreachProtocol {
       }
 
       const [square] = path;
-      const unit = this.unitsMap.get(square)[dir];
+      const unit = this.unitsMap.get(square)[path.length % 2];
       const nextSquares = unit
         .filter((s) => !path.includes(s))
         .map((square) => ({
           path: [square, ...path],
-          dir: dir ^ 1,
           tail: this.findNewTail(tail, square, sequence),
         }));
 
