@@ -49,6 +49,9 @@ export abstract class BreachProtocolResolver {
     willExit,
     shouldForceClose,
   }: BreachProtocolExitStrategy) {
+    // Game will exit on its own. No action required.
+    if (willExit) return;
+
     // Always stop BP if it doesn't exit on its own to display the exit modal.
     if (shouldForceClose) {
       await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
