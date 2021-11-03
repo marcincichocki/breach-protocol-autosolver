@@ -169,10 +169,14 @@ export class BreachProtocolAutosolver {
   }
 
   private getResolver(): BreachProtocolResolver {
-    return this.settings.outputDevice === 'keyboard'
-      ? new BreachProtocolKeyboardResolver(this.robot, this.game.size)
+    const { outputDevice, autoExit } = this.settings;
+    const settings = { autoExit };
+
+    return outputDevice === 'keyboard'
+      ? new BreachProtocolKeyboardResolver(this.robot, settings, this.game.size)
       : new BreachProtocolMouseResolver(
           this.robot,
+          settings,
           this.recognitionResult.positionSquareMap
         );
   }

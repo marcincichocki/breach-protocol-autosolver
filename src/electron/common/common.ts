@@ -1,7 +1,11 @@
-import type { RobotSettings, SharpImageContainerConfig } from '@/common/node';
-import type { BreachProtocolLanguage } from '@/core';
-import {
+import type {
+  ResolverSettings,
+  RobotSettings,
+  SharpImageContainerConfig,
+} from '@/common/node';
+import type {
   BreachProtocolFragmentResults,
+  BreachProtocolLanguage,
   BreachProtocolResultJSON,
   FragmentId,
   SequenceJSON,
@@ -74,7 +78,8 @@ export interface AppSettings
   extends RobotSettings,
     Required<SharpImageContainerConfig>,
     SoundPlayerConfig,
-    KeyBindsConfig {
+    KeyBindsConfig,
+    ResolverSettings {
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;

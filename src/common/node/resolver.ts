@@ -6,6 +6,10 @@ import {
 import { Point } from '../util';
 import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
 
+export interface ResolverSettings {
+  autoExit: boolean;
+}
+
 export abstract class BreachProtocolResolver {
   protected readonly dirs: Record<GapDirection, BreachProtocolRobotKeys> = {
     left: BreachProtocolRobotKeys.Left,
@@ -16,7 +20,7 @@ export abstract class BreachProtocolResolver {
 
   constructor(
     protected readonly robot: BreachProtocolRobot,
-    private readonly autoExit: boolean
+    private readonly settings: ResolverSettings
   ) {}
 
   /** Send solution to the game. */
@@ -58,15 +62,19 @@ export abstract class BreachProtocolResolver {
     }
 
     // Exit only when BP will not exit on its own and "autoExit" option in turned on.
-    if (!willExit && this.autoExit) {
+    if (!willExit && this.settings.autoExit) {
       await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
     }
   }
 }
 
 export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
-  constructor(robot: BreachProtocolRobot, private readonly size: number) {
-    super(robot, robot.settings.autoExit);
+  constructor(
+    robot: BreachProtocolRobot,
+    settings: ResolverSettings,
+    private readonly size: number
+  ) {
+    super(robot, settings);
   }
 
   async resolve(path: string[]) {
@@ -119,9 +127,10 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 export class BreachProtocolMouseResolver extends BreachProtocolResolver {
   constructor(
     robot: BreachProtocolRobot,
+    settings: ResolverSettings,
     private readonly squareMap: Map<string, Point>
   ) {
-    super(robot, robot.settings.autoExit);
+    super(robot, settings);
   }
 
   async resolve(path: string[]) {

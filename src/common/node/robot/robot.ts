@@ -10,7 +10,6 @@ export interface RobotSettings {
   activeDisplayId: string;
   format: ScreenshotFormat;
   screenshotDir: string;
-  autoExit: boolean;
   useScaling: boolean;
   ahkBinPath: string;
   keyExit: string;
@@ -45,7 +44,7 @@ export abstract class BreachProtocolRobot {
   protected gameWindowTitle = 'Cyberpunk 2077';
 
   constructor(
-    public readonly settings: RobotSettings,
+    protected readonly settings: RobotSettings,
     protected readonly scaling: number = 1
   ) {}
 
