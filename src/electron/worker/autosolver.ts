@@ -124,10 +124,7 @@ export class BreachProtocolAutosolver {
 
     await this.resolveDelay;
     await resolver.resolve(this.result.path);
-
-    if (this.settings.autoExit) {
-      await resolver.handleExit(this.result.exitStrategy);
-    }
+    await resolver.stopAndExit(this.result.exitStrategy);
 
     this.resolveJob();
   }
@@ -172,10 +169,14 @@ export class BreachProtocolAutosolver {
   }
 
   private getResolver(): BreachProtocolResolver {
-    return this.settings.outputDevice === 'keyboard'
-      ? new BreachProtocolKeyboardResolver(this.robot, this.game.size)
+    const { outputDevice, autoExit } = this.settings;
+    const settings = { autoExit };
+
+    return outputDevice === 'keyboard'
+      ? new BreachProtocolKeyboardResolver(this.robot, settings, this.game.size)
       : new BreachProtocolMouseResolver(
           this.robot,
+          settings,
           this.recognitionResult.positionSquareMap
         );
   }

@@ -1,6 +1,7 @@
 import {
   BreachProtocolKeyboardResolver,
   BreachProtocolResolver,
+  ResolverSettings,
 } from './resolver';
 import { BreachProtocolRobot, RobotSettings } from './robot';
 
@@ -8,10 +9,11 @@ describe('resolvers', () => {
   let robot: BreachProtocolRobot;
   let keyboardResolver: BreachProtocolResolver;
   let spy: jest.SpyInstance;
+  const settings: ResolverSettings = { autoExit: true };
 
   beforeAll(() => {
     robot = new TestRobot({ delay: 0 } as RobotSettings);
-    keyboardResolver = new BreachProtocolKeyboardResolver(robot, 7);
+    keyboardResolver = new BreachProtocolKeyboardResolver(robot, settings, 7);
 
     spy = jest.spyOn(robot, 'pressKey');
   });

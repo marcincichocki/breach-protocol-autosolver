@@ -10,7 +10,6 @@ export interface RobotSettings {
   activeDisplayId: string;
   format: ScreenshotFormat;
   screenshotDir: string;
-  autoExit: boolean;
   useScaling: boolean;
   ahkBinPath: string;
   keyExit: string;

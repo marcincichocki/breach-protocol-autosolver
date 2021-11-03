@@ -6,6 +6,10 @@ import {
 import { Point } from '../util';
 import { BreachProtocolRobot, BreachProtocolRobotKeys } from './robot';
 
+export interface ResolverSettings {
+  autoExit: boolean;
+}
+
 export abstract class BreachProtocolResolver {
   protected readonly dirs: Record<GapDirection, BreachProtocolRobotKeys> = {
     left: BreachProtocolRobotKeys.Left,
@@ -14,36 +18,63 @@ export abstract class BreachProtocolResolver {
     bottom: BreachProtocolRobotKeys.Down,
   };
 
-  constructor(protected readonly robot: BreachProtocolRobot) {}
+  constructor(
+    protected readonly robot: BreachProtocolRobot,
+    private readonly settings: ResolverSettings
+  ) {}
 
   /** Send solution to the game. */
   abstract resolve(path: string[]): Promise<void>;
 
-  /** Exit BP manually if required. */
-  async handleExit({ willExit, shouldForceClose }: BreachProtocolExitStrategy) {
-    // Breach protocol exits on its own when sequence fill buffer completly.
-    if (!willExit) {
-      // If buffer is not yet filled, but sequence is finished
-      // breach protocol will hang on exit screen. Pressing esc
-      // exits it.
-      await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
+  /**
+   * Stop and/or exit breach protocol if it's necessary.
+   *
+   * There are few cases to handle:
+   *
+   * ```text
+   * #1: Buffer and path have same lengths.
+   *
+   *     Game will close BP on its own. No action required.
+   *
+   *
+   * #2: Every daemon was solved, but buffer is not yet filled.
+   *
+   *     Game will display exit modal, autosolver should exit if "autoExit" option is
+   *     turned on. Otherwise don't do anything.
+   *
+   *
+   * #3: Sequence didn't include every daemon and there is space in a buffer still.
+   *
+   *     It's required to stop BP manually, and then exit if "autoExit" option is
+   *     turned on.
+   * ```
+   */
+  async stopAndExit({
+    willExit,
+    shouldForceClose,
+  }: BreachProtocolExitStrategy) {
+    // Game will exit on its own. No action required.
+    if (willExit) return;
 
-      // Sometimes sequence does not use every daemon, and there might be
-      // a rare case in which sequence ended, but there is still enough space
-      // in a buffer to fit leftover daemons. However, since it is impossible
-      // to find correct squares, autosolver will stop.
-      // To hanlde such case we have to press esc twice: once to stop it, and
-      // second time to exit it.
-      if (shouldForceClose) {
-        await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
-      }
+    // Always stop BP if it doesn't exit on its own to display the exit modal.
+    if (shouldForceClose) {
+      await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
+    }
+
+    // Exit only when BP will not exit on its own and "autoExit" option in turned on.
+    if (!willExit && this.settings.autoExit) {
+      await this.robot.pressKey(BreachProtocolRobotKeys.Escape);
     }
   }
 }
 
 export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
-  constructor(robot: BreachProtocolRobot, private readonly size: number) {
-    super(robot);
+  constructor(
+    robot: BreachProtocolRobot,
+    settings: ResolverSettings,
+    private readonly size: number
+  ) {
+    super(robot, settings);
   }
 
   async resolve(path: string[]) {
@@ -96,9 +127,10 @@ export class BreachProtocolKeyboardResolver extends BreachProtocolResolver {
 export class BreachProtocolMouseResolver extends BreachProtocolResolver {
   constructor(
     robot: BreachProtocolRobot,
+    settings: ResolverSettings,
     private readonly squareMap: Map<string, Point>
   ) {
-    super(robot);
+    super(robot, settings);
   }
 
   async resolve(path: string[]) {
