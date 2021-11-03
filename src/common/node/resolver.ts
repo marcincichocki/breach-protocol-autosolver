@@ -23,7 +23,7 @@ export abstract class BreachProtocolResolver {
   abstract resolve(path: string[]): Promise<void>;
 
   /**
-   * Stop and/or exit breach protocol if required.
+   * Stop and/or exit breach protocol if it's necessary.
    *
    * There are few cases to handle:
    *
