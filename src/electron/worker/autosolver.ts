@@ -124,10 +124,7 @@ export class BreachProtocolAutosolver {
 
     await this.resolveDelay;
     await resolver.resolve(this.result.path);
-
-    if (this.settings.autoExit) {
-      await resolver.handleExit(this.result.exitStrategy);
-    }
+    await resolver.stopAndExit(this.result.exitStrategy);
 
     this.resolveJob();
   }
