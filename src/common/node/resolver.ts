@@ -41,7 +41,7 @@ export abstract class BreachProtocolResolver {
    *
    * #3: Sequence didn't include every daemon and there is space in a buffer still.
    *
-   *     It's required to stop BP manually, and than exit if "autoExit" option is
+   *     It's required to stop BP manually, and then exit if "autoExit" option is
    *     turned on.
    * ```
    */
