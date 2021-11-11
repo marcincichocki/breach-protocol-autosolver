@@ -97,7 +97,10 @@ const SelectViewer = ({ options, index }: SelectViewerProps) => (
     <SelectViewerValue>{options[index].name}</SelectViewerValue>
     <SelectViewerOptions>
       {options.map((option, i) => (
-        <SelectViewerOption key={i} active={index === i}></SelectViewerOption>
+        <SelectViewerOption
+          key={option.name}
+          active={index === i}
+        ></SelectViewerOption>
       ))}
     </SelectViewerOptions>
   </SelectViewerWrapper>
@@ -150,8 +153,8 @@ export const Select = ({
   return (
     <SelectWrapper disabled={disabled}>
       <select hidden value={value} onChange={onChange}>
-        {options.map(({ value }, i) => (
-          <option key={i} value={value}></option>
+        {options.map(({ name, value }) => (
+          <option key={name} value={value}></option>
         ))}
       </select>
       <SelectButton onClick={prev} disabled={disabled}>
