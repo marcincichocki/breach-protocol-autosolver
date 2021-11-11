@@ -185,7 +185,7 @@ export const KeyBind = ({
           <KeyBindText>Unbound</KeyBindText>
         ) : (
           selected.map((key, i) => (
-            <Fragment key={i}>
+            <Fragment key={key}>
               {!!i && <KeyCodeSeparator>+</KeyCodeSeparator>}
               <KeyCode>{key}</KeyCode>
             </Fragment>
