@@ -13,6 +13,7 @@ export const GlobalStyles = createGlobalStyle`
     --accent-darker: #213d3d;
     --success: #1bd676;
     --disabled: #bb9a95;
+    --outline: #ffb46b;
   }
 
   html,
@@ -43,5 +44,10 @@ export const GlobalStyles = createGlobalStyle`
   
   ::-webkit-scrollbar-thumb {
     background: var(--primary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--outline);
+    outline-offset: 2px;
   }
 `;

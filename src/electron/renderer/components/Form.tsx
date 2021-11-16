@@ -33,7 +33,7 @@ const StyledField = styled(Row)`
     flex-shrink: 0;
   }
 
-  &:hover > ${StyledLabel} {
+  &:hover > ${StyledLabel}, &:focus-within > ${StyledLabel} {
     color: var(--accent);
     background: linear-gradient(
       90deg,
@@ -144,6 +144,8 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
         ref={ref}
         onMouseEnter={onHover ? () => onHover(name) : undefined}
         onMouseLeave={onHover ? () => onHover(null) : undefined}
+        onFocus={onHover ? () => onHover(name) : undefined}
+        onBlur={onHover ? () => onHover(null) : undefined}
       >
         <FieldContext.Provider
           value={{

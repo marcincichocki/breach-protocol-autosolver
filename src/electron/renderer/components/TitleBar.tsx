@@ -62,8 +62,11 @@ const IconButton = styled.button<{ close?: boolean }>`
   align-items: center;
   -webkit-app-region: no-drag;
 
-  &:hover,
   &:focus-visible {
+    outline-offset: -2px;
+  }
+
+  &:hover {
     background: ${(p) => (p.close ? '#e81123' : '#461f23')};
   }
 

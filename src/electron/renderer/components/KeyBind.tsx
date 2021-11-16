@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { ClearButton } from './Buttons';
 import { Row } from './Flex';
 import { OnBeforeValueChange, useField } from './Form';
+import { VisuallyHiddenInput } from './VisuallyHiddenInput';
 
 export interface Transformer {
   toUniversal(input: string): string[];
@@ -47,22 +48,6 @@ const KeyBindContainer = styled.div`
 
 const KeyBindText = styled.span`
   text-transform: uppercase;
-`;
-
-const VisuallyHiddenInput = styled.input`
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-  white-space: nowrap;
-  outline: 0;
-  appearance: none;
-  top: 0;
-  left: 0;
 `;
 
 const KeyCode = styled.kbd`

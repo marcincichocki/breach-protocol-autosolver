@@ -5,7 +5,7 @@ import {
 import styled from 'styled-components';
 import { Col } from './Flex';
 
-const RawDataPreviewWrapper = styled.pre`
+const RawDataPreviewWrapper = styled.pre.attrs({ tabIndex: 0 })`
   border: 1px solid var(--primary);
   background: var(--background);
   color: var(--accent);
@@ -16,6 +16,10 @@ const RawDataPreviewWrapper = styled.pre`
   overflow-y: auto;
   margin: 0;
   flex-grow: 1;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
 `;
 
 // prettier-ignore

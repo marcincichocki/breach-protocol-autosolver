@@ -3,6 +3,7 @@ import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import { ClearButton } from './Buttons';
 import { useField } from './Form';
+import { VisuallyHiddenInput } from './VisuallyHiddenInput';
 
 const FileOutput = styled.output`
   flex-grow: 1;
@@ -85,8 +86,13 @@ export const File = ({ accept }: FileProps) => {
       ) : (
         <FilePathEmpty>No file selected</FilePathEmpty>
       )}
+      <VisuallyHiddenInput
+        type="file"
+        accept={accept}
+        id={name}
+        onChange={onChange}
+      />
       <FileLabel htmlFor={name}>Change</FileLabel>
-      <input type="file" accept={accept} id={name} onChange={onChange} hidden />
     </FileWrapper>
   );
 };
