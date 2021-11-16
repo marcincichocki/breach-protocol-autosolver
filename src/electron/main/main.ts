@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItemConstructorOptions,
   MessageBoxOptions,
+  PopupOptions,
   shell,
   Tray,
 } from 'electron';
@@ -397,8 +398,8 @@ export class Main {
     return dialog.showMessageBox(options);
   }
 
-  private onShowHelpMenu() {
-    this.menu.popup();
+  private onShowHelpMenu(e: IpcMainEvent, options: PopupOptions) {
+    this.menu.popup(options);
   }
 
   private onRendererClosed() {

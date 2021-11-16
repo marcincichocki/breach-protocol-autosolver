@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, MouseEvent } from 'react';
 import styled from 'styled-components';
 
 const StyledSvg = styled.svg.attrs({ width: 20, height: 20 })``;
@@ -62,7 +62,8 @@ const IconButton = styled.button<{ close?: boolean }>`
   align-items: center;
   -webkit-app-region: no-drag;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: ${(p) => (p.close ? '#e81123' : '#461f23')};
   }
 
@@ -71,9 +72,17 @@ const IconButton = styled.button<{ close?: boolean }>`
   }
 `;
 
+function showHelpMenu(event: MouseEvent<HTMLButtonElement>) {
+  const target = event.currentTarget as HTMLButtonElement;
+  const x = target.offsetLeft;
+  const y = target.offsetHeight;
+
+  api.send('main:show-help-menu', { x, y });
+}
+
 export const TitleBar = memo(() => (
   <StyledTitleBar>
-    <IconButton onClick={() => api.send('main:show-help-menu')}>
+    <IconButton onClick={showHelpMenu}>
       <MenuIcon></MenuIcon>
     </IconButton>
     <IconButton onClick={() => api.send('main:minimize')}>
