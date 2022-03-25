@@ -1,4 +1,11 @@
-import { memoize, permute, Serializable, uniqueBy, uniqueWith } from '@/common';
+import {
+  groupBy,
+  memoize,
+  permute,
+  Serializable,
+  uniqueBy,
+  uniqueWith,
+} from '@/common';
 import {
   BreachProtocolRawData,
   byBufferSize,
@@ -177,6 +184,13 @@ export function parseDaemons(
   return [regularDaemons, childDaemons];
 }
 
+function getBestSequenceFromGroup(group: Sequence[]) {
+  const daemonCount = group.map((s) => s.parts.length);
+  const maxDaemons = Math.max(...daemonCount);
+
+  return group.filter((s) => s.parts.length === maxDaemons)[0];
+}
+
 export function generateSequences(
   { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
   strategy: SequenceCompareStrategy = new IndexSequenceCompareStrategy()
@@ -185,15 +199,16 @@ export function generateSequences(
   const childSequences = childDaemons
     .filter(byUniqueValue())
     .map((d) => Sequence.fromPermutation([d]));
-
   const regularSequences = permute(regularDaemons)
     .flatMap((p) => p.map((d, i) => p.slice(0, i + 1)))
     .filter(uniqueWith(getPermutationId))
     .map((p) => Sequence.fromPermutation(p));
-
-  return regularSequences
+  const sequences = regularSequences
     .concat(childSequences)
-    .filter(byUniqueValue())
-    .filter(byBufferSize(bufferSize))
+    .filter(byBufferSize(bufferSize));
+  const group = groupBy(sequences, (s) => s.tValue);
+
+  return Object.keys(group)
+    .map((k) => getBestSequenceFromGroup(group[k]))
     .sort((s1, s2) => strategy.apply(s1, s2));
 }
