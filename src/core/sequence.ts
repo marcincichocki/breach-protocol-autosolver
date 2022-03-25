@@ -188,7 +188,7 @@ function getBestSequenceFromGroup(group: Sequence[]) {
   const daemonCount = group.map((s) => s.parts.length);
   const maxDaemons = Math.max(...daemonCount);
 
-  return group.filter((s) => s.parts.length === maxDaemons)[0];
+  return group.find((s) => s.parts.length === maxDaemons);
 }
 
 export function generateSequences(
