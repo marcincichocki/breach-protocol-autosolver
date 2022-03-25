@@ -185,10 +185,10 @@ export function parseDaemons(
 }
 
 function getBestSequenceFromGroup(group: Sequence[]) {
-  const daemonCount = group.map((s) => s.parts.length);
-  const maxDaemons = Math.max(...daemonCount);
+  const strengths = group.map((s) => s.strength);
+  const maxStrength = Math.max(...strengths);
 
-  return group.find((s) => s.parts.length === maxDaemons);
+  return group.find((s) => s.strength === maxStrength);
 }
 
 export function generateSequences(
