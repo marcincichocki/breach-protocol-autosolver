@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.3.0...v2.3.1) (2022-03-25)
+
+
+### Bug Fixes
+
+* **client-electron:** use unique id on lists ([ebc232a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ebc232aa57d131492579d291d6b4fca7f42827b1))
+* **common:** always stop BP on end of a sequence ([a564c34](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a564c345dd8579b2fb9f71ce7e92f5cc9334e66a)), closes [#250](https://github.com/marcincichocki/breach-protocol-autosolver/issues/250)
+* **core:** pick best sequence from duplicates ([1a1b5b7](https://github.com/marcincichocki/breach-protocol-autosolver/commit/1a1b5b7f05bab9bc95a400ba9140d34786e49c73))
+
 ## [2.3.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.2.1...v2.3.0) (2021-10-24)
 
 
