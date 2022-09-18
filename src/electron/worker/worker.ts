@@ -9,6 +9,7 @@ import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
+  BreachProtocolFragmentOptions,
   BreachProtocolGridFragment,
   BreachProtocolResultJSON,
   BreachProtocolTypesFragment,
@@ -333,20 +334,29 @@ export class BreachProtocolWorker {
 
   private async initTestThreshold(req: Request<string>) {
     const instance = sharp(req.data);
-    const { downscaleSource, filterRecognizerResults, gameLang } =
-      this.settings;
+    const {
+      downscaleSource,
+      filterRecognizerResults,
+      gameLang,
+      extendedBufferSizeRecognitionRange,
+      extendedDaemonsAndTypesRecognitionRange,
+    } = this.settings;
     const container = await SharpImageContainer.create(instance, {
       downscaleSource,
     });
     const recognizer = new WasmBreachProtocolRecognizer(gameLang);
+    const options: BreachProtocolFragmentOptions = {
+      recognizer,
+      filterRecognizerResults,
+      extendedBufferSizeRecognitionRange,
+      extendedDaemonsAndTypesRecognitionRange,
+    };
 
     this.fragments = {
-      // prettier-ignore
-      grid: new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults),
-      // prettier-ignore
-      daemons: new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults),
-      types: new BreachProtocolTypesFragment(container, recognizer),
-      bufferSize: new BreachProtocolBufferSizeFragment(container),
+      grid: new BreachProtocolGridFragment(container, options),
+      daemons: new BreachProtocolDaemonsFragment(container, options),
+      types: new BreachProtocolTypesFragment(container, options),
+      bufferSize: new BreachProtocolBufferSizeFragment(container, options),
     };
   }
 
