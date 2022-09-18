@@ -21,12 +21,14 @@ const BufferSizeWrapper = styled.div`
   justify-content: start;
   gap: var(--gap);
   width: calc(${getBufferSizeWrapperWidth()});
+  overflow-x: auto;
   cursor: default;
 `;
 
 const BufferSizeItem = styled.div<{ active: boolean }>`
   width: var(--size);
   height: var(--size);
+  flex-shrink: 0;
   border: 1px
     ${({ active }) =>
       active ? 'solid var(--accent)' : 'dashed var(--primary)'};

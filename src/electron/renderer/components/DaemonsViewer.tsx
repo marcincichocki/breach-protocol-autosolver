@@ -12,6 +12,8 @@ const DaemonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
   cursor: default;
 `;
 

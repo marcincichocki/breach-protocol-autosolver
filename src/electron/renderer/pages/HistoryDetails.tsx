@@ -85,7 +85,7 @@ export const HistoryDetails = () => {
   const duration = formatDuration({ seconds });
 
   return (
-    <Col gap>
+    <Col gap scroll={false}>
       <HistoryViewer entry={entry} />
       <Row style={{ justifyContent: 'space-between' }}>
         <Col>

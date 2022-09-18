@@ -11,6 +11,7 @@ import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolBufferSizeTrimFragment,
   BreachProtocolDaemonsFragment,
+  BreachProtocolFragmentOptions,
   BreachProtocolFragmentResults,
   BreachProtocolGridFragment,
   BreachProtocolTypesFragment,
@@ -74,6 +75,8 @@ interface BreachProtocolOCROptions {
   experimentalBufferSizeRecognition?: boolean;
   filterRecognizerResults?: boolean;
   skipTypesFragment?: boolean;
+  extendedDaemonsAndTypesRecognitionRange?: boolean;
+  extendedBufferSizeRecognitionRange?: boolean;
 }
 
 export async function breachProtocolOCR<TImage>(
@@ -84,18 +87,24 @@ export async function breachProtocolOCR<TImage>(
     experimentalBufferSizeRecognition,
     filterRecognizerResults,
     skipTypesFragment,
+    extendedBufferSizeRecognitionRange,
+    extendedDaemonsAndTypesRecognitionRange,
   }: BreachProtocolOCROptions
 ) {
-  // prettier-ignore
-  const gridFragment = new BreachProtocolGridFragment(container, recognizer, filterRecognizerResults);
-  // prettier-ignore
-  const daemonsFragment = new BreachProtocolDaemonsFragment(container, recognizer, filterRecognizerResults);
+  const options: BreachProtocolFragmentOptions = {
+    recognizer,
+    filterRecognizerResults,
+    extendedBufferSizeRecognitionRange,
+    extendedDaemonsAndTypesRecognitionRange,
+  };
+  const gridFragment = new BreachProtocolGridFragment(container, options);
+  const daemonsFragment = new BreachProtocolDaemonsFragment(container, options);
   const bufferSizeFragment = experimentalBufferSizeRecognition
-    ? new BreachProtocolBufferSizeTrimFragment(container)
-    : new BreachProtocolBufferSizeFragment(container);
+    ? new BreachProtocolBufferSizeTrimFragment(container, options)
+    : new BreachProtocolBufferSizeFragment(container, options);
   const typesFragment = skipTypesFragment
     ? null
-    : new BreachProtocolTypesFragment(container, recognizer);
+    : new BreachProtocolTypesFragment(container, options);
 
   const results = await Promise.all([
     gridFragment.recognize(thresholds?.grid),

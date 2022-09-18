@@ -24,7 +24,10 @@ export class BreachProtocolDaemonsFragment<
 
   readonly p1 = new Point(0.42, 0.312);
 
-  readonly p2 = new Point(0.59, 0.6);
+  readonly p2 = new Point(
+    0.59,
+    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.6
+  );
 
   readonly boundingBox = this.getFragmentBoundingBox();
 

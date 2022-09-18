@@ -137,11 +137,12 @@ describe('raw data validation', () => {
   const valid = BreachProtocolFragmentStatus.Valid;
 
   it('should pass it if data is valid', () => {
-    const gridFragment = new BreachProtocolGridFragment(container, recognizer);
-    const daemonsFragment = new BreachProtocolDaemonsFragment(
-      container,
-      recognizer
-    );
+    const gridFragment = new BreachProtocolGridFragment(container, {
+      recognizer,
+    });
+    const daemonsFragment = new BreachProtocolDaemonsFragment(container, {
+      recognizer,
+    });
     const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container);
 
     expect(gridFragment.getStatus(grid)).toBe(valid);
@@ -150,7 +151,7 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if grid is invalid', () => {
-    const fragment = new BreachProtocolGridFragment(container, recognizer);
+    const fragment = new BreachProtocolGridFragment(container, { recognizer });
     const invalidGrids = [
       grid.map((s, i) => (i === 5 ? '57' : s)),
       grid.map((s, i) => (i === 9 ? 'asd' : s)),
@@ -165,7 +166,9 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if daemons are invalid', () => {
-    const fragment = new BreachProtocolDaemonsFragment(container, recognizer);
+    const fragment = new BreachProtocolDaemonsFragment(container, {
+      recognizer,
+    });
     const invalidDaemons = [
       daemons.map(() => ['B7']),
       daemons.map(() => ['asd']),

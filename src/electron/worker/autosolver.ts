@@ -263,6 +263,8 @@ export class BreachProtocolAutosolver {
       filterRecognizerResults,
       gameLang,
       skipTypesFragment,
+      extendedBufferSizeRecognitionRange,
+      extendedDaemonsAndTypesRecognitionRange,
     } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,
@@ -274,6 +276,8 @@ export class BreachProtocolAutosolver {
       experimentalBufferSizeRecognition,
       filterRecognizerResults,
       skipTypesFragment,
+      extendedBufferSizeRecognitionRange,
+      extendedDaemonsAndTypesRecognitionRange,
     });
   }
 }
