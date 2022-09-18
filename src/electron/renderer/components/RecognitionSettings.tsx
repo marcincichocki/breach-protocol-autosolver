@@ -140,6 +140,14 @@ export const RecognitionSettings = ({
         switchLabel="Automatic buffer size threshold"
         disabled={values.experimentalBufferSizeRecognition}
       />
+      <Field name="extendedDaemonsAndTypesRecognitionRange">
+        <Label>Extended daemons and type range</Label>
+        <Switch />
+      </Field>
+      <Field name="extendedBufferSizeRecognitionRange">
+        <Label>Extended buffer size range</Label>
+        <Switch />
+      </Field>
     </Section>
   );
 };

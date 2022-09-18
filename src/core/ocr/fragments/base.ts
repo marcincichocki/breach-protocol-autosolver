@@ -67,10 +67,17 @@ export type BreachProtocolFragmentResults = [
   BreachProtocolTypesFragmentResult?
 ];
 
+export interface BreachProtocolFragmentOptions {
+  recognizer?: BreachProtocolRecognizer;
+  filterRecognizerResults?: boolean;
+  extendedDaemonsAndTypesRecognitionRange?: boolean;
+  extendedBufferSizeRecognitionRange?: boolean;
+}
+
 export abstract class BreachProtocolFragment<
-  TData,
-  TImage,
-  TId extends FragmentId
+  TData = any,
+  TImage = any,
+  TId extends FragmentId = any
 > {
   /** Id of fragment. */
   abstract readonly id: TId;
@@ -86,13 +93,17 @@ export abstract class BreachProtocolFragment<
   /** Preprocessed image fragment. */
   protected abstract readonly fragment: TImage;
 
-  constructor(public readonly container: ImageContainer<TImage>) {}
+  constructor(
+    public readonly container: ImageContainer<TImage>,
+    protected readonly options?: BreachProtocolFragmentOptions
+  ) {}
 
   /** Recognize data from fragment image. */
   abstract recognize(
     threshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>>;
 
+  /** Returns status of given fragment based on recognized data. */
   abstract getStatus(rawData: TData): BreachProtocolFragmentStatus;
 
   private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
@@ -195,14 +206,6 @@ export abstract class BreachProtocolCodeFragment<
   /** Max size in pixels by which height of squares can deviate. */
   private static readonly maxHeightDeviation = 4;
 
-  constructor(
-    container: ImageContainer<TImage>,
-    private recognizer: BreachProtocolRecognizer,
-    private readonly filterRecognizerResults?: boolean
-  ) {
-    super(container);
-  }
-
   async recognize(
     fixedThreshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>> {
@@ -218,7 +221,7 @@ export abstract class BreachProtocolCodeFragment<
     const gray = this.id === 'grid';
     const fragment = this.container.threshold(this.fragment, threshold, gray);
     const buffer = await this.container.toBuffer(fragment);
-    const results = await this.recognizer.recognizeCode(buffer);
+    const results = await this.options.recognizer.recognizeCode(buffer);
     const source = this.getSource(results);
 
     return { buffer, source };
@@ -249,7 +252,7 @@ export abstract class BreachProtocolCodeFragment<
   private getSource({
     lines,
   }: BreachProtocolRecognizerResult): BreachProtocolSource {
-    if (!this.filterRecognizerResults) {
+    if (!this.options.filterRecognizerResults) {
       return this.codesToSource(lines);
     }
 

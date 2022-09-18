@@ -32,7 +32,7 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const result = customResult || entry.result;
 
   return (
-    <Row gap>
+    <Row gap scroll={false}>
       <GridViewer grid={grid} path={result?.path} highlight={highlight} />
       <Col gap grow>
         <BufferSizeViewer

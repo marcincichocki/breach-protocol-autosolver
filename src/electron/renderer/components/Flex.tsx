@@ -16,6 +16,7 @@ function applyFlexProps(p: FlexProps & FlexAttrs) {
   if (p.gap) css += 'gap: 1rem;';
   if (p.grow) css += 'flex-grow: 1;';
   if (p.scroll) css += 'overflow-y: auto;';
+  if (p.scroll === false) css += 'overflow: hidden';
 
   return css;
 }

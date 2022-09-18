@@ -137,12 +137,16 @@ describe('raw data validation', () => {
   const valid = BreachProtocolFragmentStatus.Valid;
 
   it('should pass it if data is valid', () => {
-    const gridFragment = new BreachProtocolGridFragment(container, recognizer);
-    const daemonsFragment = new BreachProtocolDaemonsFragment(
-      container,
-      recognizer
-    );
-    const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container);
+    const gridFragment = new BreachProtocolGridFragment(container, {
+      recognizer,
+    });
+    const daemonsFragment = new BreachProtocolDaemonsFragment(container, {
+      recognizer,
+      extendedDaemonsAndTypesRecognitionRange: false,
+    });
+    const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container, {
+      extendedBufferSizeRecognitionRange: false,
+    });
 
     expect(gridFragment.getStatus(grid)).toBe(valid);
     expect(daemonsFragment.getStatus(daemons)).toBe(valid);
@@ -150,7 +154,7 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if grid is invalid', () => {
-    const fragment = new BreachProtocolGridFragment(container, recognizer);
+    const fragment = new BreachProtocolGridFragment(container, { recognizer });
     const invalidGrids = [
       grid.map((s, i) => (i === 5 ? '57' : s)),
       grid.map((s, i) => (i === 9 ? 'asd' : s)),
@@ -165,7 +169,10 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if daemons are invalid', () => {
-    const fragment = new BreachProtocolDaemonsFragment(container, recognizer);
+    const fragment = new BreachProtocolDaemonsFragment(container, {
+      recognizer,
+      extendedDaemonsAndTypesRecognitionRange: false,
+    });
     const invalidDaemons = [
       daemons.map(() => ['B7']),
       daemons.map(() => ['asd']),
@@ -179,7 +186,9 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if buffer size is invalid', () => {
-    const fragment = new BreachProtocolBufferSizeFragment(container);
+    const fragment = new BreachProtocolBufferSizeFragment(container, {
+      extendedBufferSizeRecognitionRange: false,
+    });
     const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
 
     invalidBufferSizes.forEach((bufferSize) => {
@@ -285,13 +294,17 @@ async function recognizeRegistryEntry(
   const container = await SharpImageContainer.create(image, {
     downscaleSource,
   });
-  const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container);
+  const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container, {
+    extendedBufferSizeRecognitionRange: false,
+  });
   const recognizer = new WasmBreachProtocolRecognizer(null);
 
   return Promise.all([
     breachProtocolOCR(container, recognizer, {
       thresholds,
       skipTypesFragment: true,
+      extendedDaemonsAndTypesRecognitionRange: false,
+      extendedBufferSizeRecognitionRange: false,
     }),
     // To not repeat tesseract ocr, trim strategy is running separately.
     trimStrategy.recognize(),

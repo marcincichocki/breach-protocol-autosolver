@@ -246,6 +246,18 @@ export const options: BreachProtocolOption[] = [
     description: 'Prevent daemon types from being recognized.',
     defaultValue: false,
   },
+  {
+    id: 'extendedDaemonsAndTypesRecognitionRange',
+    description:
+      'Use extended OCR range for daemons and types fragments. Removes upper bound of max daemons.',
+    defaultValue: false,
+  },
+  {
+    id: 'extendedBufferSizeRecognitionRange',
+    description:
+      'Use extended OCR range for buffer size fragment. Removes upper bound of max buffer size.',
+    defaultValue: false,
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {

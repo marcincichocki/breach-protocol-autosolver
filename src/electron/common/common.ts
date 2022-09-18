@@ -101,6 +101,8 @@ export interface AppSettings
   filterRecognizerResults: boolean;
   gameLang: BreachProtocolLanguage;
   skipTypesFragment: boolean;
+  extendedDaemonsAndTypesRecognitionRange: boolean;
+  extendedBufferSizeRecognitionRange: boolean;
 }
 
 export interface AppStats {

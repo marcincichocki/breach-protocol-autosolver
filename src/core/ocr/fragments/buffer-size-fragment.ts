@@ -13,7 +13,10 @@ export abstract class BreachProtocolBufferSizeBase<
 
   readonly p1 = new Point(0.42, 0.167);
 
-  readonly p2 = new Point(0.8, 0.225);
+  readonly p2 = new Point(
+    this.options.extendedBufferSizeRecognitionRange ? 0.863 : 0.8,
+    0.225
+  );
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
@@ -29,7 +32,11 @@ export abstract class BreachProtocolBufferSizeBase<
   protected readonly gap = 0.00546;
 
   getStatus(n: number) {
-    if (!Number.isInteger(n) || n < BUFFER_SIZE_MIN || n > BUFFER_SIZE_MAX) {
+    if (
+      !Number.isInteger(n) ||
+      n < BUFFER_SIZE_MIN ||
+      (!this.options.extendedBufferSizeRecognitionRange && n > BUFFER_SIZE_MAX)
+    ) {
       return BreachProtocolFragmentStatus.InvalidSize;
     }
 

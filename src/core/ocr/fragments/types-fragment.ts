@@ -8,8 +8,8 @@ import {
 } from '../../daemons';
 import { BreachProtocolLanguage, daemonsI18n } from '../../daemons-i18n';
 import { ImageContainer } from '../image-container';
-import { BreachProtocolRecognizer } from '../recognizer';
 import {
+  BreachProtocolFragmentOptions,
   BreachProtocolFragmentResult,
   BreachProtocolFragmentStatus,
   BreachProtocolOCRFragment,
@@ -25,7 +25,10 @@ export class BreachProtocolTypesFragment<
 > extends BreachProtocolOCRFragment<TypesRawData, TImage, 'types'> {
   readonly id = 'types';
   readonly p1 = new Point(0.679, 0.312);
-  readonly p2 = new Point(0.963, 0.6);
+  readonly p2 = new Point(
+    0.963,
+    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.6
+  );
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
@@ -69,16 +72,19 @@ export class BreachProtocolTypesFragment<
 
   constructor(
     container: ImageContainer<TImage>,
-    private readonly recognizer: BreachProtocolRecognizer
+    options: BreachProtocolFragmentOptions
   ) {
-    super(container);
+    super(container, options);
 
     this.setDaemonDict();
   }
 
   private setDaemonDict() {
-    if (this.recognizer.lang !== BreachProtocolTypesFragment.daemonDictLang) {
-      const { lang } = this.recognizer;
+    if (
+      this.options.recognizer.lang !==
+      BreachProtocolTypesFragment.daemonDictLang
+    ) {
+      const { lang } = this.options.recognizer;
       const entries = Object.entries(daemonsI18n[lang]).map(
         ([k, v]: [DaemonId, string]) => [v, k] as const
       );
@@ -116,7 +122,7 @@ export class BreachProtocolTypesFragment<
   protected async ocr(threshold: number) {
     const fragment = this.container.threshold(this.fragment, threshold, false);
     const buffer = await this.container.toBuffer(fragment);
-    const { lines, text } = await this.recognizer.recognizeText(buffer);
+    const { lines, text } = await this.options.recognizer.recognizeText(buffer);
     const boxes = lines.flatMap((code) => code.map((w) => w.bbox));
     const source = { boxes, text };
 

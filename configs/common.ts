@@ -39,8 +39,9 @@ export function getConfig(
   configOrCallback: Configuration | ConfigurationCallback
 ) {
   return (env: any, options: any) => {
+    const mode = options.mode === 'production' ? 'production' : 'development';
     const defaultConfig: Configuration = {
-      mode: 'development',
+      mode,
       context: join(root, './src/electron'),
       output: {
         path: join(root, 'dist'),
@@ -56,6 +57,9 @@ export function getConfig(
             test: /\.tsx?$/,
             exclude: /node_modules/,
             loader: 'ts-loader',
+            options: {
+              transpileOnly: mode === 'development',
+            },
           },
           {
             test: /\.(ttf|svg|png)$/,
@@ -73,11 +77,9 @@ export function getConfig(
         concatenateModules: false,
       },
     };
-
-    const isProduction = options.mode === 'production';
     const config =
       typeof configOrCallback === 'function'
-        ? configOrCallback(isProduction, env, options)
+        ? configOrCallback(mode === 'production', env, options)
         : configOrCallback;
 
     return {
