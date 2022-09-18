@@ -249,13 +249,13 @@ export const options: BreachProtocolOption[] = [
   {
     id: 'extendedDaemonsAndTypesRecognitionRange',
     description:
-      'Extend OCR range for daemons and types fragments. Removes upper bound of max daemons.',
+      'Use extended OCR range for daemons and types fragments. Removes upper bound of max daemons.',
     defaultValue: false,
   },
   {
     id: 'extendedBufferSizeRecognitionRange',
     description:
-      'Extend OCR range for buffer size fragment. Removes upper bound of max buffer size.',
+      'Use extended OCR range for buffer size fragment. Removes upper bound of max buffer size.',
     defaultValue: false,
   },
 ];
