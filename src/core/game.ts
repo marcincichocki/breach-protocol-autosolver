@@ -20,7 +20,6 @@ import {
 } from './sequence';
 
 export type BreachProtocolResultJSON = {
-  uuid?: string;
   path: string[];
   rawPath: string[];
   sequence: SequenceJSON;
@@ -35,8 +34,6 @@ export class BreachProtocolResult implements Serializable {
 
   public readonly exitStrategy = this.resolveExitStrategy();
 
-  public readonly uuid = uuidv4();
-
   constructor(
     public readonly sequence: Sequence,
     public readonly rawPath: string[],
@@ -44,10 +41,9 @@ export class BreachProtocolResult implements Serializable {
   ) {}
 
   toJSON(): BreachProtocolResultJSON {
-    const { path, rawPath, exitStrategy, uuid } = this;
+    const { path, rawPath, exitStrategy } = this;
 
     return {
-      uuid,
       path,
       rawPath,
       exitStrategy,
