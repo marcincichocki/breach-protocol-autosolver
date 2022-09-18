@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.3.1...v2.4.0) (2022-09-18)
+
+
+### Features
+
+* **core:** add ability to use extended range for daemons and buffer size ([e2cd762](https://github.com/marcincichocki/breach-protocol-autosolver/commit/e2cd7623ebee391d205a603b0d005285123b9be7))
+
 ### [2.3.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.3.0...v2.3.1) (2022-03-25)
 
 
