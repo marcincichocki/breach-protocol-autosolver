@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.4.0...v2.5.0) (2022-09-21)
+
+
+### Features
+
+* **client-electron:** add links to warning about unhandled types fragment ([b5e28a1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/b5e28a1fda6c9265ac801137ee0bd800386dffb5))
+* **client-electron:** show release notes when update is available ([542f98b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/542f98bbed897e7f29852a0c2d9f8ef93bddc3ef))
+* **core:** add ability to specify fixed buffer size ([2762d73](https://github.com/marcincichocki/breach-protocol-autosolver/commit/2762d73babc959fd7650cfb1fd5734966e3bdbc9))
+
+
+### Bug Fixes
+
+* **client-electron:** update layout of release notes dialog ([15c9e30](https://github.com/marcincichocki/breach-protocol-autosolver/commit/15c9e30056f7b4e7fb48352119a93e665d4654c7))
+* **core:** update control group when using extended buffer size ([581c553](https://github.com/marcincichocki/breach-protocol-autosolver/commit/581c5531e1074f21c70180e4ae98fe4a6ad4a551))
+
 ## [2.4.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.3.1...v2.4.0) (2022-09-18)
 
 
