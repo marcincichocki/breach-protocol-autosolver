@@ -2,6 +2,7 @@ import { isDaemonsFragment } from '@/core';
 import {
   Action,
   ActionTypes,
+  Analysis,
   AppSettings,
   AppStats,
   BreachProtocolStatus,
@@ -107,7 +108,7 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
 });
 
 const setUpdateStatus = createSetHandler<UpdateStatus>('updateStatus');
-const setAnalysis = createSetHandler<HistoryEntry>('analysis');
+const setAnalysis = createSetHandler<Analysis>('analysis');
 
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,

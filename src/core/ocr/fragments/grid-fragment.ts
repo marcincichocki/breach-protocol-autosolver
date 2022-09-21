@@ -3,24 +3,24 @@ import { GridRawData } from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
-  BreachProtocolFragmentStatus,
 } from './base';
+import { FragmentId, FragmentStatus } from './fragment';
 
 export type BreachProtocolGridFragmentResult = BreachProtocolFragmentResult<
   GridRawData,
-  'grid'
+  FragmentId.Grid
 >;
 
 export class BreachProtocolGridFragment<
   TImage
-> extends BreachProtocolCodeFragment<GridRawData, TImage, 'grid'> {
+> extends BreachProtocolCodeFragment<GridRawData, TImage, FragmentId.Grid> {
   readonly thresholds = new Map([
     [1080, 120],
     [1440, 120],
     [2160, 120],
   ]);
 
-  readonly id = 'grid';
+  readonly id = FragmentId.Grid;
 
   readonly p1 = new Point(0.137, 0.312);
 
@@ -42,13 +42,13 @@ export class BreachProtocolGridFragment<
 
   getStatus(rawData: GridRawData) {
     if (!this.isSquare(rawData.length)) {
-      return BreachProtocolFragmentStatus.InvalidSize;
+      return FragmentStatus.InvalidSize;
     }
 
     if (!this.validateSymbols(rawData)) {
-      return BreachProtocolFragmentStatus.InvalidSymbols;
+      return FragmentStatus.InvalidSymbols;
     }
 
-    return BreachProtocolFragmentStatus.Valid;
+    return FragmentStatus.Valid;
   }
 }

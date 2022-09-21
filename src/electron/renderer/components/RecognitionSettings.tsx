@@ -1,14 +1,16 @@
 import type { BreachProtocolLanguage } from '@/core/daemons-i18n';
 import { AppSettings } from '@/electron/common';
+import { nativeDialog } from '../common';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { getDisplayName } from '../common';
 import { Field, Label, useForm } from './Form';
-import { ThresholdSlider } from './RangeSlider';
+import { RangeSlider, ThresholdSlider } from './RangeSlider';
 import { Section } from './Section';
 import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
+import { BUFFER_SIZE_MAX } from '@/core';
 
 const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
@@ -94,6 +96,27 @@ export const RecognitionSettings = ({
   const ref = useDisplayOptionScrollTo();
   const { values } = useForm<AppSettings>();
 
+  function createBufferSizeNotifier<T>(predicate: (value: T) => boolean) {
+    return async (value: T, next: () => void) => {
+      if (predicate(value)) {
+        const message =
+          values.strategy === 'dps'
+            ? 'Using modded buffer with together with depth-first search strategy might result in poor performance.'
+            : 'Path permutations might be limited to prevent severe performance downgrade. It is possible that some solutions will not be found.';
+        await nativeDialog.alert({ message });
+      }
+
+      next();
+    };
+  }
+
+  const notifyAboutExtendedBufferSizeRange = createBufferSizeNotifier<boolean>(
+    (v) => v
+  );
+  const notifyAboutFixedBufferSize = createBufferSizeNotifier<number>(
+    (v) => v > BUFFER_SIZE_MAX
+  );
+
   return (
     <Section title="Recognition">
       <Field ref={ref} name="activeDisplayId">
@@ -129,23 +152,41 @@ export const RecognitionSettings = ({
         label="Types threshold"
         switchLabel="Automatic types threshold"
       />
-      <Field name="experimentalBufferSizeRecognition">
-        <Label>Experimental buffer size recognition</Label>
+      <Field name="useFixedBufferSize">
+        <Label>Use fixed buffer size</Label>
         <Switch />
       </Field>
-      <ThresholdField
-        name="thresholdBufferSize"
-        switchName="thresholdBufferSizeAuto"
-        label="Buffer size threshold"
-        switchLabel="Automatic buffer size threshold"
-        disabled={values.experimentalBufferSizeRecognition}
-      />
+      {values.useFixedBufferSize ? (
+        <Field name="fixedBufferSize">
+          <Label>Fixed buffer size</Label>
+          <RangeSlider
+            min={4}
+            max={99}
+            step={1}
+            onBeforeValueChange={notifyAboutFixedBufferSize}
+          />
+        </Field>
+      ) : (
+        <>
+          <Field name="experimentalBufferSizeRecognition">
+            <Label>Experimental buffer size recognition</Label>
+            <Switch />
+          </Field>
+          <ThresholdField
+            name="thresholdBufferSize"
+            switchName="thresholdBufferSizeAuto"
+            label="Buffer size threshold"
+            switchLabel="Automatic buffer size threshold"
+            disabled={values.experimentalBufferSizeRecognition}
+          />
+          <Field name="extendedBufferSizeRecognitionRange">
+            <Label>Extended buffer size range</Label>
+            <Switch onBeforeValueChange={notifyAboutExtendedBufferSizeRange} />
+          </Field>
+        </>
+      )}
       <Field name="extendedDaemonsAndTypesRecognitionRange">
         <Label>Extended daemons and type range</Label>
-        <Switch />
-      </Field>
-      <Field name="extendedBufferSizeRecognitionRange">
-        <Label>Extended buffer size range</Label>
         <Switch />
       </Field>
     </Section>

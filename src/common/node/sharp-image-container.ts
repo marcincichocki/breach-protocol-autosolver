@@ -1,4 +1,4 @@
-import { BreachProtocolFragmentBoundingBox, ImageContainer } from '@/core';
+import { FragmentBoundingBox, ImageContainer } from '@/core';
 import sharp from 'sharp';
 
 const SHARP_TOKEN = Symbol('SharpImageContainer');
@@ -41,7 +41,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     );
   }
 
-  process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+  process(fragmentBoundingBox: FragmentBoundingBox) {
     return this.instance
       .clone()
       .extract(fragmentBoundingBox)
@@ -51,26 +51,22 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .png({ colors: 2 });
   }
 
-  processGridFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+  processGridFragment(fragmentBoundingBox: FragmentBoundingBox) {
     return this.processWithOptionalDownscaling(fragmentBoundingBox, 400);
   }
 
-  processDaemonsFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
-  ) {
+  processDaemonsFragment(fragmentBoundingBox: FragmentBoundingBox) {
     return this.processWithOptionalDownscaling(
       fragmentBoundingBox,
       450
     ).extractChannel('blue');
   }
 
-  processTypesFragment(fragmentBoundingBox: BreachProtocolFragmentBoundingBox) {
+  processTypesFragment(fragmentBoundingBox: FragmentBoundingBox) {
     return this.process(fragmentBoundingBox).extractChannel('blue');
   }
 
-  processBufferSizeFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
-  ) {
+  processBufferSizeFragment(fragmentBoundingBox: FragmentBoundingBox) {
     return this.process(fragmentBoundingBox).flop();
   }
 
@@ -104,7 +100,7 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   }
 
   private processWithOptionalDownscaling(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox,
+    fragmentBoundingBox: FragmentBoundingBox,
     width: number
   ) {
     const instance = this.process(fragmentBoundingBox);

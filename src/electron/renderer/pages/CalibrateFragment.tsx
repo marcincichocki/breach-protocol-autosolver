@@ -65,7 +65,7 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   const result = entry.fragments.find((f) => f.id === fragmentId);
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
-  const isBufferSize = fragmentId === 'bufferSize';
+  const isBufferSize = fragmentId === FragmentId.BufferSize;
   const isExperimental =
     entry.settings.experimentalBufferSizeRecognition && isBufferSize;
   const [loading, setLoading] = useState<boolean>(false);

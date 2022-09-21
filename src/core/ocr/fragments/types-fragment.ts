@@ -11,19 +11,19 @@ import { ImageContainer } from '../image-container';
 import {
   BreachProtocolFragmentOptions,
   BreachProtocolFragmentResult,
-  BreachProtocolFragmentStatus,
   BreachProtocolOCRFragment,
 } from './base';
+import { FragmentId, FragmentStatus } from './fragment';
 
 export type BreachProtocolTypesFragmentResult = BreachProtocolFragmentResult<
   TypesRawData,
-  'types'
+  FragmentId.Types
 >;
 
 export class BreachProtocolTypesFragment<
   TImage
-> extends BreachProtocolOCRFragment<TypesRawData, TImage, 'types'> {
-  readonly id = 'types';
+> extends BreachProtocolOCRFragment<TypesRawData, TImage, FragmentId.Types> {
+  readonly id = FragmentId.Types;
   readonly p1 = new Point(0.679, 0.312);
   readonly p2 = new Point(
     0.963,
@@ -100,14 +100,14 @@ export class BreachProtocolTypesFragment<
     const hasUnknown = rawData.some((t) => !t);
 
     if (hasDuplicates || hasUnknown) {
-      return BreachProtocolFragmentStatus.InvalidSymbols;
+      return FragmentStatus.InvalidSymbols;
     }
 
     if (!rawData.length || rawData.length > 5) {
-      return BreachProtocolFragmentStatus.InvalidSize;
+      return FragmentStatus.InvalidSize;
     }
 
-    return BreachProtocolFragmentStatus.Valid;
+    return FragmentStatus.Valid;
   }
 
   async recognize(fixedThreshold?: number) {

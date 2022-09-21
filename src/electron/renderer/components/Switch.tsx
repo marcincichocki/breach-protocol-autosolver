@@ -66,7 +66,7 @@ export const Switch = ({ disabled, onBeforeValueChange }: SwitchProps) => {
     const next = () => setValue(newValue);
 
     if (onBeforeValueChange) {
-      onBeforeValueChange(value, next);
+      onBeforeValueChange(newValue, next);
     } else {
       next();
     }

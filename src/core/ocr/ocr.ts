@@ -1,117 +1,142 @@
-import { Point } from '@/common';
-import {
-  BreachProtocolRawData,
-  COLS,
-  cross,
-  generateSquareMap,
-  isGridFragment,
-  ROWS,
-} from '../common';
+import { capitalize } from '@/common';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolBufferSizeTrimFragment,
   BreachProtocolDaemonsFragment,
+  BreachProtocolFragment,
   BreachProtocolFragmentOptions,
-  BreachProtocolFragmentResults,
   BreachProtocolGridFragment,
   BreachProtocolTypesFragment,
+  Fragment,
   FragmentId,
+  FragmentOptions,
+  FRAGMENTS,
 } from './fragments';
 import { ImageContainer } from './image-container';
 import { BreachProtocolRecognizer } from './recognizer';
+import { BreachProtocolRecognitionResult } from './result';
 
-export class BreachProtocolRecognitionResult {
-  public readonly results = this.unsafeResults.filter(
-    Boolean
-  ) as BreachProtocolFragmentResults;
+export interface BreachProtocolOCROptions extends FragmentOptions {
+  thresholdGrid?: number;
+  thresholdGridAuto: boolean;
+  thresholdDaemons?: number;
+  thresholdDaemonsAuto: boolean;
+  thresholdTypes?: number;
+  thresholdTypesAuto: boolean;
+  thresholdBufferSize?: number;
+  thresholdBufferSizeAuto: boolean;
+  experimentalBufferSizeRecognition?: boolean;
+  skipTypesFragment?: boolean;
+  useFixedBufferSize?: boolean;
+  fixedBufferSize?: number;
+}
 
-  readonly positionSquareMap = this.getPositionSquareMap();
+type FragmentCtor = new (
+  ...args: ConstructorParameters<typeof BreachProtocolFragment>
+) => Fragment;
 
-  readonly rawData = this.reduceToRawData();
+class BreachProtocolFragmentFactory<TImage> {
+  private static readonly fragmentCtorMap = new Map<FragmentId, FragmentCtor>([
+    [FragmentId.Grid, BreachProtocolGridFragment],
+    [FragmentId.Daemons, BreachProtocolDaemonsFragment],
+    [FragmentId.Types, BreachProtocolTypesFragment],
+    [FragmentId.BufferSize, BreachProtocolBufferSizeFragment],
+  ]);
 
-  readonly isValid = this.results
-    // daemon types can be undedected
-    .filter((r) => r.id !== 'types')
-    .every((r) => r.isValid);
+  constructor(
+    private readonly container: ImageContainer<TImage>,
+    private readonly recognizer: BreachProtocolRecognizer,
+    private readonly options: BreachProtocolOCROptions
+  ) {}
 
-  constructor(private readonly unsafeResults: BreachProtocolFragmentResults) {}
+  create(id: FragmentId) {
+    const FragmentCtor = this.getFragmentCtor(id);
+    const options = this.getFragmentOptions();
 
-  private reduceToRawData(): BreachProtocolRawData {
-    return this.results.reduce(
-      (result, { id, rawData }) => ({
-        ...result,
-        [id]: rawData,
-      }),
-      {} as BreachProtocolRawData
-    );
+    if (FragmentCtor) {
+      return new FragmentCtor(this.container, options);
+    }
+
+    return null;
   }
 
-  private getSquares(length: number) {
-    const size = Math.sqrt(length);
-    const rows = ROWS.slice(0, size);
-    const cols = COLS.slice(0, size);
+  private getFragmentCtor(id: FragmentId) {
+    if (id === FragmentId.BufferSize) {
+      if (this.options.useFixedBufferSize) {
+        return null;
+      }
 
-    return cross(rows, cols);
+      if (this.options.experimentalBufferSizeRecognition) {
+        return BreachProtocolBufferSizeTrimFragment;
+      }
+    }
+
+    if (id === FragmentId.Types && this.options.skipTypesFragment) {
+      return null;
+    }
+
+    return BreachProtocolFragmentFactory.fragmentCtorMap.get(id)!;
   }
 
-  private getPositionSquareMap() {
-    const grid = this.results.find(isGridFragment);
-    const { top, left } = grid.boundingBox;
-    const { boxes } = grid.source;
-    const squares = this.getSquares(boxes.length);
+  private getFragmentOptions(): BreachProtocolFragmentOptions {
+    const { recognizer, options } = this;
+    const {
+      filterRecognizerResults,
+      extendedDaemonsAndTypesRecognitionRange,
+      extendedBufferSizeRecognitionRange,
+    } = options;
 
-    return generateSquareMap(squares, (s, i) => {
-      const { x0, y0, x1, y1 } = boxes[i];
-      const x = Math.round((x0 + x1) / 2);
-      const y = Math.round((y0 + y1) / 2);
-
-      return new Point(x + left, y + top);
-    });
+    return {
+      recognizer,
+      extendedBufferSizeRecognitionRange,
+      extendedDaemonsAndTypesRecognitionRange,
+      filterRecognizerResults,
+    };
   }
 }
 
-interface BreachProtocolOCROptions {
-  thresholds?: Partial<Record<FragmentId, number>>;
-  experimentalBufferSizeRecognition?: boolean;
-  filterRecognizerResults?: boolean;
-  skipTypesFragment?: boolean;
-  extendedDaemonsAndTypesRecognitionRange?: boolean;
-  extendedBufferSizeRecognitionRange?: boolean;
+function getFixedThresholdFor<T extends FragmentId>(
+  id: T,
+  options: BreachProtocolOCROptions
+) {
+  const thresholdKey = `threshold${capitalize(id)}` as const;
+  const thresholdAutoKey = `${thresholdKey}Auto` as const;
+
+  const { [thresholdKey]: threshold, [thresholdAutoKey]: thresholdAuto } =
+    options;
+
+  return thresholdAuto ? undefined : threshold;
+}
+
+async function reduceFragmentsToResult(
+  fragments: Fragment[],
+  options: BreachProtocolOCROptions
+) {
+  const pendingResults = fragments.map((fragment) => {
+    if (fragment) {
+      const threshold = getFixedThresholdFor(fragment.id, options);
+
+      return fragment.recognize(threshold);
+    }
+
+    return null;
+  });
+  const results = await Promise.all(pendingResults);
+
+  return new BreachProtocolRecognitionResult(results);
 }
 
 export async function breachProtocolOCR<TImage>(
   container: ImageContainer<TImage>,
   recognizer: BreachProtocolRecognizer,
-  {
-    thresholds,
-    experimentalBufferSizeRecognition,
-    filterRecognizerResults,
-    skipTypesFragment,
-    extendedBufferSizeRecognitionRange,
-    extendedDaemonsAndTypesRecognitionRange,
-  }: BreachProtocolOCROptions
+  options: BreachProtocolOCROptions
 ) {
-  const options: BreachProtocolFragmentOptions = {
+  const factory = new BreachProtocolFragmentFactory(
+    container,
     recognizer,
-    filterRecognizerResults,
-    extendedBufferSizeRecognitionRange,
-    extendedDaemonsAndTypesRecognitionRange,
-  };
-  const gridFragment = new BreachProtocolGridFragment(container, options);
-  const daemonsFragment = new BreachProtocolDaemonsFragment(container, options);
-  const bufferSizeFragment = experimentalBufferSizeRecognition
-    ? new BreachProtocolBufferSizeTrimFragment(container, options)
-    : new BreachProtocolBufferSizeFragment(container, options);
-  const typesFragment = skipTypesFragment
-    ? null
-    : new BreachProtocolTypesFragment(container, options);
+    options
+  );
+  const fragments = FRAGMENTS.map((id) => factory.create(id));
 
-  const results = await Promise.all([
-    gridFragment.recognize(thresholds?.grid),
-    daemonsFragment.recognize(thresholds?.daemons),
-    bufferSizeFragment.recognize(thresholds?.bufferSize),
-    typesFragment?.recognize(thresholds?.types),
-  ]);
-
-  return new BreachProtocolRecognitionResult(results);
+  return reduceFragmentsToResult(fragments, options);
 }

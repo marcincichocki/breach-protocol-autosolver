@@ -15,6 +15,27 @@
         "1C", "55", "1C", "55", "BD"
       ],
       "bufferSize": 7
+    },
+    {
+      "path": "custom/2.png",
+      "daemons": [
+        ["55", "FF", "BD"],
+        ["BD", "BD", "1C"],
+        ["1C", "1C", "55"]
+      ],
+      "grid": [
+        "BD", "1C", "FF", "1C", "1C", "BD", "55",
+        "FF", "BD", "1C", "7A", "E9", "FF", "BD",
+        "7A", "BD", "1C", "1C", "1C", "E9", "E9",
+        "55", "E9", "1C", "55", "BD", "7A", "BD",
+        "7A", "7A", "FF", "1C", "55", "1C", "E9",
+        "7A", "BD", "1C", "1C", "1C", "55", "55",
+        "1C", "7A", "55", "55", "E9", "BD", "BD"
+      ],
+      "bufferSize": 13,
+      "settings": {
+        "extendedBufferSizeRecognitionRange": true
+      }
     }
   ],
   "1024x768": [

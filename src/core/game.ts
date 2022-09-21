@@ -2,6 +2,7 @@ import { Serializable } from '@/common';
 import {
   BreachProtocolExitStrategy,
   BreachProtocolRawData,
+  BUFFER_SIZE_MAX,
   COLS,
   cross,
   fromHex,
@@ -102,9 +103,19 @@ export class BreachProtocolResult implements Serializable {
   }
 }
 
+export interface BreachProtocolOptions {
+  strategy: BreachProtocolStrategy;
+  compare?: SequenceCompareStrategy;
+}
+
+export type BreachProtocolStrategy = 'dps' | 'bfs';
+
 export class BreachProtocol {
   // Grid is always a square.
   readonly size = Math.sqrt(this.rawData.grid.length);
+
+  private readonly isBufferSizeOverMax =
+    this.rawData.bufferSize > BUFFER_SIZE_MAX;
 
   // Rows and columns trimmed to right size.
   private readonly rows = ROWS.slice(0, this.size);
@@ -128,16 +139,16 @@ export class BreachProtocol {
 
   public readonly sequences = generateSequences(
     this.rawData,
-    this.compareStrategy
+    this.options?.compare
   );
 
   constructor(
     public readonly rawData: BreachProtocolRawData,
-    private readonly compareStrategy?: SequenceCompareStrategy
+    private readonly options: BreachProtocolOptions
   ) {}
 
   solveForSequence(sequence: Sequence) {
-    const path = this.findShortestPath(sequence);
+    const path = this.findPath(sequence);
 
     return path ? new BreachProtocolResult(sequence, path, this) : null;
   }
@@ -208,15 +219,33 @@ export class BreachProtocol {
     return tValue;
   }
 
+  private reduceQueue(queue: { tail: string; path: string[] }[]) {
+    return queue
+      .sort((a, b) => a.tail.length - b.tail.length)
+      .slice(0, Math.ceil(queue.length / 2));
+  }
+
+  private findPath(sequence: Sequence) {
+    return this.options.strategy === 'dps'
+      ? this.dps(sequence)
+      : this.bfs(sequence);
+  }
+
   /**
-   * Find shortest path that fulfills given sequence using
-   * breadth first search. Supports sequence delagation on breaks.
+   * Find shortest path that fulfills given sequence using breadth first search.
+   *
+   * This strategy will limit number of permutations when buffer is bigger than max
+   * to preserve performance. It can affect results.
    */
-  private findShortestPath(sequence: Sequence) {
+  bfs(sequence: Sequence) {
     const { bufferSize } = this.rawData;
-    const queue = this.getInitialQueue(sequence.tValue);
+    let queue = this.getInitialQueue(sequence.tValue);
 
     while (queue.length) {
+      if (this.isBufferSizeOverMax && queue.length > 20e2) {
+        queue = this.reduceQueue(queue);
+      }
+
       // Get first element from queue.
       const { path, tail } = queue.shift();
 
@@ -241,5 +270,54 @@ export class BreachProtocol {
 
       queue.push(...nextSquares);
     }
+  }
+
+  /**
+   * Find path that fulfills given sequence using depth first search.
+   *
+   * This strategy will not limit number of permutations and can get really slow
+   * when buffer size is over max.
+   */
+  private dps(sequence: Sequence) {
+    const queue = this.getInitialQueue(sequence.tValue);
+
+    for (let { path, tail } of queue) {
+      const result = this.runDps(sequence, path, tail);
+
+      if (result) {
+        return result;
+      }
+    }
+
+    return null;
+  }
+
+  private runDps(sequence: Sequence, path: string[], tail: string): string[] {
+    if (this.rawData.bufferSize - path.length < tail.length) {
+      return null;
+    }
+
+    if (!tail.length) {
+      return path.reverse();
+    }
+
+    const [square] = path;
+    const unit = this.unitsMap.get(square)[path.length % 2];
+    const nextSquares = unit
+      .filter((s) => !path.includes(s))
+      .map((square) => ({
+        path: [square, ...path],
+        tail: this.findNewTail(tail, square, sequence),
+      }));
+
+    for (let { path: newPath, tail: newTail } of nextSquares) {
+      const result = this.runDps(sequence, newPath, newTail);
+
+      if (result) {
+        return result;
+      }
+    }
+
+    return null;
   }
 }

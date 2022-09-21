@@ -1,6 +1,7 @@
 import entries from './bp-registry/sequences.json';
 import { BreachProtocolRawData, DaemonsRawData } from './common';
 import { FocusDaemonSequenceCompareStrategy } from './compare-strategy';
+import { FragmentId } from './ocr';
 import {
   Daemon,
   findOverlap,
@@ -11,7 +12,7 @@ import {
 
 interface SequenceEntry {
   description: string;
-  rawData: Omit<BreachProtocolRawData, 'grid'>;
+  rawData: Omit<BreachProtocolRawData, FragmentId.Grid>;
   expected: {
     indexes: number[][];
     sequences: DaemonsRawData;
@@ -170,7 +171,7 @@ describe('sequences', () => {
     describe('focus daemon strategy', () => {
       it('should return sequences sorted by selected daemon', () => {
         const strategy = new FocusDaemonSequenceCompareStrategy(0);
-        const rawData: Omit<BreachProtocolRawData, 'grid'> = {
+        const rawData: Omit<BreachProtocolRawData, FragmentId.Grid> = {
           bufferSize: 5,
           daemons: [
             ['1C', '1C'],

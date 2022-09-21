@@ -34,7 +34,7 @@ const FragmentLink = styled.a<{ active: boolean }>`
 `;
 
 export const AnalyzeDetails = ({ entry }: { entry: HistoryEntry }) => {
-  const [fragmentId, setFragmentId] = useState<FragmentId>('grid');
+  const [fragmentId, setFragmentId] = useState<FragmentId>(FragmentId.Grid);
   const fragment = entry.fragments.find((f) => f.id === fragmentId);
 
   function changeEntry(event: MouseEvent, id: FragmentId) {

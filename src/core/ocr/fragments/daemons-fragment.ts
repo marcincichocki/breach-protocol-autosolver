@@ -3,24 +3,28 @@ import { DaemonsRawData } from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
-  BreachProtocolFragmentStatus,
 } from './base';
+import { FragmentId, FragmentStatus } from './fragment';
 
 export type BreachProtocolDaemonsFragmentResult = BreachProtocolFragmentResult<
   DaemonsRawData,
-  'daemons'
+  FragmentId.Daemons
 >;
 
 export class BreachProtocolDaemonsFragment<
   TImage
-> extends BreachProtocolCodeFragment<DaemonsRawData, TImage, 'daemons'> {
+> extends BreachProtocolCodeFragment<
+  DaemonsRawData,
+  TImage,
+  FragmentId.Daemons
+> {
   readonly thresholds = new Map([
     [1080, 60],
     [1440, 45],
     [2160, 10],
   ]);
 
-  readonly id = 'daemons';
+  readonly id = FragmentId.Daemons;
 
   readonly p1 = new Point(0.42, 0.312);
 
@@ -45,13 +49,13 @@ export class BreachProtocolDaemonsFragment<
 
   getStatus(rawData: DaemonsRawData) {
     if (!this.isCorrectSize(rawData)) {
-      return BreachProtocolFragmentStatus.InvalidSize;
+      return FragmentStatus.InvalidSize;
     }
 
     if (!this.validateSymbols(rawData.flat())) {
-      return BreachProtocolFragmentStatus.InvalidSymbols;
+      return FragmentStatus.InvalidSymbols;
     }
 
-    return BreachProtocolFragmentStatus.Valid;
+    return FragmentStatus.Valid;
   }
 }

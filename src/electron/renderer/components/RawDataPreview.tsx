@@ -1,7 +1,4 @@
-import {
-  BreachProtocolFragmentResults,
-  BreachProtocolFragmentStatus,
-} from '@/core';
+import { BreachProtocolFragmentResults, FragmentStatus } from '@/core';
 import styled from 'styled-components';
 import { Col } from './Flex';
 
@@ -19,12 +16,12 @@ const RawDataPreviewWrapper = styled.pre`
 `;
 
 // prettier-ignore
-const RawDataStatusMessage = styled.span<{ status: BreachProtocolFragmentStatus }>`
+const RawDataStatusMessage = styled.span<{ status: FragmentStatus }>`
   position: absolute;
   bottom: 0.5rem;
   right: 1rem;
   color: ${(p) =>
-    p.status === BreachProtocolFragmentStatus.Valid
+    p.status === FragmentStatus.Valid
       ? 'var(--accent)'
       : 'var(--primary)'};
   font-size: 1.5rem;
@@ -33,9 +30,9 @@ const RawDataStatusMessage = styled.span<{ status: BreachProtocolFragmentStatus 
 `;
 
 const statusMessages = {
-  [BreachProtocolFragmentStatus.InvalidSize]: 'Invalid size',
-  [BreachProtocolFragmentStatus.InvalidSymbols]: 'Invalid codes',
-  [BreachProtocolFragmentStatus.Valid]: 'Valid',
+  [FragmentStatus.InvalidSize]: 'Invalid size',
+  [FragmentStatus.InvalidSymbols]: 'Invalid codes',
+  [FragmentStatus.Valid]: 'Valid',
 };
 
 type RawDataPreviewProps = Pick<

@@ -6,7 +6,8 @@ import {
   isTypesFragment,
 } from '@/core';
 import { HistoryEntry } from '@/electron/common';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { StateContext } from '../state';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
@@ -25,8 +26,11 @@ interface HistoryViewerProps {
 
 export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
+  const { settings } = useContext(StateContext);
   const { rawData: grid } = entry.fragments.find(isGridFragment);
-  const { rawData: bufferSize } = entry.fragments.find(isBufferSizeFragment);
+  const { rawData: bufferSize } = entry.fragments.find(
+    isBufferSizeFragment
+  ) ?? { rawData: settings.fixedBufferSize };
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const typesFragment = entry.fragments.find(isTypesFragment);
   const result = customResult || entry.result;

@@ -258,6 +258,23 @@ export const options: BreachProtocolOption[] = [
       'Use extended OCR range for buffer size fragment. Removes upper bound of max buffer size.',
     defaultValue: false,
   },
+  {
+    id: 'useFixedBufferSize',
+    description:
+      'Use fixed buffer size. This option will disable buffer size fragment recognition.',
+    defaultValue: false,
+  },
+  {
+    id: 'fixedBufferSize',
+    description:
+      'Amount of buffer size there is currently available in equipped cyberdeck.',
+    defaultValue: 4,
+  },
+  {
+    id: 'strategy',
+    description: 'Algorithm that will be used to find path.',
+    defaultValue: 'bfs',
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {

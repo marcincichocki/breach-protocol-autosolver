@@ -1,8 +1,10 @@
+import { BreachProtocolStrategy, BUFFER_SIZE_MAX } from '@/core';
+import { AppSettings } from '@/electron/common';
 import { nativeDialog } from '../common';
-import { Field, Label } from './Form';
+import { Field, Label, useForm } from './Form';
 import { RangeSlider } from './RangeSlider';
 import { Section } from './Section';
-import { Select } from './Select';
+import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
 
 const formatOptions = [
@@ -29,7 +31,38 @@ async function onResolveDelayChange(value: number) {
   }
 }
 
+const strategyOptions: SelectOption<BreachProtocolStrategy>[] = [
+  {
+    name: 'Breadth-first search(recommended)',
+    value: 'bfs',
+  },
+  {
+    name: 'Depth-first search(experimental)',
+    value: 'dps',
+  },
+];
+
 export const PerformanceSettings = () => {
+  const { values } = useForm<AppSettings>();
+
+  async function notifyAboutDps(
+    value: BreachProtocolStrategy,
+    next: () => void
+  ) {
+    const isPotentiallyDangerousBufferSize =
+      values.extendedBufferSizeRecognitionRange ||
+      (values.useFixedBufferSize && values.fixedBufferSize > BUFFER_SIZE_MAX);
+
+    if (value === 'dps' && isPotentiallyDangerousBufferSize) {
+      await nativeDialog.alert({
+        message:
+          'Depth-first search can cause performance issues when using it together with modded buffer.',
+      });
+    }
+
+    next();
+  }
+
   return (
     <Section title="Performance">
       <Field name="format">
@@ -51,6 +84,13 @@ export const PerformanceSettings = () => {
       <Field name="skipTypesFragment">
         <Label>Skip types fragment</Label>
         <Switch />
+      </Field>
+      <Field name="strategy">
+        <Label>Strategy</Label>
+        <Select
+          options={strategyOptions}
+          onBeforeValueChange={notifyAboutDps}
+        ></Select>
       </Field>
     </Section>
   );

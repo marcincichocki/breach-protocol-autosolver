@@ -6,6 +6,8 @@ import type {
 import type {
   BreachProtocolFragmentResults,
   BreachProtocolLanguage,
+  BreachProtocolOCROptions,
+  BreachProtocolOptions,
   BreachProtocolResultJSON,
   FragmentId,
   SequenceJSON,
@@ -79,30 +81,19 @@ export interface AppSettings
     Required<SharpImageContainerConfig>,
     SoundPlayerConfig,
     KeyBindsConfig,
-    ResolverSettings {
+    ResolverSettings,
+    Required<BreachProtocolOCROptions>,
+    Pick<BreachProtocolOptions, 'strategy'> {
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;
   autoUpdate: boolean;
   minimizeToTray: boolean;
-  thresholdGrid: number;
-  thresholdGridAuto: boolean;
-  thresholdDaemons: number;
-  thresholdDaemonsAuto: boolean;
-  thresholdTypes: number;
-  thresholdTypesAuto: boolean;
-  thresholdBufferSize: number;
-  thresholdBufferSizeAuto: boolean;
-  experimentalBufferSizeRecognition: boolean;
   outputDevice: 'mouse' | 'keyboard';
   engine: 'nircmd' | 'ahk' | 'xdotool';
   resolveDelay: number;
   focusOnError: boolean;
-  filterRecognizerResults: boolean;
   gameLang: BreachProtocolLanguage;
-  skipTypesFragment: boolean;
-  extendedDaemonsAndTypesRecognitionRange: boolean;
-  extendedBufferSizeRecognitionRange: boolean;
 }
 
 export interface AppStats {

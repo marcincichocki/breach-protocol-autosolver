@@ -12,7 +12,11 @@ import {
   getUnits,
   GridRawData,
 } from './common';
-import { BreachProtocol, BreachProtocolResult } from './game';
+import {
+  BreachProtocol,
+  BreachProtocolOptions,
+  BreachProtocolResult,
+} from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
 
 const registryBreachProtocols = [
@@ -161,6 +165,8 @@ describe('utilities', () => {
 });
 
 describe('Breach protocol solve', () => {
+  const options: BreachProtocolOptions = { strategy: 'bfs' };
+
   it('should resolve 3 base cases', () => {
     // prettier-ignore
     const grid: GridRawData = [
@@ -169,7 +175,7 @@ describe('Breach protocol solve', () => {
       '55', '55', '1C'
     ]
     const bufferSize = 5;
-    const g1 = new BreachProtocol({ grid, bufferSize, daemons: [] });
+    const g1 = new BreachProtocol({ grid, bufferSize, daemons: [] }, options);
     const results = [
       // case 1) all symbols are accesible from the start.
       ['55', '55', 'E9'],
@@ -192,7 +198,7 @@ describe('Breach protocol solve', () => {
 
   it('should find best sequences and solve BPs from raw data', () => {
     testData.forEach((rawData) => {
-      const game = new BreachProtocol(rawData);
+      const game = new BreachProtocol(rawData, options);
       const result = game.solve();
 
       expect(result.path.length).toBeLessThanOrEqual(rawData.bufferSize);
@@ -213,7 +219,10 @@ describe('Breach protocol solve', () => {
       ['1C', '55'],
     ];
     const bufferSize: BufferSize = 7;
-    const result = new BreachProtocol({ grid, daemons, bufferSize }).solve();
+    const result = new BreachProtocol(
+      { grid, daemons, bufferSize },
+      options
+    ).solve();
 
     expect(result.path.length).toBeLessThan(result.rawPath.length);
     expect(result.path).not.toEqual(result.rawPath);
@@ -235,11 +244,14 @@ describe('Breach protocol solve', () => {
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
       const s1 = Sequence.fromPermutation(p1);
-      const result = new BreachProtocol({
-        grid,
-        bufferSize,
-        daemons,
-      }).solveForSequence(s1);
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
       expect(result.exitStrategy).toEqual({
         willExit: true,
@@ -252,11 +264,14 @@ describe('Breach protocol solve', () => {
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
       const [p1] = parseDaemons(daemons);
       const s1 = Sequence.fromPermutation(p1);
-      const result = new BreachProtocol({
-        grid,
-        bufferSize,
-        daemons,
-      }).solveForSequence(s1);
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
       expect(result.exitStrategy).toEqual({
         willExit: false,
@@ -269,11 +284,14 @@ describe('Breach protocol solve', () => {
       const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C'], ['7A']];
       const [p1] = parseDaemons(daemons);
       const s1 = Sequence.fromPermutation(p1.slice(0, 2));
-      const result = new BreachProtocol({
-        grid,
-        bufferSize,
-        daemons,
-      }).solveForSequence(s1);
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
       expect(result.exitStrategy).toEqual({
         willExit: false,
@@ -289,11 +307,14 @@ describe('Breach protocol solve', () => {
       ];
       const [p1] = parseDaemons(daemons);
       const s1 = Sequence.fromPermutation(p1.slice(0, 1));
-      const result = new BreachProtocol({
-        grid,
-        bufferSize,
-        daemons,
-      }).solveForSequence(s1);
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
       expect(result.exitStrategy).toEqual({
         willExit: false,
