@@ -79,9 +79,17 @@ export class BreachProtocolBufferSizeFragment<
 > extends BreachProtocolBufferSizeBase<TImage> {
   private readonly controlGroups = [
     // Buffer boxes.
-    new BufferSizeControlGroup(0.12, 0.22, 255),
+    new BufferSizeControlGroup(
+      this.options.extendedBufferSizeRecognitionRange ? 0.102 : 0.12,
+      this.options.extendedBufferSizeRecognitionRange ? 0.189 : 0.22,
+      255
+    ),
     // End of fragment.
-    new BufferSizeControlGroup(0.7, 1, 0),
+    new BufferSizeControlGroup(
+      this.options.extendedBufferSizeRecognitionRange ? 0.9 : 0.7,
+      1,
+      0
+    ),
   ];
 
   private static cachedThreshold: number = null;
