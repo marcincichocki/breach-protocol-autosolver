@@ -3,6 +3,7 @@ import type { UpdateInfo } from 'electron-updater';
 import { useIpcEventDialog } from '../common';
 import { FlatButton } from './Buttons';
 import { Dialog, DialogBody, DialogTitle } from './Dialog';
+import { Row } from './Flex';
 import { Only } from './Only';
 
 export const ReleaseNotesDialog = () => {
@@ -35,22 +36,16 @@ export const ReleaseNotesDialog = () => {
           __html: sanitize(updateInfo.releaseNotes as string),
         }}
       />
-      <FlatButton
-        onClick={close}
-        color="accent"
-        style={{ alignSelf: 'flex-end' }}
-      >
-        Close
-      </FlatButton>
-      <Only when={updateAvailable}>
-        <FlatButton
-          color="accent"
-          style={{ alignSelf: 'flex-end' }}
-          onClick={update}
-        >
-          Update to {updateInfo.version}
+      <Row gap style={{ justifyContent: 'flex-end' }}>
+        <FlatButton onClick={close} color="primary">
+          Close
         </FlatButton>
-      </Only>
+        <Only when={updateAvailable}>
+          <FlatButton color="accent" onClick={update}>
+            Update to {updateInfo.version}
+          </FlatButton>
+        </Only>
+      </Row>
     </Dialog>
   );
 };
