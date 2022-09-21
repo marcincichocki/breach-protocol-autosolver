@@ -16,6 +16,7 @@ import {
   BreachProtocol,
   BreachProtocolOptions,
   BreachProtocolResult,
+  BreachProtocolStrategy,
 } from './game';
 import { Daemon, parseDaemons, Sequence } from './sequence';
 
@@ -196,15 +197,18 @@ describe('Breach protocol solve', () => {
     });
   });
 
-  it('should find best sequences and solve BPs from raw data', () => {
-    testData.forEach((rawData) => {
-      const game = new BreachProtocol(rawData, options);
-      const result = game.solve();
+  it.each(['bfs', 'dfs'] as BreachProtocolStrategy[])(
+    'should find best sequences and solve BPs from raw data',
+    (strategy) => {
+      testData.forEach((rawData) => {
+        const game = new BreachProtocol(rawData, { strategy });
+        const result = game.solve();
 
-      expect(result.path.length).toBeLessThanOrEqual(rawData.bufferSize);
-      expectResolvedSequenceToContainDaemons(result);
-    });
-  });
+        expect(result.path.length).toBeLessThanOrEqual(rawData.bufferSize);
+        expectResolvedSequenceToContainDaemons(result);
+      });
+    }
+  );
 
   it('should slice path if it contains accidental daemons', () => {
     // prettier-ignore
