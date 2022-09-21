@@ -1,6 +1,9 @@
 import type { BreachProtocolTypesFragmentResult } from '@/core';
 import { MdWarning } from '@react-icons/all-files/md/MdWarning';
+import { useContext } from 'react';
 import styled from 'styled-components';
+import { RouterExtContext } from '../router-ext';
+import { LinkButton } from './Buttons';
 import { Col, Row } from './Flex';
 
 const WarningTitle = styled.h3`
@@ -16,12 +19,19 @@ const WarningSubTitle = styled.h4`
   color: var(--primary);
 `;
 
+const WarningLink = styled(LinkButton)`
+  color: var(--primary);
+  font-weight: 600;
+`;
+
 interface TypesFragmentStatusProps {
   types: BreachProtocolTypesFragmentResult;
 }
 
 export const TypesFragmentStatus = ({ types }: TypesFragmentStatusProps) => {
   if (!types || types.isValid) return null;
+
+  const { navigateToSetting } = useContext(RouterExtContext);
 
   return (
     <Col>
@@ -30,7 +40,19 @@ export const TypesFragmentStatus = ({ types }: TypesFragmentStatusProps) => {
         <WarningTitle>Warning: unknown types</WarningTitle>
       </Row>
       <WarningSubTitle>
-        Select correct game language, change threshold or disable this feature.
+        Select correct{' '}
+        <WarningLink onClick={() => navigateToSetting('gameLang')}>
+          game language
+        </WarningLink>
+        , change{' '}
+        <WarningLink onClick={() => navigateToSetting('thresholdTypesAuto')}>
+          threshold
+        </WarningLink>{' '}
+        or{' '}
+        <WarningLink onClick={() => navigateToSetting('skipTypesFragment')}>
+          disable this feature
+        </WarningLink>
+        .
       </WarningSubTitle>
     </Col>
   );

@@ -72,8 +72,6 @@ export const SelectSequence = ({
 
   async function discard() {
     history.replace('/');
-
-    await dispatchAsyncRequest({ type: 'ANALYZE_DISCARD' });
   }
 
   async function resolve() {

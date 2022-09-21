@@ -1,9 +1,9 @@
 import { ActionTypes, UpdateStatus, WorkerStatus } from '@/electron/common';
 import { ProgressInfo } from 'electron-updater';
 import { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { getDisplayName, useIpcEvent } from '../common';
+import { RouterExtContext } from '../router-ext';
 import { StateContext } from '../state';
 import { Spacer } from './Flex';
 
@@ -141,22 +141,20 @@ export const StatusBar = () => {
     updateStatus,
     settings: { activeDisplayId },
   } = useContext(StateContext);
+  const { navigateToSetting } = useContext(RouterExtContext);
   const show = useSettingsChangeListener();
   const showUpdateStatus = useShowUpdateStatus(updateStatus);
   const progress = useDownloadProgress();
-  const history = useHistory();
   const activeDisplay = displays.find((d) => d.id === activeDisplayId);
   const isWorkerDetatch =
     status === WorkerStatus.Disabled || status === WorkerStatus.Disconnected;
 
-  function goToDisplaySetting() {
-    history.push('/settings?goToDisplay=true');
-  }
-
   return (
     <StatusBarWrapper>
       <StatusBarItem>{VERSION}</StatusBarItem>
-      <InteractiveStatusBarItem onClick={goToDisplaySetting}>
+      <InteractiveStatusBarItem
+        onClick={() => navigateToSetting('activeDisplayId')}
+      >
         {activeDisplay ? getDisplayName(activeDisplay) : 'Loading...'}
       </InteractiveStatusBarItem>
       <StatusBarItem warn={isWorkerDetatch}>
