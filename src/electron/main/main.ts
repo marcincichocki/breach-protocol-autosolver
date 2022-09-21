@@ -257,6 +257,7 @@ export class Main {
     ipc.on('main:save-snapshot', this.onSaveSnapshot.bind(this));
     ipc.on('main:get-resources-path', this.onGetResourcesPath.bind(this));
     ipc.on('main:focus-renderer', this.showRenderer.bind(this));
+    ipc.on('main:update', this.update.bind(this));
     ipc.handle('main:show-message-box', this.onShowMessageBox);
     ipc.handle('main:validate-key-bind', this.onValidateKeyBind.bind(this));
     ipc.handle('main:validate-file', this.onValidateFile.bind(this));
@@ -271,6 +272,10 @@ export class Main {
     );
 
     app.on('second-instance', this.showRenderer.bind(this));
+  }
+
+  private update() {
+    this.updater.downloadUpdate();
   }
 
   private onValidateFile(

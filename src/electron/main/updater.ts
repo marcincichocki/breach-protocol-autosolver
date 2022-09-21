@@ -7,11 +7,11 @@ import {
   UpdateStatus,
   WorkerStatus,
 } from '../common';
-import { nativeDialog } from './dialog';
 import { Store } from './store/store';
 
 export class BreachProtocolAutosolverUpdater {
   private autoUpdate: boolean = null;
+  private status: UpdateStatus;
 
   private wereReleseNotesShown = false;
 
@@ -36,6 +36,17 @@ export class BreachProtocolAutosolverUpdater {
         throw error;
       }
     }
+  }
+
+  downloadUpdate() {
+    if (this.status !== UpdateStatus.UpdateAvailable) {
+      throw new Error('There is not update to download.');
+    }
+
+    autoUpdater.downloadUpdate();
+
+    this.disableWorker();
+    this.setUpdateStatus(UpdateStatus.Downloading);
   }
 
   dispose() {
@@ -65,23 +76,14 @@ export class BreachProtocolAutosolverUpdater {
     this.setUpdateStatus(UpdateStatus.CheckingForUpdate);
   }
 
-  private async onUpdateAvailable({ version }: UpdateInfo) {
+  private async onUpdateAvailable(info: UpdateInfo) {
     this.setUpdateStatus(UpdateStatus.UpdateAvailable);
 
     if (!this.autoUpdate) {
-      const result = await nativeDialog.confirm({
-        message: `New version of ${PRODUCT_NAME}(${version}) is available.`,
-        buttons: ['Download and install', 'Cancel'],
-        type: 'info',
-      });
-
-      if (!result) return;
-
-      autoUpdater.downloadUpdate();
+      this.renderer.send('renderer:show-release-notes', info);
+    } else {
+      this.downloadUpdate();
     }
-
-    this.disableWorker();
-    this.setUpdateStatus(UpdateStatus.Downloading);
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {
@@ -111,6 +113,7 @@ export class BreachProtocolAutosolverUpdater {
   }
 
   private setUpdateStatus(status: UpdateStatus) {
+    this.status = status;
     const action = new SetUpdateStatusAction(status);
 
     return this.store.dispatch(action, true);
