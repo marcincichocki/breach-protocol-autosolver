@@ -141,6 +141,7 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
 
     return (
       <StyledField
+        id={name}
         ref={ref}
         onMouseEnter={onHover ? () => onHover(name) : undefined}
         onMouseLeave={onHover ? () => onHover(null) : undefined}

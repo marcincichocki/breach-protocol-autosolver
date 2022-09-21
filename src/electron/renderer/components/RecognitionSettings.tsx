@@ -1,16 +1,13 @@
+import { BUFFER_SIZE_MAX } from '@/core';
 import type { BreachProtocolLanguage } from '@/core/daemons-i18n';
 import { AppSettings } from '@/electron/common';
-import { nativeDialog } from '../common';
-import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
-import { getDisplayName } from '../common';
+import { getDisplayName, nativeDialog } from '../common';
 import { Field, Label, useForm } from './Form';
 import { RangeSlider, ThresholdSlider } from './RangeSlider';
 import { Section } from './Section';
 import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
-import { BUFFER_SIZE_MAX } from '@/core';
 
 const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
@@ -33,19 +30,6 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'Türkçe', value: 'tur' },
   { name: 'ไทย', value: 'tha+eng' },
 ];
-
-function useDisplayOptionScrollTo<T extends HTMLDivElement>() {
-  const ref = useRef<T>();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.search.includes('goToDisplay')) {
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [location.search]);
-
-  return ref;
-}
 
 interface ThresholdFieldProps {
   name: keyof AppSettings;
@@ -93,7 +77,6 @@ export const RecognitionSettings = ({
     name: getDisplayName(d),
     value: d.id,
   }));
-  const ref = useDisplayOptionScrollTo();
   const { values } = useForm<AppSettings>();
 
   function createBufferSizeNotifier<T>(predicate: (value: T) => boolean) {
@@ -119,7 +102,7 @@ export const RecognitionSettings = ({
 
   return (
     <Section title="Recognition">
-      <Field ref={ref} name="activeDisplayId">
+      <Field name="activeDisplayId">
         <Label>Display</Label>
         <Select
           options={displayOptions}
