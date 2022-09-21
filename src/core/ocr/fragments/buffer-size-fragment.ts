@@ -1,15 +1,12 @@
 import { Point } from '@/common';
 import { BufferSize, BUFFER_SIZE_MAX, BUFFER_SIZE_MIN } from '../../common';
-import {
-  BreachProtocolFragment,
-  BreachProtocolFragmentResult,
-  BreachProtocolFragmentStatus,
-} from './base';
+import { BreachProtocolFragment, BreachProtocolFragmentResult } from './base';
+import { FragmentId, FragmentStatus } from './fragment';
 
 export abstract class BreachProtocolBufferSizeBase<
   TImage
-> extends BreachProtocolFragment<BufferSize, TImage, 'bufferSize'> {
-  readonly id = 'bufferSize';
+> extends BreachProtocolFragment<BufferSize, TImage, FragmentId.BufferSize> {
+  readonly id = FragmentId.BufferSize;
 
   readonly p1 = new Point(0.42, 0.167);
 
@@ -37,10 +34,10 @@ export abstract class BreachProtocolBufferSizeBase<
       n < BUFFER_SIZE_MIN ||
       (!this.options.extendedBufferSizeRecognitionRange && n > BUFFER_SIZE_MAX)
     ) {
-      return BreachProtocolFragmentStatus.InvalidSize;
+      return FragmentStatus.InvalidSize;
     }
 
-    return BreachProtocolFragmentStatus.Valid;
+    return FragmentStatus.Valid;
   }
 }
 
@@ -72,7 +69,7 @@ class BufferSizeControlGroup {
 }
 
 export type BreachProtocolBufferSizeFragmentResult =
-  BreachProtocolFragmentResult<BufferSize, 'bufferSize'>;
+  BreachProtocolFragmentResult<BufferSize, FragmentId.BufferSize>;
 
 export class BreachProtocolBufferSizeFragment<
   TImage
@@ -145,7 +142,7 @@ export class BreachProtocolBufferSizeFragment<
     const rawBuffer = await this.container.toRawBuffer(fragment);
     const bufferSize = this.getBufferSizeFromPixels(rawBuffer);
 
-    if (this.getStatus(bufferSize) !== BreachProtocolFragmentStatus.Valid) {
+    if (this.getStatus(bufferSize) !== FragmentStatus.Valid) {
       // In rare cases where given value is wrong, repeat with
       // binary search. For example when user changes gamma mid
       // game, saved value will be wrong. This allows to recalibrate

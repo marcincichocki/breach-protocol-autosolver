@@ -42,7 +42,7 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
 `;
 
 interface BufferSizeViewerProps {
-  bufferSize: BufferSize;
+  bufferSize: number;
   result?: BreachProtocolResultJSON;
   onHighlight?: (highlight: Highlight) => void;
 }

@@ -12,6 +12,7 @@ import {
   breachProtocolOCR,
   BreachProtocolRecognitionResult,
   BreachProtocolResultJSON,
+  BufferSize,
   FragmentId,
   SequenceCompareStrategy,
 } from '@/core';
@@ -102,10 +103,12 @@ export class BreachProtocolAutosolver {
       return this.rejectJob();
     }
 
-    this.game = new BreachProtocol(
-      this.recognitionResult.rawData,
-      this.compareStrategy
-    );
+    const rawData = this.getNormalizedRawData(this.recognitionResult);
+
+    this.game = new BreachProtocol(rawData, {
+      strategy: this.settings.strategy,
+      compare: this.compareStrategy,
+    });
 
     this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
   }
@@ -127,6 +130,14 @@ export class BreachProtocolAutosolver {
     await resolver.stopAndExit(this.result.exitStrategy);
 
     this.resolveJob();
+  }
+
+  private getNormalizedRawData({ rawData }: BreachProtocolRecognitionResult) {
+    const bufferSize = this.settings.useFixedBufferSize
+      ? (this.settings.fixedBufferSize as BufferSize)
+      : rawData.bufferSize;
+
+    return { ...rawData, bufferSize };
   }
 
   private async getBreachProtocolImage(input?: AnalysisInput) {
@@ -257,27 +268,12 @@ export class BreachProtocolAutosolver {
 
   private async recognize() {
     const image = sharp(this.fileName);
-    const {
-      downscaleSource,
-      experimentalBufferSizeRecognition,
-      filterRecognizerResults,
-      gameLang,
-      skipTypesFragment,
-      extendedBufferSizeRecognitionRange,
-      extendedDaemonsAndTypesRecognitionRange,
-    } = this.settings;
+    const { downscaleSource, gameLang } = this.settings;
     const container = await SharpImageContainer.create(image, {
       downscaleSource,
     });
     const recognizer = new WasmBreachProtocolRecognizer(gameLang);
 
-    return breachProtocolOCR(container, recognizer, {
-      thresholds: this.getFixedThresholds(),
-      experimentalBufferSizeRecognition,
-      filterRecognizerResults,
-      skipTypesFragment,
-      extendedBufferSizeRecognitionRange,
-      extendedDaemonsAndTypesRecognitionRange,
-    });
+    return breachProtocolOCR(container, recognizer, this.settings);
   }
 }

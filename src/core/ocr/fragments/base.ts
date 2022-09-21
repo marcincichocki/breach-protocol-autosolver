@@ -1,5 +1,5 @@
 import { chunk, getClosest, Point, unique } from '@/common';
-import { BreachProtocolRawData, HexCode, HEX_CODES } from '../../common';
+import { HexCode, HEX_CODES } from '../../common';
 import { ImageContainer } from '../image-container';
 import {
   BreachProtocolRecognizer,
@@ -9,86 +9,53 @@ import {
 } from '../recognizer';
 import { BreachProtocolBufferSizeFragmentResult } from './buffer-size-fragment';
 import { BreachProtocolDaemonsFragmentResult } from './daemons-fragment';
+import {
+  BaseFragmentResult,
+  Fragment,
+  FragmentBoundingBox,
+  FragmentId,
+  FragmentOptions,
+  FragmentResult,
+  FragmentStatus,
+} from './fragment';
 import { BreachProtocolGridFragmentResult } from './grid-fragment';
 import { BreachProtocolTypesFragmentResult } from './types-fragment';
-
-export type FragmentId = keyof BreachProtocolRawData;
-
-export interface BreachProtocolFragmentBoundingBox {
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-  outerWidth: number;
-  outerHeight: number;
-  innerWidth: number;
-  innerHeight: number;
-}
 
 export interface BreachProtocolSource {
   text: string;
   boxes: BreachProtocolRecognizerBox[];
 }
 
-export enum BreachProtocolFragmentStatus {
-  Valid,
-  InvalidSymbols,
-  InvalidSize,
-}
-
-interface BreachProtocolFragmentResultBase<TId extends FragmentId> {
-  readonly boundingBox: BreachProtocolFragmentBoundingBox;
-  readonly id: TId;
-  readonly isValid: boolean;
-  readonly status: BreachProtocolFragmentStatus;
-}
-
 export interface BreachProtocolFragmentResult<
   TData,
   TId extends FragmentId = FragmentId
-> extends BreachProtocolFragmentResultBase<TId> {
-  /** Used threshold to generate transformed image. */
-  readonly threshold: number;
-
-  /** Transformed image in base64 encoding. */
-  readonly image: string;
-
+> extends FragmentResult<TData, TId> {
   /** Extracted data from image. */
   readonly source: BreachProtocolSource;
-
-  /** Extracted data from source. */
-  readonly rawData: TData;
 }
 
 export type BreachProtocolFragmentResults = [
   BreachProtocolGridFragmentResult,
   BreachProtocolDaemonsFragmentResult,
-  BreachProtocolBufferSizeFragmentResult,
+  BreachProtocolBufferSizeFragmentResult?,
   BreachProtocolTypesFragmentResult?
 ];
 
-export interface BreachProtocolFragmentOptions {
+export interface BreachProtocolFragmentOptions extends FragmentOptions {
   recognizer?: BreachProtocolRecognizer;
-  filterRecognizerResults?: boolean;
-  extendedDaemonsAndTypesRecognitionRange?: boolean;
-  extendedBufferSizeRecognitionRange?: boolean;
 }
 
 export abstract class BreachProtocolFragment<
   TData = any,
   TImage = any,
   TId extends FragmentId = any
-> {
-  /** Id of fragment. */
+> implements Fragment
+{
   abstract readonly id: TId;
-
-  /** Top left corner of fragment. */
   abstract readonly p1: Point;
-
-  /** Botton right corner of fragment. */
   abstract readonly p2: Point;
 
-  abstract readonly boundingBox: BreachProtocolFragmentBoundingBox;
+  abstract readonly boundingBox: FragmentBoundingBox;
 
   /** Preprocessed image fragment. */
   protected abstract readonly fragment: TImage;
@@ -98,18 +65,16 @@ export abstract class BreachProtocolFragment<
     protected readonly options?: BreachProtocolFragmentOptions
   ) {}
 
-  /** Recognize data from fragment image. */
   abstract recognize(
     threshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>>;
 
-  /** Returns status of given fragment based on recognized data. */
-  abstract getStatus(rawData: TData): BreachProtocolFragmentStatus;
+  abstract getStatus(rawData: TData): FragmentStatus;
 
-  private getBaseResult(rawData: TData): BreachProtocolFragmentResultBase<TId> {
+  private getBaseResult(rawData: TData): BaseFragmentResult<TId> {
     const { id, boundingBox } = this;
     const status = this.getStatus(rawData);
-    const isValid = status === BreachProtocolFragmentStatus.Valid;
+    const isValid = status === FragmentStatus.Valid;
 
     return {
       id,
@@ -147,7 +112,7 @@ export abstract class BreachProtocolFragment<
       outerHeight: Math.round(2 * top + height),
       innerWidth: width,
       innerHeight: height,
-    } as BreachProtocolFragmentBoundingBox;
+    } as FragmentBoundingBox;
   }
 }
 
@@ -218,7 +183,7 @@ export abstract class BreachProtocolCodeFragment<
   }
 
   protected async ocr(threshold: number) {
-    const gray = this.id === 'grid';
+    const gray = this.id === FragmentId.Grid;
     const fragment = this.container.threshold(this.fragment, threshold, gray);
     const buffer = await this.container.toBuffer(fragment);
     const results = await this.options.recognizer.recognizeCode(buffer);

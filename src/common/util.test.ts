@@ -1,5 +1,6 @@
 import {
   BitMask,
+  capitalize,
   chunk,
   getClosest,
   groupBy,
@@ -109,5 +110,9 @@ describe('utils', () => {
         { key: 'feature', value: 42 },
       ],
     });
+  });
+
+  it('should capitalize string', () => {
+    expect(capitalize('test')).toBe('Test');
   });
 });

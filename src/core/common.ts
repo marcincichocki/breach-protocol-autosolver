@@ -100,10 +100,10 @@ export function byUniqueValue() {
 }
 
 export interface BreachProtocolRawData {
-  grid: GridRawData;
-  daemons: DaemonsRawData;
-  types?: TypesRawData;
-  bufferSize: BufferSize;
+  [FragmentId.Grid]: GridRawData;
+  [FragmentId.Daemons]: DaemonsRawData;
+  [FragmentId.Types]?: TypesRawData;
+  [FragmentId.BufferSize]: BufferSize;
 }
 
 export type BreachProtocolExitStrategy = {
@@ -117,14 +117,16 @@ function isFragment<T extends BreachProtocolFragmentResult<any>>(
   return (f: BreachProtocolFragmentResult<any>): f is T => f.id === id;
 }
 
-export const isGridFragment =
-  isFragment<BreachProtocolGridFragmentResult>('grid');
+export const isGridFragment = isFragment<BreachProtocolGridFragmentResult>(
+  FragmentId.Grid
+);
 export const isBufferSizeFragment =
-  isFragment<BreachProtocolBufferSizeFragmentResult>('bufferSize');
+  isFragment<BreachProtocolBufferSizeFragmentResult>(FragmentId.BufferSize);
 export const isDaemonsFragment =
-  isFragment<BreachProtocolDaemonsFragmentResult>('daemons');
-export const isTypesFragment =
-  isFragment<BreachProtocolTypesFragmentResult>('types');
+  isFragment<BreachProtocolDaemonsFragmentResult>(FragmentId.Daemons);
+export const isTypesFragment = isFragment<BreachProtocolTypesFragmentResult>(
+  FragmentId.Types
+);
 
 function getDir(orientation: GapOrientation, offset: number): GapDirection {
   switch (orientation) {

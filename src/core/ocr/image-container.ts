@@ -1,4 +1,4 @@
-import { BreachProtocolFragmentBoundingBox } from './fragments/base';
+import { FragmentBoundingBox } from './fragments/fragment';
 
 export abstract class ImageContainer<T> {
   abstract readonly instance: T;
@@ -6,22 +6,16 @@ export abstract class ImageContainer<T> {
   abstract readonly dimensions: { x: number; y: number };
 
   /** Crop image and turn it into 8bit. */
-  abstract process(fragmentBoundingBox: BreachProtocolFragmentBoundingBox): T;
+  abstract process(fragmentBoundingBox: FragmentBoundingBox): T;
 
-  abstract processGridFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
-  ): T;
+  abstract processGridFragment(fragmentBoundingBox: FragmentBoundingBox): T;
 
-  abstract processDaemonsFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
-  ): T;
+  abstract processDaemonsFragment(fragmentBoundingBox: FragmentBoundingBox): T;
 
-  abstract processTypesFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
-  ): T;
+  abstract processTypesFragment(fragmentBoundingBox: FragmentBoundingBox): T;
 
   abstract processBufferSizeFragment(
-    fragmentBoundingBox: BreachProtocolFragmentBoundingBox
+    fragmentBoundingBox: FragmentBoundingBox
   ): T;
 
   abstract trim(instance: T): Promise<{

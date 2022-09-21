@@ -20,6 +20,7 @@ import {
   IndexSequenceCompareStrategy,
   SequenceCompareStrategy,
 } from './compare-strategy';
+import { FragmentId } from './ocr';
 
 export interface RawSequence {
   value: string[];
@@ -192,7 +193,7 @@ function getBestSequenceFromGroup(group: Sequence[]) {
 }
 
 export function generateSequences(
-  { daemons, bufferSize }: Omit<BreachProtocolRawData, 'grid'>,
+  { daemons, bufferSize }: Omit<BreachProtocolRawData, FragmentId.Grid>,
   strategy: SequenceCompareStrategy = new IndexSequenceCompareStrategy()
 ) {
   const [regularDaemons, childDaemons] = parseDaemons(daemons);
