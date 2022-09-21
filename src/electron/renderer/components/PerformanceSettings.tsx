@@ -38,14 +38,14 @@ const strategyOptions: SelectOption<BreachProtocolStrategy>[] = [
   },
   {
     name: 'Depth-first search(experimental)',
-    value: 'dps',
+    value: 'dfs',
   },
 ];
 
 export const PerformanceSettings = () => {
   const { values } = useForm<AppSettings>();
 
-  async function notifyAboutDps(
+  async function notifyAboutDfs(
     value: BreachProtocolStrategy,
     next: () => void
   ) {
@@ -53,7 +53,7 @@ export const PerformanceSettings = () => {
       values.extendedBufferSizeRecognitionRange ||
       (values.useFixedBufferSize && values.fixedBufferSize > BUFFER_SIZE_MAX);
 
-    if (value === 'dps' && isPotentiallyDangerousBufferSize) {
+    if (value === 'dfs' && isPotentiallyDangerousBufferSize) {
       await nativeDialog.alert({
         message:
           'Depth-first search can cause performance issues when using it together with modded buffer.',
@@ -89,7 +89,7 @@ export const PerformanceSettings = () => {
         <Label>Strategy</Label>
         <Select
           options={strategyOptions}
-          onBeforeValueChange={notifyAboutDps}
+          onBeforeValueChange={notifyAboutDfs}
         ></Select>
       </Field>
     </Section>

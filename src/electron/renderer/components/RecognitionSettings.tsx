@@ -100,7 +100,7 @@ export const RecognitionSettings = ({
     return async (value: T, next: () => void) => {
       if (predicate(value)) {
         const message =
-          values.strategy === 'dps'
+          values.strategy === 'dfs'
             ? 'Using modded buffer with together with depth-first search strategy might result in poor performance.'
             : 'Path permutations might be limited to prevent severe performance downgrade. It is possible that some solutions will not be found.';
         await nativeDialog.alert({ message });

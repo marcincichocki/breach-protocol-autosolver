@@ -108,7 +108,7 @@ export interface BreachProtocolOptions {
   compare?: SequenceCompareStrategy;
 }
 
-export type BreachProtocolStrategy = 'dps' | 'bfs';
+export type BreachProtocolStrategy = 'dfs' | 'bfs';
 
 export class BreachProtocol {
   // Grid is always a square.
@@ -226,8 +226,8 @@ export class BreachProtocol {
   }
 
   private findPath(sequence: Sequence) {
-    return this.options.strategy === 'dps'
-      ? this.dps(sequence)
+    return this.options.strategy === 'dfs'
+      ? this.dfs(sequence)
       : this.bfs(sequence);
   }
 
@@ -278,11 +278,11 @@ export class BreachProtocol {
    * This strategy will not limit number of permutations and can get really slow
    * when buffer size is over max.
    */
-  private dps(sequence: Sequence) {
+  private dfs(sequence: Sequence) {
     const queue = this.getInitialQueue(sequence.tValue);
 
     for (let { path, tail } of queue) {
-      const result = this.runDps(sequence, path, tail);
+      const result = this.runDfs(sequence, path, tail);
 
       if (result) {
         return result;
@@ -292,7 +292,7 @@ export class BreachProtocol {
     return null;
   }
 
-  private runDps(sequence: Sequence, path: string[], tail: string): string[] {
+  private runDfs(sequence: Sequence, path: string[], tail: string): string[] {
     if (this.rawData.bufferSize - path.length < tail.length) {
       return null;
     }
@@ -311,7 +311,7 @@ export class BreachProtocol {
       }));
 
     for (let { path: newPath, tail: newTail } of nextSquares) {
-      const result = this.runDps(sequence, newPath, newTail);
+      const result = this.runDfs(sequence, newPath, newTail);
 
       if (result) {
         return result;
