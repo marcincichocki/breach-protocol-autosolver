@@ -88,6 +88,7 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
         <BufferSizeViewer
           bufferSize={bufferSize}
           result={result}
+          highlight={highlight}
           hasDaemonAttached={hasDaemonAttached}
           onHighlight={setHighlight}
         />

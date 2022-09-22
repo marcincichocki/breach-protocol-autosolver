@@ -11,6 +11,7 @@ import {
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
+import { getSquareColor, Square, SquareProps } from './Square';
 
 const cssVars = { size: 5, gutter: 16, square: 40, border: 1 };
 const cssVarsHighlight = { size: 7, border: 4 };
@@ -35,15 +36,29 @@ const GridWrapper = styled.div<{ size: number }>`
   cursor: default;
 `;
 
-interface SquareProps {
-  active: boolean;
-  highlight: boolean;
-  spotlight: boolean;
+interface GridSquareProps extends SquareProps {
   pathIndex: number;
-  hasDaemon: boolean;
 }
 
-function getSquarePathIndex({ active, highlight, pathIndex }: SquareProps) {
+const GridSquare = styled(Square)`
+  ${(p) =>
+    p.highlight &&
+    css`
+      --border: ${cssVarsHighlight.border}px;
+      --size: ${cssVarsHighlight.size}px;
+    `}
+
+  ${getSquarePathIndex}
+
+  border: var(--border) solid ${getSquareColor('var(--accent)')};
+  color: ${getSquareColor('var(--background)', 'var(--accent-darker)')};
+  background: ${({ highlight }) =>
+    highlight ? 'var(--accent)' : 'var(--background)'};
+  z-index: ${({ active, spotlight }) =>
+    spotlight ? 'auto' : active ? 'auto' : '-3'};
+`;
+
+function getSquarePathIndex({ active, highlight, pathIndex }: GridSquareProps) {
   return (
     active &&
     `
@@ -60,55 +75,6 @@ function getSquarePathIndex({ active, highlight, pathIndex }: SquareProps) {
       }
     `
   );
-}
-
-const Square = styled.div<SquareProps>`
-  ${(p) =>
-    p.highlight &&
-    css`
-      --border: ${cssVarsHighlight.border}px;
-      --size: ${cssVarsHighlight.size}px;
-    `}
-
-  ${getSquarePathIndex}
-
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${getSquareColor('var(--background)', 'var(--accent-darker)')};
-  width: var(--square);
-  height: var(--square);
-  font-size: 24px;
-  font-weight: 500;
-  position: relative;
-  z-index: ${({ active, spotlight }) =>
-    spotlight ? 'auto' : active ? 'auto' : '-3'};
-  background: ${({ highlight }) =>
-    highlight ? 'var(--accent)' : 'var(--background)'};
-  border: var(--border) solid ${getSquareColor('var(--accent)')};
-`;
-
-function getSquareColor(highlightColor: string, defaultColor = 'transparent') {
-  return ({ active, highlight, spotlight, hasDaemon }: SquareProps) => {
-    if (spotlight) {
-      return 'var(--primary)';
-    }
-
-    if (active) {
-      if (highlight) {
-        return highlightColor;
-      }
-
-      if (hasDaemon) {
-        return 'var(--accent)';
-      }
-
-      return 'var(--accent-dark)';
-    }
-
-    return defaultColor;
-  };
 }
 
 function getArrowBorderFor(d: GapDirection) {
@@ -221,7 +187,7 @@ export const GridViewer = ({
         const hasDaemon = isActive && hasDaemonAttached(index);
 
         return (
-          <Square
+          <GridSquare
             key={s}
             active={isActive}
             hasDaemon={hasDaemon}
@@ -237,7 +203,7 @@ export const GridViewer = ({
               />
             )}
             {value}
-          </Square>
+          </GridSquare>
         );
       })}
     </GridWrapper>
