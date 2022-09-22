@@ -58,6 +58,7 @@ interface FileProps {
 export const File = ({ accept }: FileProps) => {
   const { setValue, value, name } = useField<string>();
   const [displayName, setDisplayName] = useState<string>(api.basename(value));
+  const inputId = `${name}-input`;
 
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files[0];
@@ -85,8 +86,14 @@ export const File = ({ accept }: FileProps) => {
       ) : (
         <FilePathEmpty>No file selected</FilePathEmpty>
       )}
-      <FileLabel htmlFor={name}>Change</FileLabel>
-      <input type="file" accept={accept} id={name} onChange={onChange} hidden />
+      <FileLabel htmlFor={inputId}>Change</FileLabel>
+      <input
+        type="file"
+        accept={accept}
+        id={inputId}
+        onChange={onChange}
+        hidden
+      />
     </FileWrapper>
   );
 };
