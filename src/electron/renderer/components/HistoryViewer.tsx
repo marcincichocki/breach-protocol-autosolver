@@ -1,12 +1,16 @@
 import {
   BreachProtocolResultJSON,
+  DaemonRawData,
+  DaemonsRawData,
+  fromHex,
   isBufferSizeFragment,
   isDaemonsFragment,
   isGridFragment,
   isTypesFragment,
+  SequenceJSON,
 } from '@/core';
 import { HistoryEntry } from '@/electron/common';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { StateContext } from '../state';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
@@ -24,6 +28,29 @@ interface HistoryViewerProps {
   customResult?: BreachProtocolResultJSON;
 }
 
+function getDaemonBounds(daemons: DaemonsRawData, sequence?: SequenceJSON) {
+  if (!sequence) {
+    return [];
+  }
+
+  const st = sequence.value.map(fromHex).join('') ?? '';
+
+  return daemons
+    .map((daemon) => {
+      const dt = daemon.map(fromHex).join('');
+      const start = st.indexOf(dt);
+
+      if (start === -1) {
+        return null;
+      }
+
+      const end = start + daemon.length;
+
+      return { start, end };
+    })
+    .filter(Boolean);
+}
+
 export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
   const { settings } = useContext(StateContext);
@@ -34,14 +61,34 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const typesFragment = entry.fragments.find(isTypesFragment);
   const result = customResult || entry.result;
+  const hasBreak =
+    result?.resolvedSequence.value.length > result?.sequence.value.length;
+  const bounds = getDaemonBounds(daemons, result?.resolvedSequence);
+
+  const hasDaemonAttached = useCallback(
+    (index: number) => {
+      if (hasBreak) {
+        return bounds.some(({ start, end }) => index >= start && index < end);
+      }
+
+      return true;
+    },
+    [result]
+  );
 
   return (
     <Row gap scroll={false}>
-      <GridViewer grid={grid} path={result?.path} highlight={highlight} />
+      <GridViewer
+        grid={grid}
+        path={result?.path}
+        highlight={highlight}
+        hasDaemonAttached={hasDaemonAttached}
+      />
       <Col gap grow>
         <BufferSizeViewer
           bufferSize={bufferSize}
           result={result}
+          hasDaemonAttached={hasDaemonAttached}
           onHighlight={setHighlight}
         />
         <DaemonsViewer

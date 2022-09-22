@@ -40,6 +40,7 @@ interface SquareProps {
   highlight: boolean;
   spotlight: boolean;
   pathIndex: number;
+  hasDaemon: boolean;
 }
 
 function getSquarePathIndex({ active, highlight, pathIndex }: SquareProps) {
@@ -75,14 +76,7 @@ const Square = styled.div<SquareProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({ active, highlight, spotlight }) =>
-    spotlight
-      ? 'var(--primary)'
-      : active
-      ? highlight
-        ? 'var(--background)'
-        : 'var(--accent)'
-      : 'var(--accent-darker)'};
+  color: ${getSquareColor('var(--background)', 'var(--accent-darker)')};
   width: var(--square);
   height: var(--square);
   font-size: 24px;
@@ -92,10 +86,30 @@ const Square = styled.div<SquareProps>`
     spotlight ? 'auto' : active ? 'auto' : '-3'};
   background: ${({ highlight }) =>
     highlight ? 'var(--accent)' : 'var(--background)'};
-  border: var(--border) solid
-    ${({ active, spotlight }) =>
-      active ? 'var(--accent)' : spotlight ? 'var(--primary)' : 'transparent'};
+  border: var(--border) solid ${getSquareColor('var(--accent)')};
 `;
+
+function getSquareColor(highlightColor: string, defaultColor = 'transparent') {
+  return ({ active, highlight, spotlight, hasDaemon }: SquareProps) => {
+    if (spotlight) {
+      return 'var(--primary)';
+    }
+
+    if (active) {
+      if (highlight) {
+        return highlightColor;
+      }
+
+      if (hasDaemon) {
+        return 'var(--accent)';
+      }
+
+      return 'var(--accent-dark)';
+    }
+
+    return defaultColor;
+  };
+}
 
 function getArrowBorderFor(d: GapDirection) {
   const o: GapOrientation =
@@ -178,9 +192,15 @@ interface GridViewerProps {
   grid: GridRawData;
   path?: string[];
   highlight?: Highlight;
+  hasDaemonAttached: (index: number) => boolean;
 }
 
-export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
+export const GridViewer = ({
+  grid,
+  path,
+  highlight,
+  hasDaemonAttached,
+}: GridViewerProps) => {
   const [spotlight, setSpotlight] = useState(null);
   const size = Math.sqrt(grid.length);
   const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
@@ -198,11 +218,13 @@ export const GridViewer = ({ grid, path, highlight }: GridViewerProps) => {
             : false;
         const shouldIgnoreHighlightArrow =
           highlight != null ? index === highlight.from : false;
+        const hasDaemon = isActive && hasDaemonAttached(index);
 
         return (
           <Square
             key={s}
             active={isActive}
+            hasDaemon={hasDaemon}
             highlight={shouldHighlight}
             spotlight={value === spotlight}
             pathIndex={index}

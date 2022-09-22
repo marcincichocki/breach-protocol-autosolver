@@ -1,4 +1,4 @@
-import { BreachProtocolResultJSON, BufferSize, BUFFER_SIZE_MAX } from '@/core';
+import { BreachProtocolResultJSON, BUFFER_SIZE_MAX } from '@/core';
 import styled from 'styled-components';
 import { Highlight } from './HistoryViewer';
 
@@ -25,17 +25,22 @@ const BufferSizeWrapper = styled.div`
   cursor: default;
 `;
 
-const BufferSizeItem = styled.div<{ active: boolean }>`
+const BufferSizeItem = styled.div<{ active: boolean; hasDaemon: boolean }>`
   width: var(--size);
   height: var(--size);
   flex-shrink: 0;
   border: 1px
-    ${({ active }) =>
-      active ? 'solid var(--accent)' : 'dashed var(--primary)'};
+    ${({ active, hasDaemon }) =>
+      active
+        ? hasDaemon
+          ? 'solid var(--accent)'
+          : 'solid var(--accent-dark)'
+        : 'dashed var(--primary)'};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
+  color: ${({ hasDaemon }) =>
+    hasDaemon ? 'var(--accent)' : 'var(--accent-dark)'};
   font-size: 24px;
   font-weight: 500;
   box-sizing: border-box;
@@ -44,12 +49,14 @@ const BufferSizeItem = styled.div<{ active: boolean }>`
 interface BufferSizeViewerProps {
   bufferSize: number;
   result?: BreachProtocolResultJSON;
+  hasDaemonAttached: (index: number) => boolean;
   onHighlight?: (highlight: Highlight) => void;
 }
 
 export const BufferSizeViewer = ({
   bufferSize,
   result,
+  hasDaemonAttached,
   onHighlight,
 }: BufferSizeViewerProps) => {
   return (
@@ -58,11 +65,13 @@ export const BufferSizeViewer = ({
     >
       {Array.from({ length: bufferSize }, (s, i) => {
         const isActive = result && i < result.path.length;
+        const hasDaemon = isActive && hasDaemonAttached(i);
 
         return (
           <BufferSizeItem
             key={i}
             active={isActive}
+            hasDaemon={hasDaemon}
             onMouseEnter={
               onHighlight
                 ? () => onHighlight(isActive ? { from: 0, to: i } : null)
