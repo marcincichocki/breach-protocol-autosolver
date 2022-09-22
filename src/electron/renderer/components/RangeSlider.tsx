@@ -1,4 +1,5 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { VK_ENTER } from '@/common';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { OnBeforeValueChange, useField } from './Form';
 
@@ -86,6 +87,12 @@ export function RangeSlider({
     }
   }
 
+  function setValueOnEnter(e: KeyboardEvent) {
+    if (e.code === VK_ENTER) {
+      onValueChange(e);
+    }
+  }
+
   return (
     <RangeWrapper disabled={props.disabled}>
       <Range
@@ -93,6 +100,7 @@ export function RangeSlider({
         value={displayValue}
         onChange={(e) => setDisplayValue(coerceInputValue(e))}
         onMouseUp={onValueChange}
+        onKeyUp={setValueOnEnter}
       />
       <RangeValue>{displayValue}</RangeValue>
     </RangeWrapper>

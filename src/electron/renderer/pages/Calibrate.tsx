@@ -41,7 +41,7 @@ export const Calibrate = () => {
 
   return (
     <Col grow>
-      <Row style={{ gap: '2rem' }}>
+      <Row style={{ gap: '2rem', margin: '4px 0' }}>
         {entry.fragments.map((f) => (
           <NavLink key={f.id} to={f.id}>
             {fromCamelCase(f.id)}

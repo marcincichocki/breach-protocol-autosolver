@@ -32,6 +32,19 @@ const Title = styled.h3`
   letter-spacing: 0;
 `;
 
+const FragmentPreviewContainer = styled(Col).attrs({
+  tabIndex: 0,
+  grow: true,
+  scroll: true,
+})<{ isLoading: boolean }>`
+  justify-content: ${(p) => (p.isLoading ? 'center' : 'flex-start')};
+  align-items: center;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+`;
+
 interface CalibrateFormValues {
   showBoxes: boolean;
   testThreshold: number;
@@ -143,14 +156,7 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
       </Col>
       <Col style={{ width: '600px', flexShrink: 0 }}>
         <Title>Fragment preview</Title>
-        <Col
-          grow
-          scroll
-          style={{
-            justifyContent: loading ? 'center' : 'flex-start',
-            alignItems: 'center',
-          }}
-        >
+        <FragmentPreviewContainer isLoading={loading}>
           {loading ? (
             <Spinner />
           ) : (
@@ -161,7 +167,7 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
               format={entry.settings.format}
             />
           )}
-        </Col>
+        </FragmentPreviewContainer>
       </Col>
     </Row>
   );

@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { transformTimestamp } from '../common';
-import { Col } from '../components';
+import { Col, List, ListItem, ListItemLink } from '../components';
 import { StateContext } from '../state';
 import { HistoryDetails } from './HistoryDetails';
 
@@ -102,23 +102,23 @@ export const History = () => {
 
   return (
     <HistoryWrapper>
-      <HistoryList>
+      <List>
         {history.map((e) => {
           const { time, distance } = transformTimestamp(e.startedAt);
 
           return (
-            <li key={e.uuid}>
-              <HistoryListItem to={`${path}/${e.uuid}`}>
+            <ListItem key={e.uuid}>
+              <ListItemLink to={`${path}/${e.uuid}`}>
                 <HistoryListItemIcon size="2rem" status={e.status} />
                 <Col>
                   <H1>{distance}</H1>
                   <H2>{time}</H2>
                 </Col>
-              </HistoryListItem>
-            </li>
+              </ListItemLink>
+            </ListItem>
           );
         })}
-      </HistoryList>
+      </List>
       <Col>
         <Switch>
           <Route path={`${path}/:entryId`} component={HistoryDetails} />
