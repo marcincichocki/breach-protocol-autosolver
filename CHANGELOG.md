@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.5.0...v2.6.0) (2022-09-22)
+
+
+### Features
+
+* **client-electron:** add highlight support to buffer viewer ([ba657c8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/ba657c8619a7f273d56ef7c48f9e85427d89d338))
+* **client-electron:** darken unused codes in history viewer ([1479b52](https://github.com/marcincichocki/breach-protocol-autosolver/commit/1479b52c50b13f159b76a0e493ed7a482a1971f5))
+
+
+### Bug Fixes
+
+* **client-electron:** set unique ids for file inputs ([9b53a97](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9b53a97206ca64e4cd22110332fb93af532a4cfe))
+
 ## [2.5.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.4.0...v2.5.0) (2022-09-21)
 
 
