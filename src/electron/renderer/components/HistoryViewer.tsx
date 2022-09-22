@@ -1,6 +1,6 @@
 import {
   BreachProtocolResultJSON,
-  DaemonRawData,
+  BUFFER_SIZE_MIN,
   DaemonsRawData,
   fromHex,
   isBufferSizeFragment,
@@ -10,8 +10,7 @@ import {
   SequenceJSON,
 } from '@/core';
 import { HistoryEntry } from '@/electron/common';
-import { useCallback, useContext, useState } from 'react';
-import { StateContext } from '../state';
+import { useCallback, useState } from 'react';
 import { BufferSizeViewer } from './BufferSizeViewer';
 import { DaemonsViewer } from './DaemonsViewer';
 import { Col, Row } from './Flex';
@@ -53,11 +52,10 @@ function getDaemonBounds(daemons: DaemonsRawData, sequence?: SequenceJSON) {
 
 export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
-  const { settings } = useContext(StateContext);
   const { rawData: grid } = entry.fragments.find(isGridFragment);
   const { rawData: bufferSize } = entry.fragments.find(
     isBufferSizeFragment
-  ) ?? { rawData: settings.fixedBufferSize };
+  ) ?? { rawData: entry.settings?.fixedBufferSize ?? BUFFER_SIZE_MIN };
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const typesFragment = entry.fragments.find(isTypesFragment);
   const result = customResult || entry.result;
