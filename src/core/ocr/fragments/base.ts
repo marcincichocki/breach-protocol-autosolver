@@ -1,6 +1,6 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { HexCode, HEX_CODES } from '../../common';
-import { ImageContainer } from '../image-container';
+import { FragmentContainer, ImageContainer } from '../image-container';
 import {
   BreachProtocolRecognizer,
   BreachProtocolRecognizerBox,
@@ -58,7 +58,7 @@ export abstract class BreachProtocolFragment<
   abstract readonly boundingBox: FragmentBoundingBox;
 
   /** Pre-processed image fragment. */
-  protected abstract readonly fragment: TImage;
+  protected abstract readonly fragment: FragmentContainer<TImage>;
 
   constructor(
     public readonly container: ImageContainer<TImage>,
@@ -87,14 +87,14 @@ export abstract class BreachProtocolFragment<
   protected getFragmentResult(
     source: BreachProtocolSource,
     rawData: TData,
-    buffer: Buffer,
+    image: string,
     threshold: number
   ): BreachProtocolFragmentResult<TData, TId> {
     return {
       ...this.getBaseResult(rawData),
       source,
       rawData,
-      image: buffer.toString('base64'),
+      image,
       threshold,
     };
   }
@@ -129,7 +129,7 @@ export abstract class BreachProtocolOCRFragment<
   /** Gather data from fragment by optical character recognition. */
   protected abstract ocr(
     threshold: number
-  ): Promise<{ buffer: Buffer; source: BreachProtocolSource }>;
+  ): Promise<{ uri: string; source: BreachProtocolSource }>;
 
   protected getLines(text: string) {
     return text.split('\n').filter(Boolean);
@@ -175,21 +175,21 @@ export abstract class BreachProtocolCodeFragment<
     fixedThreshold?: number
   ): Promise<BreachProtocolFragmentResult<TData, TId>> {
     const threshold = fixedThreshold ?? this.getThreshold();
-    const { source, buffer } = await this.ocr(threshold);
+    const { source, uri } = await this.ocr(threshold);
+
     const lines = this.getLines(source.text);
     const rawData = this.getRawData(lines);
 
-    return this.getFragmentResult(source, rawData, buffer, threshold);
+    return this.getFragmentResult(source, rawData, uri, threshold);
   }
 
   protected async ocr(threshold: number) {
     const gray = this.id === FragmentId.Grid;
-    const fragment = this.container.threshold(this.fragment, threshold, gray);
-    const buffer = await this.container.toBuffer(fragment);
-    const results = await this.options.recognizer.recognizeCode(buffer);
+    const { uri } = await this.fragment.threshold(threshold, gray).toBase64();
+    const results = await this.options.recognizer.recognizeCode(uri);
     const source = this.getSource(results);
 
-    return { buffer, source };
+    return { uri, source };
   }
 
   private byWordHeight(base: number, word: BreachProtocolRecognizerWord) {

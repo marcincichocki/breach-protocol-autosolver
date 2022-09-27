@@ -1,30 +1,103 @@
-import { FragmentBoundingBox, ImageContainer } from '@/core';
+import {
+  Dimensions,
+  FragmentContainer,
+  FragmentContainerConfig,
+  ImageContainer,
+} from '@/core';
 import sharp from 'sharp';
-
-const SHARP_TOKEN = Symbol('SharpImageContainer');
+import { toBase64DataUri } from '../util';
 
 export interface SharpImageContainerConfig {
   downscaleSource?: boolean;
 }
 
-// NOTE: this class will not work in web environments!
+class SharpFragmentContainer implements FragmentContainer<sharp.Sharp> {
+  private readonly original = this.instance.clone();
+
+  constructor(private readonly instance: sharp.Sharp) {}
+
+  clone() {
+    return new SharpFragmentContainer(this.original);
+  }
+
+  async toBase64({ trim }: { trim?: boolean } = {}) {
+    const buffer = await this.instance.toBuffer();
+
+    if (trim) {
+      return this.trim(buffer);
+    }
+
+    const { width, height, format } = await this.instance.metadata();
+    const data = buffer.toString('base64');
+    const uri = toBase64DataUri(format, data);
+    const dimensions = { width, height };
+
+    return { uri, dimensions };
+  }
+
+  async toPixelData() {
+    const { buffer, byteOffset, length } = await this.instance
+      .clone()
+      .raw()
+      .toBuffer();
+
+    return new Uint8Array(
+      buffer,
+      byteOffset,
+      length / Uint8Array.BYTES_PER_ELEMENT
+    );
+  }
+
+  threshold(threshold: number, grayscale = true) {
+    this.instance.threshold(threshold, { grayscale });
+
+    return this;
+  }
+
+  private async trim(buffer: Buffer) {
+    try {
+      const i1 = sharp(buffer);
+      const buf = await i1.toBuffer();
+      const i2 = sharp(buf);
+
+      const m1 = await i1.metadata();
+      const m2 = await i2.metadata();
+
+      console.log({ m1, m2 });
+
+      const {
+        data: trimmedBuffer,
+        info: { format, width, height },
+      } = await i1.trim().toBuffer({ resolveWithObject: true });
+
+      const data = trimmedBuffer.toString('base64');
+      const uri = toBase64DataUri(format, data);
+      const dimensions = { width, height };
+
+      console.log(uri);
+
+      return { uri, dimensions };
+    } catch (err) {
+      console.log(err);
+
+      return {
+        uri: toBase64DataUri('png', ''),
+        dimensions: { width: 0, height: 0 },
+      };
+    }
+  }
+}
+
 export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   // Only downscale from 4k or higher resolutions.
   static readonly MIN_DOWNSCALE_WIDTH = 3840;
 
-  constructor(
+  private constructor(
     public readonly instance: sharp.Sharp,
-    public readonly dimensions: { x: number; y: number },
-    private readonly config: SharpImageContainerConfig,
-    token?: Symbol
+    public readonly dimensions: Dimensions,
+    private readonly config: SharpImageContainerConfig
   ) {
     super();
-
-    if (token !== SHARP_TOKEN) {
-      throw new Error(
-        'SharpImageContainer can not be created by constructor. Use SharpImageContainer.create instead.'
-      );
-    }
   }
 
   static async create(
@@ -33,82 +106,49 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
   ) {
     const { width, height } = await instance.metadata();
 
-    return new SharpImageContainer(
-      instance,
-      { x: width, y: height },
-      config,
-      SHARP_TOKEN
-    );
+    return new SharpImageContainer(instance, { width, height }, config);
   }
 
-  process(fragmentBoundingBox: FragmentBoundingBox) {
-    return this.instance
-      .clone()
-      .extract(fragmentBoundingBox)
+  toFragmentContainer(config: FragmentContainerConfig) {
+    const fragment = this.process(config);
+
+    return new SharpFragmentContainer(fragment);
+  }
+
+  private process({
+    boundingBox,
+    colors,
+    channel,
+    flop,
+    width,
+    colorspace,
+  }: FragmentContainerConfig) {
+    const instance = this.instance.clone();
+
+    instance
+      .extract(boundingBox)
       .removeAlpha()
       .negate({ alpha: false })
-      .toColorspace('b-w')
-      .png({ colors: 2 });
-  }
+      .toColorspace(colorspace ?? 'b-w');
 
-  processGridFragment(fragmentBoundingBox: FragmentBoundingBox) {
-    return this.processWithOptionalDownscaling(fragmentBoundingBox, 400);
-  }
+    if (colors) {
+      instance.png({ colors: colors, palette: false });
+    }
 
-  processDaemonsFragment(fragmentBoundingBox: FragmentBoundingBox) {
-    return this.processWithOptionalDownscaling(
-      fragmentBoundingBox,
-      450
-    ).extractChannel('blue');
-  }
+    if (channel) {
+      instance.extractChannel(channel);
+    }
 
-  processTypesFragment(fragmentBoundingBox: FragmentBoundingBox) {
-    return this.process(fragmentBoundingBox).extractChannel('blue');
-  }
+    if (flop) {
+      instance.flop();
+    }
 
-  processBufferSizeFragment(fragmentBoundingBox: FragmentBoundingBox) {
-    return this.process(fragmentBoundingBox).flop();
-  }
-
-  async trim(instance: sharp.Sharp) {
-    const buffer = await instance.toBuffer();
-    const { data, info } = await sharp(buffer)
-      .trim()
-      .toBuffer({ resolveWithObject: true });
-
-    return {
-      buffer: data,
-      width: info.width,
-      height: info.height,
-    };
-  }
-
-  threshold(instance: sharp.Sharp, threshold: number, grayscale = true) {
-    return instance.clone().threshold(threshold, { grayscale });
-  }
-
-  toBuffer(instance: sharp.Sharp) {
-    return instance.clone().toBuffer();
-  }
-
-  toRawBuffer(instance: sharp.Sharp) {
-    return instance.clone().raw().toBuffer();
-  }
-
-  toFile(instance: sharp.Sharp, fileName: string) {
-    return instance.clone().toFile(fileName);
-  }
-
-  private processWithOptionalDownscaling(
-    fragmentBoundingBox: FragmentBoundingBox,
-    width: number
-  ) {
-    const instance = this.process(fragmentBoundingBox);
-    const isHighResolution =
-      fragmentBoundingBox.innerWidth >= SharpImageContainer.MIN_DOWNSCALE_WIDTH;
-
-    if (this.config.downscaleSource && isHighResolution) {
-      return instance.resize({
+    if (
+      this.config.downscaleSource &&
+      typeof width === 'number' &&
+      boundingBox.innerWidth >= SharpImageContainer.MIN_DOWNSCALE_WIDTH
+    ) {
+      instance.resize({
         width,
         withoutEnlargement: true,
       });

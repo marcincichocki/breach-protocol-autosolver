@@ -54,7 +54,13 @@
         "55", "FF", "1C", "7A", "55", "BD", "1C",
         "1C", "7A", "55", "7A", "7A", "FF", "55"
       ],
-      "bufferSize": 9
+      "bufferSize": 9,
+      "settings": {
+        "thresholdGrid": 155,
+        "thresholdGridAuto": false,
+        "thresholdDaemons": 140,
+        "thresholdDaemonsAuto": false
+      }
     }
   ],
   "1920x1080": [
@@ -430,7 +436,12 @@
         "1C", "BD", "BD", "1C", "55",
         "1C", "55", "55", "BD", "1C"
       ],
-      "bufferSize": 4
+      "bufferSize": 4,
+      "settings": {
+        "downscaleSource": true,
+        "thresholdDaemonsAuto": false,
+        "thresholdDaemons": 45
+      }
     }
   ]
 }

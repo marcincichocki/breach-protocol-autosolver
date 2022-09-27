@@ -74,7 +74,6 @@ export const AnalyzeDetails = () => {
               image={fragment.image}
               boxes={fragment.source?.boxes}
               showBoxes={true}
-              format={entry.settings.format}
             />
           </Col>
         </Col>

@@ -22,8 +22,8 @@ export interface BreachProtocolRecognizer {
   lang: BreachProtocolLanguage;
 
   /** Recognize BP codes. */
-  recognizeCode(image: Buffer): Promise<BreachProtocolRecognizerResult>;
+  recognizeCode(image: string): Promise<BreachProtocolRecognizerResult>;
 
   /** Recognize daemon type. */
-  recognizeText(image: Buffer): Promise<BreachProtocolRecognizerResult>;
+  recognizeText(image: string): Promise<BreachProtocolRecognizerResult>;
 }

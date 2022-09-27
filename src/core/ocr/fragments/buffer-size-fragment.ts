@@ -9,7 +9,6 @@ export abstract class BreachProtocolBufferSizeBase<
   readonly id = FragmentId.BufferSize;
 
   readonly p1 = new Point(0.42, 0.167);
-
   readonly p2 = new Point(
     this.options.extendedBufferSizeRecognitionRange ? 0.863 : 0.8,
     0.225
@@ -17,7 +16,10 @@ export abstract class BreachProtocolBufferSizeBase<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  readonly fragment = this.container.process(this.boundingBox);
+  protected readonly fragment = this.container.toFragmentContainer({
+    boundingBox: this.boundingBox,
+    colors: 2,
+  });
 
   /** Percentage that padding in buffer box takes. */
   protected readonly padding = 0.00937;
@@ -58,12 +60,12 @@ class BufferSizeControlGroup {
   }
 
   /** Check if every pixel in control group has given value. */
-  verify(pixels: Buffer, rowLength: number) {
+  verify(data: Uint8Array, rowLength: number) {
     const startIndex = Math.round(this.start * rowLength);
     const endIndex = Math.round(this.end * rowLength);
 
     return this.getLineIndexes(rowLength)
-      .map((n) => pixels.subarray(startIndex + n, endIndex + n))
+      .map((n) => data.subarray(startIndex + n, endIndex + n))
       .every((line) => line.every((p) => p === this.value));
   }
 }
@@ -92,11 +94,10 @@ export class BreachProtocolBufferSizeFragment<
   private static cachedThreshold: number = null;
 
   private async checkControlGroupsForThreshold(threshold: number) {
-    const fragment = this.container.threshold(this.fragment, threshold);
-    const rawBuffer = await this.container.toRawBuffer(fragment);
+    const data = await this.fragment.clone().threshold(threshold).toPixelData();
 
     return this.controlGroups.map((cg) =>
-      cg.verify(rawBuffer, this.boundingBox.width)
+      cg.verify(data, this.boundingBox.width)
     ) as [boolean, boolean];
   }
 
@@ -137,10 +138,9 @@ export class BreachProtocolBufferSizeFragment<
     useFallback = true
   ): Promise<BreachProtocolBufferSizeFragmentResult> {
     const threshold = fixedThreshold ?? (await this.findThreshold());
-    const fragment = this.container.threshold(this.fragment, threshold);
-    const buffer = await this.container.toBuffer(fragment);
-    const rawBuffer = await this.container.toRawBuffer(fragment);
-    const bufferSize = this.getBufferSizeFromPixels(rawBuffer);
+    const { uri } = await this.fragment.threshold(threshold).toBase64();
+    const data = await this.fragment.toPixelData();
+    const bufferSize = this.getBufferSizeFromPixels(data);
 
     if (this.getStatus(bufferSize) !== FragmentStatus.Valid) {
       // In rare cases where given value is wrong, repeat with
@@ -157,18 +157,18 @@ export class BreachProtocolBufferSizeFragment<
     // Cache valid threshold to limit ammount of computation required on following BPs.
     BreachProtocolBufferSizeFragment.cachedThreshold = threshold;
 
-    return this.getFragmentResult(null, bufferSize, buffer, threshold);
+    return this.getFragmentResult(null, bufferSize, uri, threshold);
   }
 
-  private verifyControlGroups(row: Buffer, length: number) {
-    return this.controlGroups.every((cg) => cg.verify(row, length));
+  private verifyControlGroups(data: Uint8Array, length: number) {
+    return this.controlGroups.every((cg) => cg.verify(data, length));
   }
 
-  private getSizeOfBufferBox(pixels: Buffer, width: number) {
-    const row = pixels.subarray(0, width);
+  private getSizeOfBufferBox(data: Uint8Array, width: number) {
+    const row = data.subarray(0, width);
     let size = 0;
 
-    if (!this.verifyControlGroups(pixels, width)) {
+    if (!this.verifyControlGroups(data, width)) {
       return 0;
     }
 
@@ -181,9 +181,9 @@ export class BreachProtocolBufferSizeFragment<
     return size;
   }
 
-  private getBufferSizeFromPixels(pixels: Buffer) {
+  private getBufferSizeFromPixels(data: Uint8Array) {
     const { width, innerWidth } = this.boundingBox;
-    let size = this.getSizeOfBufferBox(pixels, width) / innerWidth;
+    let size = this.getSizeOfBufferBox(data, width) / innerWidth;
     let bufferSize = 0;
 
     size -= 2 * this.padding;
@@ -200,28 +200,21 @@ export class BreachProtocolBufferSizeFragment<
 export class BreachProtocolBufferSizeTrimFragment<
   TImage
 > extends BreachProtocolBufferSizeBase<TImage> {
-  override readonly fragment = this.container.processBufferSizeFragment(
-    this.boundingBox
-  );
+  override readonly fragment = this.container.toFragmentContainer({
+    boundingBox: this.boundingBox,
+    flop: true,
+  });
 
   // Ensure compatibility with current api.
   async recognize(
     threshold?: number
   ): Promise<BreachProtocolBufferSizeFragmentResult> {
-    const { buffer, width } = await this.trimFragment();
-    const bufferSize = await this.getBufferSizeFromPixels(width);
+    console.log(this.boundingBox);
 
-    return this.getFragmentResult(null, bufferSize, buffer, null);
-  }
+    const { uri, dimensions } = await this.fragment.toBase64({ trim: true });
+    const bufferSize = await this.getBufferSizeFromPixels(dimensions.width);
 
-  private async trimFragment() {
-    try {
-      return await this.container.trim(this.fragment);
-    } catch (e) {
-      const buffer = await this.container.toBuffer(this.fragment);
-
-      return { buffer, width: 0 };
-    }
+    return this.getFragmentResult(null, bufferSize, uri, null);
   }
 
   private async getBufferSizeFromPixels(width: number) {
