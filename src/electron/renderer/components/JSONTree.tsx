@@ -302,25 +302,25 @@ const JSONViewer = memo(
       return null;
     }
 
+    const isArray = Array.isArray(data);
     const entries = Object.entries(data);
 
     return (
       <JSONViewerList className={path}>
         {entries.map(([property, value], index) => {
           const isLast = index === entries.length - 1;
-          const isArrayMember = !Number.isNaN(Number(property));
-          const newPath = path ? `${path}-${property}` : property;
+          const childPath = path ? `${path}-${property}` : property;
 
           return (
             <JSONViewerListItem key={property}>
-              <Only when={!isArrayMember}>
+              <Only when={!isArray}>
                 <JSONProperty property={property} />
               </Only>
               <Only when={isObject(value)}>
                 <JSONBracket data={value as any} position="start" />
                 <JSONPropertyToggle data={value as any} />
               </Only>
-              <JSONViewer data={value} path={newPath}></JSONViewer>
+              <JSONViewer data={value} path={childPath}></JSONViewer>
               <Only when={isObject(value)}>
                 <JSONBracket data={value as any} position="end" />
               </Only>
