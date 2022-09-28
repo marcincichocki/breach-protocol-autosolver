@@ -20,6 +20,7 @@ const Heading2 = styled.h2`
 const TextLink = styled(Link)`
   font-size: 1rem;
   color: var(--accent);
+  font-weight: 500;
 `;
 
 const OpenInExplorer = ({ fileName }: { fileName: string }) => {
