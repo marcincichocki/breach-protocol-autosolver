@@ -157,14 +157,9 @@ export const JSONTree = memo(
         <TreeValidatorContext.Provider value={validate}>
           <JSONTreeContainer className={className}>
             <JSONTreeContent>
-              <Only when={isJSONObject(data)}>
-                <JSONBracket position="start" data={data as any} />
-                <JSONPropertyToggle data={data as any} />
-              </Only>
-              <JSONViewer data={data} path="root"></JSONViewer>
-              <Only when={isJSONObject(data)}>
-                <JSONBracket position="end" data={data as any} />
-              </Only>
+              <JSONViewerContainer data={data}>
+                <JSONViewer data={data} path="root"></JSONViewer>
+              </JSONViewerContainer>
             </JSONTreeContent>
             {children}
           </JSONTreeContainer>
@@ -231,17 +226,14 @@ const JSONPrimitive = memo(({ data }: { data: JSONPrimitive }) => {
   const validate = useContext(TreeValidatorContext);
   const isValid = validate ? validate(data) : true;
   const value = JSON.stringify(data);
-  const type = typeof data;
 
-  if (type === 'string' && pathRe.test(data as string)) {
+  if (typeof data === 'string' && pathRe.test(data)) {
     return (
-      <JSONLink onClick={() => api.showItemInFolder(data as string)}>
-        {value}
-      </JSONLink>
+      <JSONLink onClick={() => api.showItemInFolder(data)}>{value}</JSONLink>
     );
   }
 
-  const Tag = primitives[type];
+  const Tag = primitives[typeof data];
 
   return <Tag className={isValid ? 'valid' : 'invalid'}>{value}</Tag>;
 });
@@ -279,6 +271,25 @@ const JSONBracket = ({
   return <>{token}</>;
 };
 
+const JSONViewerContainer = memo(
+  ({ data, children }: PropsWithChildren<{ data: JSONValue }>) => {
+    const isObject = isJSONObject(data);
+
+    return (
+      <>
+        <Only when={isObject}>
+          <JSONBracket data={data as JSONObject} position="start" />
+          <JSONPropertyToggle data={data as JSONObject} />
+        </Only>
+        {children}
+        <Only when={isObject}>
+          <JSONBracket data={data as JSONObject} position="end" />
+        </Only>
+      </>
+    );
+  }
+);
+
 const JSONViewerList = styled.ul`
   margin: 0;
   padding-left: 24px;
@@ -289,7 +300,6 @@ const JSONViewerListItem = styled.li`
 
 const JSONViewer = memo(
   ({ data, path }: { data: JSONValue; path?: string }) => {
-    // TODO: save result to const.
     if (!isJSONObject(data)) {
       return <JSONPrimitive data={data} />;
     }
@@ -314,14 +324,9 @@ const JSONViewer = memo(
               <Only when={!isArray}>
                 <JSONProperty property={property} />
               </Only>
-              <Only when={isJSONObject(value)}>
-                <JSONBracket data={value as any} position="start" />
-                <JSONPropertyToggle data={value as any} />
-              </Only>
-              <JSONViewer data={value} path={childPath}></JSONViewer>
-              <Only when={isJSONObject(value)}>
-                <JSONBracket data={value as any} position="end" />
-              </Only>
+              <JSONViewerContainer data={value}>
+                <JSONViewer data={value} path={childPath}></JSONViewer>
+              </JSONViewerContainer>
               <Only when={!isLast}>,</Only>
             </JSONViewerListItem>
           );
