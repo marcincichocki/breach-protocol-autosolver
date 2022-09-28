@@ -1,5 +1,5 @@
 import { Point } from '@/common';
-import { GridRawData } from '../../common';
+import { GridRawData, GRID_SIZE_MAX, GRID_SIZE_MIN } from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
@@ -41,7 +41,13 @@ export class BreachProtocolGridFragment<
   }
 
   getStatus(rawData: GridRawData) {
-    if (!this.isSquare(rawData.length)) {
+    const { length } = rawData;
+
+    if (
+      !this.isSquare(length) ||
+      length < Math.pow(GRID_SIZE_MIN, 2) ||
+      length > Math.pow(GRID_SIZE_MAX, 2)
+    ) {
       return FragmentStatus.InvalidSize;
     }
 
