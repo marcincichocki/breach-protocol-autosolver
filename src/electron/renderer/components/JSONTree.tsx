@@ -1,4 +1,4 @@
-import { isObject, JSONValue } from '@/common';
+import { isJSONObject, JSONValue } from '@/common';
 import {
   createContext,
   memo,
@@ -41,7 +41,7 @@ interface JSONTreeControl {
 }
 
 function forEachObject(data: JSONValue, cb: (data: JSONObject) => void) {
-  if (!isObject(data)) {
+  if (!isJSONObject(data)) {
     return;
   }
 
@@ -140,8 +140,7 @@ export const JSONTreeActions = styled.aside`
   flex-direction: column;
 `;
 
-const TreeValidatorContext =
-  createContext<(value: JSONPrimitive) => boolean>(null);
+const TreeValidatorContext = createContext<JSONValidator>(null);
 
 export const JSONTree = memo(
   ({
@@ -158,12 +157,12 @@ export const JSONTree = memo(
         <TreeValidatorContext.Provider value={validate}>
           <JSONTreeContainer className={className}>
             <JSONTreeContent>
-              <Only when={isObject(data)}>
+              <Only when={isJSONObject(data)}>
                 <JSONBracket position="start" data={data as any} />
                 <JSONPropertyToggle data={data as any} />
               </Only>
               <JSONViewer data={data} path="root"></JSONViewer>
-              <Only when={isObject(data)}>
+              <Only when={isJSONObject(data)}>
                 <JSONBracket position="end" data={data as any} />
               </Only>
             </JSONTreeContent>
@@ -291,7 +290,7 @@ const JSONViewerListItem = styled.li`
 const JSONViewer = memo(
   ({ data, path }: { data: JSONValue; path?: string }) => {
     // TODO: save result to const.
-    if (!isObject(data)) {
+    if (!isJSONObject(data)) {
       return <JSONPrimitive data={data} />;
     }
 
@@ -315,12 +314,12 @@ const JSONViewer = memo(
               <Only when={!isArray}>
                 <JSONProperty property={property} />
               </Only>
-              <Only when={isObject(value)}>
+              <Only when={isJSONObject(value)}>
                 <JSONBracket data={value as any} position="start" />
                 <JSONPropertyToggle data={value as any} />
               </Only>
               <JSONViewer data={value} path={childPath}></JSONViewer>
-              <Only when={isObject(value)}>
+              <Only when={isJSONObject(value)}>
                 <JSONBracket data={value as any} position="end" />
               </Only>
               <Only when={!isLast}>,</Only>

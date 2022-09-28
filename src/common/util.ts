@@ -2,7 +2,7 @@ export function capitalize<T extends string>(value: T) {
   return (value[0].toUpperCase() + value.slice(1)) as Capitalize<T>;
 }
 
-export function isObject(data: unknown): data is object {
+export function isJSONObject(data: unknown): data is object {
   return typeof data === 'object' && data !== null;
 }
 
