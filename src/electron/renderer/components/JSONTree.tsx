@@ -1,12 +1,11 @@
 import { isObject, JSONValue } from '@/common';
-import { useCallback } from 'react';
-import { useEffect } from 'react';
-import { useLayoutEffect } from 'react';
 import {
   createContext,
   memo,
   PropsWithChildren,
+  useCallback,
   useContext,
+  useLayoutEffect,
   useState,
 } from 'react';
 import styled from 'styled-components';
@@ -25,10 +24,13 @@ interface JSONTreeControl {
   /** Data used by this tree. */
   readonly root: JSONValue;
 
+  /** Set of objects which are expanded. */
+  readonly expansionModel: Set<JSONObject>;
+
   /** Expands given tree object. */
   expand: (data: JSONObject) => void;
 
-  /** Extends all tree objects. */
+  /** Expands all tree objects. */
   expandAll: () => void;
 
   /** Collapses given tree object. */
@@ -36,8 +38,6 @@ interface JSONTreeControl {
 
   /** Collapses whole tree. */
   collapseAll: () => void;
-
-  expansionModel: Set<JSONObject>;
 }
 
 function forEachObject(data: JSONValue, cb: (data: JSONObject) => void) {
@@ -94,14 +94,13 @@ function useTreeControl(root: JSONValue, expanded?: boolean): JSONTreeControl {
   return { root, expand, expandAll, collapse, collapseAll, expansionModel };
 }
 
-/** Checks whether value is valid or not. */
 export type JSONValidator = (value: JSONPrimitive) => boolean;
 
 interface JsonTreeProps {
   /** Data to render. */
   data: JSONValue;
 
-  /** Whether tree is expanded initially. */
+  /** Whether json is expanded initially. */
   expanded?: boolean;
 
   /** Checks whether value is valid or not. */

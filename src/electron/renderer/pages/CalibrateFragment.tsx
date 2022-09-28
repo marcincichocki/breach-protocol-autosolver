@@ -10,7 +10,7 @@ import {
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatchAsyncRequest, fromCamelCase } from '../common';
@@ -20,14 +20,14 @@ import {
   FlatButton,
   Form,
   FragmentPreview,
+  JSONTree,
+  JSONValidator,
   Label,
   RangeSlider,
   Row,
   Spinner,
   Switch,
   useField,
-  JSONTree,
-  JSONValidator,
 } from '../components';
 
 const Title = styled.h3`
