@@ -13,6 +13,9 @@ import { Daemon, Sequence } from './sequence';
 export const BUFFER_SIZE_MIN = 4;
 export const BUFFER_SIZE_MAX = 9;
 
+export const GRID_SIZE_MIN = 4;
+export const GRID_SIZE_MAX = 7;
+
 export const HEX_CODES = ['E9', '1C', 'BD', '55', '7A', 'FF'] as const;
 export type HexCode = typeof HEX_CODES[number];
 
@@ -45,7 +48,7 @@ export const COLS: string = '123456789';
  * Combine elements from two strings together.
  *
  * @param a First string to combine.
- * @param b Second string to comine.
+ * @param b Second string to combine.
  */
 export function cross(a: string, b: string) {
   return Array.from(a).flatMap((r) => Array.from(b).map((c) => r + c));
