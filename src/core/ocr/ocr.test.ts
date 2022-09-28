@@ -154,7 +154,7 @@ describe('raw data validation', () => {
     const fragment = new BreachProtocolGridFragment(container, { recognizer });
     const invalidGrids = [
       grid.map((s, i) => (i === 5 ? '57' : s)),
-      grid.map((s, i) => (i === 9 ? 'asd' : s)),
+      grid.map((s, i) => (i === 9 ? 'test' : s)),
       grid.map(() => ' '),
       grid.slice(1),
       [],
@@ -172,7 +172,7 @@ describe('raw data validation', () => {
     });
     const invalidDaemons = [
       daemons.map(() => ['B7']),
-      daemons.map(() => ['asd']),
+      daemons.map(() => ['test']),
       daemons.map(() => [' ']),
       daemons.map(() => [] as string[]),
     ] as DaemonsRawData[];
@@ -252,7 +252,7 @@ describe('ocr', () => {
   );
 
   it.each(getRegistryFor('3840x2160'))(
-    'should correctly ocr $path with downscaling',
+    'should correctly ocr $path with down-scaling',
     async (entry: RegistryEntry) => {
       await expectRegistryEntryToEqualRawData(entry, {
         downscaleSource: true,
@@ -322,7 +322,7 @@ class NoopImageContainer extends ImageContainer<any> {
     super();
   }
 
-  // These methods will be called in fragment's contructor
+  // These methods will be called in fragment's constructor
   process() {}
   processGridFragment() {}
   processDaemonsFragment() {}
