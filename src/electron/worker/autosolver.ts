@@ -35,7 +35,9 @@ export class BreachProtocolAutosolver {
   private fileName: string;
 
   private readonly startedAt = Date.now();
-  private finishedAt: number;
+  // This must be null, as undefined is not a valid JSON value, and it will be
+  // serialized before autosolver job resolves or rejects.
+  private finishedAt: number = null;
 
   private recognitionResult: BreachProtocolRecognitionResult;
   private game: BreachProtocol;
@@ -150,7 +152,7 @@ export class BreachProtocolAutosolver {
 
         return dest;
       } else {
-        // Only jpeg format is suported when analyzing BP from clipboard.
+        // Only jpeg format is supported when analyzing BP from clipboard.
         const dest = this.robot.getScreenShotPath('jpg');
         const buffer = input instanceof Buffer ? input : Buffer.from(input);
 
@@ -244,26 +246,6 @@ export class BreachProtocolAutosolver {
   private removeSourceImage() {
     remove(this.fileName);
     this.fileName = null;
-  }
-
-  private getFixedThresholds(): Record<FragmentId, number> {
-    const {
-      thresholdGrid,
-      thresholdGridAuto,
-      thresholdDaemons,
-      thresholdDaemonsAuto,
-      thresholdTypes,
-      thresholdTypesAuto,
-      thresholdBufferSize,
-      thresholdBufferSizeAuto,
-    } = this.settings;
-
-    return {
-      grid: thresholdGridAuto ? undefined : thresholdGrid,
-      daemons: thresholdDaemonsAuto ? undefined : thresholdDaemons,
-      types: thresholdTypesAuto ? undefined : thresholdTypes,
-      bufferSize: thresholdBufferSizeAuto ? undefined : thresholdBufferSize,
-    };
   }
 
   private async recognize() {

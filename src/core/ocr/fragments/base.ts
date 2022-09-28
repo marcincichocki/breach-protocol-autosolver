@@ -57,7 +57,7 @@ export abstract class BreachProtocolFragment<
 
   abstract readonly boundingBox: FragmentBoundingBox;
 
-  /** Preprocessed image fragment. */
+  /** Pre-processed image fragment. */
   protected abstract readonly fragment: TImage;
 
   constructor(
@@ -135,7 +135,7 @@ export abstract class BreachProtocolOCRFragment<
     return text.split('\n').filter(Boolean);
   }
 
-  /** Get closest treshold value for given resolution. */
+  /** Get closest threshold value for given resolution. */
   protected getThreshold(thresholds: Map<number, number> = this.thresholds) {
     const { innerHeight } = this.boundingBox;
     const list = Array.from(thresholds.keys());
@@ -247,9 +247,9 @@ export abstract class BreachProtocolCodeFragment<
   }
 
   protected chunkLine(line: string) {
-    // In some localizations font and font spacing is different. Sometimes
-    // symbols are recognized without whitespaces which cause errors.
-    // It's better to remove every whitespace character and then to chunk it.
+    // In some localization font and font spacing is different. Sometimes
+    // symbols are recognized without white spaces which cause errors.
+    // It's better to remove every white space character and then to chunk it.
     return chunk(line.replace(/\s/g, ''), 2);
   }
 

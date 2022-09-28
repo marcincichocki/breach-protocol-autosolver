@@ -23,7 +23,7 @@ export class BreachProtocolRecognitionResult {
   readonly rawData = this.reduceToRawData();
 
   readonly isValid = this.results
-    // daemon types can be undedected
+    // daemon types can be undetected
     .filter((r) => r.id !== FragmentId.Types)
     .every((r) => r.isValid);
 

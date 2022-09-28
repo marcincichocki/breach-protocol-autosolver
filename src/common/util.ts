@@ -2,6 +2,10 @@ export function capitalize<T extends string>(value: T) {
   return (value[0].toUpperCase() + value.slice(1)) as Capitalize<T>;
 }
 
+export function isObject(data: unknown): data is object {
+  return typeof data === 'object' && data !== null;
+}
+
 export function unique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;
 }
@@ -103,7 +107,7 @@ export function getClosest(n: number, list: number[]) {
   return list[index];
 }
 
-type JSONValue =
+export type JSONValue =
   | string
   | number
   | boolean
@@ -138,7 +142,7 @@ export class BitMask {
   }
 }
 
-/** Wait for given amount of miliseconds. */
+/** Wait for given amount of milliseconds. */
 export function sleep(delay: number) {
   return delay ? new Promise((r) => setTimeout(r, delay)) : Promise.resolve();
 }
@@ -146,7 +150,7 @@ export function sleep(delay: number) {
 /** Does nothing. */
 export const noop = () => {};
 
-/** Check how similiar are 2 strings using Gestalt Pattern Matching algorithm. */
+/** Check how similar are 2 strings using Gestalt Pattern Matching algorithm. */
 // https://github.com/ben-yocum/gestalt-pattern-matcher/blob/master/gestalt-pattern-matcher.js
 export function similarity(s1: string, s2: string) {
   const stack = [s1, s2];

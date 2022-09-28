@@ -126,13 +126,13 @@ export class Sequence implements Serializable {
     return new Sequence(value, parts);
   }
 
-  // Sequence break is an index which doesn't have dameon attached.
+  // Sequence break is an index which doesn't have daemon attached.
   // For example daemons: FF 7A and BD BD can create sequence FF 7A BD BD.
   // At index 0 and 2 next daemon is not yet started and can be delayed if
   // buffer allows it.
   // It's not possible to break sequence on overlap. For example daemons:
   // FF 7A and 7A BD BD can not be broken on index 2 because they share
-  // beggining and the end.
+  // beginning and the end.
   private getSequenceBreaks() {
     return this.parts
       .map((d) => {
@@ -178,7 +178,7 @@ export function parseDaemons(
     }
   }
 
-  // These sequences are created out of daemons that overlap completly.
+  // These sequences are created out of daemons that overlap completely.
   const childDaemons = baseDaemons.filter((d) => d.isChild);
   const regularDaemons = baseDaemons.filter((d) => !d.isChild);
 

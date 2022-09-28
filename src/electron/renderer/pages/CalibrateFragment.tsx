@@ -1,10 +1,16 @@
-import { BreachProtocolFragmentResults, FragmentId } from '@/core';
+import { capitalize } from '@/common';
+import {
+  BreachProtocolFragmentResults,
+  FragmentId,
+  FragmentStatus,
+  HEX_CODES,
+} from '@/core';
 import {
   HistoryEntry,
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatchAsyncRequest, fromCamelCase } from '../common';
@@ -16,11 +22,12 @@ import {
   FragmentPreview,
   Label,
   RangeSlider,
-  RawDataPreview,
   Row,
   Spinner,
   Switch,
   useField,
+  JSONTree,
+  JSONValidator,
 } from '../components';
 
 const Title = styled.h3`
@@ -55,12 +62,65 @@ const ThresholdUpdater = ({
   return null;
 };
 
-function capitalize(s: string) {
-  return s[0].toUpperCase() + s.slice(1);
-}
+const statusMessages = {
+  [FragmentStatus.InvalidSize]: 'Invalid size',
+  [FragmentStatus.InvalidSymbols]: 'Invalid codes',
+  [FragmentStatus.Valid]: 'Valid',
+};
+
+const RawDataStatusMessage = styled.span<{ status: FragmentStatus }>`
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1rem;
+  color: ${(p) =>
+    p.status === FragmentStatus.Valid ? 'var(--accent)' : 'var(--primary)'};
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+`;
+
+const BaseFragmentJSONTree = styled(JSONTree)`
+  --gap: 0.5rem;
+
+  .invalid {
+    color: var(--primary);
+  }
+`;
+
+const GridJSONTree = styled(BaseFragmentJSONTree)<{ columns: number }>`
+  .root {
+    display: grid;
+    grid-gap: var(--gap);
+    grid-template-columns: repeat(${(p) => p.columns}, max-content);
+  }
+`;
+
+const DaemonsJSONTree = styled(BaseFragmentJSONTree)`
+  .root > li > ul {
+    display: flex;
+    gap: var(--gap);
+  }
+`;
+
+const FragmentJSONTrees = {
+  [FragmentId.Grid]: GridJSONTree,
+  [FragmentId.Daemons]: DaemonsJSONTree,
+  [FragmentId.BufferSize]: JSONTree,
+  [FragmentId.Types]: JSONTree,
+};
+
+const hexCodesSet = new Set<string>(HEX_CODES);
+const hexCodeValidator: JSONValidator = (value) => {
+  if (typeof value === 'string') {
+    return hexCodesSet.has(value);
+  }
+
+  return true;
+};
 
 export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
+  const FragmentJSONTree = FragmentJSONTrees[fragmentId];
   const { fileName } = entry;
   const result = entry.fragments.find((f) => f.id === fragmentId);
   const [testResult, setTestResult] =
@@ -73,6 +133,13 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   const [testThreshold, setTestThreshold] = useState<number>(
     result.threshold ?? 0
   );
+  const columns = Array.isArray(testResult.rawData)
+    ? Math.round(Math.sqrt(testResult.rawData.length))
+    : undefined;
+  const validate =
+    fragmentId === FragmentId.Grid || fragmentId === FragmentId.Daemons
+      ? hexCodeValidator
+      : undefined;
 
   useEffect(() => {
     setTestResult(result);
@@ -95,7 +162,7 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
   }
 
   function handleSubmit(values: CalibrateFormValues) {
-    const key = `threshold${capitalize(fragmentId)}`;
+    const key = `threshold${capitalize(fragmentId)}` as const;
     const payload = {
       [key]: values.testThreshold,
       [`${key}Auto`]: false,
@@ -109,10 +176,16 @@ export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
       <Col gap grow>
         <Col grow scroll>
           <Title>Raw data</Title>
-          <RawDataPreview
-            rawData={testResult.rawData}
-            status={testResult.status}
-          />
+          <FragmentJSONTree
+            data={testResult.rawData}
+            expanded={true}
+            columns={columns}
+            validate={validate}
+          >
+            <RawDataStatusMessage status={testResult.status}>
+              {statusMessages[testResult.status]}
+            </RawDataStatusMessage>
+          </FragmentJSONTree>
         </Col>
         <Form<CalibrateFormValues>
           initialValues={{ showBoxes, testThreshold }}

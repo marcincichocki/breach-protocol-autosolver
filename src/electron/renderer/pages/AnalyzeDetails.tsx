@@ -3,7 +3,15 @@ import { HistoryEntry } from '@/electron/common';
 import { MouseEvent, useState } from 'react';
 import styled from 'styled-components';
 import { fromCamelCase } from '../common';
-import { Col, FragmentPreview, Row, Spacer } from '../components';
+import {
+  Col,
+  FragmentPreview,
+  JSONTree,
+  JSONTreeActions,
+  JSONTreeCopy,
+  Row,
+  Spacer,
+} from '../components';
 
 const Title = styled.h3`
   color: var(--primary);
@@ -12,16 +20,6 @@ const Title = styled.h3`
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 0;
-`;
-
-const HistoryEntryPreview = styled.pre`
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow: auto;
-  background: var(--background);
-  border: 1px solid var(--primary);
-  margin: 0;
-  padding: 1rem;
 `;
 
 const FragmentLink = styled.a<{ active: boolean }>`
@@ -44,7 +42,7 @@ export const AnalyzeDetails = ({ entry }: { entry: HistoryEntry }) => {
   }
 
   return (
-    <Col>
+    <Col grow>
       <Row style={{ gap: '2rem' }}>
         {entry.fragments.map((f) => (
           <FragmentLink
@@ -57,12 +55,14 @@ export const AnalyzeDetails = ({ entry }: { entry: HistoryEntry }) => {
         ))}
         <Spacer />
       </Row>
-      <Row gap scroll>
-        <Col>
+      <Row grow gap scroll>
+        <Col grow>
           <Title>Entry</Title>
-          <HistoryEntryPreview>
-            {JSON.stringify(entry, null, 2)}
-          </HistoryEntryPreview>
+          <JSONTree data={entry as Record<string, any>} expanded={true}>
+            <JSONTreeActions>
+              <JSONTreeCopy />
+            </JSONTreeActions>
+          </JSONTree>
         </Col>
         <Col style={{ width: '600px', flexShrink: 0 }}>
           <Title>Fragment preview</Title>
