@@ -1,5 +1,6 @@
 import {
   Action,
+  HistoryEntry,
   NativeDialog,
   Request,
   Response,
@@ -17,7 +18,7 @@ import { StateContext } from './state';
 
 /** Return history entry based on entryId url param. */
 export function useHistoryEntryFromParam() {
-  const { entryId } = useParams<{ entryId: string }>();
+  const { entryId } = useParams();
 
   return useHistoryEntry(entryId);
 }
@@ -139,4 +140,10 @@ export function createErrorMessageDispenser<T extends Record<string, string>>(
 
     return messages[key];
   };
+}
+
+export function getFirstHistoryEntryPath(history: HistoryEntry[]) {
+  const { uuid } = history[0] ?? {};
+
+  return uuid ? `/history/${uuid}` : '/history';
 }

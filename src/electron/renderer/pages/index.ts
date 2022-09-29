@@ -7,3 +7,4 @@ export * from './History';
 export * from './HistoryDetails';
 export * from './SelectSequence';
 export * from './Settings';
+export * from './Root';

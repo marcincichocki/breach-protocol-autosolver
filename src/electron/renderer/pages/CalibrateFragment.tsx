@@ -11,7 +11,7 @@ import {
   UpdateSettingsAction,
 } from '@/electron/common';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatchAsyncRequest, fromCamelCase } from '../common';
 import {
@@ -118,7 +118,8 @@ const hexCodeValidator: JSONValidator = (value) => {
   return true;
 };
 
-export const CalibrateFragment = ({ entry }: CalibrateFragmentProps) => {
+export const CalibrateFragment = () => {
+  const entry = useOutletContext<HistoryEntry>();
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
   const FragmentJSONTree = FragmentJSONTrees[fragmentId];
   const { fileName } = entry;

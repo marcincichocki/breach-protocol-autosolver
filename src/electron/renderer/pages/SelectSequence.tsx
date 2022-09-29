@@ -1,7 +1,7 @@
 import { BreachProtocolResultJSON, isDaemonsFragment } from '@/core';
-import { Analysis, WorkerStatus } from '@/electron/common';
+import { WorkerStatus } from '@/electron/common';
 import { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { dispatchAsyncRequest } from '../common';
 import { Col, FlatButton, HistoryViewer, Row, Spacer } from '../components';
@@ -44,17 +44,14 @@ function toUniqueValue(result: BreachProtocolResultJSON) {
   return result?.sequence.value.join('');
 }
 
-interface SelectSequenceProps extends Analysis {}
-
-export const SelectSequence = ({
-  entry,
-  results,
-  options,
-}: SelectSequenceProps) => {
+export const SelectSequence = () => {
+  const {
+    analysis: { entry, options, results },
+  } = useContext(StateContext);
   const { status } = useContext(StateContext);
   const [activeResult, setActiveResult] =
     useState<BreachProtocolResultJSON>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const isWorking = status === WorkerStatus.Working;
   const fromScreenShot = options.origin === 'screenshot';
@@ -71,7 +68,7 @@ export const SelectSequence = ({
   }
 
   async function discard() {
-    history.replace('/');
+    navigate('/', { replace: true });
   }
 
   async function resolve() {
