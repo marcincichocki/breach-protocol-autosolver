@@ -1,10 +1,9 @@
 import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
-import {
-  Link,
-  NavLink as RouterNavLink,
-  useRouteMatch,
-} from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, NavLink as RouterNavLink, useMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import { getFirstHistoryEntryPath } from '../common';
+import { StateContext } from '../state';
 
 const Nav = styled.nav`
   display: flex;
@@ -48,8 +47,10 @@ const GoBackLink = styled(Link)`
 `;
 
 export const Navigation = () => {
-  const match = useRouteMatch<{ entryId: string }>('/calibrate/:entryId');
-  const isAnalyzePage = useRouteMatch('/analyze');
+  const match = useMatch('/calibrate/:entryId/*');
+  const isAnalyzePage = useMatch('/analyze/*');
+  const { history } = useContext(StateContext);
+  const historyPath = getFirstHistoryEntryPath(history);
 
   return (
     <Nav>
@@ -70,12 +71,12 @@ export const Navigation = () => {
       ) : (
         <List>
           <ListItem>
-            <NavLink exact to="/">
+            <NavLink to="/" end>
               Dashboard
             </NavLink>
           </ListItem>
           <ListItem>
-            <NavLink to="/history">History</NavLink>
+            <NavLink to={historyPath}>History</NavLink>
           </ListItem>
           <ListItem>
             <NavLink to="/settings">Settings</NavLink>

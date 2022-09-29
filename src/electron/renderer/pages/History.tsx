@@ -2,18 +2,11 @@ import { BreachProtocolStatus } from '@/electron/common';
 import { MdClose } from '@react-icons/all-files/md/MdClose';
 import { MdDone } from '@react-icons/all-files/md/MdDone';
 import { useContext } from 'react';
-import {
-  NavLink,
-  Redirect,
-  Route,
-  Switch,
-  useRouteMatch,
-} from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { transformTimestamp } from '../common';
 import { Col } from '../components';
 import { StateContext } from '../state';
-import { HistoryDetails } from './HistoryDetails';
 
 const HistoryList = styled.ul`
   overflow-y: auto;
@@ -96,7 +89,6 @@ const H2 = styled.h2`
 
 export const History = () => {
   const { history } = useContext(StateContext);
-  const { path } = useRouteMatch();
 
   if (!history.length) return <NoHistory />;
 
@@ -108,7 +100,7 @@ export const History = () => {
 
           return (
             <li key={e.uuid}>
-              <HistoryListItem to={`${path}/${e.uuid}`}>
+              <HistoryListItem to={e.uuid}>
                 <HistoryListItemIcon size="2rem" status={e.status} />
                 <Col>
                   <H1>{distance}</H1>
@@ -120,10 +112,7 @@ export const History = () => {
         })}
       </HistoryList>
       <Col>
-        <Switch>
-          <Route path={`${path}/:entryId`} component={HistoryDetails} />
-          <Redirect to={`/history/${history[0].uuid}`} />
-        </Switch>
+        <Outlet />
       </Col>
     </HistoryWrapper>
   );

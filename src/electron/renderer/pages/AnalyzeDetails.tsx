@@ -1,6 +1,5 @@
 import { FragmentId } from '@/core';
-import { HistoryEntry } from '@/electron/common';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useContext, useState } from 'react';
 import styled from 'styled-components';
 import { fromCamelCase } from '../common';
 import {
@@ -12,6 +11,7 @@ import {
   Row,
   Spacer,
 } from '../components';
+import { StateContext } from '../state';
 
 const Title = styled.h3`
   color: var(--primary);
@@ -31,7 +31,10 @@ const FragmentLink = styled.a<{ active: boolean }>`
   cursor: pointer;
 `;
 
-export const AnalyzeDetails = ({ entry }: { entry: HistoryEntry }) => {
+export const AnalyzeDetails = () => {
+  const {
+    analysis: { entry },
+  } = useContext(StateContext);
   const [fragmentId, setFragmentId] = useState<FragmentId>(FragmentId.Grid);
   const fragment = entry.fragments.find((f) => f.id === fragmentId);
 

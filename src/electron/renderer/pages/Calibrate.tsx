@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   dispatchAsyncRequest,
@@ -8,7 +8,6 @@ import {
   useHistoryEntryFromParam,
 } from '../common';
 import { Col, NavLink, Row, Spacer } from '../components';
-import { CalibrateFragment } from './CalibrateFragment';
 
 const Heading = styled.h1`
   font-size: 2rem;
@@ -36,7 +35,6 @@ export const Calibrate = () => {
   if (!entry) return null;
 
   useContainerInit(entry.fileName);
-  const { path } = useRouteMatch<{ entryId: string }>();
   const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
@@ -52,9 +50,7 @@ export const Calibrate = () => {
           {time} - {distance}
         </Heading>
       </Row>
-      <Route path={`${path}/:fragmentId`}>
-        <CalibrateFragment entry={entry} />
-      </Route>
+      <Outlet context={entry} />
     </Col>
   );
 };
