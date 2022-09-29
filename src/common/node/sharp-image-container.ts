@@ -56,30 +56,15 @@ class SharpFragmentContainer implements FragmentContainer<sharp.Sharp> {
 
   private async trim(buffer: Buffer) {
     try {
-      const i1 = sharp(buffer);
-      const buf = await i1.toBuffer();
-      const i2 = sharp(buf);
-
-      const m1 = await i1.metadata();
-      const m2 = await i2.metadata();
-
-      console.log({ m1, m2 });
-
       const {
-        data: trimmedBuffer,
+        data,
         info: { format, width, height },
-      } = await i1.trim().toBuffer({ resolveWithObject: true });
-
-      const data = trimmedBuffer.toString('base64');
-      const uri = toBase64DataUri(format, data);
+      } = await sharp(buffer).trim().toBuffer({ resolveWithObject: true });
+      const uri = toBase64DataUri(format, data.toString('base64'));
       const dimensions = { width, height };
-
-      console.log(uri);
 
       return { uri, dimensions };
     } catch (err) {
-      console.log(err);
-
       return {
         uri: toBase64DataUri('png', ''),
         dimensions: { width: 0, height: 0 },

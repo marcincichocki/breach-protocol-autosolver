@@ -103,7 +103,7 @@ export class BreachProtocolBufferSizeFragment<
 
   // Run binary search and check control groups to narrow
   // correct result. Since thresholds only depend on gamma,
-  // values below 128 are exluded to speed up search(lowest
+  // values below 128 are excluded to speed up search(lowest
   // gamma 0.5 require ~160 threshold).
   private async findThreshold() {
     const base = 128;
@@ -145,16 +145,16 @@ export class BreachProtocolBufferSizeFragment<
     if (this.getStatus(bufferSize) !== FragmentStatus.Valid) {
       // In rare cases where given value is wrong, repeat with
       // binary search. For example when user changes gamma mid
-      // game, saved value will be wrong. This allows to recalibrate
+      // game, saved value will be wrong. This allows to re-calibrate
       // threshold on the fly.
-      // One side effect of this behaviour is that --threshold-buffer-size
+      // One side effect of this behavior is that --threshold-buffer-size
       // flag is quite useless, because even it fails, fallback will be used.
       if (useFallback && fixedThreshold !== null) {
         return this.recognize(null);
       }
     }
 
-    // Cache valid threshold to limit ammount of computation required on following BPs.
+    // Cache valid threshold to limit amount of computation required on following breach protocols.
     BreachProtocolBufferSizeFragment.cachedThreshold = threshold;
 
     return this.getFragmentResult(null, bufferSize, uri, threshold);
@@ -209,8 +209,6 @@ export class BreachProtocolBufferSizeTrimFragment<
   async recognize(
     threshold?: number
   ): Promise<BreachProtocolBufferSizeFragmentResult> {
-    console.log(this.boundingBox);
-
     const { uri, dimensions } = await this.fragment.toBase64({ trim: true });
     const bufferSize = await this.getBufferSizeFromPixels(dimensions.width);
 

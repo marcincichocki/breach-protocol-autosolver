@@ -211,7 +211,7 @@ describe('ocr', () => {
     await WasmBreachProtocolRecognizer.terminate();
   });
 
-  fit.each(entries.filter((e) => e.path.startsWith('1024')))(
+  it.each(entries)(
     'should correctly ocr $path',
     async (entry: RegistryEntry) => {
       await expectRegistryEntryToEqualRawData(entry);
