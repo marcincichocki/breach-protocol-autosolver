@@ -63,7 +63,6 @@ export class Store {
     name: 'history',
     defaults: { data: [] },
     migrations: {
-      // TODO: validate version number
       '>=2.7.0': (store) => {
         const base64DataUri = /data:image\/([a-zA-Z]*);base64,([^"]*)/;
         const entires = store.get('data').map((entry) => {

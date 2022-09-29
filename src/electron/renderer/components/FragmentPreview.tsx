@@ -1,6 +1,5 @@
 import type { BreachProtocolRecognizerBox } from '@/core';
 import { useEffect, useRef } from 'react';
-import { ScreenshotFormat } from 'screenshot-desktop';
 
 function getStrokeRectCords(
   box: BreachProtocolRecognizerBox,
