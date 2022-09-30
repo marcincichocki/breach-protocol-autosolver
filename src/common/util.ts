@@ -205,7 +205,7 @@ export function similarity(s1: string, s2: string) {
   return score / (s1.length + s2.length);
 }
 
-const jpegRe = /jpe?g/;
+const jpegRe = /^jpe?g$/;
 
 export function toBase64DataUri(format: string, base64: string) {
   const mime = `image/${jpegRe.test(format) ? 'jpeg' : 'png'}`;
