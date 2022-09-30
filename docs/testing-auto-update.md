@@ -17,13 +17,13 @@ mkdir <YOUR_BUCKET_NAME> # Create bucket.
 minio server ./minio-data # Run minio server.
 ```
 
-Next go api url, log in with default credentials and change `<YOUR_BUCKET_NAME>` Access Policy to `public`. This is required for electron-updater to see the update.
+Next go to api url, log in with default credentials and change `<YOUR_BUCKET_NAME>` Access Policy to `public`. This is required for electron-updater to see the update.
 
 ### Publishing
 
 _It is recommended to first publish latest tag as it is guaranteed to work._
 
-> **Attention**: do not use localhost as publish endpoint, as it will case upload error.
+> **Attention**: do not use localhost as publish endpoint, as it will cause upload error.
 
 To build and publish test release run:
 
@@ -35,9 +35,9 @@ After command completes you should be able to see artifacts in your bucket. Down
 
 ### Auto update
 
-Breach protocol autosolver will now query minio server for updates, so it **critical** that minio server is running in the background during this process.
+Breach protocol autosolver will now query minio server for updates, so it is **critical** that minio server is running in the background during this process.
 
-_If you checked out latest tag this is the time to return to HEAD_
+_If you checked out latest tag this is the time to return to HEAD._
 
 You can now do necessary changes to the source code, and when you are done you **must** increase version field in `package.json`. You can also attach test release notes by adding `release-notes.md` file to `resources` folder.
 
