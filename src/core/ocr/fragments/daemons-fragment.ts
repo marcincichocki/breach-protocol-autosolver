@@ -35,9 +35,12 @@ export class BreachProtocolDaemonsFragment<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  protected readonly fragment = this.container.processDaemonsFragment(
-    this.boundingBox
-  );
+  protected readonly fragment = this.container.toFragmentContainer({
+    boundingBox: this.boundingBox,
+    channel: 'blue',
+    colors: 2,
+    width: 450,
+  });
 
   protected getRawData(lines: string[]) {
     return lines.map((l) => this.parseLine(l));

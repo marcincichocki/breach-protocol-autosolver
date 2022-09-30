@@ -18,7 +18,11 @@ import {
   BreachProtocolGridFragment,
   FragmentStatus,
 } from './fragments';
-import { ImageContainer } from './image-container';
+import {
+  Dimensions,
+  FragmentContainer,
+  ImageContainer,
+} from './image-container';
 import { breachProtocolOCR } from './ocr';
 import { BreachProtocolRecognizer } from './recognizer';
 
@@ -70,7 +74,7 @@ describe('image container', () => {
   ];
 
   it.each(horizontal)('should crop horizontal black bars(%ix%i)', (x, y) => {
-    const container = new NoopImageContainer({ x, y });
+    const container = new NoopImageContainer({ width: x, height: y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -81,7 +85,7 @@ describe('image container', () => {
   });
 
   it.each(vertical)('should crop vertical black bars(%ix%i)', (x, y) => {
-    const container = new NoopImageContainer({ x, y });
+    const container = new NoopImageContainer({ width: x, height: y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -92,7 +96,7 @@ describe('image container', () => {
   });
 
   it.each(regular)('should not crop 16:9 resolutions(%ix%i)', (x, y) => {
-    const container = new NoopImageContainer({ x, y });
+    const container = new NoopImageContainer({ width: x, height: y });
     const { width, height, left, top } = container.getCroppedBoundingBox();
 
     expect(container.getAspectRatio(width, height)).toBe(aspectRatio);
@@ -109,7 +113,7 @@ describe('raw data validation', () => {
 
   beforeAll(() => {
     recognizer = new TestBreachProtocolRecognizer();
-    container = new NoopImageContainer({ x: 1920, y: 1080 });
+    container = new NoopImageContainer({ width: 1920, height: 1080 });
     // @ts-ignore
     WasmBreachProtocolRecognizer.scheduler = true;
   });
@@ -195,6 +199,10 @@ describe('raw data validation', () => {
 });
 
 describe('ocr', () => {
+  const entries = Object.keys(registry).flatMap(
+    (resolution: Resolution) => registry[resolution]
+  );
+
   beforeAll(async () => {
     await WasmBreachProtocolRecognizer.init('./resources/tessdata', 'eng');
   }, 30000);
@@ -203,69 +211,13 @@ describe('ocr', () => {
     await WasmBreachProtocolRecognizer.terminate();
   });
 
-  it.each(getRegistryFor('custom'))(
+  it.each(entries)(
     'should correctly ocr $path',
     async (entry: RegistryEntry) => {
       await expectRegistryEntryToEqualRawData(entry);
-    }
-  );
-
-  it.each(getRegistryFor('1024x768'))(
-    'should correctly ocr $path',
-    async (entry: RegistryEntry) => {
-      // This resolution requires fixed thresholds.
-      await expectRegistryEntryToEqualRawData(entry, {
-        thresholdGrid: 155,
-        thresholdGridAuto: false,
-        thresholdDaemons: 140,
-        thresholdDaemonsAuto: false,
-      });
-    }
-  );
-
-  it.each(getRegistryFor('1920x1080'))(
-    'should correctly ocr $path',
-    async (entry: RegistryEntry) => {
-      await expectRegistryEntryToEqualRawData(entry);
-    }
-  );
-
-  it.each(getRegistryFor('2560x1440'))(
-    'should correctly ocr $path',
-    async (entry: RegistryEntry) => {
-      await expectRegistryEntryToEqualRawData(entry);
-    }
-  );
-
-  it.each(getRegistryFor('3440x1440'))(
-    'should correctly ocr $path',
-    async (entry: RegistryEntry) => {
-      await expectRegistryEntryToEqualRawData(entry);
-    }
-  );
-
-  it.each(getRegistryFor('3840x2160'))(
-    'should correctly ocr $path',
-    async (entry: RegistryEntry) => {
-      await expectRegistryEntryToEqualRawData(entry);
-    }
-  );
-
-  it.each(getRegistryFor('3840x2160'))(
-    'should correctly ocr $path with down-scaling',
-    async (entry: RegistryEntry) => {
-      await expectRegistryEntryToEqualRawData(entry, {
-        downscaleSource: true,
-        thresholdDaemonsAuto: false,
-        thresholdDaemons: 45,
-      });
     }
   );
 });
-
-function getRegistryFor(resolution: Resolution) {
-  return registry[resolution] as RegistryEntry[];
-}
 
 async function expectRegistryEntryToEqualRawData(
   entry: RegistryEntry,
@@ -276,11 +228,10 @@ async function expectRegistryEntryToEqualRawData(
     settings ?? entry.settings
   );
 
-  expect(entry.grid).toEqual(ocr.rawData.grid);
-  expect(entry.daemons).toEqual(ocr.rawData.daemons);
-  expect(entry.bufferSize).toBe(ocr.rawData.bufferSize);
-  expect(entry.bufferSize).toBe(trim.rawData);
-
+  expect(ocr.rawData.grid).toEqual(entry.grid);
+  expect(ocr.rawData.daemons).toEqual(entry.daemons);
+  expect(ocr.rawData.bufferSize).toBe(entry.bufferSize);
+  expect(trim.rawData).toBe(entry.bufferSize);
   expect(ocr.isValid).toBe(true);
   expect(trim.isValid).toBe(true);
 }
@@ -291,6 +242,7 @@ async function recognizeRegistryEntry(
 ) {
   const file = join('./src/core/bp-registry', entry.path);
   const image = sharp(file);
+
   const container = await SharpImageContainer.create(image, {
     downscaleSource,
   });
@@ -318,15 +270,14 @@ async function recognizeRegistryEntry(
 // @ts-ignore
 // Only test protected methods
 class NoopImageContainer extends ImageContainer<any> {
-  constructor(public readonly dimensions: { x: number; y: number }) {
+  constructor(public readonly dimensions: Dimensions) {
     super();
   }
 
-  // These methods will be called in fragment's constructor
-  process() {}
-  processGridFragment() {}
-  processDaemonsFragment() {}
-  processBufferSizeFragment() {}
+  // @ts-ignore
+  toFragmentContainer(): FragmentContainer<any> {
+    // Not used.
+  }
 }
 
 class TestBreachProtocolRecognizer implements BreachProtocolRecognizer {

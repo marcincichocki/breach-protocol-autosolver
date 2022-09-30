@@ -32,9 +32,11 @@ export class BreachProtocolTypesFragment<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  protected readonly fragment = this.container.processTypesFragment(
-    this.boundingBox
-  );
+  protected readonly fragment = this.container.toFragmentContainer({
+    boundingBox: this.boundingBox,
+    colors: 2,
+    channel: 'blue',
+  });
 
   readonly thresholds = new Map([
     [1080, 100],
@@ -112,21 +114,20 @@ export class BreachProtocolTypesFragment<
 
   async recognize(fixedThreshold?: number) {
     const threshold = fixedThreshold ?? this.getThreshold();
-    const { buffer, source } = await this.ocr(threshold);
+    const { uri, source } = await this.ocr(threshold);
     const lines = this.getLines(source.text);
     const rawData = this.getRawData(lines);
 
-    return this.getFragmentResult(source, rawData, buffer, threshold);
+    return this.getFragmentResult(source, rawData, uri, threshold);
   }
 
   protected async ocr(threshold: number) {
-    const fragment = this.container.threshold(this.fragment, threshold, false);
-    const buffer = await this.container.toBuffer(fragment);
-    const { lines, text } = await this.options.recognizer.recognizeText(buffer);
+    const { uri } = await this.fragment.threshold(threshold, false).toBase64();
+    const { lines, text } = await this.options.recognizer.recognizeText(uri);
     const boxes = lines.flatMap((code) => code.map((w) => w.bbox));
     const source = { boxes, text };
 
-    return { buffer, source };
+    return { uri, source };
   }
 
   protected getRawData(lines: string[]) {

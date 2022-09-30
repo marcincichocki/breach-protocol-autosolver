@@ -1,6 +1,5 @@
 import type { BreachProtocolRecognizerBox } from '@/core';
 import { useEffect, useRef } from 'react';
-import { ScreenshotFormat } from 'screenshot-desktop';
 
 function getStrokeRectCords(
   box: BreachProtocolRecognizerBox,
@@ -20,11 +19,9 @@ function renderFragmentToCanvas({
   image,
   boxes,
   showBoxes,
-  format,
 }: FragmentPreviewProps & { canvas: HTMLCanvasElement }) {
   const imageEl = new Image();
   const context = canvas.getContext('2d');
-  const mime = `image/${format === 'jpg' ? 'jpeg' : 'png'}`;
 
   imageEl.onload = () => {
     const base = 600;
@@ -47,14 +44,13 @@ function renderFragmentToCanvas({
     }
   };
 
-  imageEl.src = `data:${mime};base64,${image}`;
+  imageEl.src = image;
 }
 
 interface FragmentPreviewProps {
   image: string;
   boxes: BreachProtocolRecognizerBox[];
   showBoxes: boolean;
-  format: ScreenshotFormat;
 }
 
 export const FragmentPreview = (props: FragmentPreviewProps) => {

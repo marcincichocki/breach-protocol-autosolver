@@ -1,40 +1,53 @@
 import { FragmentBoundingBox } from './fragments/fragment';
 
+export interface Dimensions {
+  width: number;
+  height: number;
+}
+
+export interface FragmentContainerConfig {
+  boundingBox: FragmentBoundingBox;
+  colors?: number;
+  channel?: string;
+  flop?: boolean;
+  width?: number;
+}
+
+export interface EncodedFragmentContainerResult {
+  /** Base64 encoded string as data uri. */
+  uri: string;
+
+  /** Dimensions of encoded image. */
+  dimensions: Dimensions;
+}
+
+export interface FragmentContainer<T> {
+  /** Clones container with original image. */
+  clone(): FragmentContainer<T>;
+
+  /** Applies threshold transformation to fragment. */
+  threshold(threshold: number, grayscale?: boolean): this;
+
+  /** Returns fragment as base64 data uri. */
+  toBase64(options?: {
+    trim?: boolean;
+  }): Promise<EncodedFragmentContainerResult>;
+
+  /** Returns fragment as raw pixel data. */
+  toPixelData(): Promise<Uint8Array>;
+}
+
 export abstract class ImageContainer<T> {
-  abstract readonly instance: T;
-
-  abstract readonly dimensions: { x: number; y: number };
-
-  /** Crop image and turn it into 8bit. */
-  abstract process(fragmentBoundingBox: FragmentBoundingBox): T;
-
-  abstract processGridFragment(fragmentBoundingBox: FragmentBoundingBox): T;
-
-  abstract processDaemonsFragment(fragmentBoundingBox: FragmentBoundingBox): T;
-
-  abstract processTypesFragment(fragmentBoundingBox: FragmentBoundingBox): T;
-
-  abstract processBufferSizeFragment(
-    fragmentBoundingBox: FragmentBoundingBox
-  ): T;
-
-  abstract trim(instance: T): Promise<{
-    buffer: Buffer;
-    width: number;
-    height: number;
-  }>;
-
-  /** Apply threshold to given fragment. */
-  abstract threshold(instance: T, threshold: number, grayscale?: boolean): T;
-
-  abstract toBuffer(instance: T): Promise<Buffer>;
-
-  abstract toRawBuffer(instance: T): Promise<Buffer>;
-
-  abstract toFile(instance: T, fileName: string): Promise<unknown>;
-
   /** Aspect ratio of breach protocol. */
   static readonly ASPECT_RATIO = 16 / 9;
+
+  abstract readonly instance: T;
+
+  abstract readonly dimensions: Dimensions;
+
+  abstract toFragmentContainer(
+    config: FragmentContainerConfig
+  ): FragmentContainer<T>;
 
   /** Return aspect ratio for given resolution and handle edge cases. */
   getAspectRatio(x: number, y: number) {
@@ -48,7 +61,7 @@ export abstract class ImageContainer<T> {
   }
 
   getCroppedBoundingBox() {
-    const { x, y } = this.dimensions;
+    const { width: x, height: y } = this.dimensions;
     // Resolution with ratio less than one have horizontal black
     // bars, and ratio greater than one have vertical.
     // Resolutions with ratio equal to 1 are in 16:9 aspect ratio

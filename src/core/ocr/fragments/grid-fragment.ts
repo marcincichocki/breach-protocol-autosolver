@@ -28,9 +28,11 @@ export class BreachProtocolGridFragment<
 
   readonly boundingBox = this.getFragmentBoundingBox();
 
-  protected readonly fragment = this.container.processGridFragment(
-    this.boundingBox
-  );
+  protected readonly fragment = this.container.toFragmentContainer({
+    boundingBox: this.boundingBox,
+    colors: 2,
+    width: 400,
+  });
 
   protected getRawData(lines: string[]) {
     return lines.flatMap((l) => this.parseLine(l));

@@ -1,3 +1,4 @@
+import { toBase64DataUri } from '@/common';
 import {
   Action,
   ActionTypes,
@@ -61,6 +62,25 @@ export class Store {
   private history = new ElectronStore<{ data: HistoryEntry[] }>({
     name: 'history',
     defaults: { data: [] },
+    migrations: {
+      '>=2.7.0': (store) => {
+        const base64DataUri = /data:image\/([a-zA-Z]*);base64,([^"]*)/;
+        const entires = store.get('data').map((entry) => {
+          const { format } = entry.settings;
+          const fragments = entry.fragments.map((fragment) => {
+            const image = base64DataUri.test(fragment.image)
+              ? fragment.image
+              : toBase64DataUri(format, fragment.image);
+
+            return { ...fragment, image };
+          });
+
+          return { ...entry, fragments };
+        });
+
+        store.set('data', entires);
+      },
+    },
   });
 
   private defaultStats: AppStats = {

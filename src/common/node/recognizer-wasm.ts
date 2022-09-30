@@ -32,7 +32,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     }
   }
 
-  async recognizeText(image: Buffer) {
+  async recognizeText(image: string) {
     if (this.lang !== WasmBreachProtocolRecognizer.loadedLang) {
       await WasmBreachProtocolRecognizer.textWorker.terminate();
 
@@ -51,7 +51,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     return this.toResult(data);
   }
 
-  async recognizeCode(image: Buffer) {
+  async recognizeCode(image: string) {
     const { data } = await this.scheduleRecognizeJob(image);
 
     return this.toResult(data);
@@ -61,7 +61,7 @@ export class WasmBreachProtocolRecognizer implements BreachProtocolRecognizer {
     return { lines: lines.map(({ words }) => words), text };
   }
 
-  private scheduleRecognizeJob(image: Buffer) {
+  private scheduleRecognizeJob(image: string) {
     return WasmBreachProtocolRecognizer.scheduler.addJob(
       'recognize',
       image

@@ -232,7 +232,6 @@ export const CalibrateFragment = () => {
               image={testResult.image}
               boxes={testResult.source?.boxes}
               showBoxes={showBoxes}
-              format={entry.settings.format}
             />
           )}
         </Col>

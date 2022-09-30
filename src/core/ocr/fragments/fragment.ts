@@ -16,7 +16,7 @@ export interface Fragment {
   /** Top left corner of fragment. */
   readonly p1: Point;
 
-  /** Botton right corner of fragment. */
+  /** Bottom right corner of fragment. */
   readonly p2: Point;
 
   /** Recognize data from fragment image. */
