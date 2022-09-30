@@ -1,4 +1,4 @@
-import { webContents } from 'electron';
+import type Electron from 'electron';
 import { clear } from 'electron-first-run';
 import { autoUpdater, ProgressInfo, UpdateInfo } from 'electron-updater';
 import {
@@ -17,7 +17,7 @@ export class BreachProtocolAutosolverUpdater {
 
   constructor(
     private store: Store,
-    private renderer: webContents,
+    private renderer: Electron.WebContents,
     private readonly isFirstRun: boolean
   ) {
     this.registerListeners();
