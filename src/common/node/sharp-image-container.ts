@@ -106,7 +106,6 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
     channel,
     flop,
     width,
-    colorspace,
   }: FragmentContainerConfig) {
     const instance = this.instance.clone();
 
@@ -114,10 +113,10 @@ export class SharpImageContainer extends ImageContainer<sharp.Sharp> {
       .extract(boundingBox)
       .removeAlpha()
       .negate({ alpha: false })
-      .toColorspace(colorspace ?? 'b-w');
+      .toColorspace('b-w');
 
     if (colors) {
-      instance.png({ colors: colors, palette: false });
+      instance.png({ colors, palette: false });
     }
 
     if (channel) {

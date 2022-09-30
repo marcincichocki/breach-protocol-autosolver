@@ -11,10 +11,9 @@ export interface FragmentContainerConfig {
   channel?: string;
   flop?: boolean;
   width?: number;
-  colorspace?: string;
 }
 
-export interface FragmentContainerResult {
+export interface EncodedFragmentContainerResult {
   /** Base64 encoded string as data uri. */
   uri: string;
 
@@ -23,13 +22,18 @@ export interface FragmentContainerResult {
 }
 
 export interface FragmentContainer<T> {
+  /** Clones container with original image. */
   clone(): FragmentContainer<T>;
 
-  /** Apply threshold to given fragment. */
+  /** Applies threshold transformation to fragment. */
   threshold(threshold: number, grayscale?: boolean): this;
 
-  toBase64(options?: { trim?: boolean }): Promise<FragmentContainerResult>;
+  /** Returns fragment as base64 data uri. */
+  toBase64(options?: {
+    trim?: boolean;
+  }): Promise<EncodedFragmentContainerResult>;
 
+  /** Returns fragment as raw pixel data. */
   toPixelData(): Promise<Uint8Array>;
 }
 
