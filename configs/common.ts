@@ -54,6 +54,11 @@ export function getConfig(
       module: {
         rules: [
           {
+            test: /\.js$/,
+            enforce: 'pre',
+            use: ['source-map-loader'],
+          },
+          {
             test: /\.tsx?$/,
             exclude: /node_modules/,
             loader: 'ts-loader',
@@ -73,7 +78,7 @@ export function getConfig(
       },
       optimization: {
         // NOTE: This allow WebpackLicensePlugin to work with ESNext module,
-        // which is required for treeshaking.
+        // which is required for tree shaking.
         concatenateModules: false,
       },
     };
