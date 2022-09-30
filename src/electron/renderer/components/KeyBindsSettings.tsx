@@ -6,7 +6,6 @@ import {
   KEY_BINDS,
   WorkerStatus,
 } from '@/electron/common';
-import type { Accelerator } from 'electron';
 import {
   createErrorMessageDispenser,
   nativeDialog,
@@ -24,7 +23,7 @@ const commands = Object.fromEntries(enteries) as Record<
   BreachProtocolCommands
 >;
 
-function changeKeyBind(accelerator: Accelerator, name: BreachProtocolKeyBinds) {
+function changeKeyBind(accelerator: string, name: BreachProtocolKeyBinds) {
   const id = commands[name];
 
   api.send('main:key-bind-change', id, accelerator);
@@ -34,13 +33,10 @@ const getErrorDetail = createErrorMessageDispenser({
   isValidAccelerator:
     'Key bind can contain multiple modifiers and a single key code.',
   isUnique: 'Key bind must be unique.',
-  canRegister: 'Key bind is alredy registered in other application.',
+  canRegister: 'Key bind is already registered in other application.',
 });
 
-async function validateKeyBind(
-  value: Electron.Accelerator,
-  next: (reset?: boolean) => void
-) {
+async function validateKeyBind(value: string, next: (reset?: boolean) => void) {
   const errors = await api.invoke<KeyBindValidationErrors>(
     'main:validate-key-bind',
     value

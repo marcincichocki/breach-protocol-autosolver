@@ -1,5 +1,4 @@
 import {
-  Accelerator,
   app,
   BrowserWindow,
   clipboard,
@@ -358,7 +357,7 @@ export class Main {
   private onKeyBindChange(
     e: IpcMainEvent,
     id: BreachProtocolCommands,
-    keyBind: Accelerator
+    keyBind: string
   ) {
     if (keyBind) {
       this.keyBindManager.register(id, keyBind);

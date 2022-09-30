@@ -12,7 +12,6 @@ import type {
   FragmentId,
   SequenceJSON,
 } from '@/core';
-import type { Accelerator } from 'electron';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import type { SoundPlayerConfig } from '../worker/sound-player';
 
@@ -62,7 +61,7 @@ export const KEY_BINDS = [
 ] as const;
 
 export type BreachProtocolKeyBinds = typeof KEY_BINDS[number];
-export type KeyBindsConfig = Record<BreachProtocolKeyBinds, Accelerator>;
+export type KeyBindsConfig = Record<BreachProtocolKeyBinds, string>;
 
 export const COMMANDS = [
   'worker:solve',
@@ -239,6 +238,6 @@ export interface DropZoneFileValidationErrors extends ValidationErrors {
   isImage: boolean;
 }
 
-export function normalizeAccelerator(input: Accelerator): Accelerator {
+export function normalizeAccelerator(input: string) {
   return input.split('+').sort().join('+');
 }

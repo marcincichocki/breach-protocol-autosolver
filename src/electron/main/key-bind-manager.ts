@@ -1,5 +1,5 @@
 import { noop } from '@/common';
-import { Accelerator, globalShortcut } from 'electron';
+import { globalShortcut } from 'electron';
 import isAccelerator from 'electron-is-accelerator';
 import { KeyBindValidationErrors, normalizeAccelerator } from '../common';
 import { Command, CommandManager } from './command-manager';
@@ -8,7 +8,7 @@ class KeyBind {
   private active = false;
 
   constructor(
-    public readonly accelerator: Accelerator,
+    public readonly accelerator: string,
     public readonly callback: Command
   ) {}
 
@@ -40,7 +40,7 @@ export class KeyBindManager<T> {
   constructor(private commandManager: CommandManager<T>) {}
 
   /** Register new or update existing command. */
-  register(id: T, accelerator: Accelerator) {
+  register(id: T, accelerator: string) {
     const command = this.commandManager.get(id);
     const keyBind = new KeyBind(accelerator, command);
 
