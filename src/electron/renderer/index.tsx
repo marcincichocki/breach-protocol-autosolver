@@ -1,5 +1,8 @@
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { App } from './app';
 import { createRootElement } from './common';
 
-render(<App />, createRootElement('root'));
+const el = createRootElement('root');
+const root = createRoot(el);
+
+root.render(<App />);

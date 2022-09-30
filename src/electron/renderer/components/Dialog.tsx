@@ -1,10 +1,10 @@
-import { Component } from 'react';
+import { Component, PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { createRootElement } from '../common';
 import { Col } from './Flex';
 
-interface DialogProps {
+interface DialogProps extends PropsWithChildren {
   isOpen?: boolean;
 }
 
