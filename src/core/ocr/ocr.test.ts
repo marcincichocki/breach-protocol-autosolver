@@ -114,12 +114,6 @@ describe('raw data validation', () => {
   beforeAll(() => {
     recognizer = new TestBreachProtocolRecognizer();
     container = new NoopImageContainer({ width: 1920, height: 1080 });
-    // @ts-ignore
-    WasmBreachProtocolRecognizer.scheduler = true;
-  });
-
-  afterAll(() => {
-    WasmBreachProtocolRecognizer['scheduler'] = undefined;
   });
 
   // prettier-ignore
