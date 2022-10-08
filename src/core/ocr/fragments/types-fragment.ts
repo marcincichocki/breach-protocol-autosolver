@@ -101,6 +101,10 @@ export class BreachProtocolTypesFragment<
     }
   }
 
+  private isTypesSizeInvalid({ length }: TypesRawData) {
+    return length < DAEMONS_SIZE_MIN || length > DAEMONS_SIZE_MAX;
+  }
+
   getStatus(rawData: TypesRawData) {
     const { length } = rawData.filter(unique);
     const hasDuplicates = length !== rawData.length;
@@ -112,7 +116,7 @@ export class BreachProtocolTypesFragment<
 
     if (
       !this.options.extendedDaemonsAndTypesRecognitionRange &&
-      (rawData.length < DAEMONS_SIZE_MIN || rawData.length > DAEMONS_SIZE_MAX)
+      this.isTypesSizeInvalid(rawData)
     ) {
       return FragmentStatus.InvalidSize;
     }

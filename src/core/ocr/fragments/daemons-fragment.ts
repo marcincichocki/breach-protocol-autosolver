@@ -1,5 +1,6 @@
 import { Point } from '@/common';
 import {
+  DaemonRawData,
   DaemonsRawData,
   DAEMONS_SIZE_MAX,
   DAEMONS_SIZE_MIN,
@@ -52,23 +53,26 @@ export class BreachProtocolDaemonsFragment<
     return lines.map((l) => this.parseLine(l));
   }
 
-  private isCorrectSize(rawData: DaemonsRawData) {
-    if (
-      rawData.length < DAEMONS_SIZE_MIN ||
-      rawData.length > DAEMONS_SIZE_MAX
-    ) {
-      return false;
+  private hasInvalidSize(rawData: DaemonsRawData) {
+    if (this.isDaemonsSizeInvalid(rawData)) {
+      return true;
     }
 
-    return !rawData.some(
-      ({ length }) => length < DAEMON_SIZE_MIN || length > DAEMON_SIZE_MAX
-    );
+    return rawData.some((daemon) => this.isDaemonSizeInvalid(daemon));
+  }
+
+  private isDaemonsSizeInvalid({ length }: DaemonsRawData) {
+    return length < DAEMONS_SIZE_MIN || length > DAEMONS_SIZE_MAX;
+  }
+
+  private isDaemonSizeInvalid({ length }: DaemonRawData) {
+    return length < DAEMON_SIZE_MIN || length > DAEMON_SIZE_MAX;
   }
 
   getStatus(rawData: DaemonsRawData) {
     if (
       !this.options.extendedDaemonsAndTypesRecognitionRange &&
-      !this.isCorrectSize(rawData)
+      this.hasInvalidSize(rawData)
     ) {
       return FragmentStatus.InvalidSize;
     }
