@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.6.0...v2.7.0) (2022-10-08)
+
+
+### Features
+
+* **client-electron:** replace json string preview with json tree viewer ([4d7aa99](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4d7aa998922c078531fa43c475605d53f33a762c))
+
+
+### Bug Fixes
+
+* **client-electron:** remove horizontal scrollbar from fragment preview ([8e2ee8e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/8e2ee8e93e681a11bb555d5e823cc1d205ae5860))
+* **client-electron:** use buffer size from entry in viewer ([9a817d8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/9a817d852fa85af94194c2e236e604e4b25a1cac))
+* **core:** apply stricter constraints on grid fragment ([8e7eb28](https://github.com/marcincichocki/breach-protocol-autosolver/commit/8e7eb281a2da060bae956bc01fa521dbd2a42454))
+* **core:** recognize up to 7 daemons ([90448c7](https://github.com/marcincichocki/breach-protocol-autosolver/commit/90448c76d4fd8016223698db4c6eeddd74c6ad4d))
+
 ## [2.6.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.5.0...v2.6.0) (2022-09-22)
 
 
