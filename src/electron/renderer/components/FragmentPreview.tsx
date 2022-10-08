@@ -63,5 +63,5 @@ export const FragmentPreview = (props: FragmentPreviewProps) => {
     });
   }, [props.image, props.showBoxes]);
 
-  return <canvas ref={ref} style={{ alignSelf: 'flex-start' }} />;
+  return <canvas ref={ref} />;
 };
