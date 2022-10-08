@@ -13,6 +13,12 @@ import { Daemon, Sequence } from './sequence';
 export const BUFFER_SIZE_MIN = 4;
 export const BUFFER_SIZE_MAX = 9;
 
+export const DAEMONS_SIZE_MIN = 1;
+export const DAEMONS_SIZE_MAX = 7;
+
+export const DAEMON_SIZE_MIN = 2;
+export const DAEMON_SIZE_MAX = 6;
+
 export const GRID_SIZE_MIN = 4;
 export const GRID_SIZE_MAX = 7;
 

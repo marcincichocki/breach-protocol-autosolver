@@ -1,5 +1,11 @@
 import { Point } from '@/common';
-import { DaemonsRawData } from '../../common';
+import {
+  DaemonsRawData,
+  DAEMONS_SIZE_MAX,
+  DAEMONS_SIZE_MIN,
+  DAEMON_SIZE_MAX,
+  DAEMON_SIZE_MIN,
+} from '../../common';
 import {
   BreachProtocolCodeFragment,
   BreachProtocolFragmentResult,
@@ -29,8 +35,8 @@ export class BreachProtocolDaemonsFragment<
   readonly p1 = new Point(0.42, 0.312);
 
   readonly p2 = new Point(
-    0.59,
-    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.6
+    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.664 : 0.59,
+    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.729
   );
 
   readonly boundingBox = this.getFragmentBoundingBox();
@@ -47,11 +53,23 @@ export class BreachProtocolDaemonsFragment<
   }
 
   private isCorrectSize(rawData: DaemonsRawData) {
-    return rawData.every(({ length }) => length >= 2 && length <= 6);
+    if (
+      rawData.length < DAEMONS_SIZE_MIN ||
+      rawData.length > DAEMONS_SIZE_MAX
+    ) {
+      return false;
+    }
+
+    return !rawData.some(
+      ({ length }) => length < DAEMON_SIZE_MIN || length > DAEMON_SIZE_MAX
+    );
   }
 
   getStatus(rawData: DaemonsRawData) {
-    if (!this.isCorrectSize(rawData)) {
+    if (
+      !this.options.extendedDaemonsAndTypesRecognitionRange &&
+      !this.isCorrectSize(rawData)
+    ) {
       return FragmentStatus.InvalidSize;
     }
 

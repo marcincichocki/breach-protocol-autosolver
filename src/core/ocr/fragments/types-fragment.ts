@@ -1,5 +1,10 @@
 import { Point, similarity, unique } from '@/common';
-import { DaemonId, TypesRawData } from '../../common';
+import {
+  DaemonId,
+  DAEMONS_SIZE_MAX,
+  DAEMONS_SIZE_MIN,
+  TypesRawData,
+} from '../../common';
 import {
   DAEMON_DATAMINE_V1,
   DAEMON_DATAMINE_V2,
@@ -24,10 +29,10 @@ export class BreachProtocolTypesFragment<
   TImage
 > extends BreachProtocolOCRFragment<TypesRawData, TImage, FragmentId.Types> {
   readonly id = FragmentId.Types;
-  readonly p1 = new Point(0.679, 0.312);
+  readonly p1 = new Point(0.664, 0.312);
   readonly p2 = new Point(
     0.963,
-    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.6
+    this.options.extendedDaemonsAndTypesRecognitionRange ? 0.847 : 0.729
   );
 
   readonly boundingBox = this.getFragmentBoundingBox();
@@ -105,7 +110,10 @@ export class BreachProtocolTypesFragment<
       return FragmentStatus.InvalidSymbols;
     }
 
-    if (!rawData.length || rawData.length > 5) {
+    if (
+      !this.options.extendedDaemonsAndTypesRecognitionRange &&
+      (rawData.length < DAEMONS_SIZE_MIN || rawData.length > DAEMONS_SIZE_MAX)
+    ) {
       return FragmentStatus.InvalidSize;
     }
 
