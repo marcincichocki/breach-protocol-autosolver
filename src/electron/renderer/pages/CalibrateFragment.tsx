@@ -221,8 +221,8 @@ export const CalibrateFragment = () => {
           grow
           scroll
           style={{
-            justifyContent: loading ? 'center' : 'flex-start',
-            alignItems: 'center',
+            justifyContent: loading ? 'center' : 'initial',
+            alignItems: loading ? 'center' : 'initial',
           }}
         >
           {loading ? (
