@@ -11,12 +11,13 @@ import {
   BreachProtocolDaemonsFragment,
   BreachProtocolFragmentOptions,
   BreachProtocolGridFragment,
+  BreachProtocolRawData,
   BreachProtocolResultJSON,
   BreachProtocolTypesFragment,
-  FocusDaemonSequenceCompareStrategy,
-  IndexSequenceCompareStrategy,
-  SequenceCompareStrategy,
+  FocusHierarchyProvider,
+  IndexHierarchyProvider,
 } from '@/core';
+import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
 import {
   Action,
   ActionTypes,
@@ -196,12 +197,14 @@ export class BreachProtocolWorker {
     event.sender.send('main:async-response', res);
   }
 
-  private getAutosolver(compareStrategy?: SequenceCompareStrategy) {
+  private getAutosolver(
+    hierarchyProvider?: HierarchyProvider<BreachProtocolRawData>
+  ) {
     return new BreachProtocolAutosolver(
       this.settings,
       this.getRobot(),
       this.player,
-      compareStrategy ?? this.getCompareStrategy()
+      hierarchyProvider ?? this.getHierarchyProvider()
     );
   }
 
@@ -230,7 +233,7 @@ export class BreachProtocolWorker {
   }
 
   private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
-    const compareStrategy = this.getCompareStrategy(index);
+    const compareStrategy = this.getHierarchyProvider(index);
     const bpa = this.getAutosolver(compareStrategy);
     const entry = await bpa.solve();
 
@@ -259,12 +262,12 @@ export class BreachProtocolWorker {
     ipc.send('main:focus-renderer');
   }
 
-  private getCompareStrategy(index?: number) {
+  private getHierarchyProvider(index?: number) {
     if (index != null) {
-      return new FocusDaemonSequenceCompareStrategy(index);
+      return new FocusHierarchyProvider(index);
     }
 
-    return new IndexSequenceCompareStrategy();
+    return new IndexHierarchyProvider();
   }
 
   private onStateChanged(

@@ -1,0 +1,20 @@
+import { BreachProtocolRawData } from "@/core/common";
+import { HierarchyProvider } from "./hierarchy-provider";
+import { IndexHierarchyProvider } from "./index-hierarchy-provider";
+
+export class FocusHierarchyProvider
+extends IndexHierarchyProvider 
+  implements HierarchyProvider<BreachProtocolRawData>
+{
+  constructor(private readonly focusedDaemonIndex: number) {
+    super();
+  }
+
+  override provide(rawData: BreachProtocolRawData) {
+      const hierarchy = super.provide(rawData);
+
+      hierarchy[this.focusedDaemonIndex] = hierarchy.length;
+
+      return hierarchy;
+  }
+}

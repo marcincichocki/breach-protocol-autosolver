@@ -10,12 +10,12 @@ import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import {
   BreachProtocol,
   breachProtocolOCR,
+  BreachProtocolRawData,
   BreachProtocolRecognitionResult,
   BreachProtocolResultJSON,
   BufferSize,
-  FragmentId,
-  SequenceCompareStrategy,
 } from '@/core';
+import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
 import {
   AnalysisInput,
   AppSettings,
@@ -52,7 +52,7 @@ export class BreachProtocolAutosolver {
     private readonly settings: AppSettings,
     private readonly robot: BreachProtocolRobot,
     private readonly player: BreachProtocolSoundPlayer,
-    private readonly compareStrategy: SequenceCompareStrategy
+    private readonly hierarchyProvider: HierarchyProvider<BreachProtocolRawData>
   ) {}
 
   toHistoryEntry(): HistoryEntry {
@@ -109,7 +109,7 @@ export class BreachProtocolAutosolver {
 
     this.game = new BreachProtocol(rawData, {
       strategy: this.settings.strategy,
-      compare: this.compareStrategy,
+      hierarchyProvider: this.hierarchyProvider,
     });
 
     this.progress.add(BreachProtocolSolveProgress.FragmentsValid);
@@ -212,7 +212,9 @@ export class BreachProtocolAutosolver {
     const bool = this.progress.has(BreachProtocolSolveProgress.FragmentsValid);
 
     return {
-      sequences: bool ? this.game.sequences.map((s) => s.toJSON()) : null,
+      // FIXME: validate if this is ok to remove
+      // sequences: bool ? this.game.sequences.map((s) => s.toJSON()) : null,
+      sequences: null as any,
     };
   }
 
