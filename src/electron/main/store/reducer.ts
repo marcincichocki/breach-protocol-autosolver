@@ -64,7 +64,7 @@ function getStatsFromHistoryEntry(
     }
 
     daemonsCount += daemonsSize;
-    daemonsSolvedCount += result.sequence.parts.length;
+    daemonsSolvedCount += result.resolvedSequence.parts.length;
   } else {
     countErrorSession += 1;
     countError += 1;
