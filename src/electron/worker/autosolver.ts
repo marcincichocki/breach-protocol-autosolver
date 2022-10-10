@@ -80,7 +80,7 @@ export class BreachProtocolAutosolver {
           .filter(Boolean)
           .map((r) => r.toJSON())
           // This filter does not guarantee that shortest sequence will be preserved.
-          .filter(uniqueWith((r) => r.sequence.parts.sort().join('')))
+          .filter(uniqueWith((r) => r.resolvedSequence.parts.sort().join('')))
       : [];
   }
 

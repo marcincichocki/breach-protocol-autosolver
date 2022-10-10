@@ -92,7 +92,7 @@ export const SelectSequence = () => {
                 <span key={i}>{s}</span>
               ))}
               <Spacer />
-              {r.sequence.parts.length}/{daemons.length}
+              {r.resolvedSequence.parts.length}/{daemons.length}
             </Sequence>
           ))}
         </SequenceList>
