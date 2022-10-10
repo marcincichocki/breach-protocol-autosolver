@@ -99,9 +99,7 @@ export class BreachProtocolResult implements Serializable {
   private getResolvedSequenceParts(tValue: string) {
     if (tValue !== this.sequence.tValue) {
       // In rare cases, daemons can be solved by accident.
-      // This can happen when sequence is delayed on break.
-      // It is important to find those daemons, and mark them as
-      // solved so that ui does reflect it.
+      // This can happen when daemon is is delayed on a sequence break.
       const pts = this.sequence.parts.map(({ tValue }) => tValue);
 
       return this.game.rawData.daemons
