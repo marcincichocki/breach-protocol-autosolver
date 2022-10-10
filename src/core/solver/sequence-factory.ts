@@ -1,29 +1,40 @@
 import { uniqueBy } from '@/common';
-import { CombinationStore } from './combination-store';
 import { BreachProtocolRawData, toHex } from '../common';
-import { HierarchyProvider } from './hierarchy/hierarchy-provider';
+import { CombinationStore } from './combination-store';
 import { Daemon } from './daemon';
 import { memoizedFindOverlap } from './overlap';
 import { Sequence } from './sequence';
 
+interface SequenceFactoryOptions {
+  /** Hierarchy of daemons that will be used to sort sequences. */
+  hierarchy: number[];
+
+  /**
+   * Determines if sequences are emitted immediately, or wait for their
+   * permutation cycle to complete. If that is the case, before emitting they
+   * will be sorted from the shortest sequence to the longest.
+   */
+  immediate?: boolean;
+}
+
+/** Creates sequences lazily from raw data, according to given hierarchy. */
 export class SequenceFactory {
-  private readonly daemons = this.parse();
-
-  private readonly done = new Set<string>();
-
-  private readonly store = new CombinationStore(
-    this.provider.provide(this.rawData)
-  );
+  private readonly daemons = Daemon.parse(this.rawData.daemons);
+  private readonly registry = new Set<string>();
+  private readonly store = new CombinationStore(this.options.hierarchy);
 
   constructor(
     private readonly rawData: BreachProtocolRawData,
-    private readonly provider: HierarchyProvider<BreachProtocolRawData>
+    private readonly options: SequenceFactoryOptions
   ) {}
 
-  *getSequence() {
+  *getSequences() {
+    this.registry.clear();
+
     let { max } = this.store;
 
     while (max--) {
+      const sequences: Sequence[] = [];
       const combination = this.store.getCombination(max + 1);
       const daemons = combination
         .map((index) => this.daemons[index])
@@ -46,18 +57,27 @@ export class SequenceFactory {
           }
         }
 
-        if (this.done.has(tValue)) {
+        if (this.registry.has(tValue)) {
           continue;
         }
 
-        this.done.add(tValue);
+        this.registry.add(tValue);
 
         const value = tValue.split('').map(toHex);
         const parts = permutation
           .flatMap((d) => d.getParts())
           .filter(uniqueBy('index'));
+        const sequence = new Sequence(value, parts);
 
-        yield new Sequence(value, parts);
+        if (this.options.immediate) {
+          yield sequence;
+        } else {
+          sequences.push(sequence);
+        }
+      }
+
+      if (!this.options.immediate) {
+        yield* sequences.sort(this.byLength);
       }
     }
   }
@@ -88,27 +108,6 @@ export class SequenceFactory {
     }
   }
 
-  private parse() {
-    const daemons = this.rawData.daemons.map((d, i) => new Daemon(d, i));
-
-    for (let i = 0; i < daemons.length; i++) {
-      const d1 = daemons[i];
-
-      for (let j = 0; j < daemons.length; j++) {
-        if (i === j) {
-          continue;
-        }
-
-        const d2 = daemons[j];
-
-        // Prevent marking child as a parent.
-        if (d1.tValue.includes(d2.tValue) && !d1.isChild) {
-          d1.addChild(d2);
-          d2.setParent(d1);
-        }
-      }
-    }
-
-    return daemons;
-  }
+  private readonly byLength = (s1: Sequence, s2: Sequence) =>
+    s1.length - s2.length;
 }

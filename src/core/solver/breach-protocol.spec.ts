@@ -44,7 +44,7 @@ describe('Breach protocol solve', () => {
     const bufferSize = 5;
     const g1 = new BreachProtocol({ grid, bufferSize, daemons: [] }, options);
     const results = [
-      // case 1) all symbols are accesible from the start.
+      // case 1) all symbols are accessible from the start.
       ['55', '55', 'E9'],
       // case 2) one or more symbols are not in chain, but fallback values
       // contain starting value of sequence.
@@ -54,7 +54,7 @@ describe('Breach protocol solve', () => {
       // out of buffer.
       ['E9', '55', '55'],
     ].map((s: DaemonRawData) =>
-      g1.solveForSequence(new Sequence(s, [new Daemon(s, 0)]))
+      g1.solveForSequence(new Sequence(s, Daemon.parse([s])))
     );
 
     results.forEach((result) => {
@@ -63,8 +63,8 @@ describe('Breach protocol solve', () => {
     });
   });
 
-  fit.each(['bfs', 'dfs'] as BreachProtocolStrategy[])(
-    'should find best sequences and solve BPs from raw data',
+  it.each(['bfs', 'dfs'] as BreachProtocolStrategy[])(
+    'should find best sequences and solve breach protocols from raw data',
     (strategy) => {
       testData.forEach((rawData) => {
         const game = new BreachProtocol(rawData, {
@@ -92,10 +92,11 @@ describe('Breach protocol solve', () => {
       ['1C', '55'],
     ];
     const bufferSize: BufferSize = 7;
+    const s1 = new Sequence(['55', '1C', '55'], Daemon.parse(daemons));
     const result = new BreachProtocol(
       { grid, daemons, bufferSize },
       options
-    ).solve();
+    ).solveForSequence(s1);
 
     expect(result.path.length).toBeLessThan(result.rawPath.length);
     expect(result.path).not.toEqual(result.rawPath);
@@ -112,88 +113,90 @@ describe('Breach protocol solve', () => {
       '55', '1C', '55', '1C', 'E9',
     ]
 
-    // it('should not use force exit when BP exits automatically', () => {
-    //   const bufferSize = 4;
-    //   const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
-    //   const [p1] = parseDaemons(daemons);
-    //   const s1 = Sequence.fromPermutation(p1);
-    //   const result = new BreachProtocol(
-    //     {
-    //       grid,
-    //       bufferSize,
-    //       daemons,
-    //     },
-    //     options
-    //   ).solveForSequence(s1);
+    it('should not use force exit when BP exits automatically', () => {
+      const bufferSize = 4;
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
+      const s1 = new Sequence(['55', 'BD', 'BD', '1C'], Daemon.parse(daemons));
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
-    //   expect(result.exitStrategy).toEqual({
-    //     willExit: true,
-    //     shouldForceClose: false,
-    //   });
-    // });
+      expect(result.exitStrategy).toEqual({
+        willExit: true,
+        shouldForceClose: false,
+      });
+    });
 
-    // it('should exit when BP is completed', () => {
-    //   const bufferSize = 5;
-    //   const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
-    //   const [p1] = parseDaemons(daemons);
-    //   const s1 = Sequence.fromPermutation(p1);
-    //   const result = new BreachProtocol(
-    //     {
-    //       grid,
-    //       bufferSize,
-    //       daemons,
-    //     },
-    //     options
-    //   ).solveForSequence(s1);
+    it('should exit when BP is completed', () => {
+      const bufferSize = 5;
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C']];
+      const s1 = new Sequence(['55', 'BD', 'BD', '1C'], Daemon.parse(daemons));
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
-    //   expect(result.exitStrategy).toEqual({
-    //     willExit: false,
-    //     shouldForceClose: false,
-    //   });
-    // });
+      expect(result.exitStrategy).toEqual({
+        willExit: false,
+        shouldForceClose: false,
+      });
+    });
 
-    // it('should force exit if leftover damon fit buffer', () => {
-    //   const bufferSize = 5;
-    //   const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C'], ['7A']];
-    //   const [p1] = parseDaemons(daemons);
-    //   const s1 = Sequence.fromPermutation(p1.slice(0, 2));
-    //   const result = new BreachProtocol(
-    //     {
-    //       grid,
-    //       bufferSize,
-    //       daemons,
-    //     },
-    //     options
-    //   ).solveForSequence(s1);
+    it('should force exit if leftover daemon fit buffer', () => {
+      const bufferSize = 5;
+      const daemons: DaemonsRawData = [['55', 'BD', 'BD'], ['1C'], ['7A']];
+      const s1 = new Sequence(
+        ['55', 'BD', 'BD', '1C'],
+        Daemon.parse(daemons).filter(({ index }) => index !== 2)
+      );
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
-    //   expect(result.exitStrategy).toEqual({
-    //     willExit: false,
-    //     shouldForceClose: true,
-    //   });
-    // });
+      expect(result.exitStrategy).toEqual({
+        willExit: false,
+        shouldForceClose: true,
+      });
+    });
 
-    // it('should force exit if leftover daemon overlap with sequence and fit buffer', () => {
-    //   const bufferSize = 5;
-    //   const daemons: DaemonsRawData = [
-    //     ['55', 'BD', 'BD', '1C'],
-    //     ['1C', '7A'],
-    //   ];
-    //   const [p1] = parseDaemons(daemons);
-    //   const s1 = Sequence.fromPermutation(p1.slice(0, 1));
-    //   const result = new BreachProtocol(
-    //     {
-    //       grid,
-    //       bufferSize,
-    //       daemons,
-    //     },
-    //     options
-    //   ).solveForSequence(s1);
+    it('should force exit if leftover daemon overlap with sequence and fit buffer', () => {
+      const bufferSize = 5;
+      const daemons: DaemonsRawData = [
+        ['55', 'BD', 'BD', '1C'],
+        ['1C', '7A'],
+      ];
+      const s1 = new Sequence(
+        ['55', 'BD', 'BD', '1C'],
+        Daemon.parse(daemons).filter(({ index }) => index !== 1)
+      );
+      const result = new BreachProtocol(
+        {
+          grid,
+          bufferSize,
+          daemons,
+        },
+        options
+      ).solveForSequence(s1);
 
-    //   expect(result.exitStrategy).toEqual({
-    //     willExit: false,
-    //     shouldForceClose: true,
-    //   });
-    // });
+      expect(result.exitStrategy).toEqual({
+        willExit: false,
+        shouldForceClose: true,
+      });
+    });
   });
 });
 

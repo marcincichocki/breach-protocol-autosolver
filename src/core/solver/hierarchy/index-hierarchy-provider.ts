@@ -1,6 +1,7 @@
 import { BreachProtocolRawData } from '@/core/common';
 import { HierarchyProvider } from './hierarchy-provider';
 
+/** Marks each daemon with its index. */
 export class IndexHierarchyProvider
   implements HierarchyProvider<BreachProtocolRawData>
 {

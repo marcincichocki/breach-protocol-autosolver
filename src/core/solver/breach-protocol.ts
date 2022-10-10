@@ -119,6 +119,7 @@ export class BreachProtocolResult implements Serializable {
     return new Sequence(value, parts);
   }
 }
+
 export interface BreachProtocolOptions {
   strategy: BreachProtocolStrategy;
   hierarchyProvider: HierarchyProvider<BreachProtocolRawData>;
@@ -153,10 +154,9 @@ export class BreachProtocol {
     fromHex(this.rawData.grid[i])
   );
 
-  private readonly factory = new SequenceFactory(
-    this.rawData,
-    this.options.hierarchyProvider
-  );
+  private readonly factory = new SequenceFactory(this.rawData, {
+    hierarchy: this.options.hierarchyProvider.provide(this.rawData),
+  });
 
   constructor(
     public readonly rawData: BreachProtocolRawData,
@@ -171,13 +171,13 @@ export class BreachProtocol {
 
   /** Solve grid with every sequence. */
   solveAll() {
-    return Array.from(this.factory.getSequence()).map((s) =>
+    return Array.from(this.factory.getSequences()).map((s) =>
       this.solveForSequence(s)
     );
   }
 
   solve() {
-    for (const sequence of this.factory.getSequence()) {
+    for (const sequence of this.factory.getSequences()) {
       const result = this.solveForSequence(sequence);
 
       if (result) {

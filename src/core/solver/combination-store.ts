@@ -11,6 +11,7 @@ export class CombinationStore {
   constructor(size: number);
   constructor(private readonly hierarchyOrSize: number | number[]) {}
 
+  /** Returns indexes of combination for given strength. */
   getCombination(strength: number) {
     if (strength > this.max || strength < 0) {
       throw new Error(`There is no combination of strength ${strength}.`);
@@ -43,7 +44,7 @@ export class CombinationStore {
 
     while (n) {
       const power = 1 << (31 - Math.clz32(n));
-      powers.push(power);
+      powers.unshift(power);
       n -= power;
     }
 
