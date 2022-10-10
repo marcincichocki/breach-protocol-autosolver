@@ -10,15 +10,12 @@ import {
   getUnits,
   ROWS,
   toHex,
-} from './common';
-import { SequenceCompareStrategy } from './compare-strategy';
-import {
-  Daemon,
-  generateSequences,
-  memoizedFindOverlap,
-  Sequence,
-  SequenceJSON,
-} from './sequence';
+} from '../common';
+import { Daemon } from './daemon';
+import { HierarchyProvider } from './hierarchy/hierarchy-provider';
+import { memoizedFindOverlap } from './overlap';
+import { Sequence, SequenceJSON } from './sequence';
+import { SequenceFactory } from './sequence-factory';
 
 export type BreachProtocolResultJSON = {
   path: string[];
@@ -61,9 +58,9 @@ export class BreachProtocolResult implements Serializable {
     const willExit = this.path.length === bufferSize;
 
     // Get daemons that were not used in resolved sequence.
-    // There is no point of finding shorthest daemon,
+    // There is no point of finding shortest daemon,
     // since in very rare cases longer daemon could create
-    // better sequence than its shorther peers(bigger overlap).
+    // better sequence than its shorter peers(bigger overlap).
     const shouldForceClose = daemons
       .filter((d, i) => !this.sequence.indexes.includes(i))
       .some((d) => {
@@ -125,7 +122,7 @@ export class BreachProtocolResult implements Serializable {
 
 export interface BreachProtocolOptions {
   strategy: BreachProtocolStrategy;
-  compare?: SequenceCompareStrategy;
+  hierarchyProvider: HierarchyProvider<BreachProtocolRawData>;
 }
 
 export type BreachProtocolStrategy = 'dfs' | 'bfs';
@@ -157,10 +154,9 @@ export class BreachProtocol {
     fromHex(this.rawData.grid[i])
   );
 
-  public readonly sequences = generateSequences(
-    this.rawData,
-    this.options?.compare
-  );
+  private readonly factory = new SequenceFactory(this.rawData, {
+    hierarchy: this.options.hierarchyProvider.provide(this.rawData),
+  });
 
   constructor(
     public readonly rawData: BreachProtocolRawData,
@@ -174,29 +170,22 @@ export class BreachProtocol {
   }
 
   /** Solve grid with every sequence. */
-  solveAll(sequences: Sequence[] = this.sequences) {
-    return sequences.map((s) => this.solveForSequence(s));
+  solveAll() {
+    return Array.from(this.factory.getSequences()).map((s) =>
+      this.solveForSequence(s)
+    );
   }
 
-  /**
-   * Try to solve current grid with provided sequences or
-   * sequences produced from daemons.
-   *
-   * @param sequences List of sequences to try.
-   */
-  solve(sequences: Sequence[] = this.sequences) {
-    if (!sequences.length) {
-      return null;
+  solve() {
+    for (const sequence of this.factory.getSequences()) {
+      const result = this.solveForSequence(sequence);
+
+      if (result) {
+        return result;
+      }
     }
 
-    let result: BreachProtocolResult;
-    let i = 0;
-
-    do {
-      result = this.solveForSequence(sequences[i]);
-    } while (!result && ++i < sequences.length);
-
-    return result;
+    return null;
   }
 
   private getInitialQueue(sequence: string) {
@@ -230,12 +219,12 @@ export class BreachProtocol {
       return tail;
     }
 
-    // Start from the begining without first value if it matches.
+    // Start from the beginning without first value if it matches.
     if (value === tValue[0]) {
       return tValue.slice(1);
     }
 
-    // Worst case, nothing matches, start from the begining.
+    // Worst case, nothing matches, start from the beginning.
     return tValue;
   }
 

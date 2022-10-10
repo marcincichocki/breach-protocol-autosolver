@@ -1,4 +1,4 @@
-import { getClosest, uniqueBy } from '@/common';
+import { getClosest } from '@/common';
 import * as daemons from './daemons';
 import {
   BreachProtocolBufferSizeFragmentResult,
@@ -8,7 +8,6 @@ import {
   BreachProtocolTypesFragmentResult,
   FragmentId,
 } from './ocr';
-import { Daemon, Sequence } from './sequence';
 
 export const BUFFER_SIZE_MIN = 4;
 export const BUFFER_SIZE_MAX = 9;
@@ -84,28 +83,6 @@ export function generateSquareMap<T>(
   cb: (square?: string, index?: number) => T
 ) {
   return new Map<string, T>(squares.map((s, i) => [s, cb(s, i)]));
-}
-
-/**
- * Filter list of {@link Sequence} by buffer length.
- *
- * ```ts
- * [1, 2, 3]
- *   .map(x => new Sequence(x));
- *   .filter(byBufferSize(4))
- * ```
- *
- * @param bufferSize Length of buffer.
- */
-export function byBufferSize(bufferSize: BufferSize) {
-  return (s: Sequence) => s.value.length <= bufferSize;
-}
-
-/**
- * Get unique list of {@link Sequence} or {@link Daemon} by their value.
- */
-export function byUniqueValue() {
-  return uniqueBy<Sequence | Daemon>('tValue');
 }
 
 export interface BreachProtocolRawData {

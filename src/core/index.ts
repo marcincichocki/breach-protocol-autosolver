@@ -1,6 +1,13 @@
 export * from './common';
-export * from './compare-strategy';
 export * from './daemons-i18n';
-export * from './game';
 export * from './ocr';
-export * from './sequence';
+export {
+  BreachProtocol,
+  BreachProtocolOptions,
+  BreachProtocolResultJSON,
+  BreachProtocolStrategy,
+} from './solver/breach-protocol';
+export { FocusHierarchyProvider } from './solver/hierarchy/focus-hierarchy-provider';
+export { HierarchyProvider } from './solver/hierarchy/hierarchy-provider';
+export { IndexHierarchyProvider } from './solver/hierarchy/index-hierarchy-provider';
+export { SequenceJSON } from './solver/sequence';
