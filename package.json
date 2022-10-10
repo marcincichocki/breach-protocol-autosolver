@@ -136,7 +136,7 @@
     "is-wsl": "^2.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.1",
+    "react-router-dom": "^6.4.2",
     "sanitize-filename": "^1.6.3",
     "screenshot-desktop": "^1.12.7",
     "sharp": "^0.31.1",
