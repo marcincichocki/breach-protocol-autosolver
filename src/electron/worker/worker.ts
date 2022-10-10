@@ -233,8 +233,8 @@ export class BreachProtocolWorker {
   }
 
   private async onWorkerSolve(e: IpcRendererEvent, index?: number) {
-    const compareStrategy = this.getHierarchyProvider(index);
-    const bpa = this.getAutosolver(compareStrategy);
+    const hierarchyProvider = this.getHierarchyProvider(index);
+    const bpa = this.getAutosolver(hierarchyProvider);
     const entry = await bpa.solve();
 
     if (
