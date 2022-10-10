@@ -14,7 +14,7 @@ export class FocusHierarchyProvider
   override provide(rawData: BreachProtocolRawData) {
     const hierarchy = super.provide(rawData);
 
-    hierarchy[this.focusedDaemonIndex] = hierarchy.length;
+    hierarchy[this.focusedDaemonIndex] = Number.POSITIVE_INFINITY;
 
     return hierarchy;
   }
