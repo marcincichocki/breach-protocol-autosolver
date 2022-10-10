@@ -28,22 +28,6 @@ export function uniqueWith<T, R>(fn: (obj: T) => R) {
   };
 }
 
-export function groupBy<T>(data: T[], callback: (item: T) => any) {
-  const group: Record<string, T[]> = {};
-
-  for (const item of data) {
-    const key = callback(item);
-
-    if (!group[key]) {
-      group[key] = [item];
-    } else {
-      group[key].push(item);
-    }
-  }
-
-  return group;
-}
-
 // Simple memo, only use with primitives
 export function memoize<R, T extends (...args: any[]) => R>(fn: T): T {
   const cache = new Map<string, R>();

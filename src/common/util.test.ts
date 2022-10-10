@@ -3,7 +3,6 @@ import {
   capitalize,
   chunk,
   getClosest,
-  groupBy,
   memoize,
   unique,
   uniqueBy,
@@ -89,27 +88,6 @@ describe('utils', () => {
     expect(mask.has(1)).toBe(true);
     expect(mask.has(2)).toBe(true);
     expect(mask.has(4)).toBe(false);
-  });
-
-  it('should group elements by value', () => {
-    const data = [
-      { key: 'bug', value: 99 },
-      { key: 'feature', value: 18 },
-      { key: 'bug', value: 7 },
-      { key: 'feature', value: 42 },
-    ];
-    const group = groupBy(data, (item) => item.key);
-
-    expect(group).toEqual({
-      bug: [
-        { key: 'bug', value: 99 },
-        { key: 'bug', value: 7 },
-      ],
-      feature: [
-        { key: 'feature', value: 18 },
-        { key: 'feature', value: 42 },
-      ],
-    });
   });
 
   it('should capitalize string', () => {
