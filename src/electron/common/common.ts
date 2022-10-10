@@ -10,7 +10,6 @@ import type {
   BreachProtocolOptions,
   BreachProtocolResultJSON,
   FragmentId,
-  SequenceJSON,
 } from '@/core';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import type { SoundPlayerConfig } from '../worker/sound-player';
@@ -45,7 +44,6 @@ export interface HistoryEntry {
   fileName: string;
   settings: AppSettings;
   fragments: BreachProtocolFragmentResults;
-  sequences: SequenceJSON[];
   result: BreachProtocolResultJSON;
 }
 

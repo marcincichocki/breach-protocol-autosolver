@@ -14,8 +14,8 @@ import {
   BreachProtocolRecognitionResult,
   BreachProtocolResultJSON,
   BufferSize,
+  HierarchyProvider,
 } from '@/core';
-import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
 import {
   AnalysisInput,
   AppSettings,
@@ -58,7 +58,6 @@ export class BreachProtocolAutosolver {
   toHistoryEntry(): HistoryEntry {
     return {
       ...this.getBaseState(),
-      ...this.getFragmentsValidState(),
       ...this.getSolutionFoundState(),
     };
   }
@@ -205,16 +204,6 @@ export class BreachProtocolAutosolver {
       fileName: this.fileName,
       fragments: this.recognitionResult.results,
       settings: this.settings,
-    };
-  }
-
-  private getFragmentsValidState() {
-    const bool = this.progress.has(BreachProtocolSolveProgress.FragmentsValid);
-
-    return {
-      // FIXME: validate if this is ok to remove
-      // sequences: bool ? this.game.sequences.map((s) => s.toJSON()) : null,
-      sequences: null as any,
     };
   }
 
