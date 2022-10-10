@@ -89,6 +89,16 @@ export const options: BreachProtocolOption[] = [
     defaultValue: 'Alt+5',
   },
   {
+    id: 'keyBindWithPriority6',
+    description: 'Solve breach protocol(prioritize sixth daemon).',
+    defaultValue: 'Alt+6',
+  },
+  {
+    id: 'keyBindWithPriority7',
+    description: 'Solve breach protocol(prioritize seventh daemon).',
+    defaultValue: 'Alt+7',
+  },
+  {
     id: 'keyBindAnalyze',
     description: 'Analyze breach protocol and display available sequences.',
     defaultValue: 'CommandOrControl+`',

@@ -118,6 +118,24 @@ export const KeyBindsSettings = ({ status }: { status: WorkerStatus }) => {
           onBeforeValueChange={validateKeyBind}
         />
       </Field>
+      <Field name="keyBindWithPriority6" onValueChange={changeKeyBind}>
+        <Label>Solve with priority 6</Label>
+        <AcceleratorKeyBind
+          allowRemove
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onBeforeValueChange={validateKeyBind}
+        />
+      </Field>
+      <Field name="keyBindWithPriority7" onValueChange={changeKeyBind}>
+        <Label>Solve with priority 7</Label>
+        <AcceleratorKeyBind
+          allowRemove
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onBeforeValueChange={validateKeyBind}
+        />
+      </Field>
       <Field name="keyBindAnalyze" onValueChange={changeKeyBind}>
         <Label>Analyze</Label>
         <AcceleratorKeyBind
