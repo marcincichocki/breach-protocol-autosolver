@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    ignore:
+      - dependency-name: 'electron'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'tesseract.js'
+        update-types: ['version-update:semver-major']
