@@ -13,6 +13,7 @@ import {
 } from './common';
 import { SequenceCompareStrategy } from './compare-strategy';
 import {
+  Daemon,
   generateSequences,
   memoizedFindOverlap,
   Sequence,
@@ -95,11 +96,32 @@ export class BreachProtocolResult implements Serializable {
     return Math.max(...indexes);
   }
 
+  private getResolvedSequenceParts(tValue: string) {
+    if (tValue !== this.sequence.tValue) {
+      // In rare cases, daemons can be solved by accident.
+      // This can happen when sequence is delayed on break.
+      // It is important to find those daemons, and mark them as
+      // solved so that ui does reflect it.
+      const pts = this.sequence.parts.map(({ tValue }) => tValue);
+
+      return this.game.rawData.daemons
+        .map((raw, index) => ({ dt: raw.map(fromHex).join(''), index }))
+        .filter(({ dt }) => !pts.includes(dt))
+        .filter(({ dt }) => tValue.includes(dt))
+        .map(({ dt, index }) => new Daemon(dt.split('').map(toHex), index))
+        .concat(this.sequence.parts);
+    }
+
+    return this.sequence.parts;
+  }
+
   // Produces sequence from resolved path.
   private getResolvedSequence() {
-    const value = this.resolvePath(this.path).map(toHex);
+    const tValue = this.resolvePath(this.path).join('');
+    const value = tValue.split('').map(toHex);
+    const parts = this.getResolvedSequenceParts(tValue);
 
-    return new Sequence(value, this.sequence.parts);
+    return new Sequence(value, parts);
   }
 }
 
