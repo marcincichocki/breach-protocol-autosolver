@@ -6,6 +6,7 @@ import {
   HEX_CODES,
 } from '@/core';
 import {
+  BreachProtocolStatus,
   HistoryEntry,
   TestThresholdData,
   UpdateSettingsAction,
@@ -29,6 +30,7 @@ import {
   Switch,
   useField,
 } from '../components';
+import { Warning } from '../components/Warning';
 
 const Title = styled.h3`
   color: var(--primary);
@@ -42,10 +44,6 @@ const Title = styled.h3`
 interface CalibrateFormValues {
   showBoxes: boolean;
   testThreshold: number;
-}
-
-interface CalibrateFragmentProps {
-  entry: HistoryEntry;
 }
 
 const ThresholdUpdater = ({
@@ -118,8 +116,46 @@ const hexCodeValidator: JSONValidator = (value) => {
   return true;
 };
 
+const CalibrateWarning = styled(
+  ({ entry, className }: { entry: HistoryEntry; className?: string }) => {
+    return (
+      <Warning
+        className={className}
+        title={<Warning.Title>Source file does not exist</Warning.Title>}
+        body={
+          <Warning.Body>
+            <>Calibration is not possible without the source file. </>
+            {entry.status === BreachProtocolStatus.Resolved &&
+            !entry.settings.preserveSourceOnSuccess ? (
+              <>
+                It wasn't saved for this entry. You can change this in the{' '}
+                <Warning.Link setting="preserveSourceOnSuccess">
+                  settings
+                </Warning.Link>
+                .
+              </>
+            ) : (
+              <>It was renamed or deleted.</>
+            )}
+          </Warning.Body>
+        }
+      />
+    );
+  }
+)`
+  align-items: flex-end;
+  max-width: 50%;
+  text-align: right;
+`;
+
+interface CalibrateOuletContext {
+  entry: HistoryEntry;
+  ready: boolean;
+  hasSource: boolean;
+}
+
 export const CalibrateFragment = () => {
-  const entry = useOutletContext<HistoryEntry>();
+  const { entry, ready, hasSource } = useOutletContext<CalibrateOuletContext>();
   const { fragmentId } = useParams<{ fragmentId: FragmentId }>();
   const FragmentJSONTree = FragmentJSONTrees[fragmentId];
   const { fileName } = entry;
@@ -188,32 +224,40 @@ export const CalibrateFragment = () => {
             </RawDataStatusMessage>
           </FragmentJSONTree>
         </Col>
-        <Form<CalibrateFormValues>
-          initialValues={{ showBoxes, testThreshold }}
-          onSubmit={handleSubmit}
-        >
-          <Field name="showBoxes" onValueChange={setShowBoxes}>
-            <Label>Show boxes</Label>
-            <Switch disabled={isBufferSize} />
-          </Field>
-          <Field name="testThreshold" onValueChange={onTestThreshold}>
-            <Label>Test threshold</Label>
-            <RangeSlider
-              min={0}
-              max={255}
-              disabled={loading || isExperimental}
-            />
-            <ThresholdUpdater threshold={testThreshold} />
-          </Field>
-          <FlatButton
-            type="submit"
-            disabled={!testResult.isValid || loading || isExperimental}
-            color="accent"
-            style={{ alignSelf: 'flex-end' }}
-          >
-            Update {fromCamelCase(fragmentId)} threshold
-          </FlatButton>
-        </Form>
+        <Row style={{ justifyContent: 'flex-end' }}>
+          {hasSource ? (
+            <Form<CalibrateFormValues>
+              initialValues={{ showBoxes, testThreshold }}
+              onSubmit={handleSubmit}
+            >
+              <Field name="showBoxes" onValueChange={setShowBoxes}>
+                <Label>Show boxes</Label>
+                <Switch disabled={!ready || isBufferSize} />
+              </Field>
+              <Field name="testThreshold" onValueChange={onTestThreshold}>
+                <Label>Test threshold</Label>
+                <RangeSlider
+                  min={0}
+                  max={255}
+                  disabled={!ready || loading || isExperimental}
+                />
+                <ThresholdUpdater threshold={testThreshold} />
+              </Field>
+              <FlatButton
+                type="submit"
+                disabled={
+                  !ready || !testResult.isValid || loading || isExperimental
+                }
+                color="accent"
+                style={{ alignSelf: 'flex-end' }}
+              >
+                Update {fromCamelCase(fragmentId)} threshold
+              </FlatButton>
+            </Form>
+          ) : (
+            <CalibrateWarning entry={entry} />
+          )}
+        </Row>
       </Col>
       <Col style={{ width: '600px', flexShrink: 0 }}>
         <Title>Fragment preview</Title>
@@ -228,11 +272,13 @@ export const CalibrateFragment = () => {
           {loading ? (
             <Spinner />
           ) : (
-            <FragmentPreview
-              image={testResult.image}
-              boxes={testResult.source?.boxes}
-              showBoxes={showBoxes}
-            />
+            <>
+              <FragmentPreview
+                image={testResult.image}
+                boxes={testResult.source?.boxes}
+                showBoxes={showBoxes}
+              />
+            </>
           )}
         </Col>
       </Col>
