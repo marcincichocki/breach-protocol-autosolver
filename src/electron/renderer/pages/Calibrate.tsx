@@ -7,7 +7,8 @@ import {
   transformTimestamp,
   useHistoryEntryFromParam,
 } from '../common';
-import { Col, NavLink, Row, Spacer } from '../components';
+import { Col, Row } from '../components';
+import { useNavigation } from '../router-ext';
 
 const Heading = styled.h1`
   font-size: 2rem;
@@ -34,18 +35,17 @@ export const Calibrate = () => {
 
   if (!entry) return null;
 
+  const items = entry.fragments.map(({ id }) => ({
+    to: `/calibrate/${entry.uuid}/${id}`,
+    label: fromCamelCase(id),
+  }));
+  useNavigation({ items, from: `/history/${entry.uuid}` });
   useContainerInit(entry.fileName);
   const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
     <Col grow>
       <Row style={{ gap: '2rem' }}>
-        {entry.fragments.map((f) => (
-          <NavLink key={f.id} to={f.id}>
-            {fromCamelCase(f.id)}
-          </NavLink>
-        ))}
-        <Spacer />
         <Heading>
           {time} - {distance}
         </Heading>

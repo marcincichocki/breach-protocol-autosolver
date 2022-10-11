@@ -24,6 +24,7 @@ const BufferSizeWrapper = styled.div`
   width: calc(${getBufferSizeWrapperWidth()});
   overflow-x: auto;
   cursor: default;
+  flex-shrink: 0;
 `;
 
 const BufferSizeItem = styled(Square)`

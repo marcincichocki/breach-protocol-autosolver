@@ -7,13 +7,13 @@ import {
 import styled from 'styled-components';
 import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
+import { Only } from './Only';
 
 const DaemonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   overflow-y: auto;
-  flex: 1;
   cursor: default;
 `;
 
@@ -76,7 +76,9 @@ export const DaemonsViewer = ({
             }
             onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
-            {types?.isValid && <DaemonType>{eng[types.rawData[i]]}</DaemonType>}
+            <Only when={types?.isValid}>
+              <DaemonType>{eng[types.rawData[i]]}</DaemonType>
+            </Only>
             <DaemonSequence>
               {d.map((s, j) => (
                 <span key={j}>{s}</span>

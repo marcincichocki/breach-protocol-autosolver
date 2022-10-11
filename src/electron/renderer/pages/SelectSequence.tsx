@@ -67,10 +67,6 @@ export const SelectSequence = () => {
     return a === b;
   }
 
-  async function discard() {
-    navigate('/', { replace: true });
-  }
-
   async function resolve() {
     await dispatchAsyncRequest({
       type: 'ANALYZE_RESOLVE',
@@ -97,13 +93,9 @@ export const SelectSequence = () => {
           ))}
         </SequenceList>
       </Col>
-      <Col>
+      <Col gap>
         <HistoryViewer entry={entry} customResult={activeResult} />
-        <Row style={{ marginTop: 'auto' }}>
-          <FlatButton color="primary" onClick={discard} disabled={isWorking}>
-            Discard
-          </FlatButton>
-          <Spacer />
+        <Row style={{ marginTop: 'auto', justifyContent: 'flex-end' }}>
           {fromScreenShot && (
             <FlatButton
               color="accent"
