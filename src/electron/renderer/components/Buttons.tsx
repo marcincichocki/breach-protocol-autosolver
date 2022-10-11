@@ -61,11 +61,14 @@ export const LinkButton = styled.button`
   border: none;
   padding: 0;
   color: var(--accent);
-  text-decoration: underline;
   cursor: pointer;
   font-family: Rajdhani;
   font-size: 1rem;
   font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const ClearButton = styled.button`

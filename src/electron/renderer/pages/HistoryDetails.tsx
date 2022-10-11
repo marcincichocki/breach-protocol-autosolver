@@ -4,10 +4,12 @@ import {
   RemoveHistoryEntryAction,
 } from '@/electron/common';
 import { formatDuration } from 'date-fns';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
+import { Only } from '../components/Only';
 
 const Heading2 = styled.h2`
   color: var(--primary);
@@ -21,6 +23,11 @@ const TextLink = styled(Link)`
   font-size: 1rem;
   color: var(--accent);
   font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const OpenInExplorer = ({ fileName }: { fileName: string }) => {
@@ -49,7 +56,13 @@ const RemoveEntry = ({ entryId }: { entryId: string }) => (
   </LinkButton>
 );
 
-const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
+const HistoryDetailsError = ({
+  entry,
+  hasSource,
+}: {
+  entry: HistoryEntry;
+  hasSource: boolean;
+}) => (
   <Col
     gap
     style={{
@@ -62,7 +75,9 @@ const HistoryDetailsError = ({ entry }: { entry: HistoryEntry }) => (
     <FlatButton color="accent" as={Link} to={`/calibrate/${entry.uuid}/grid`}>
       Recalibrate
     </FlatButton>
-    <OpenInExplorer fileName={entry.fileName} />
+    <Only when={hasSource}>
+      <OpenInExplorer fileName={entry.fileName} />
+    </Only>
     <SaveSnapshot entryId={entry.uuid} />
     <RemoveEntry entryId={entry.uuid} />
   </Col>
@@ -78,8 +93,10 @@ export const HistoryDetails = () => {
 
   if (!entry) return null;
 
+  const hasSource = useMemo(() => api.existsSync(entry.fileName), [entry]);
+
   if (entry.status === BreachProtocolStatus.Rejected) {
-    return <HistoryDetailsError entry={entry} />;
+    return <HistoryDetailsError entry={entry} hasSource={hasSource} />;
   }
 
   const seconds = (entry.finishedAt - entry.startedAt) / 1000;
@@ -93,16 +110,10 @@ export const HistoryDetails = () => {
           <DetailText>Done in {duration}</DetailText>
         </Col>
         <Col style={{ alignItems: 'flex-end' }}>
-          {entry.fileName ? (
-            <>
-              <OpenInExplorer fileName={entry.fileName} />
-              <TextLink to={`/calibrate/${entry.uuid}/grid`}>
-                Recalibrate
-              </TextLink>
-            </>
-          ) : (
-            <DetailText>Source not available</DetailText>
-          )}
+          <Only when={hasSource}>
+            <OpenInExplorer fileName={entry.fileName} />
+          </Only>
+          <TextLink to={`/calibrate/${entry.uuid}/grid`}>Recalibrate</TextLink>
           <SaveSnapshot entryId={entry.uuid} />
           <RemoveEntry entryId={entry.uuid} />
         </Col>

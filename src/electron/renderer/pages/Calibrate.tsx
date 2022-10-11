@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -20,14 +20,27 @@ const Heading = styled.h1`
 `;
 
 function useContainerInit(fileName: string) {
+  const [ready, setReady] = useState(false);
+  const hasSource = useMemo(() => api.existsSync(fileName), [fileName]);
+
   useEffect(() => {
-    // FIXME: tiny race condition. Disable button until fragments are ready.
-    dispatchAsyncRequest({ type: 'TEST_THRESHOLD_INIT', data: fileName });
+    if (hasSource) {
+      dispatchAsyncRequest({
+        type: 'TEST_THRESHOLD_INIT',
+        data: fileName,
+      }).then(() => setReady(true));
+    }
 
     return () => {
-      dispatchAsyncRequest({ type: 'TEST_THRESHOLD_DISPOSE' });
+      if (hasSource) {
+        dispatchAsyncRequest({ type: 'TEST_THRESHOLD_DISPOSE' }).then(() =>
+          setReady(false)
+        );
+      }
     };
   }, []);
+
+  return { ready, hasSource };
 }
 
 export const Calibrate = () => {
@@ -40,7 +53,8 @@ export const Calibrate = () => {
     label: fromCamelCase(id),
   }));
   useNavigation({ items, from: `/history/${entry.uuid}` });
-  useContainerInit(entry.fileName);
+
+  const { ready, hasSource } = useContainerInit(entry.fileName);
   const { time, distance } = transformTimestamp(entry.startedAt);
 
   return (
@@ -50,7 +64,7 @@ export const Calibrate = () => {
           {time} - {distance}
         </Heading>
       </Row>
-      <Outlet context={entry} />
+      <Outlet context={{ entry, ready, hasSource }} />
     </Col>
   );
 };
