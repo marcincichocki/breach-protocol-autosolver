@@ -2,7 +2,7 @@ import { BreachProtocolStatus } from '@/electron/common';
 import { MdClose } from '@react-icons/all-files/md/MdClose';
 import { MdDone } from '@react-icons/all-files/md/MdDone';
 import { useContext } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { transformTimestamp } from '../common';
 import { Col } from '../components';
@@ -89,8 +89,13 @@ const H2 = styled.h2`
 
 export const History = () => {
   const { history } = useContext(StateContext);
+  const { entryId = null } = useParams();
 
   if (!history.length) return <NoHistory />;
+
+  if (!entryId) {
+    return <Navigate to={history[0].uuid} replace />;
+  }
 
   return (
     <HistoryWrapper>

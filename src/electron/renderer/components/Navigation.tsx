@@ -1,9 +1,9 @@
 import { MdKeyboardBackspace } from '@react-icons/all-files/md/MdKeyboardBackspace';
 import { useContext } from 'react';
-import { Link, NavLink as RouterNavLink, useMatch } from 'react-router-dom';
+import { Link, NavLink as RouterNavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { getFirstHistoryEntryPath } from '../common';
-import { StateContext } from '../state';
+import { RouterExtContext } from '../router-ext';
+import { Only } from './Only';
 
 const Nav = styled.nav`
   display: flex;
@@ -36,7 +36,7 @@ export const NavLink = styled(RouterNavLink)`
   }
 `;
 
-const GoBackLink = styled(Link)`
+const NavigateBackLink = styled(Link)`
   color: var(--accent);
   position: absolute;
   top: 50%;
@@ -47,42 +47,22 @@ const GoBackLink = styled(Link)`
 `;
 
 export const Navigation = () => {
-  const match = useMatch('/calibrate/:entryId/*');
-  const isAnalyzePage = useMatch('/analyze/*');
-  const { history } = useContext(StateContext);
-  const historyPath = getFirstHistoryEntryPath(history);
+  const { items, from } = useContext(RouterExtContext);
 
   return (
     <Nav>
-      {match && (
-        <GoBackLink to={`/history/${match.params.entryId}`}>
+      <Only when={!!from}>
+        <NavigateBackLink to={from}>
           <MdKeyboardBackspace size="2rem" />
-        </GoBackLink>
-      )}
-      {isAnalyzePage ? (
-        <List>
-          <ListItem>
-            <NavLink to="/analyze/select">Select sequence</NavLink>
+        </NavigateBackLink>
+      </Only>
+      <List>
+        {items.map((item, index) => (
+          <ListItem key={index}>
+            <NavLink {...item}>{item.label}</NavLink>
           </ListItem>
-          <ListItem>
-            <NavLink to="/analyze/details">Details</NavLink>
-          </ListItem>
-        </List>
-      ) : (
-        <List>
-          <ListItem>
-            <NavLink to="/" end>
-              Dashboard
-            </NavLink>
-          </ListItem>
-          <ListItem>
-            <NavLink to={historyPath}>History</NavLink>
-          </ListItem>
-          <ListItem>
-            <NavLink to="/settings">Settings</NavLink>
-          </ListItem>
-        </List>
-      )}
+        ))}
+      </List>
     </Nav>
   );
 };

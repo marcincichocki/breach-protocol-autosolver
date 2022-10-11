@@ -1,4 +1,4 @@
-import { ActionTypes, AppSettings, State } from '@/electron/common';
+import { ActionTypes, State } from '@/electron/common';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,7 +11,7 @@ import {
   ThirdPartyLicensesDialog,
   TitleBar,
 } from '../components';
-import { RouterExtContext } from '../router-ext';
+import { RouterExt } from '../router-ext';
 
 const Main = styled.main`
   flex-grow: 1;
@@ -51,17 +51,11 @@ function useHashScroll() {
 }
 
 export const Root = () => {
-  const navigate = useNavigate();
-
   useActionRedirect();
   useHashScroll();
 
-  function navigateToSetting(id: keyof AppSettings) {
-    navigate(`/settings#${id}`);
-  }
-
   return (
-    <RouterExtContext.Provider value={{ navigateToSetting }}>
+    <RouterExt>
       <TitleBar />
       <Navigation />
       <Main>
@@ -71,6 +65,6 @@ export const Root = () => {
       <ThirdPartyLicensesDialog />
       <AnalyzeDropZone />
       <StatusBar />
-    </RouterExtContext.Provider>
+    </RouterExt>
   );
 };
