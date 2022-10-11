@@ -11,7 +11,7 @@ import {
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatchAsyncRequest, fromCamelCase } from '../common';
@@ -178,7 +178,7 @@ export const CalibrateFragment = () => {
       ? hexCodeValidator
       : undefined;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTestResult(result);
     setTestThreshold(result.threshold ?? 0);
   }, [fragmentId]);
