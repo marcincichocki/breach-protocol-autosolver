@@ -4,6 +4,7 @@ import {
   DaemonsRawData,
   eng,
 } from '@/core';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
@@ -42,49 +43,85 @@ const Daemon = styled(Col)<{ active: boolean }>`
 `;
 
 interface DaemonsViewerProps {
-  daemons: DaemonsRawData;
+  rawData: DaemonsRawData;
   types?: BreachProtocolTypesFragmentResult;
   result?: BreachProtocolResultJSON;
+  sortDaemonsBySequence?: boolean;
   onHighlight?: (highlight: Highlight) => void;
 }
 
+function useDaemons(
+  rawData: DaemonsRawData,
+  result: BreachProtocolResultJSON,
+  sort: boolean
+) {
+  return useMemo(() => {
+    const rs = result?.resolvedSequence.value.join('');
+    const daemonsWithDetails = rawData.map((raw, index) => {
+      const ds = raw.join('');
+      const from = result && rs.indexOf(ds) / 2;
+      const to = result && from + raw.length - 1;
+
+      return { raw, index, from, to };
+    });
+
+    if (sort) {
+      return daemonsWithDetails.sort((d1, d2) => {
+        if (d2.from < 0) {
+          return -1;
+        }
+
+        if (d1.from < 0) {
+          return 1;
+        }
+
+        const start = d1.from - d2.from;
+        const end = d1.to - d2.to;
+
+        return start || end;
+      });
+    }
+
+    return daemonsWithDetails;
+  }, [rawData, result, sort]);
+}
+
 export const DaemonsViewer = ({
-  daemons,
+  rawData,
   types,
   result,
+  sortDaemonsBySequence,
   onHighlight,
 }: DaemonsViewerProps) => {
   const { parts } = result?.resolvedSequence || {};
-  const s = result?.resolvedSequence.value.join('');
+  const daemons = useDaemons(rawData, result, sortDaemonsBySequence);
 
   return (
-    <DaemonsWrapper>
-      {daemons.map((d, i) => {
-        const ds = d.join('');
-        const from = result && s.indexOf(ds) / 2;
-        const to = result && from + d.length - 1;
-        const active = result && parts.includes(i);
+    <DaemonsWrapper
+      onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+    >
+      {daemons.map(({ raw, index, from, to }) => {
+        const active = result && parts.includes(index);
 
         return (
           <Daemon
-            key={i}
+            key={index}
             active={active}
             onMouseEnter={
               active && onHighlight
                 ? () => onHighlight({ from, to })
                 : undefined
             }
-            onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
           >
             <Only when={types?.isValid}>
-              <DaemonType>{eng[types.rawData[i]]}</DaemonType>
+              <DaemonType>{eng[types.rawData[index]]}</DaemonType>
             </Only>
             <DaemonSequence>
-              {d.map((s, j) => (
-                <span key={j}>{s}</span>
+              {raw.map((s, i) => (
+                <span key={i}>{s}</span>
               ))}
               <Spacer />
-              <span>#{i + 1}</span>
+              <span>#{index + 1}</span>
             </DaemonSequence>
           </Daemon>
         );

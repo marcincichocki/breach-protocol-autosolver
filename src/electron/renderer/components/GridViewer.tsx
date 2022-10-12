@@ -155,26 +155,26 @@ const Line = styled.div<LineProps>`
 `;
 
 interface GridViewerProps {
-  grid: GridRawData;
+  rawData: GridRawData;
   path?: string[];
   highlight?: Highlight;
   hasDaemonAttached: (index: number) => boolean;
 }
 
 export const GridViewer = ({
-  grid,
+  rawData,
   path,
   highlight,
   hasDaemonAttached,
 }: GridViewerProps) => {
   const [spotlight, setSpotlight] = useState(null);
-  const size = Math.sqrt(grid.length);
+  const size = Math.sqrt(rawData.length);
   const squares = cross(ROWS.slice(0, size), COLS.slice(0, size));
 
   return (
     <GridWrapper size={size} onMouseLeave={() => setSpotlight(null)}>
       {squares.map((s, i) => {
-        const value = grid[i];
+        const value = rawData[i];
         const index = path ? path.indexOf(s) : 0;
         const isActive = path && index !== -1;
         const shouldRenderLine = index > 0;
