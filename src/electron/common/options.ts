@@ -105,7 +105,7 @@ export const options: BreachProtocolOption[] = [
   },
   {
     id: 'errorSoundPath',
-    description: 'Sound played when error occured during recognition.',
+    description: 'Sound played when error occurred during recognition.',
     defaultValue:
       BUILD_PLATFORM === 'win32'
         ? 'C:/Windows/Media/Windows Foreground.wav'
@@ -274,6 +274,11 @@ export const options: BreachProtocolOption[] = [
     id: 'strategy',
     description: 'Algorithm that will be used to find path.',
     defaultValue: 'bfs',
+  },
+  {
+    id: 'sortDaemonsBySequence',
+    description: 'Sort daemons in history viewer by order in the sequence.',
+    defaultValue: false,
   },
 ];
 

@@ -47,6 +47,7 @@ function toUniqueValue(result: BreachProtocolResultJSON) {
 export const SelectSequence = () => {
   const {
     analysis: { entry, options, result },
+    settings: { sortDaemonsBySequence },
   } = useContext(StateContext);
   const { status } = useContext(StateContext);
   const [activeResult, setActiveResult] =
@@ -102,7 +103,11 @@ export const SelectSequence = () => {
         </Only>
       </Col>
       <Col gap>
-        <HistoryViewer entry={entry} customResult={activeResult} />
+        <HistoryViewer
+          entry={entry}
+          customResult={activeResult}
+          sortDaemonsBySequence={sortDaemonsBySequence}
+        />
         <Row style={{ marginTop: 'auto', justifyContent: 'flex-end' }}>
           {fromScreenShot && (
             <FlatButton

@@ -37,7 +37,7 @@ const BufferSizeItem = styled(Square)`
 `;
 
 interface BufferSizeViewerProps {
-  bufferSize: number;
+  rawData: number;
   result?: BreachProtocolResultJSON;
   highlight: Highlight;
   hasDaemonAttached: (index: number) => boolean;
@@ -45,7 +45,7 @@ interface BufferSizeViewerProps {
 }
 
 export const BufferSizeViewer = ({
-  bufferSize,
+  rawData,
   result,
   highlight,
   hasDaemonAttached,
@@ -55,7 +55,7 @@ export const BufferSizeViewer = ({
     <BufferSizeWrapper
       onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
     >
-      {Array.from({ length: bufferSize }, (s, i) => {
+      {Array.from({ length: rawData }, (s, i) => {
         const isActive = result && i < result.path.length;
         const hasDaemon = isActive && hasDaemonAttached(i);
         const hasHighlight =

@@ -42,6 +42,10 @@ export const GeneralSettings = ({ historySize }: { historySize: number }) => {
           onBeforeValueChange={onBeforeHistorySizeChange}
         />
       </Field>
+      <Field name="sortDaemonsBySequence">
+        <Label>Sort daemons by sequence</Label>
+        <Switch />
+      </Field>
       <Field name="preserveSourceOnSuccess">
         <Label>Preserve sources</Label>
         <Switch />

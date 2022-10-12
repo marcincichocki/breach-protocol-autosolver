@@ -4,12 +4,13 @@ import {
   RemoveHistoryEntryAction,
 } from '@/electron/common';
 import { formatDuration } from 'date-fns';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
 import { Only } from '../components/Only';
+import { StateContext } from '../state';
 
 const Heading2 = styled.h2`
   color: var(--primary);
@@ -99,12 +100,18 @@ export const HistoryDetails = () => {
     return <HistoryDetailsError entry={entry} hasSource={hasSource} />;
   }
 
+  const {
+    settings: { sortDaemonsBySequence },
+  } = useContext(StateContext);
   const seconds = (entry.finishedAt - entry.startedAt) / 1000;
   const duration = formatDuration({ seconds });
 
   return (
     <Col gap scroll={false}>
-      <HistoryViewer entry={entry} />
+      <HistoryViewer
+        entry={entry}
+        sortDaemonsBySequence={sortDaemonsBySequence}
+      />
       <Row style={{ justifyContent: 'space-between' }}>
         <Col>
           <DetailText>Done in {duration}</DetailText>

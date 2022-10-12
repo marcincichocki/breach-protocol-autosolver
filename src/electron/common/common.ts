@@ -91,6 +91,7 @@ export interface AppSettings
   resolveDelay: number;
   focusOnError: boolean;
   gameLang: BreachProtocolLanguage;
+  sortDaemonsBySequence: boolean;
 }
 
 export interface AppStats {

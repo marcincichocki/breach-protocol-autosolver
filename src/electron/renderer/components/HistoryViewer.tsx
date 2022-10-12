@@ -25,6 +25,7 @@ export interface Highlight {
 interface HistoryViewerProps {
   entry: HistoryEntry;
   customResult?: BreachProtocolResultJSON;
+  sortDaemonsBySequence?: boolean;
 }
 
 function getDaemonBounds(daemons: DaemonsRawData, sequence?: SequenceJSON) {
@@ -50,7 +51,11 @@ function getDaemonBounds(daemons: DaemonsRawData, sequence?: SequenceJSON) {
     .filter(Boolean);
 }
 
-export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
+export const HistoryViewer = ({
+  entry,
+  customResult,
+  sortDaemonsBySequence,
+}: HistoryViewerProps) => {
   const [highlight, setHighlight] = useState<Highlight>(null);
   const { rawData: grid } = entry.fragments.find(isGridFragment);
   const { rawData: bufferSize } = entry.fragments.find(
@@ -77,22 +82,23 @@ export const HistoryViewer = ({ entry, customResult }: HistoryViewerProps) => {
   return (
     <Row gap scroll={false}>
       <GridViewer
-        grid={grid}
+        rawData={grid}
         path={result?.path}
         highlight={highlight}
         hasDaemonAttached={hasDaemonAttached}
       />
       <Col gap grow>
         <BufferSizeViewer
-          bufferSize={bufferSize}
+          rawData={bufferSize}
           result={result}
           highlight={highlight}
           hasDaemonAttached={hasDaemonAttached}
           onHighlight={setHighlight}
         />
         <DaemonsViewer
+          sortDaemonsBySequence={sortDaemonsBySequence}
           types={typesFragment}
-          daemons={daemons}
+          rawData={daemons}
           result={result}
           onHighlight={setHighlight}
         />
