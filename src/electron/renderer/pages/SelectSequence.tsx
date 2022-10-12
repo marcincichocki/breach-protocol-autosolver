@@ -1,10 +1,10 @@
 import { BreachProtocolResultJSON, isDaemonsFragment } from '@/core';
 import { WorkerStatus } from '@/electron/common';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { dispatchAsyncRequest } from '../common';
 import { Col, FlatButton, HistoryViewer, Row, Spacer } from '../components';
+import { Only } from '../components/Only';
 import { StateContext } from '../state';
 
 const SequenceList = styled.ul`
@@ -46,18 +46,17 @@ function toUniqueValue(result: BreachProtocolResultJSON) {
 
 export const SelectSequence = () => {
   const {
-    analysis: { entry, options, results },
+    analysis: { entry, options, result },
   } = useContext(StateContext);
   const { status } = useContext(StateContext);
   const [activeResult, setActiveResult] =
     useState<BreachProtocolResultJSON>(null);
-  const navigate = useNavigate();
   const { rawData: daemons } = entry.fragments.find(isDaemonsFragment);
   const isWorking = status === WorkerStatus.Working;
   const fromScreenShot = options.origin === 'screenshot';
 
   useEffect(() => {
-    setActiveResult(null);
+    setActiveResult(result.items[0]);
   }, [entry.uuid]);
 
   function isActiveSequence(result: BreachProtocolResultJSON) {
@@ -74,11 +73,15 @@ export const SelectSequence = () => {
     });
   }
 
+  function loadMore() {
+    dispatchAsyncRequest({ type: 'ANALYZE_LOAD_MORE' });
+  }
+
   return (
     <>
       <Col gap grow>
         <SequenceList>
-          {results.map((r, i) => (
+          {result.items.map((r, i) => (
             <Sequence
               key={i}
               active={isActiveSequence(r)}
@@ -92,6 +95,11 @@ export const SelectSequence = () => {
             </Sequence>
           ))}
         </SequenceList>
+        <Only when={result.hasNext}>
+          <FlatButton disabled={isWorking} color="accent" onClick={loadMore}>
+            Load more
+          </FlatButton>
+        </Only>
       </Col>
       <Col gap>
         <HistoryViewer entry={entry} customResult={activeResult} />

@@ -2,6 +2,7 @@ import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import {
   Action,
   Analysis,
+  AnalysisResult,
   AppSettings,
   HistoryEntry,
   UpdateStatus,
@@ -18,6 +19,7 @@ export const ActionTypes = {
   SET_UPDATE_STATUS: 'SET_UPDATE_STATUS',
   SET_ANALYSIS: 'SET_ANALYSIS',
   CLEAR_ANALYSIS: 'CLEAR_ANALYSIS',
+  ADD_ANALYSIS_RESULTS: 'ADD_ANALYSIS_RESULTS',
 } as const;
 
 export class SetStatusAction implements Action {
@@ -74,4 +76,10 @@ export class SetAnalysisAction implements Action {
 export class ClearAnalysisAction implements Action {
   readonly type = ActionTypes.CLEAR_ANALYSIS;
   readonly payload: Analysis = null;
+}
+
+export class AddAnalysisResultsAction implements Action {
+  readonly type = ActionTypes.ADD_ANALYSIS_RESULTS;
+
+  constructor(public readonly payload: AnalysisResult) {}
 }

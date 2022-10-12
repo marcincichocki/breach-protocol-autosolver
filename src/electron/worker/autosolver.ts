@@ -70,17 +70,9 @@ export class BreachProtocolAutosolver {
     }
   }
 
-  /** Get every unique result. */
-  getResults() {
-    return this.progress.has(BreachProtocolSolveProgress.FragmentsValid)
-      ? this.game
-          .solveAll()
-          // Not every sequence have a solution.
-          .filter(Boolean)
-          .map((r) => r.toJSON())
-          // This filter does not guarantee that shortest sequence will be preserved.
-          .filter(uniqueWith((r) => r.resolvedSequence.parts.sort().join('')))
-      : [];
+  /** Returns paginated list of results. */
+  *getPaginatedResults(size: number) {
+    yield* this.paginate(this.getResults(), size);
   }
 
   async solve() {
@@ -133,6 +125,42 @@ export class BreachProtocolAutosolver {
     this.resolveJob();
   }
 
+  private *getResults() {
+    const registry = new Set<string>();
+
+    for (const result of this.game.solveAll()) {
+      const json = result.toJSON();
+      const id = json.resolvedSequence.parts.sort().join('');
+
+      if (!registry.has(id)) {
+        registry.add(id);
+
+        yield json;
+      }
+    }
+  }
+
+  private *paginate<T>(generator: Generator<T>, size: number) {
+    let items: T[] = [];
+
+    while (true) {
+      const { value, done } = generator.next();
+      const hasNext = !done;
+
+      if (items.length === size || done) {
+        yield { items, hasNext };
+
+        if (done) {
+          break;
+        }
+
+        items = [];
+      }
+
+      items.push(value);
+    }
+  }
+
   private getNormalizedRawData({ rawData }: BreachProtocolRecognitionResult) {
     const bufferSize = this.settings.useFixedBufferSize
       ? (this.settings.fixedBufferSize as BufferSize)
@@ -167,11 +195,13 @@ export class BreachProtocolAutosolver {
   private async findSolution() {
     if (this.status !== BreachProtocolStatus.Pending) return;
 
-    this.result = this.game.solve().toJSON();
+    const result = this.game.solve();
 
-    if (!this.result) {
+    if (!result) {
       return this.rejectJob();
     }
+
+    this.result = result.toJSON();
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
   }

@@ -134,9 +134,14 @@ export interface AnalysisOptions {
   origin: AnalysisOrigin;
 }
 
+export interface AnalysisResult {
+  items: BreachProtocolResultJSON[];
+  hasNext: boolean;
+}
+
 export interface Analysis {
   entry: HistoryEntry;
-  results: BreachProtocolResultJSON[];
+  result: AnalysisResult;
   options: AnalysisOptions;
 }
 

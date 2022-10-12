@@ -21,9 +21,11 @@ import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
 import {
   Action,
   ActionTypes,
+  AddAnalysisResultsAction,
   AddHistoryEntryAction,
   AnalysisInput,
   AnalysisOptions,
+  AnalysisResult,
   AppSettings,
   BreachProtocolStatus,
   ClearAnalysisAction,
@@ -65,6 +67,7 @@ export class BreachProtocolWorker {
   private readonly player = new BreachProtocolSoundPlayer(this.settings);
 
   private bpa: BreachProtocolAutosolver = null;
+  private paginator: Generator<AnalysisResult, void, unknown>;
 
   private status: WorkerStatus = WorkerStatus.Bootstrap;
 
@@ -76,6 +79,7 @@ export class BreachProtocolWorker {
       ANALYZE_DISCARD: this.discardAnalyze.bind(this),
       ANALYZE_RESOLVE: this.createTask(this.analyzeResolve),
       ANALYZE_FILE: this.createTask(this.analyzeFile),
+      ANALYZE_LOAD_MORE: this.createTask(this.loadMoreResults),
     };
 
   private async loadAndSetActiveDisplay() {
@@ -224,11 +228,18 @@ export class BreachProtocolWorker {
         this.focusRendererWindow();
       }
     } else {
-      const results = this.bpa.getResults();
-      const options = this.getAnalysisOptions(input);
-      this.dispatch(new SetAnalysisAction({ entry, results, options }));
+      this.paginator = this.bpa.getPaginatedResults(10);
 
-      this.focusRendererWindow();
+      const { value: result } = this.paginator.next();
+      const options = this.getAnalysisOptions(input);
+
+      if (result) {
+        this.dispatch(new SetAnalysisAction({ entry, options, result }));
+
+        this.focusRendererWindow();
+      } else {
+        throw new Error('There are no other results.');
+      }
     }
   }
 
@@ -309,6 +320,7 @@ export class BreachProtocolWorker {
     if (this.bpa) {
       this.bpa.dispose();
       this.bpa = null;
+      this.paginator = null;
 
       if (!skipClean) {
         this.dispatch(new ClearAnalysisAction());
@@ -318,6 +330,20 @@ export class BreachProtocolWorker {
 
   private async discardAnalyze() {
     this.discardAnalysis();
+  }
+
+  private async loadMoreResults() {
+    if (!this.bpa || !this.paginator) {
+      throw new Error('Paginator not found.');
+    }
+
+    const { value } = this.paginator.next();
+
+    if (value) {
+      this.dispatch(new AddAnalysisResultsAction(value));
+    } else {
+      throw new Error('There are no other results.');
+    }
   }
 
   private async analyzeFile({ data }: Request<string>) {
