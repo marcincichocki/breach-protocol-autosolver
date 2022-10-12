@@ -3,6 +3,7 @@ import {
   Action,
   ActionTypes,
   Analysis,
+  AnalysisResult,
   AppSettings,
   AppStats,
   BreachProtocolStatus,
@@ -110,6 +111,20 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
 const setUpdateStatus = createSetHandler<UpdateStatus>('updateStatus');
 const setAnalysis = createSetHandler<Analysis>('analysis');
 
+const addAnalysisResults: Handler<AnalysisResult> = (
+  state: State,
+  { payload }
+) => {
+  const items = [...(state.analysis?.result.items ?? []), ...payload.items];
+  const result = { items, hasNext: payload.hasNext };
+  const analysis = { ...state.analysis, result };
+
+  return {
+    ...state,
+    analysis,
+  };
+};
+
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
   [ActionTypes.SET_STATUS]: setStatus,
@@ -120,4 +135,5 @@ export const appReducer = createReducer<State>({
   [ActionTypes.SET_UPDATE_STATUS]: setUpdateStatus,
   [ActionTypes.SET_ANALYSIS]: setAnalysis,
   [ActionTypes.CLEAR_ANALYSIS]: setAnalysis,
+  [ActionTypes.ADD_ANALYSIS_RESULTS]: addAnalysisResults,
 });

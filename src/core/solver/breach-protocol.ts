@@ -170,19 +170,21 @@ export class BreachProtocol {
   }
 
   /** Solve grid with every sequence. */
-  solveAll() {
-    return Array.from(this.factory.getSequences()).map((s) =>
-      this.solveForSequence(s)
-    );
-  }
-
-  solve() {
+  *solveAll() {
     for (const sequence of this.factory.getSequences()) {
       const result = this.solveForSequence(sequence);
 
       if (result) {
-        return result;
+        yield result;
       }
+    }
+  }
+
+  solve() {
+    const { value } = this.solveAll().next();
+
+    if (value) {
+      return value;
     }
 
     return null;
