@@ -195,13 +195,11 @@ export class BreachProtocolAutosolver {
   private async findSolution() {
     if (this.status !== BreachProtocolStatus.Pending) return;
 
-    const result = this.game.solve();
+    this.result = this.game.solve()?.toJSON();
 
-    if (!result) {
+    if (!this.result) {
       return this.rejectJob();
     }
-
-    this.result = result.toJSON();
 
     this.progress.add(BreachProtocolSolveProgress.SolutionFound);
   }
