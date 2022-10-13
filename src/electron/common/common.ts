@@ -55,6 +55,8 @@ export const KEY_BINDS = [
   'keyBindWithPriority3',
   'keyBindWithPriority4',
   'keyBindWithPriority5',
+  'keyBindWithPriority6',
+  'keyBindWithPriority7',
   'keyBindAnalyze',
 ] as const;
 
@@ -68,6 +70,8 @@ export const COMMANDS = [
   'worker:solve.withPriority3',
   'worker:solve.withPriority4',
   'worker:solve.withPriority5',
+  'worker:solve.withPriority6',
+  'worker:solve.withPriority7',
   'worker:analyze',
 ] as const;
 

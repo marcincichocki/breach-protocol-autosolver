@@ -175,6 +175,8 @@ export class Main {
       .register('worker:solve.withPriority3', () => this.onWorkerSolve(2))
       .register('worker:solve.withPriority4', () => this.onWorkerSolve(3))
       .register('worker:solve.withPriority5', () => this.onWorkerSolve(4))
+      .register('worker:solve.withPriority6', () => this.onWorkerSolve(5))
+      .register('worker:solve.withPriority7', () => this.onWorkerSolve(6))
       .register('worker:analyze', () => this.onWorkerAnalyze());
   }
 
