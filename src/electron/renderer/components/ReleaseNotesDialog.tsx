@@ -4,7 +4,6 @@ import { useIpcEventDialog } from '../common';
 import { FlatButton } from './Buttons';
 import { Dialog, DialogBody, DialogTitle } from './Dialog';
 import { Row } from './Flex';
-import { Only } from './Only';
 
 export const ReleaseNotesDialog = () => {
   const {
@@ -40,11 +39,11 @@ export const ReleaseNotesDialog = () => {
         <FlatButton onClick={close} color="primary">
           Close
         </FlatButton>
-        <Only when={updateAvailable}>
+        {updateAvailable && (
           <FlatButton color="accent" onClick={update}>
             Update to {updateInfo.version}
           </FlatButton>
-        </Only>
+        )}
       </Row>
     </Dialog>
   );

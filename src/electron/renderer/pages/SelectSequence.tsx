@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { dispatchAsyncRequest } from '../common';
 import { Col, FlatButton, HistoryViewer, Row, Spacer } from '../components';
-import { Only } from '../components/Only';
 import { StateContext } from '../state';
 
 const SequenceList = styled.ul`
@@ -96,11 +95,11 @@ export const SelectSequence = () => {
             </Sequence>
           ))}
         </SequenceList>
-        <Only when={result.hasNext}>
+        {result.hasNext && (
           <FlatButton disabled={isWorking} color="accent" onClick={loadMore}>
             Load more
           </FlatButton>
-        </Only>
+        )}
       </Col>
       <Col gap>
         <HistoryViewer

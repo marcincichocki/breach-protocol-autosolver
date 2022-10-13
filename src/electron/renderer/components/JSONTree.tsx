@@ -12,10 +12,6 @@ import styled from 'styled-components';
 import { LinkButton } from './Buttons';
 import { Col } from './Flex';
 
-const Only = ({ when, children }: PropsWithChildren<{ when: boolean }>) => {
-  return <>{when ? children : null}</>;
-};
-
 type JSONObject = Extract<JSONValue, object>;
 type JSONPrimitive = Exclude<JSONValue, object>;
 
@@ -277,14 +273,14 @@ const JSONViewerContainer = memo(
 
     return (
       <>
-        <Only when={isObject}>
-          <JSONBracket data={data as JSONObject} position="start" />
-          <JSONPropertyToggle data={data as JSONObject} />
-        </Only>
+        {isObject && (
+          <>
+            <JSONBracket data={data as JSONObject} position="start" />
+            <JSONPropertyToggle data={data as JSONObject} />
+          </>
+        )}
         {children}
-        <Only when={isObject}>
-          <JSONBracket data={data as JSONObject} position="end" />
-        </Only>
+        {isObject && <JSONBracket data={data as JSONObject} position="end" />}
       </>
     );
   }
@@ -321,13 +317,11 @@ const JSONViewer = memo(
 
           return (
             <JSONViewerListItem key={property}>
-              <Only when={!isArray}>
-                <JSONProperty property={property} />
-              </Only>
+              {!isArray && <JSONProperty property={property} />}
               <JSONViewerContainer data={value}>
                 <JSONViewer data={value} path={childPath}></JSONViewer>
               </JSONViewerContainer>
-              <Only when={!isLast}>,</Only>
+              {!isLast && <>,</>}
             </JSONViewerListItem>
           );
         })}

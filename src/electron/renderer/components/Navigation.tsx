@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { Link, NavLink as RouterNavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { RouterExtContext } from '../router-ext';
-import { Only } from './Only';
 
 const Nav = styled.nav`
   display: flex;
@@ -51,11 +50,11 @@ export const Navigation = () => {
 
   return (
     <Nav>
-      <Only when={!!from}>
+      {!!from && (
         <NavigateBackLink to={from}>
           <MdKeyboardBackspace size="2rem" />
         </NavigateBackLink>
-      </Only>
+      )}
       <List>
         {items.map((item, index) => (
           <ListItem key={index}>

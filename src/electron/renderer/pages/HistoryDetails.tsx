@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useHistoryEntryFromParam } from '../common';
 import { Col, FlatButton, HistoryViewer, LinkButton, Row } from '../components';
-import { Only } from '../components/Only';
 import { StateContext } from '../state';
 
 const Heading2 = styled.h2`
@@ -76,9 +75,7 @@ const HistoryDetailsError = ({
     <FlatButton color="accent" as={Link} to={`/calibrate/${entry.uuid}/grid`}>
       Recalibrate
     </FlatButton>
-    <Only when={hasSource}>
-      <OpenInExplorer fileName={entry.fileName} />
-    </Only>
+    {hasSource && <OpenInExplorer fileName={entry.fileName} />}
     <SaveSnapshot entryId={entry.uuid} />
     <RemoveEntry entryId={entry.uuid} />
   </Col>
@@ -117,9 +114,7 @@ export const HistoryDetails = () => {
           <DetailText>Done in {duration}</DetailText>
         </Col>
         <Col style={{ alignItems: 'flex-end' }}>
-          <Only when={hasSource}>
-            <OpenInExplorer fileName={entry.fileName} />
-          </Only>
+          {hasSource && <OpenInExplorer fileName={entry.fileName} />}
           <TextLink to={`/calibrate/${entry.uuid}/grid`}>Recalibrate</TextLink>
           <SaveSnapshot entryId={entry.uuid} />
           <RemoveEntry entryId={entry.uuid} />
