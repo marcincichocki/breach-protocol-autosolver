@@ -275,12 +275,12 @@ const JSONViewerContainer = memo(
       <>
         {isObject && (
           <>
-            <JSONBracket data={data as JSONObject} position="start" />
-            <JSONPropertyToggle data={data as JSONObject} />
+            <JSONBracket data={data} position="start" />
+            <JSONPropertyToggle data={data} />
           </>
         )}
         {children}
-        {isObject && <JSONBracket data={data as JSONObject} position="end" />}
+        {isObject && <JSONBracket data={data} position="end" />}
       </>
     );
   }
