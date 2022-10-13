@@ -96,6 +96,8 @@ export interface AppSettings
   focusOnError: boolean;
   gameLang: BreachProtocolLanguage;
   sortDaemonsBySequence: boolean;
+  hierarchy: 'index' | 'types';
+  typesHierarchy: string[];
 }
 
 export interface AppStats {

@@ -43,7 +43,7 @@ const strategyOptions: SelectOption<BreachProtocolStrategy>[] = [
 ];
 
 export const PerformanceSettings = () => {
-  const { values } = useForm<AppSettings>();
+  const { values, setFormValue } = useForm<AppSettings>();
 
   async function notifyAboutDfs(
     value: BreachProtocolStrategy,
@@ -58,6 +58,22 @@ export const PerformanceSettings = () => {
         message:
           'Depth-first search can cause performance issues when using it together with modded buffer.',
       });
+    }
+
+    next();
+  }
+
+  async function ensureTypesHierarchyIsNotSelected(
+    value: boolean,
+    next: () => void
+  ) {
+    if (value && values.hierarchy === 'types') {
+      await nativeDialog.alert({
+        message:
+          'Types hierarchy cannot work without types information. Switching to index hierarchy.',
+      });
+
+      setFormValue('hierarchy', 'index');
     }
 
     next();
@@ -83,7 +99,7 @@ export const PerformanceSettings = () => {
       </Field>
       <Field name="skipTypesFragment">
         <Label>Skip types fragment</Label>
-        <Switch />
+        <Switch onBeforeValueChange={ensureTypesHierarchyIsNotSelected} />
       </Field>
       <Field name="strategy">
         <Label>Strategy</Label>

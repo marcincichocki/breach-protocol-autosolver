@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import {
   ArrowLeft,
@@ -117,18 +117,19 @@ export const Select = ({
   disabled,
   onBeforeValueChange,
 }: SelectProps) => {
-  const { value, setValue, onChange } = useField<string>();
+  const { value, setValue, onChange, name } = useField<string>();
+  const index = useMemo(() => {
+    if (!value) {
+      throw new Error(`Value for field ${name} is missing.`);
+    }
 
-  // NOTE: this might cause error.
-  const [index, setIndex] = useState<number>(
-    value ? options.findIndex((o) => o.value === value) : 0
-  );
+    return options.findIndex((o) => o.value === value);
+  }, [value, options]);
 
   function update(dir: -1 | 1) {
     const nextIndex = index + dir;
     const next = () => {
       setValue(options[nextIndex].value);
-      setIndex(nextIndex);
     };
 
     if (onBeforeValueChange) {

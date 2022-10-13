@@ -1,15 +1,21 @@
 import { AppSettings, WorkerStatus } from '@/electron/common';
 import { nativeDialog, updateWorkerStatus } from '../common';
+import { FlatButton } from './Buttons';
 import { File } from './File';
 import { Field, Label, useForm } from './Form';
+import { Only } from './Only';
 import { Section } from './Section';
-import { Select } from './Select';
+import { Select, SelectOption } from './Select';
 import { ShallowKeyBind } from './ShallowKeyBind';
 import { Switch } from './Switch';
 
 const inputDeviceOptions = [
   { name: 'Keyboard(recommended)', value: 'keyboard' },
   { name: 'Mouse', value: 'mouse' },
+];
+const hierarchyOptions: SelectOption[] = [
+  { name: 'Index', value: 'index' },
+  { name: 'Types', value: 'types' },
 ];
 
 const engineOptions =
@@ -86,6 +92,16 @@ export const AutoSolverSettings = () => {
         <Label>Auto exit</Label>
         <Switch />
       </Field>
+      <Field name="hierarchy">
+        <Label>Hierarchy</Label>
+        <Select
+          options={hierarchyOptions}
+          disabled={values.skipTypesFragment}
+        />
+      </Field>
+      <Only when={values.hierarchy === 'types'}>
+        <FlatButton color="accent">Change hierarchy</FlatButton>
+      </Only>
       <Field name="engine" onValueChange={changeEngine}>
         <Label>Engine</Label>
         <Select

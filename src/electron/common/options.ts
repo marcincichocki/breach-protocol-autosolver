@@ -1,4 +1,5 @@
 import {
+  JSONValue,
   VK_ARROW_DOWN,
   VK_ARROW_LEFT,
   VK_ARROW_RIGHT,
@@ -6,12 +7,28 @@ import {
   VK_ENTER,
   VK_ESCAPE,
 } from '@/common';
+import {
+  DAEMON_CAMERA_SHUTDOWN,
+  DAEMON_DATAMINE_COPY_MALWARE,
+  DAEMON_DATAMINE_CRAFTING_SPECS,
+  DAEMON_DATAMINE_V1,
+  DAEMON_DATAMINE_V2,
+  DAEMON_DATAMINE_V3,
+  DAEMON_FRIENDLY_TURRETS,
+  DAEMON_GAIN_ACCESS,
+  DAEMON_ICEPICK,
+  DAEMON_MASS_VULNERABILITY,
+  DAEMON_NEUTRALIZE_MALWARE,
+  DAEMON_OPTICS_JAMMER,
+  DAEMON_TURRET_SHUTDOWN,
+  DAEMON_WEAPONS_JAMMER,
+} from '@/core/daemons';
 import { AppSettings } from './common';
 
 interface BreachProtocolOption {
   id: keyof AppSettings;
   description: string;
-  defaultValue: boolean | string | number;
+  defaultValue: JSONValue;
 }
 
 export const options: BreachProtocolOption[] = [
@@ -289,6 +306,36 @@ export const options: BreachProtocolOption[] = [
     id: 'sortDaemonsBySequence',
     description: 'Sort daemons in history viewer by order in the sequence.',
     defaultValue: false,
+  },
+  {
+    id: 'hierarchy',
+    description:
+      'Hierarchy determines order of generated sequences. In index hierarchy each daemon is more important than daemons above it. In types hierarchy type of a daemon determines its value(requires types to be recognized).',
+    defaultValue: 'index',
+  },
+  {
+    id: 'typesHierarchy',
+    description: '',
+    defaultValue: [
+      // Quest or special daemons.
+      DAEMON_DATAMINE_COPY_MALWARE,
+      DAEMON_NEUTRALIZE_MALWARE,
+      DAEMON_GAIN_ACCESS,
+      DAEMON_DATAMINE_CRAFTING_SPECS,
+      // Passive from legendary daemons.
+      DAEMON_OPTICS_JAMMER,
+      DAEMON_WEAPONS_JAMMER,
+      // Perk daemons.
+      DAEMON_CAMERA_SHUTDOWN,
+      DAEMON_MASS_VULNERABILITY,
+      DAEMON_FRIENDLY_TURRETS,
+      DAEMON_TURRET_SHUTDOWN,
+      // Common daemons.
+      DAEMON_ICEPICK,
+      DAEMON_DATAMINE_V3,
+      DAEMON_DATAMINE_V2,
+      DAEMON_DATAMINE_V1,
+    ],
   },
 ];
 
