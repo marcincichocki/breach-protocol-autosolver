@@ -322,6 +322,8 @@ export const options: BreachProtocolOption[] = [
       DAEMON_NEUTRALIZE_MALWARE,
       DAEMON_GAIN_ACCESS,
       DAEMON_DATAMINE_CRAFTING_SPECS,
+
+      DAEMON_ICEPICK,
       // Passive from legendary daemons.
       DAEMON_OPTICS_JAMMER,
       DAEMON_WEAPONS_JAMMER,
@@ -331,7 +333,6 @@ export const options: BreachProtocolOption[] = [
       DAEMON_FRIENDLY_TURRETS,
       DAEMON_TURRET_SHUTDOWN,
       // Common daemons.
-      DAEMON_ICEPICK,
       DAEMON_DATAMINE_V3,
       DAEMON_DATAMINE_V2,
       DAEMON_DATAMINE_V1,
