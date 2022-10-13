@@ -8,7 +8,6 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 import { Col, Row, Spacer } from './Flex';
 import { Highlight } from './HistoryViewer';
-import { Only } from './Only';
 
 const DaemonsWrapper = styled.div`
   display: flex;
@@ -113,9 +112,9 @@ export const DaemonsViewer = ({
                 : undefined
             }
           >
-            <Only when={types?.isValid}>
+            {types?.isValid && (
               <DaemonType>{eng[types.rawData[index]]}</DaemonType>
-            </Only>
+            )}
             <DaemonSequence>
               {raw.map((s, i) => (
                 <span key={i}>{s}</span>
