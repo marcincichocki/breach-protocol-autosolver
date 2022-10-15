@@ -336,7 +336,7 @@ export const options: BreachProtocolOption[] = [
   {
     id: 'immediate',
     description:
-      'Determines if sequences should be emitted immediately, or should they be grouped by permutation of daemons.',
+      'Determines if sequences should be emitted immediately, or should they be grouped by permutation of daemons. Grouped sequences are sorted by raw path length.',
     defaultValue: false,
   },
 ];
