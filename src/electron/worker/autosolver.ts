@@ -15,6 +15,7 @@ import {
   BreachProtocolResultJSON,
   BufferSize,
   HierarchyProvider,
+  isTypesFragment,
 } from '@/core';
 import {
   AnalysisInput,
@@ -161,12 +162,17 @@ export class BreachProtocolAutosolver {
     }
   }
 
-  private getNormalizedRawData({ rawData }: BreachProtocolRecognitionResult) {
+  private getNormalizedRawData({
+    rawData,
+    results,
+  }: BreachProtocolRecognitionResult): BreachProtocolRawData {
     const bufferSize = this.settings.useFixedBufferSize
       ? (this.settings.fixedBufferSize as BufferSize)
       : rawData.bufferSize;
+    const typesFragment = results.find(isTypesFragment);
+    const types = typesFragment?.isValid ? rawData.types : null;
 
-    return { ...rawData, bufferSize };
+    return { ...rawData, bufferSize, types };
   }
 
   private async getBreachProtocolImage(input?: AnalysisInput) {
