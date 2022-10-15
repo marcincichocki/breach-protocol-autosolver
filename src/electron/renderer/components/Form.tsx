@@ -124,8 +124,8 @@ export const Form = <T,>({
       value: T[keyof T],
       options: { emit?: boolean } = { emit: true }
     ) => {
-      setValues((v) => {
-        const newValues = { ...v, [name]: value };
+      setValues((values) => {
+        const newValues = { ...values, [name]: value };
 
         if (options.emit) {
           onValuesChange?.(newValues, name);
@@ -135,7 +135,7 @@ export const Form = <T,>({
         return newValues;
       });
     },
-    [values]
+    []
   );
 
   return (
