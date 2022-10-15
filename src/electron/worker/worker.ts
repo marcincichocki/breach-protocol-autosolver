@@ -275,15 +275,18 @@ export class BreachProtocolWorker {
   }
 
   private getHierarchyProvider(index?: number) {
-    if (index != null) {
-      return new FocusHierarchyProvider(index);
+    const base =
+      this.settings.hierarchy === 'types'
+        ? new TypesHierarchyProvider(
+            this.settings.daemonPriority.slice().reverse()
+          )
+        : new IndexHierarchyProvider();
+
+    if (typeof index === 'number') {
+      return new FocusHierarchyProvider(index, base);
     }
 
-    if (this.settings.hierarchy === 'types') {
-      return new TypesHierarchyProvider(this.settings.typesHierarchy.reverse());
-    }
-
-    return new IndexHierarchyProvider();
+    return base;
   }
 
   private onStateChanged(

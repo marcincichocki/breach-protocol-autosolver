@@ -1,9 +1,11 @@
 import { AppSettings, WorkerStatus } from '@/electron/common';
+import { useState } from 'react';
 import { nativeDialog, updateWorkerStatus } from '../common';
 import { FlatButton } from './Buttons';
+import { DaemonPriority } from './DaemonPriority';
 import { File } from './File';
+import { Spacer } from './Flex';
 import { Field, Label, useForm } from './Form';
-import { Only } from './Only';
 import { Section } from './Section';
 import { Select, SelectOption } from './Select';
 import { ShallowKeyBind } from './ShallowKeyBind';
@@ -28,6 +30,7 @@ const engineOptions =
 
 export const AutoSolverSettings = () => {
   const { values } = useForm<AppSettings>();
+  const [isOpen, setIsOpen] = useState(false);
 
   function changeEngine(engine: string) {
     if (engine === 'ahk') {
@@ -99,9 +102,20 @@ export const AutoSolverSettings = () => {
           disabled={values.skipTypesFragment}
         />
       </Field>
-      <Only when={values.hierarchy === 'types'}>
-        <FlatButton color="accent">Change hierarchy</FlatButton>
-      </Only>
+      {values.hierarchy === 'types' && (
+        <Field name="daemonPriority">
+          <Label>Daemon priority</Label>
+          <Spacer />
+          <FlatButton
+            color="accent"
+            type="button"
+            onClick={() => setIsOpen(true)}
+          >
+            Change priority
+          </FlatButton>
+          <DaemonPriority isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        </Field>
+      )}
       <Field name="engine" onValueChange={changeEngine}>
         <Label>Engine</Label>
         <Select

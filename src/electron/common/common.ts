@@ -9,6 +9,7 @@ import type {
   BreachProtocolOCROptions,
   BreachProtocolOptions,
   BreachProtocolResultJSON,
+  DaemonId,
   FragmentId,
 } from '@/core';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
@@ -97,7 +98,7 @@ export interface AppSettings
   gameLang: BreachProtocolLanguage;
   sortDaemonsBySequence: boolean;
   hierarchy: 'index' | 'types';
-  typesHierarchy: string[];
+  daemonPriority: DaemonId[];
 }
 
 export interface AppStats {

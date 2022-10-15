@@ -314,25 +314,20 @@ export const options: BreachProtocolOption[] = [
     defaultValue: 'index',
   },
   {
-    id: 'typesHierarchy',
-    description: '',
+    id: 'daemonPriority',
+    description: 'Specifiy priority of each daemon.',
     defaultValue: [
-      // Quest or special daemons.
       DAEMON_DATAMINE_COPY_MALWARE,
       DAEMON_NEUTRALIZE_MALWARE,
       DAEMON_GAIN_ACCESS,
       DAEMON_DATAMINE_CRAFTING_SPECS,
-
-      DAEMON_ICEPICK,
-      // Passive from legendary daemons.
       DAEMON_OPTICS_JAMMER,
       DAEMON_WEAPONS_JAMMER,
-      // Perk daemons.
       DAEMON_CAMERA_SHUTDOWN,
       DAEMON_MASS_VULNERABILITY,
       DAEMON_FRIENDLY_TURRETS,
       DAEMON_TURRET_SHUTDOWN,
-      // Common daemons.
+      DAEMON_ICEPICK,
       DAEMON_DATAMINE_V3,
       DAEMON_DATAMINE_V2,
       DAEMON_DATAMINE_V1,
