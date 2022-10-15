@@ -33,7 +33,8 @@ describe('Sequence factory', () => {
 
   describe('Focus hierarchy', () => {
     it('should return sequences sorted by selected daemon', () => {
-      const provider = new FocusHierarchyProvider(0);
+      const base = new IndexHierarchyProvider();
+      const provider = new FocusHierarchyProvider(0, base);
       const rawData: BreachProtocolRawData = {
         grid: [],
         bufferSize: 5,

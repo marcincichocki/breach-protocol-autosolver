@@ -18,6 +18,7 @@ import {
   IndexHierarchyProvider,
 } from '@/core';
 import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
+import { TypesHierarchyProvider } from '@/core/solver/hierarchy/types-hierarchy-provider';
 import {
   Action,
   ActionTypes,
@@ -274,11 +275,18 @@ export class BreachProtocolWorker {
   }
 
   private getHierarchyProvider(index?: number) {
-    if (index != null) {
-      return new FocusHierarchyProvider(index);
+    const base =
+      this.settings.hierarchy === 'types'
+        ? new TypesHierarchyProvider(
+            this.settings.daemonPriority.slice().reverse()
+          )
+        : new IndexHierarchyProvider();
+
+    if (typeof index === 'number') {
+      return new FocusHierarchyProvider(index, base);
     }
 
-    return new IndexHierarchyProvider();
+    return base;
   }
 
   private onStateChanged(

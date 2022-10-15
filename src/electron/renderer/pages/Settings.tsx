@@ -25,6 +25,7 @@ const Description = styled.p`
   min-height: 50px;
   margin: 0;
   text-align: center;
+  width: 90vw;
 `;
 
 const FieldDescription = ({ name }: { name: keyof AppSettings }) => {

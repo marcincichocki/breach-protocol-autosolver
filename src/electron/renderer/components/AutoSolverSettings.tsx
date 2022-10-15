@@ -1,15 +1,23 @@
 import { AppSettings, WorkerStatus } from '@/electron/common';
+import { useState } from 'react';
 import { nativeDialog, updateWorkerStatus } from '../common';
+import { FlatButton } from './Buttons';
+import { DaemonPriority } from './DaemonPriority';
 import { File } from './File';
+import { Spacer } from './Flex';
 import { Field, Label, useForm } from './Form';
 import { Section } from './Section';
-import { Select } from './Select';
+import { Select, SelectOption } from './Select';
 import { ShallowKeyBind } from './ShallowKeyBind';
 import { Switch } from './Switch';
 
 const inputDeviceOptions = [
   { name: 'Keyboard(recommended)', value: 'keyboard' },
   { name: 'Mouse', value: 'mouse' },
+];
+const hierarchyOptions: SelectOption[] = [
+  { name: 'Index', value: 'index' },
+  { name: 'Types', value: 'types' },
 ];
 
 const engineOptions =
@@ -22,6 +30,7 @@ const engineOptions =
 
 export const AutoSolverSettings = () => {
   const { values } = useForm<AppSettings>();
+  const [isOpen, setIsOpen] = useState(false);
 
   function changeEngine(engine: string) {
     if (engine === 'ahk') {
@@ -86,6 +95,27 @@ export const AutoSolverSettings = () => {
         <Label>Auto exit</Label>
         <Switch />
       </Field>
+      <Field name="hierarchy">
+        <Label>Hierarchy</Label>
+        <Select
+          options={hierarchyOptions}
+          disabled={values.skipTypesFragment}
+        />
+      </Field>
+      {values.hierarchy === 'types' && (
+        <Field name="daemonPriority">
+          <Label>Daemon priority</Label>
+          <Spacer />
+          <FlatButton
+            color="accent"
+            type="button"
+            onClick={() => setIsOpen(true)}
+          >
+            Change priority
+          </FlatButton>
+          <DaemonPriority isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        </Field>
+      )}
       <Field name="engine" onValueChange={changeEngine}>
         <Label>Engine</Label>
         <Select

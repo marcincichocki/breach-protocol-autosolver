@@ -4,7 +4,10 @@ import {
   FormEvent,
   forwardRef,
   PropsWithChildren,
+  useCallback,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
@@ -46,10 +49,45 @@ const StyledField = styled(Row)`
 
 interface FormContext<T> {
   values: T;
-  setValues: (values: T) => void;
-  onValuesChange?: (values: T, name: keyof T) => void;
+  setFormValue: (
+    name: keyof T,
+    value: T[keyof T],
+    options?: { emit?: boolean }
+  ) => void;
   onHover?: (name: keyof T) => void;
 }
+
+type ValueChangeListner<T> = (value: T[keyof T], name: keyof T) => void;
+
+function useFieldValueChangeRegistry<T>(): FieldValueChangeRegistry<T> {
+  const listeners = useRef(new Map<keyof T, ValueChangeListner<T>>());
+
+  const addValueChangeListener = useCallback(
+    (name: keyof T, cb: ValueChangeListner<T>) => {
+      listeners.current.set(name, cb);
+    },
+    []
+  );
+
+  const removeValueChangeListener = useCallback((name: keyof T) => {
+    listeners.current.delete(name);
+  }, []);
+
+  const emit = useCallback((name: keyof T, value: T[keyof T]) => {
+    listeners.current.get(name)?.(value, name);
+  }, []);
+
+  return { addValueChangeListener, removeValueChangeListener, emit };
+}
+
+interface FieldValueChangeRegistry<T> {
+  addValueChangeListener: (name: keyof T, cb: ValueChangeListner<T>) => void;
+  removeValueChangeListener: (name: keyof T) => void;
+  emit: (name: keyof T, value: T[keyof T]) => void;
+}
+
+const FieldValueChangeRegistryContext =
+  createContext<FieldValueChangeRegistry<any>>(null);
 
 const FormContext = createContext<FormContext<any>>(undefined);
 
@@ -72,6 +110,7 @@ export const Form = <T,>({
   onSubmit,
 }: PropsWithChildren<FormProps<T>>) => {
   const [values, setValues] = useState(initialValues);
+  const registry = useFieldValueChangeRegistry<T>();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,18 +118,39 @@ export const Form = <T,>({
     onSubmit(values);
   }
 
+  const setFormValue = useCallback(
+    (
+      name: keyof T,
+      value: T[keyof T],
+      options: { emit?: boolean } = { emit: true }
+    ) => {
+      setValues((values) => {
+        const newValues = { ...values, [name]: value };
+
+        if (options.emit) {
+          onValuesChange?.(newValues, name);
+          registry.emit(name, value);
+        }
+
+        return newValues;
+      });
+    },
+    []
+  );
+
   return (
     <StyledForm onSubmit={onSubmit ? handleSubmit : undefined}>
-      <FormContext.Provider
-        value={{
-          values,
-          setValues,
-          onHover,
-          onValuesChange,
-        }}
-      >
-        {children}
-      </FormContext.Provider>
+      <FieldValueChangeRegistryContext.Provider value={registry}>
+        <FormContext.Provider
+          value={{
+            values,
+            setFormValue,
+            onHover,
+          }}
+        >
+          {children}
+        </FormContext.Provider>
+      </FieldValueChangeRegistryContext.Provider>
     </StyledForm>
   );
 };
@@ -116,22 +176,30 @@ interface FieldProps {
 
 export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
   ({ name, children, onValueChange, render }, ref) => {
-    const { values, setValues, onHover, onValuesChange } =
-      useContext(FormContext);
+    const { values, setFormValue, onHover } = useContext(FormContext);
+    const { addValueChangeListener, removeValueChangeListener } = useContext(
+      FieldValueChangeRegistryContext
+    );
     const value = values[name];
 
-    function setValue(
-      value: string | number | boolean,
-      options = { emit: true }
-    ) {
-      const newValues = { ...values, [name]: value };
-      setValues(newValues);
-
-      if (options.emit) {
-        if (onValueChange) onValueChange(value, name);
-        if (onValuesChange) onValuesChange(newValues, name);
+    useEffect(() => {
+      if (onValueChange) {
+        addValueChangeListener(name, onValueChange);
       }
-    }
+
+      return () => {
+        if (onValueChange) {
+          removeValueChangeListener(name);
+        }
+      };
+    }, []);
+
+    const setValue = useCallback(
+      (value: unknown, options: { emit?: boolean } = { emit: true }) => {
+        setFormValue(name, value, options);
+      },
+      []
+    );
 
     function onChange(event: ChangeEvent<any>) {
       const { value, checked, type } = event.target;
