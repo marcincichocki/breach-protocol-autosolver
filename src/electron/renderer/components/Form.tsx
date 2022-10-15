@@ -52,7 +52,7 @@ interface FormContext<T> {
   setFormValue: (
     name: keyof T,
     value: T[keyof T],
-    options?: FieldOptions
+    options?: { emit?: boolean }
   ) => void;
   onHover?: (name: keyof T) => void;
 }
@@ -174,11 +174,6 @@ interface FieldProps {
   render?: (props: { values: any }) => JSX.Element;
 }
 
-type FieldValue = string | number | boolean;
-interface FieldOptions {
-  emit?: boolean;
-}
-
 export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
   ({ name, children, onValueChange, render }, ref) => {
     const { values, setFormValue, onHover } = useContext(FormContext);
@@ -200,7 +195,7 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
     }, []);
 
     const setValue = useCallback(
-      (value: FieldValue, options: FieldOptions = { emit: true }) => {
+      (value: unknown, options: { emit?: boolean } = { emit: true }) => {
         setFormValue(name, value, options);
       },
       []
