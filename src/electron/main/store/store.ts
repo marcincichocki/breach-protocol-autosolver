@@ -56,6 +56,32 @@ export class Store {
           store.set(option.id, '');
         }
       },
+      '>=2.8.0': (store) => {
+        const newKeyBinds = options.filter(
+          (o) =>
+            o.id === 'keyBindWithPriority6' || o.id === 'keyBindWithPriority7'
+        );
+        const values = newKeyBinds.map(({ defaultValue }) =>
+          normalize(defaultValue as string)
+        );
+        const conflict = [
+          'keyBind',
+          'keyBindWithPriority1',
+          'keyBindWithPriority2',
+          'keyBindWithPriority3',
+          'keyBindWithPriority4',
+          'keyBindWithPriority5',
+          'keyBindAnalyze',
+        ]
+          .map((k) => normalize(store.get(k)))
+          .some((v) => values.includes(v));
+
+        if (conflict) {
+          newKeyBinds.forEach((option) => {
+            store.set(option.id, '');
+          });
+        }
+      },
     },
   });
 
