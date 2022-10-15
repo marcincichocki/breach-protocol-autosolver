@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.7.0...v2.8.0) (2022-10-15)
+
+
+### Features
+
+* **client-electron:** add ability to emit sequences immediately  ([41f5db6](https://github.com/marcincichocki/breach-protocol-autosolver/commit/41f5db65a5421ab11b2499d9f9c6d26954d5f550))
+* **client-electron:** add ability to sort daemons by order in the sequence ([54fc847](https://github.com/marcincichocki/breach-protocol-autosolver/commit/54fc847301f1c8795fd8d0de345bfb8c5417ac92))
+* **client-electron:** add dynamic navigation ([a5bbb5d](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a5bbb5dfc6727e36c643e72a78283eb4ff3f22ea))
+* **client-electron:** add key binds to solve with focus for sixth and seventh daemon ([94f667b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/94f667b4f1ad2a75304b0776290428df95d702e1))
+* **client-electron:** add simple pagination to analyze view ([fd714e8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/fd714e8d93d6fa5775256bebee29455227c38444)), closes [#294](https://github.com/marcincichocki/breach-protocol-autosolver/issues/294)
+* **core:** add ability to order sequences by types ([1ab78a3](https://github.com/marcincichocki/breach-protocol-autosolver/commit/1ab78a3e9279e08b680bd6d617030d13d0300b13)), closes [#249](https://github.com/marcincichocki/breach-protocol-autosolver/issues/249)
+
+
+### Bug Fixes
+
+* **client-electron:** calculate acquired daemons from resolved sequence ([c5266e2](https://github.com/marcincichocki/breach-protocol-autosolver/commit/c5266e2164f11dacf86da5a0ee3169816b4114bf))
+* **client-electron:** filter analyze results by daemons from resolved sequence ([70b501e](https://github.com/marcincichocki/breach-protocol-autosolver/commit/70b501e2ca0ab379d8a1172b06f57ba8bf9a98f8))
+* **client-electron:** handle missing source file ([6e5c55b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/6e5c55b4731320a80c9fc7ed776bd64ee6fcc0b6)), closes [#277](https://github.com/marcincichocki/breach-protocol-autosolver/issues/277)
+* **client-electron:** prevent conditional jsx from executing ([f18cd7b](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f18cd7bd8092e516093ff090ae75865f21d8a27e))
+* **client-electron:** prevent flicker in json viewer ([f26af63](https://github.com/marcincichocki/breach-protocol-autosolver/commit/f26af63176a9f605a0ba277a198479ec5085e6bc))
+* **common:** add extra delay after game is activated for nircmd ([721bf12](https://github.com/marcincichocki/breach-protocol-autosolver/commit/721bf12d6beffad428a5f7ffc60856707c67b14c))
+* **core:** add orphan daemons to daemons of resolved sequence ([a56cfd7](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a56cfd73034bbb5d44cac94796d79c9712cd1b0d))
+
+
+### Performance improvements
+
+* **core:** defer generation of sequences ([dc239ea](https://github.com/marcincichocki/breach-protocol-autosolver/commit/dc239ea78149f09552f58ab7d2fb94124f70f88f))
+
 ## [2.7.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.6.0...v2.7.0) (2022-10-08)
 
 
