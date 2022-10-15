@@ -1,3 +1,4 @@
+import { sleep } from '@/common/util';
 import { BreachProtocolRobotKeys } from './robot';
 import { WindowsRobot } from './win32';
 
@@ -7,8 +8,12 @@ export class NirCmdRobot extends WindowsRobot {
 
   protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
 
-  activateGameWindow() {
-    return this.bin(`win activate stitle ${this.gameWindowTitle}`);
+  async activateGameWindow() {
+    await this.bin(`win activate stitle ${this.gameWindowTitle}`);
+    // Wait extra time as nircmd will not wait for window to be actually
+    // actived. This could cause errors when entering sequence, as keystrokes
+    // could be sent before game can receive them
+    await sleep(500);
   }
 
   click() {
