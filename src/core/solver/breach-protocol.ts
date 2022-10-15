@@ -15,7 +15,7 @@ import { Daemon } from './daemon';
 import { HierarchyProvider } from './hierarchy/hierarchy-provider';
 import { memoizedFindOverlap } from './overlap';
 import { Sequence, SequenceJSON } from './sequence';
-import { SequenceFactory } from './sequence-factory';
+import { SequenceFactory, SequenceFactoryOptions } from './sequence-factory';
 
 export type BreachProtocolResultJSON = {
   path: string[];
@@ -120,7 +120,8 @@ export class BreachProtocolResult implements Serializable {
   }
 }
 
-export interface BreachProtocolOptions {
+export interface BreachProtocolOptions
+  extends Pick<SequenceFactoryOptions, 'immediate'> {
   strategy: BreachProtocolStrategy;
   hierarchyProvider: HierarchyProvider<BreachProtocolRawData>;
 }
@@ -156,6 +157,7 @@ export class BreachProtocol {
 
   private readonly factory = new SequenceFactory(this.rawData, {
     hierarchy: this.options.hierarchyProvider.provide(this.rawData),
+    immediate: this.options.immediate,
   });
 
   constructor(

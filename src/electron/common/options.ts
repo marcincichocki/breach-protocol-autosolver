@@ -333,6 +333,12 @@ export const options: BreachProtocolOption[] = [
       DAEMON_DATAMINE_V1,
     ],
   },
+  {
+    id: 'immediate',
+    description:
+      'Determines if sequences should be emitted immediately, or should they be grouped by permutation of daemons. Grouped sequences are sorted by raw path length.',
+    defaultValue: false,
+  },
 ];
 
 function optionsToObject<T>(cb: (option: BreachProtocolOption) => T) {
