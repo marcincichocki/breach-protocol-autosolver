@@ -209,7 +209,7 @@ export const CalibrateFragment = () => {
   }
 
   return (
-    <Row gap grow scroll>
+    <Row gap grow scroll key={fragmentId}>
       <Col gap grow>
         <Col grow scroll>
           <Title>Raw data</Title>
