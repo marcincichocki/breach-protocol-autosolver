@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.0...v2.8.1) (2022-10-15)
+
+
+### Bug Fixes
+
+* **client-electron:** show correct fragment while calibrating ([4e4c9ea](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4e4c9eaa4c50927ca5f4f4ce1f88c7e6ab36346a))
+
 ## [2.8.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.7.0...v2.8.0) (2022-10-15)
 
 
