@@ -79,6 +79,20 @@ export const PerformanceSettings = () => {
     next();
   }
 
+  async function notifyAboutExtendedDaemonsAndTypesRecognitionRange(
+    value: boolean,
+    next: () => void
+  ) {
+    if (value && !values.extendedDaemonsAndTypesRecognitionRange) {
+      await nativeDialog.alert({
+        message:
+          'This option might have little to no impact when extended daemons and types recognition range is not enabled.',
+      });
+    }
+
+    next();
+  }
+
   return (
     <Section title="Performance">
       <Field name="format">
@@ -107,6 +121,14 @@ export const PerformanceSettings = () => {
           options={strategyOptions}
           onBeforeValueChange={notifyAboutDfs}
         ></Select>
+      </Field>
+      <Field name="immediate">
+        <Label>Immediate sequences</Label>
+        <Switch
+          onBeforeValueChange={
+            notifyAboutExtendedDaemonsAndTypesRecognitionRange
+          }
+        />
       </Field>
     </Section>
   );

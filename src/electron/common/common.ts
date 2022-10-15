@@ -85,7 +85,7 @@ export interface AppSettings
     KeyBindsConfig,
     ResolverSettings,
     Required<BreachProtocolOCROptions>,
-    Pick<BreachProtocolOptions, 'strategy'> {
+    Exclude<BreachProtocolOptions, 'hierarchyProvider'> {
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;

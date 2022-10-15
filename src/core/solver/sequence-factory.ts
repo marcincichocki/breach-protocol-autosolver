@@ -5,7 +5,7 @@ import { Daemon } from './daemon';
 import { memoizedFindOverlap } from './overlap';
 import { Sequence } from './sequence';
 
-interface SequenceFactoryOptions {
+export interface SequenceFactoryOptions {
   /** Hierarchy of daemons that will be used to sort sequences. */
   hierarchy: number[];
 
