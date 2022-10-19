@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.1...v2.8.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* **core:** filter child daemons from sequence breaks ([0e47dde](https://github.com/marcincichocki/breach-protocol-autosolver/commit/0e47dde5657f9dab4ac689d5ac358e41b2f28f29))
+
+
+### Performance improvements
+
+* **core:** defer sequence constructor logic ([85bb4d1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/85bb4d1933136494b5246cd0cf7bb7ab282891fb))
+
 ### [2.8.1](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.0...v2.8.1) (2022-10-15)
 
 
