@@ -1,6 +1,21 @@
-import { DaemonId } from '@/core';
-import * as d from '@/core/daemons';
-import { eng } from '@/core/daemons-i18n';
+import {
+  DaemonId,
+  DAEMON_CAMERA_SHUTDOWN,
+  DAEMON_DATAMINE_COPY_MALWARE,
+  DAEMON_DATAMINE_CRAFTING_SPECS,
+  DAEMON_DATAMINE_V1,
+  DAEMON_DATAMINE_V2,
+  DAEMON_DATAMINE_V3,
+  DAEMON_FRIENDLY_TURRETS,
+  DAEMON_GAIN_ACCESS,
+  DAEMON_ICEPICK,
+  DAEMON_MASS_VULNERABILITY,
+  DAEMON_NEUTRALIZE_MALWARE,
+  DAEMON_OPTICS_JAMMER,
+  DAEMON_TURRET_SHUTDOWN,
+  DAEMON_WEAPONS_JAMMER,
+  eng,
+} from '@/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import styled from 'styled-components';
@@ -46,29 +61,29 @@ function moveInArray<T>(data: T[], from: number, to: number) {
 }
 
 const commonDaemons: ReadonlySet<DaemonId> = new Set([
-  d.DAEMON_DATAMINE_V1,
-  d.DAEMON_DATAMINE_V2,
-  d.DAEMON_DATAMINE_V3,
-  d.DAEMON_ICEPICK,
+  DAEMON_DATAMINE_V1,
+  DAEMON_DATAMINE_V2,
+  DAEMON_DATAMINE_V3,
+  DAEMON_ICEPICK,
 ]);
 
 const perkDaemons: ReadonlySet<DaemonId> = new Set([
-  d.DAEMON_MASS_VULNERABILITY,
-  d.DAEMON_CAMERA_SHUTDOWN,
-  d.DAEMON_FRIENDLY_TURRETS,
-  d.DAEMON_TURRET_SHUTDOWN,
+  DAEMON_MASS_VULNERABILITY,
+  DAEMON_CAMERA_SHUTDOWN,
+  DAEMON_FRIENDLY_TURRETS,
+  DAEMON_TURRET_SHUTDOWN,
 ]);
 
 const legendaryDaemons: ReadonlySet<DaemonId> = new Set([
-  d.DAEMON_OPTICS_JAMMER,
-  d.DAEMON_WEAPONS_JAMMER,
+  DAEMON_OPTICS_JAMMER,
+  DAEMON_WEAPONS_JAMMER,
 ]);
 
 const specialDaemons: ReadonlySet<DaemonId> = new Set([
-  d.DAEMON_DATAMINE_COPY_MALWARE,
-  d.DAEMON_NEUTRALIZE_MALWARE,
-  d.DAEMON_GAIN_ACCESS,
-  d.DAEMON_DATAMINE_CRAFTING_SPECS,
+  DAEMON_DATAMINE_COPY_MALWARE,
+  DAEMON_NEUTRALIZE_MALWARE,
+  DAEMON_GAIN_ACCESS,
+  DAEMON_DATAMINE_CRAFTING_SPECS,
 ]);
 
 function getDaemonType(id: DaemonId): DaemonType {

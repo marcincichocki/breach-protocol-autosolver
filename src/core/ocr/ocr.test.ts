@@ -1,5 +1,7 @@
-import { SharpImageContainer } from '@/common/node';
-import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
+import {
+  SharpImageContainer,
+  WasmBreachProtocolRecognizer,
+} from '@/common/node';
 import type { BreachProtocolLanguage } from '@/core';
 import { AppSettings } from '@/electron/common';
 import { join } from 'path';

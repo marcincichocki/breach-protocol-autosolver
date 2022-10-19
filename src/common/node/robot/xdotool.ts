@@ -1,5 +1,5 @@
+import { sleep } from '@/common';
 import * as k from '@/common/keyboard';
-import { sleep } from '@/common/util';
 import {
   BreachProtocolRobot,
   BreachProtocolRobotKeys,

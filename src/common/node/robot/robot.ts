@@ -1,5 +1,5 @@
+import { sleep } from '@/common';
 import * as k from '@/common/keyboard';
-import { sleep } from '@/common/util';
 import { execFile } from 'child_process';
 import { join } from 'path';
 import sanitize from 'sanitize-filename';

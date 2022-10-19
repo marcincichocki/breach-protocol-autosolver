@@ -1,4 +1,4 @@
-import { BreachProtocolRawData } from '@/core/common';
+import { BreachProtocolRawData } from '../../common';
 import { HierarchyProvider } from './hierarchy-provider';
 
 /** Focuses one daemon, and applies index to others. */

@@ -2,7 +2,7 @@ import {
   BreachProtocolResultJSON,
   BUFFER_SIZE_MIN,
   DaemonsRawData,
-  fromHex,
+  HexCodeSequence,
   isBufferSizeFragment,
   isDaemonsFragment,
   isGridFragment,
@@ -33,11 +33,11 @@ function getDaemonBounds(daemons: DaemonsRawData, sequence?: SequenceJSON) {
     return [];
   }
 
-  const st = sequence.value.map(fromHex).join('') ?? '';
+  const st = HexCodeSequence.fromHex(sequence?.value ?? []);
 
   return daemons
     .map((daemon) => {
-      const dt = daemon.map(fromHex).join('');
+      const dt = HexCodeSequence.fromHex(daemon);
       const start = st.indexOf(dt);
 
       if (start === -1) {
