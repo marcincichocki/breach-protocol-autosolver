@@ -3,9 +3,9 @@ import {
   BreachProtocolRobot,
   NirCmdRobot,
   SharpImageContainer,
+  WasmBreachProtocolRecognizer,
   XDoToolRobot,
 } from '@/common/node';
-import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import {
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
@@ -15,10 +15,10 @@ import {
   BreachProtocolResultJSON,
   BreachProtocolTypesFragment,
   FocusHierarchyProvider,
+  HierarchyProvider,
   IndexHierarchyProvider,
+  TypesHierarchyProvider,
 } from '@/core';
-import { HierarchyProvider } from '@/core/solver/hierarchy/hierarchy-provider';
-import { TypesHierarchyProvider } from '@/core/solver/hierarchy/types-hierarchy-provider';
 import {
   Action,
   ActionTypes,

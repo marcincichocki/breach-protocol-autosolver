@@ -1,5 +1,5 @@
+import type { BreachProtocolLanguage } from '@/core';
 import { BUFFER_SIZE_MAX } from '@/core';
-import type { BreachProtocolLanguage } from '@/core/daemons-i18n';
 import { AppSettings } from '@/electron/common';
 import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 import { getDisplayName, nativeDialog } from '../common';

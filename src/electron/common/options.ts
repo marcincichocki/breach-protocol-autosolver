@@ -22,7 +22,7 @@ import {
   DAEMON_OPTICS_JAMMER,
   DAEMON_TURRET_SHUTDOWN,
   DAEMON_WEAPONS_JAMMER,
-} from '@/core/daemons';
+} from '@/core';
 import { AppSettings } from './common';
 
 interface BreachProtocolOption {

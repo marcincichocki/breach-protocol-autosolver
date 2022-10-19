@@ -1,4 +1,4 @@
-import { sleep } from '@/common/util';
+import { sleep } from '@/common';
 import { BreachProtocolRobotKeys } from './robot';
 import { WindowsRobot } from './win32';
 

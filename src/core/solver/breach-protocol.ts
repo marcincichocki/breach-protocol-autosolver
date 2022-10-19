@@ -62,9 +62,9 @@ export class BreachProtocolResult implements Serializable {
     // since in very rare cases longer daemon could create
     // better sequence than its shorter peers(bigger overlap).
     const shouldForceClose = daemons
-      .filter((d, i) => !this.sequence.indexes.includes(i))
+      .filter((_, i) => !this.sequence.indexes.includes(i))
       .some((d) => {
-        const daemon = d.map(fromHex).join('');
+        const daemon = HexCodeSequence.fromHex(d);
         const r = memoizedFindOverlap(base, daemon);
 
         // If potential result(which will never happen) will

@@ -1,12 +1,12 @@
-import { BitMask, sleep, uniqueWith } from '@/common';
+import { BitMask, sleep } from '@/common';
 import {
   BreachProtocolKeyboardResolver,
   BreachProtocolMouseResolver,
   BreachProtocolResolver,
   BreachProtocolRobot,
   SharpImageContainer,
+  WasmBreachProtocolRecognizer,
 } from '@/common/node';
-import { WasmBreachProtocolRecognizer } from '@/common/node/recognizer-wasm';
 import {
   BreachProtocol,
   breachProtocolOCR,
