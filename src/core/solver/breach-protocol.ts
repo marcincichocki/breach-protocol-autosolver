@@ -9,9 +9,9 @@ import {
   generateSquareMap,
   getUnits,
   ROWS,
-  toHex,
 } from '../common';
 import { Daemon } from './daemon';
+import { HexCodeSequence } from './hex-code-sequence';
 import { HierarchyProvider } from './hierarchy/hierarchy-provider';
 import { memoizedFindOverlap } from './overlap';
 import { Sequence, SequenceJSON } from './sequence';
@@ -100,10 +100,10 @@ export class BreachProtocolResult implements Serializable {
       const pts = this.sequence.parts.map(({ tValue }) => tValue);
 
       return this.game.rawData.daemons
-        .map((raw, index) => ({ dt: raw.map(fromHex).join(''), index }))
+        .map((raw, index) => ({ dt: HexCodeSequence.fromHex(raw), index }))
         .filter(({ dt }) => !pts.includes(dt))
         .filter(({ dt }) => tValue.includes(dt))
-        .map(({ dt, index }) => new Daemon(dt.split('').map(toHex), index))
+        .map(({ dt, index }) => new Daemon(dt, index))
         .concat(this.sequence.parts);
     }
 
@@ -113,10 +113,9 @@ export class BreachProtocolResult implements Serializable {
   // Produces sequence from resolved path.
   private getResolvedSequence() {
     const tValue = this.resolvePath(this.path).join('');
-    const value = tValue.split('').map(toHex);
     const parts = this.getResolvedSequenceParts(tValue);
 
-    return new Sequence(value, parts);
+    return new Sequence(tValue, parts);
   }
 }
 
