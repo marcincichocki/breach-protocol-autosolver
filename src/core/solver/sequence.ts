@@ -38,6 +38,7 @@ export class Sequence
   // beginning and the end.
   private getSequenceBreaks() {
     return this.parts
+      .filter((d) => !d.isChild)
       .map((d) => {
         const start = this.tValue.indexOf(d.tValue);
         const end = start + d.length - 1;
