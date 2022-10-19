@@ -8,10 +8,7 @@ describe('Sequence', () => {
       ['1C', '1C'],
       ['55', '7A'],
     ];
-    const sequence = new Sequence(
-      ['1C', '1C', '55', '7A'],
-      Daemon.parse(rawData)
-    );
+    const sequence = Sequence.fromPermutation(Daemon.parse(rawData));
 
     expect(sequence.breaks).toEqual([0, 2]);
   });
@@ -22,26 +19,21 @@ describe('Sequence', () => {
       ['1C', '7A'],
       ['BD', 'BD'],
     ];
-    const sequence = new Sequence(
-      ['1C', '1C', '7A', 'BD', 'BD'],
-      Daemon.parse(rawData)
-    );
+    const sequence = Sequence.fromPermutation(Daemon.parse(rawData));
 
     expect(sequence.breaks).toEqual([0, 3]);
   });
 
-  it('should have only one break at the start if there is a full overlap', () => {
+  it('should not create breaks for child daemons and regular daemons', () => {
     const rawData: DaemonsRawData = [
-      ['1C', '1C'],
-      ['1C', '1C', '7A'],
+      ['BD', 'BD', 'BD'],
+      ['BD', '1C', 'BD'],
+      ['BD', 'BD'],
     ];
-    const daemons = Daemon.parse(rawData);
-    const sequence = new Sequence(
-      ['1C', '1C', '7A'],
-      daemons.filter(({ index }) => index === 1)
-    );
+    const [d1, d2, d3] = Daemon.parse(rawData);
+    const sequence = Sequence.fromPermutation([d1, d2]);
 
-    expect(daemons[0].isChild).toBe(true);
+    expect(d3.isChild).toBe(true);
     expect(sequence.breaks).toEqual([0]);
   });
 });

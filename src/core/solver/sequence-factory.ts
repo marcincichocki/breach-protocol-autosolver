@@ -46,28 +46,17 @@ export class SequenceFactory {
           return true;
         });
 
-      permutations: for (const permutation of this.permutate(daemons)) {
-        let { tValue } = permutation[0];
+      for (const permutation of this.permutate(daemons)) {
+        const sequence = Sequence.fromPermutation(
+          permutation,
+          this.rawData.bufferSize
+        );
 
-        for (let i = 1; i < permutation.length; i++) {
-          tValue = memoizedFindOverlap(tValue, permutation[i].tValue);
-
-          if (tValue.length > this.rawData.bufferSize) {
-            continue permutations;
-          }
-        }
-
-        if (this.registry.has(tValue)) {
+        if (!sequence || this.registry.has(sequence.tValue)) {
           continue;
         }
 
-        this.registry.add(tValue);
-
-        const value = tValue.split('').map(toHex);
-        const parts = permutation
-          .flatMap((d) => d.getParts())
-          .filter(uniqueBy('index'));
-        const sequence = new Sequence(value, parts);
+        this.registry.add(sequence.tValue);
 
         if (this.options.immediate) {
           yield sequence;

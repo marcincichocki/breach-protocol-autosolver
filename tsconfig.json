@@ -4,6 +4,7 @@
     "module": "esnext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "target": "ES2019",
     "noImplicitAny": true,
     "noImplicitOverride": true,

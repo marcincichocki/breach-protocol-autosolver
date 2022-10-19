@@ -5,7 +5,7 @@ import {
 } from '../common';
 import { HexCodeSequence } from './hex-code-sequence';
 
-export class Daemon extends HexCodeSequence<DaemonRawData> {
+export class Daemon extends HexCodeSequence {
   /** Whether this daemon is a child of another daemon. */
   get isChild() {
     return this.parents.size > 0;
@@ -19,7 +19,7 @@ export class Daemon extends HexCodeSequence<DaemonRawData> {
   private readonly parents = new Set<Daemon>();
   private readonly children = new Set<Daemon>();
 
-  constructor(value: DaemonRawData, public readonly index: number) {
+  constructor(value: DaemonRawData | string, public readonly index: number) {
     super(value);
   }
 
