@@ -100,7 +100,7 @@
     "@types/jest": "^29.2.2",
     "@types/node": "^16.11.68",
     "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
+    "@types/react-dom": "^18.0.8",
     "@types/sharp": "^0.31.0",
     "@types/styled-components": "^5.1.26",
     "@types/tar": "^6.1.3",
