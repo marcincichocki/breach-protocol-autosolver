@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.3](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.2...v2.8.3) (2022-11-13)
+
+
+### Bug Fixes
+
+* **client-electron:** remove duplicate value from language select ([3d851b1](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3d851b1e535fb81435f00dbac92ff05b710b4509))
+
 ### [2.8.2](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.1...v2.8.2) (2022-10-19)
 
 
