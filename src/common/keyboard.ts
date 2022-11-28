@@ -50,8 +50,7 @@ export const VK_KEY_B = 'KeyB';
 export const VK_KEY_N = 'KeyN';
 export const VK_KEY_M = 'KeyM';
 
-// [F1-F12]
-// MISSING CODES: [F13-F24]
+// [F1-F24]
 export const VK_F1 = 'F1';
 export const VK_F2 = 'F2';
 export const VK_F3 = 'F3';
@@ -64,6 +63,18 @@ export const VK_F9 = 'F9';
 export const VK_F10 = 'F10';
 export const VK_F11 = 'F11';
 export const VK_F12 = 'F12';
+export const VK_F13 = 'F13';
+export const VK_F14 = 'F14';
+export const VK_F15 = 'F15';
+export const VK_F16 = 'F16';
+export const VK_F17 = 'F17';
+export const VK_F18 = 'F18';
+export const VK_F19 = 'F19';
+export const VK_F20 = 'F20';
+export const VK_F21 = 'F21';
+export const VK_F22 = 'F22';
+export const VK_F23 = 'F23';
+export const VK_F24 = 'F24';
 export const VK_BACKQUOTE = 'Backquote';
 export const VK_MINUS = 'Minus';
 export const VK_EQUAL = 'Equal';
