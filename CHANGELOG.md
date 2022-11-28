@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.4](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.3...v2.8.4) (2022-11-28)
+
+
+### Bug Fixes
+
+* **client-electron:** allow to bind F20-F24 keys ([94d9516](https://github.com/marcincichocki/breach-protocol-autosolver/commit/94d951665ac5ea5b59ceafe2837a9f6b46f30bd2)), closes [#346](https://github.com/marcincichocki/breach-protocol-autosolver/issues/346)
+
 ### [2.8.3](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.2...v2.8.3) (2022-11-13)
 
 
