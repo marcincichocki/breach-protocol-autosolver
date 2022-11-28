@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.5](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.4...v2.8.5) (2022-11-28)
+
+
+### Bug Fixes
+
+* **common:** add missing F13-F24 vkeys ([a1bf34c](https://github.com/marcincichocki/breach-protocol-autosolver/commit/a1bf34c6ca31aa93a979200e7fa21773d1668f1b))
+
 ### [2.8.4](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.3...v2.8.4) (2022-11-28)
 
 
