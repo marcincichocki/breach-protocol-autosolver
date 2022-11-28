@@ -95,7 +95,7 @@
   "bugs": "https://github.com/marcincichocki/breach-protocol-autosolver/issues",
   "license": "MIT",
   "devDependencies": {
-    "@types/dompurify": "^2.3.4",
+    "@types/dompurify": "^2.4.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.2",
     "@types/node": "^16.18.3",
@@ -127,7 +127,7 @@
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
     "date-fns": "^2.29.3",
-    "dompurify": "^2.4.0",
+    "dompurify": "^2.4.1",
     "electron-first-run": "^3.0.0",
     "electron-is-accelerator": "^0.2.0",
     "electron-store": "^8.1.0",
