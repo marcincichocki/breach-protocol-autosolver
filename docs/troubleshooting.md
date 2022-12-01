@@ -2,9 +2,15 @@
 
 ### Pressing key bind doesn't do anything!
 
-Ensure that selected key bind doesn't collide with anything else(system keybinds, 3rd party programs, etc).
+There are 2 main reasons why key binds might not work:
 
-One situation in which key bind will not work is when worker is disabled. In that case there will be appropriate message on the status bar. Worker can become temporarily disabled when changing some settings(like key binds or engine) and permanently disabled, when some dependency is not present. In latter case install missing dependencies and restart the app.
+Firstly, due to how global shortcuts work in [electron.js](https://www.electronjs.org/docs/latest/api/global-shortcut), selected keys will be mapped to their values. If you are using non-standard keyboard layout, this means that the selected key bind will not match the value displayed in the settings. To ensure that key binds work as expected, please use QWERTY keyboard layout in the autosolver. Keyboard layout can be changed in the settings of your operating system. In most operating systems it can be changed per application.
+
+For Windows 10 please see: https://answers.microsoft.com/en-us/windows/forum/all/how-to-set-a-keyboard-input-language-for-a/1f5ce55c-26ef-485d-b40c-43e19d35d1de
+
+Secondly, please ensure that the selected key bind doesn't collide with anything else(system key binds, 3rd party programs, etc.).
+
+Additionally, key binds will not work is when the worker is disabled. In that case, there will be an appropriate message on the status bar. Worker can become temporarily disabled when changing some settings (like key binds or engine) and permanently disabled, when some dependency is not present (Linux only). In the latter case, install missing dependencies and restart the app.
 
 ### Key bind works, but recognition doesn't work!
 
