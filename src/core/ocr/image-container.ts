@@ -8,7 +8,7 @@ export interface Dimensions {
 export interface FragmentContainerConfig {
   boundingBox: FragmentBoundingBox;
   colors?: number;
-  channel?: string;
+  channel?: 'red' | 'green' | 'blue';
   flop?: boolean;
   width?: number;
 }
