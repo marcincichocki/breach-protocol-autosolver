@@ -8,12 +8,15 @@ import {
   VK_ESCAPE,
 } from '@/common';
 import {
+  DAEMON_ADVANCED_DATAMINE,
+  DAEMON_BASIC_DATAMINE,
   DAEMON_CAMERA_SHUTDOWN,
   DAEMON_DATAMINE_COPY_MALWARE,
   DAEMON_DATAMINE_CRAFTING_SPECS,
   DAEMON_DATAMINE_V1,
   DAEMON_DATAMINE_V2,
   DAEMON_DATAMINE_V3,
+  DAEMON_EXPERT_DATAMINE,
   DAEMON_FRIENDLY_TURRETS,
   DAEMON_GAIN_ACCESS,
   DAEMON_ICEPICK,
@@ -331,6 +334,9 @@ export const options: BreachProtocolOption[] = [
       DAEMON_DATAMINE_V3,
       DAEMON_DATAMINE_V2,
       DAEMON_DATAMINE_V1,
+      DAEMON_EXPERT_DATAMINE,
+      DAEMON_ADVANCED_DATAMINE,
+      DAEMON_BASIC_DATAMINE,
     ],
   },
   {
@@ -338,6 +344,11 @@ export const options: BreachProtocolOption[] = [
     description:
       'Determines if sequences should be emitted immediately, or should they be grouped by permutation of daemons. Grouped sequences are sorted by raw path length.',
     defaultValue: false,
+  },
+  {
+    id: 'patch',
+    description: 'Installed patch of Cyberpunk 2077.',
+    defaultValue: '2.x',
   },
 ];
 

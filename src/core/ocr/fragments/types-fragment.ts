@@ -1,10 +1,11 @@
 import { Point, similarity, unique } from '@/common';
 import {
-  DaemonId,
   DAEMONS_SIZE_MAX,
   DAEMONS_SIZE_MIN,
+  DaemonId,
   TypesRawData,
 } from '../../common';
+import { DAEMONS, LEGACY_DAEMONS } from '../../daemon-set';
 import {
   DAEMON_DATAMINE_V1,
   DAEMON_DATAMINE_V2,
@@ -55,6 +56,8 @@ export class BreachProtocolTypesFragment<
   /** Language of current dictionary. */
   private static daemonDictLang: BreachProtocolLanguage = null;
 
+  private static patch: string = null;
+
   private static minAcceptableSimilarity = 0.85;
 
   // Some non latin languages contain latin characters in daemon names.
@@ -87,17 +90,27 @@ export class BreachProtocolTypesFragment<
   }
 
   private setDaemonDict() {
-    if (
-      this.options.recognizer.lang !==
-      BreachProtocolTypesFragment.daemonDictLang
-    ) {
-      const { lang } = this.options.recognizer;
-      const entries = Object.entries(daemonsI18n[lang]).map(
-        ([k, v]: [DaemonId, string]) => [v, k] as const
-      );
+    const hasValidDictionary =
+      this.options.recognizer.lang ===
+      BreachProtocolTypesFragment.daemonDictLang;
+    const hasValidPatch =
+      this.options.patch === BreachProtocolTypesFragment.patch;
+
+    if (!hasValidDictionary || !hasValidPatch) {
+      const { recognizer, patch } = this.options;
+      const { lang } = recognizer;
+      const daemons = patch === '1.x' ? LEGACY_DAEMONS : DAEMONS;
+      const daemonDictEntries = Object.entries(daemonsI18n[lang]) as [
+        DaemonId,
+        string
+      ][];
+      const entries = daemonDictEntries
+        .filter(([daemonId]) => daemons.has(daemonId))
+        .map(([daemonId, translation]) => [translation, daemonId] as const);
 
       BreachProtocolTypesFragment.daemonDict = Object.fromEntries(entries);
       BreachProtocolTypesFragment.daemonDictLang = lang;
+      BreachProtocolTypesFragment.patch = patch;
     }
   }
 
@@ -146,7 +159,10 @@ export class BreachProtocolTypesFragment<
     const keys = Object.keys(BreachProtocolTypesFragment.daemonDict);
 
     return lines.map((t) => {
-      if (BreachProtocolTypesFragment.edgeCases.has(t)) {
+      if (
+        this.options.patch === '1.x' &&
+        BreachProtocolTypesFragment.edgeCases.has(t)
+      ) {
         return BreachProtocolTypesFragment.edgeCases.get(t);
       }
 

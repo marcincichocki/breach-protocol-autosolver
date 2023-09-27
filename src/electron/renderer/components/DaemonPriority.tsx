@@ -15,6 +15,9 @@ import {
   DAEMON_TURRET_SHUTDOWN,
   DAEMON_WEAPONS_JAMMER,
   eng,
+  DAEMON_BASIC_DATAMINE,
+  DAEMON_ADVANCED_DATAMINE,
+  DAEMON_EXPERT_DATAMINE,
 } from '@/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -22,7 +25,9 @@ import styled from 'styled-components';
 import { FlatButton } from './Buttons';
 import { Dialog } from './Dialog';
 import { Col, Row, Spacer } from './Flex';
-import { useField } from './Form';
+import { useField, useForm } from './Form';
+import { AppSettings } from '@/electron/common';
+import { DAEMONS, LEGACY_DAEMONS } from '@/core/daemon-set';
 
 const Description = styled.p`
   color: var(--primary);
@@ -34,10 +39,22 @@ const Description = styled.p`
 
 const Daemon = styled(Row).attrs({
   role: 'button',
-})<{ selected: boolean }>`
-  color: ${(p) => (p.selected ? 'var(--background)' : 'var(--accent)')};
-  background: ${(p) => (p.selected ? 'var(--accent)' : 'var(--background)')};
-  border: 1px solid ${(p) => (p.selected ? 'var(--accent)' : 'var(--primary)')};
+})<{ selected: boolean; disabled: boolean }>`
+  color: ${(p) =>
+    p.disabled ? 'gray' : p.selected ? 'var(--background)' : 'var(--accent)'};
+  background: ${(p) =>
+    p.disabled
+      ? 'darkgray'
+      : p.selected
+      ? 'var(--accent)'
+      : 'var(--background)'};
+  border: 1px solid
+    ${(p) =>
+      p.disabled
+        ? 'darkgray'
+        : p.selected
+        ? 'var(--accent)'
+        : 'var(--primary)'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,6 +82,9 @@ const commonDaemons: ReadonlySet<DaemonId> = new Set([
   DAEMON_DATAMINE_V2,
   DAEMON_DATAMINE_V3,
   DAEMON_ICEPICK,
+  DAEMON_BASIC_DATAMINE,
+  DAEMON_ADVANCED_DATAMINE,
+  DAEMON_EXPERT_DATAMINE,
 ]);
 
 const perkDaemons: ReadonlySet<DaemonId> = new Set([
@@ -119,10 +139,15 @@ interface DaemonPriorityProps {
 }
 
 export const DaemonPriority = ({ isOpen, onClose }: DaemonPriorityProps) => {
+  const { values } = useForm<AppSettings>();
   const [selected, setSelected] = useState<string>(null);
   const { value, setValue } = useField<DaemonId[]>();
   const didMount = useRef(false);
   const [dirty, setDirty] = useState(false);
+  const daemonSet = useMemo(
+    () => (values.patch === '1.x' ? LEGACY_DAEMONS : DAEMONS),
+    [values.patch]
+  );
   const defaultDaemons = useMemo(() => {
     return value.map((id) => {
       const type = getDaemonType(id);
@@ -239,6 +264,7 @@ export const DaemonPriority = ({ isOpen, onClose }: DaemonPriorityProps) => {
             {daemons.map(({ id, type }) => (
               <Daemon
                 key={id}
+                disabled={!daemonSet.has(id)}
                 selected={selected === id}
                 onClick={() =>
                   setSelected((selected) => (selected === id ? null : id))

@@ -90,6 +90,14 @@ export function getDisplayName(display: ScreenshotDisplayOutput) {
   return `${display.name} (${display.width}x${display.height})`;
 }
 
+export function getPatchName(patch: '1.x' | '2.x') {
+  if (patch === '1.x') {
+    return '1.63';
+  }
+
+  return '2.0';
+}
+
 export function createRootElement(id: string) {
   const root = document.createElement('div');
   root.id = id;

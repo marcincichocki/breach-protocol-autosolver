@@ -102,6 +102,7 @@ export class BreachProtocolAutosolver {
     this.game = new BreachProtocol(rawData, {
       strategy: this.settings.strategy,
       hierarchyProvider: this.hierarchyProvider,
+      patch: this.settings.patch,
     });
 
     this.progress.add(BreachProtocolSolveProgress.FragmentsValid);

@@ -19,6 +19,11 @@ import ElectronStore from 'electron-store';
 import { ensureDirSync, remove, removeSync } from 'fs-extra';
 import { join } from 'path';
 import { appReducer } from './reducer';
+import {
+  DAEMON_ADVANCED_DATAMINE,
+  DAEMON_BASIC_DATAMINE,
+  DAEMON_EXPERT_DATAMINE,
+} from '@/core';
 
 type Middleware = (action: Action) => void;
 
@@ -80,6 +85,26 @@ export class Store {
           newKeyBinds.forEach((option) => {
             store.set(option.id, '');
           });
+        }
+      },
+      '>=2.9.0': (store) => {
+        const daemons = store.get('daemonPriority');
+        const newDaemons = [];
+
+        if (!daemons.includes(DAEMON_EXPERT_DATAMINE)) {
+          newDaemons.push(DAEMON_EXPERT_DATAMINE);
+        }
+
+        if (!daemons.includes(DAEMON_ADVANCED_DATAMINE)) {
+          newDaemons.push(DAEMON_ADVANCED_DATAMINE);
+        }
+
+        if (!daemons.includes(DAEMON_BASIC_DATAMINE)) {
+          newDaemons.push(DAEMON_BASIC_DATAMINE);
+        }
+
+        if (newDaemons.length > 0) {
+          store.set('daemonPriority', [...daemons, ...newDaemons]);
         }
       },
     },

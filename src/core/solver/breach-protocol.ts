@@ -55,7 +55,10 @@ export class BreachProtocolResult implements Serializable {
     const { bufferSize, daemons } = this.game.rawData;
 
     // BP will exit automatically when all of the buffer has been used.
-    const willExit = this.path.length === bufferSize;
+    const willExit =
+      this.game.options.patch === '1.x'
+        ? this.path.length === bufferSize
+        : false;
 
     // Get daemons that were not used in resolved sequence.
     // There is no point of finding shortest daemon,
@@ -123,6 +126,7 @@ export interface BreachProtocolOptions
   extends Pick<SequenceFactoryOptions, 'immediate'> {
   strategy: BreachProtocolStrategy;
   hierarchyProvider: HierarchyProvider<BreachProtocolRawData>;
+  patch: '1.x' | '2.x';
 }
 
 export type BreachProtocolStrategy = 'dfs' | 'bfs';
@@ -161,7 +165,7 @@ export class BreachProtocol {
 
   constructor(
     public readonly rawData: BreachProtocolRawData,
-    private readonly options: BreachProtocolOptions
+    public readonly options: BreachProtocolOptions
   ) {}
 
   solveForSequence(sequence: Sequence) {
