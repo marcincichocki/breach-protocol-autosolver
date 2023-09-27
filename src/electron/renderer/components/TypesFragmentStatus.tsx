@@ -14,7 +14,8 @@ export const TypesFragmentStatus = ({ types }: TypesFragmentStatusProps) => {
       body={
         <Warning.Body>
           Select correct{' '}
-          <Warning.Link setting="gameLang">game language</Warning.Link>, change{' '}
+          <Warning.Link setting="gameLang">game language</Warning.Link>,{' '}
+          <Warning.Link setting="patch">patch</Warning.Link>, change{' '}
           <Warning.Link setting="thresholdTypesAuto">threshold</Warning.Link> or{' '}
           <Warning.Link setting="skipTypesFragment">
             disable this feature

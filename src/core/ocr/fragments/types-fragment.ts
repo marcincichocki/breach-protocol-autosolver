@@ -56,6 +56,8 @@ export class BreachProtocolTypesFragment<
   /** Language of current dictionary. */
   private static daemonDictLang: BreachProtocolLanguage = null;
 
+  private static patch: string = null;
+
   private static minAcceptableSimilarity = 0.85;
 
   // Some non latin languages contain latin characters in daemon names.
@@ -88,12 +90,16 @@ export class BreachProtocolTypesFragment<
   }
 
   private setDaemonDict() {
-    if (
-      this.options.recognizer.lang !==
-      BreachProtocolTypesFragment.daemonDictLang
-    ) {
-      const { lang } = this.options.recognizer;
-      const daemons = this.options.patch === '1.x' ? LEGACY_DAEMONS : DAEMONS;
+    const hasValidDictionary =
+      this.options.recognizer.lang ===
+      BreachProtocolTypesFragment.daemonDictLang;
+    const hasValidPatch =
+      this.options.patch === BreachProtocolTypesFragment.patch;
+
+    if (!hasValidDictionary || !hasValidPatch) {
+      const { recognizer, patch } = this.options;
+      const { lang } = recognizer;
+      const daemons = patch === '1.x' ? LEGACY_DAEMONS : DAEMONS;
       const daemonDictEntries = Object.entries(daemonsI18n[lang]) as [
         DaemonId,
         string
@@ -104,6 +110,7 @@ export class BreachProtocolTypesFragment<
 
       BreachProtocolTypesFragment.daemonDict = Object.fromEntries(entries);
       BreachProtocolTypesFragment.daemonDictLang = lang;
+      BreachProtocolTypesFragment.patch = patch;
     }
   }
 
