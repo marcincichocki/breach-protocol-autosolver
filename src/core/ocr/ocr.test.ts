@@ -136,13 +136,16 @@ describe('raw data validation', () => {
   it('should pass it if data is valid', () => {
     const gridFragment = new BreachProtocolGridFragment(container, {
       recognizer,
+      patch: '1.x',
     });
     const daemonsFragment = new BreachProtocolDaemonsFragment(container, {
       recognizer,
       extendedDaemonsAndTypesRecognitionRange: false,
+      patch: '1.x',
     });
     const bufferSizeFragment = new BreachProtocolBufferSizeFragment(container, {
       extendedBufferSizeRecognitionRange: false,
+      patch: '1.x',
     });
 
     expect(gridFragment.getStatus(grid)).toBe(valid);
@@ -151,7 +154,10 @@ describe('raw data validation', () => {
   });
 
   it('should throw an error if grid is invalid', () => {
-    const fragment = new BreachProtocolGridFragment(container, { recognizer });
+    const fragment = new BreachProtocolGridFragment(container, {
+      recognizer,
+      patch: '1.x',
+    });
     const invalidGrids = [
       grid.map((s, i) => (i === 5 ? '57' : s)),
       grid.map((s, i) => (i === 9 ? 'test' : s)),
@@ -169,6 +175,7 @@ describe('raw data validation', () => {
     const fragment = new BreachProtocolDaemonsFragment(container, {
       recognizer,
       extendedDaemonsAndTypesRecognitionRange: false,
+      patch: '1.x',
     });
     const invalidDaemons = [
       daemons.map(() => ['B7']),
@@ -185,6 +192,7 @@ describe('raw data validation', () => {
   it('should throw an error if buffer size is invalid', () => {
     const fragment = new BreachProtocolBufferSizeFragment(container, {
       extendedBufferSizeRecognitionRange: false,
+      patch: '1.x',
     });
     const invalidBufferSizes = [NaN, 3, 10, 2 * Math.PI] as BufferSize[];
 
@@ -246,11 +254,13 @@ async function recognizeRegistryEntry(
     settings?.extendedBufferSizeRecognitionRange ?? false;
   const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container, {
     extendedBufferSizeRecognitionRange,
+    patch: '1.x',
   });
   const recognizer = new WasmBreachProtocolRecognizer(null);
 
   return Promise.all([
     breachProtocolOCR(container, recognizer, {
+      patch: '1.x',
       thresholdGridAuto: true,
       thresholdTypesAuto: true,
       thresholdDaemonsAuto: true,

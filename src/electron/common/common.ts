@@ -61,7 +61,7 @@ export const KEY_BINDS = [
   'keyBindAnalyze',
 ] as const;
 
-export type BreachProtocolKeyBinds = typeof KEY_BINDS[number];
+export type BreachProtocolKeyBinds = (typeof KEY_BINDS)[number];
 export type KeyBindsConfig = Record<BreachProtocolKeyBinds, string>;
 
 export const COMMANDS = [
@@ -76,7 +76,7 @@ export const COMMANDS = [
   'worker:analyze',
 ] as const;
 
-export type BreachProtocolCommands = typeof COMMANDS[number];
+export type BreachProtocolCommands = (typeof COMMANDS)[number];
 
 export interface AppSettings
   extends RobotSettings,
@@ -86,6 +86,7 @@ export interface AppSettings
     ResolverSettings,
     Required<BreachProtocolOCROptions>,
     Exclude<BreachProtocolOptions, 'hierarchyProvider'> {
+  patch: '1.x' | '2.x';
   historySize: number;
   preserveSourceOnSuccess: boolean;
   checkForUpdates: boolean;

@@ -1,9 +1,16 @@
 import { RemoveLastNHistoryEntriesAction } from '@/electron/common';
-import { nativeDialog } from '../common';
+import { getPatchName, nativeDialog } from '../common';
 import { Field, Label, OnBeforeValueChange } from './Form';
 import { RangeSlider } from './RangeSlider';
 import { Section } from './Section';
 import { Switch } from './Switch';
+import { Select, SelectOption } from './Select';
+
+const patches = ['1.x', '2.x'] as const;
+const patchOptions: SelectOption<string>[] = patches.map((value) => ({
+  value,
+  name: getPatchName(value),
+}));
 
 export const GeneralSettings = ({ historySize }: { historySize: number }) => {
   const onBeforeHistorySizeChange: OnBeforeValueChange<number> = async (
@@ -30,6 +37,10 @@ export const GeneralSettings = ({ historySize }: { historySize: number }) => {
 
   return (
     <Section title="General">
+      <Field name="patch">
+        <Label>Cyberpunk patch</Label>
+        <Select options={patchOptions}></Select>
+      </Field>
       <Field name="minimizeToTray">
         <Label>Minimize to tray</Label>
         <Switch />

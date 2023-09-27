@@ -32,7 +32,11 @@ const testData = (data as BreachProtocolRawData[]).concat(
 
 describe('Breach protocol solve', () => {
   const hierarchyProvider = new IndexHierarchyProvider();
-  const options: BreachProtocolOptions = { strategy: 'bfs', hierarchyProvider };
+  const options: BreachProtocolOptions = {
+    strategy: 'bfs',
+    hierarchyProvider,
+    patch: '1.x',
+  };
 
   it('should resolve 3 base cases', () => {
     // prettier-ignore
@@ -70,6 +74,7 @@ describe('Breach protocol solve', () => {
         const game = new BreachProtocol(rawData, {
           strategy,
           hierarchyProvider,
+          patch: '1.x',
         });
         const result = game.solve();
 

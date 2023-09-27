@@ -43,6 +43,7 @@ export type BreachProtocolFragmentResults = [
 
 export interface BreachProtocolFragmentOptions extends FragmentOptions {
   recognizer?: BreachProtocolRecognizer;
+  patch: '1.x' | '2.x';
 }
 
 export abstract class BreachProtocolFragment<

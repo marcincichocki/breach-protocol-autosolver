@@ -29,6 +29,7 @@ export interface BreachProtocolOCROptions extends FragmentOptions {
   skipTypesFragment?: boolean;
   useFixedBufferSize?: boolean;
   fixedBufferSize?: number;
+  patch: '1.x' | '2.x';
 }
 
 type FragmentCtor = new (
@@ -84,6 +85,7 @@ class BreachProtocolFragmentFactory<TImage> {
       filterRecognizerResults,
       extendedDaemonsAndTypesRecognitionRange,
       extendedBufferSizeRecognitionRange,
+      patch,
     } = options;
 
     return {
@@ -91,6 +93,7 @@ class BreachProtocolFragmentFactory<TImage> {
       extendedBufferSizeRecognitionRange,
       extendedDaemonsAndTypesRecognitionRange,
       filterRecognizerResults,
+      patch,
     };
   }
 }

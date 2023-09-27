@@ -377,6 +377,7 @@ export class BreachProtocolWorker {
       gameLang,
       extendedBufferSizeRecognitionRange,
       extendedDaemonsAndTypesRecognitionRange,
+      patch,
     } = this.settings;
     const container = await SharpImageContainer.create(instance, {
       downscaleSource,
@@ -387,6 +388,7 @@ export class BreachProtocolWorker {
       filterRecognizerResults,
       extendedBufferSizeRecognitionRange,
       extendedDaemonsAndTypesRecognitionRange,
+      patch,
     };
 
     this.fragments = {

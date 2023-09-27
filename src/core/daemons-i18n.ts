@@ -37,6 +37,9 @@ export const eng: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALIZE MALWARE',
   [d.DAEMON_GAIN_ACCESS]: 'GAIN ACCESS',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATAMINE: CRAFTING SPECS',
+  [d.DAEMON_BASIC_DATAMINE]: 'BASIC DATAMINE',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'ADVANCED DATAMINE',
+  [d.DAEMON_EXPERT_DATAMINE]: 'EXPERT DATAMINE',
 };
 
 export const pol: DaemonDict = {
@@ -56,6 +59,9 @@ export const pol: DaemonDict = {
   [d.DAEMON_GAIN_ACCESS]: 'UZYSKAJ DOSTĘP',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
     'EKSPLORACJA DANYCH: SCHEMATY WYTWARZANIA',
+  [d.DAEMON_BASIC_DATAMINE]: 'EKSPLORACJA: DANE BAZOWE',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'EKSPLORACJA: DANE SPECJALNE',
+  [d.DAEMON_EXPERT_DATAMINE]: 'EKSPLORACJA: DANE WRAŻLIWE',
 };
 
 export const rus: DaemonDict = {
@@ -73,6 +79,9 @@ export const rus: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'ОБЕЗВРЕДИТЬ ВИРУС',
   [d.DAEMON_GAIN_ACCESS]: 'ПОЛУЧИТЬ ДОСТУП',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ДОБЫЧА ДАННЫХ: ДОКУМЕНТАЦИЯ',
+  [d.DAEMON_BASIC_DATAMINE]: 'ОБЫЧНА ДОБЫЧА ДАННЫХ',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'ПРОДВИНУТАЯ ДОБЫЧА ДАННЫХ',
+  [d.DAEMON_EXPERT_DATAMINE]: 'ВЫСОКОУРОВНЕВАЯ ДОБЫЧА ДАННЫХ',
 };
 
 export const deu: DaemonDict = {
@@ -90,6 +99,9 @@ export const deu: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'MALWARE NEUTRALISIEREN',
   [d.DAEMON_GAIN_ACCESS]: 'ZUGRIFF VERSCHAFFEN',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATA-MINING: SCHEMA',
+  [d.DAEMON_BASIC_DATAMINE]: 'EINFACHES DATA-MINING',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'VERBESSERTES DATA-MINING',
+  [d.DAEMON_EXPERT_DATAMINE]: 'HERAUSRAGENDES DATA-MINING',
 };
 
 export const fra: DaemonDict = {
@@ -107,6 +119,9 @@ export const fra: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'NEUTRALISER LE MALWARE',
   [d.DAEMON_GAIN_ACCESS]: "OBTENIR L'ACCÈS",
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'DATA MINING : PLAN DE FABRICATION',
+  [d.DAEMON_BASIC_DATAMINE]: 'DATA MINING ÉLÉMENTAIRE',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'DATA MINING AVANCÉ',
+  [d.DAEMON_EXPERT_DATAMINE]: 'DATA MINING EXPERT',
 };
 
 export const por: DaemonDict = {
@@ -125,6 +140,9 @@ export const por: DaemonDict = {
   [d.DAEMON_GAIN_ACCESS]: 'OBTER ACESSO',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
     'MINERAÇÃO DE DADOS: ESPECIALIZAÇÕES DE CRIAÇÃO',
+  [d.DAEMON_BASIC_DATAMINE]: 'MINERAÇÃO DE DADOS BÁSICA',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'MINERAÇÃO DE DADOS AVANÇADA',
+  [d.DAEMON_EXPERT_DATAMINE]: 'PERÍCIA EM MINERAÇÃO DE DADOS',
 };
 
 export const chi_sim: DaemonDict = {
@@ -142,6 +160,9 @@ export const chi_sim: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: '清除恶意软件',
   [d.DAEMON_GAIN_ACCESS]: '获取权限',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '数据挖掘: 制作规范',
+  [d.DAEMON_BASIC_DATAMINE]: '基础数据挖掘',
+  [d.DAEMON_ADVANCED_DATAMINE]: '高级数据挖掘',
+  [d.DAEMON_EXPERT_DATAMINE]: '专家数据挖掘',
 };
 
 export const spa: DaemonDict = {
@@ -160,6 +181,9 @@ export const spa: DaemonDict = {
   [d.DAEMON_GAIN_ACCESS]: 'OBTENER ACCESO',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
     'MINERÍA DE DATOS: ESPECIFICACIONES DE CREACIÓN',
+  [d.DAEMON_BASIC_DATAMINE]: 'MINERÍA DE DATOS BÁSICA',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'MINERÍA DE DATOS AVANZADA',
+  [d.DAEMON_EXPERT_DATAMINE]: 'MINERÍA DE DATOS EXPERTA',
 };
 
 export const ita: DaemonDict = {
@@ -178,6 +202,9 @@ export const ita: DaemonDict = {
   [d.DAEMON_GAIN_ACCESS]: 'OTTIENI ACCESSO',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]:
     'ESTRAZIONE DATI: ISTRUZIONI DI CREAZIONE',
+  [d.DAEMON_BASIC_DATAMINE]: 'ESTRAZIONE DATI SEMPLICE',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'ESTRAZIONE DATI AVANZATA',
+  [d.DAEMON_EXPERT_DATAMINE]: 'ESTRAZIONE DATI ESPERTO',
 };
 
 export const kor: DaemonDict = {
@@ -195,6 +222,9 @@ export const kor: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: '멀웨어 무력화',
   [d.DAEMON_GAIN_ACCESS]: '액세스 권한 획득',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '데이터마이닝: 제작 사양서',
+  [d.DAEMON_BASIC_DATAMINE]: '기본 데이터마이닝',
+  [d.DAEMON_ADVANCED_DATAMINE]: '고급 데이터마이닝',
+  [d.DAEMON_EXPERT_DATAMINE]: '전문 데이터마이닝',
 };
 
 export const jpn: DaemonDict = {
@@ -212,6 +242,9 @@ export const jpn: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'マルウェアを無力化する',
   [d.DAEMON_GAIN_ACCESS]: 'アクセス取得',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'データマイニング: クラフト用設計図',
+  [d.DAEMON_BASIC_DATAMINE]: '基礎データマイニング',
+  [d.DAEMON_ADVANCED_DATAMINE]: '高度データマイニング',
+  [d.DAEMON_EXPERT_DATAMINE]: '超高度データマイニング',
 };
 
 export const tha: DaemonDict = {
@@ -229,6 +262,9 @@ export const tha: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'กําจัดมัลแวร์',
   [d.DAEMON_GAIN_ACCESS]: 'ขอสิทธิ์เข้าถึง',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ดาต้าไมน์: สูตรการคราฟต์',
+  [d.DAEMON_BASIC_DATAMINE]: 'ดาต้าไมน์ขันพื่นฐาน',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'ดาต้าไมน์ขันสูง',
+  [d.DAEMON_EXPERT_DATAMINE]: 'ดาต้าไมน์ขันเชียวชาญ',
 };
 
 export const tur: DaemonDict = {
@@ -246,6 +282,9 @@ export const tur: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'KÖTÜ AMAÇLI YAZILIMI ORTADAN KALDIR',
   [d.DAEMON_GAIN_ACCESS]: 'ERİŞİM SAĞLA',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'VERİ MADENİ: ÜRETİM KILAVUZLARI',
+  [d.DAEMON_BASIC_DATAMINE]: 'BASİT VERİ MADENİ',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'GELİŞMİŞ VERİ MADENİ',
+  [d.DAEMON_EXPERT_DATAMINE]: 'UZMAN VERİ MADENİ',
 };
 
 export const ara: DaemonDict = {
@@ -263,6 +302,9 @@ export const ara: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'اقض على البرنامج الخبيث',
   [d.DAEMON_GAIN_ACCESS]: 'تمكن من الوصول',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'منجم بيانات: مواصفات التصنيع',
+  [d.DAEMON_BASIC_DATAMINE]: 'منجه بيانات أساسي',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'منجم بيانات متقدم',
+  [d.DAEMON_EXPERT_DATAMINE]: 'منجم بيانات نخبوي',
 };
 
 export const chi_tra: DaemonDict = {
@@ -280,6 +322,9 @@ export const chi_tra: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: '制止惡意軟體',
   [d.DAEMON_GAIN_ACCESS]: '取得存取權',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: '資料探勘 : 製作需求',
+  [d.DAEMON_BASIC_DATAMINE]: '基礎資料探勘',
+  [d.DAEMON_ADVANCED_DATAMINE]: '進階資料探勘',
+  [d.DAEMON_EXPERT_DATAMINE]: '專業資料探勘',
 };
 
 export const ces: DaemonDict = {
@@ -297,6 +342,9 @@ export const ces: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'ZNEŠKODNIT MALWARE',
   [d.DAEMON_GAIN_ACCESS]: 'ZÍSKAT PŘÍSTUP',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'TĚŽBA DAT: VÝROBNÍ SPECIFIKACE',
+  [d.DAEMON_BASIC_DATAMINE]: 'ZÁKLADNÍ TĚŽBA DAT',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'POKROČILÁ TĚŽBA DAT',
+  [d.DAEMON_EXPERT_DATAMINE]: 'EXPERTNÍ TĚŽBA DAT',
 };
 
 export const hun: DaemonDict = {
@@ -315,6 +363,9 @@ export const hun: DaemonDict = {
   [d.DAEMON_NEUTRALIZE_MALWARE]: 'ROSSZINDULATÚ SZOFTVER HATÁSTALANÍTÁSA',
   [d.DAEMON_GAIN_ACCESS]: 'HOZZÁFÉRÉS MEGSZERZÉSE',
   [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ADATBÁNYÁSZAT: TÁRGYKÉSZÍTÉSI ÁBRA',
+  [d.DAEMON_BASIC_DATAMINE]: 'ALAP ADATBÁNYÁSZAT',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'HALADÓ ADATBÁNYÁSZAT',
+  [d.DAEMON_EXPERT_DATAMINE]: 'SZAKÉRTŐ ADATBÁNYÁSZAT',
 };
 
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {

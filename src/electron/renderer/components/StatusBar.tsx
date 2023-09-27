@@ -2,7 +2,7 @@ import { ActionTypes, UpdateStatus, WorkerStatus } from '@/electron/common';
 import { ProgressInfo } from 'electron-updater';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getDisplayName, useIpcEvent } from '../common';
+import { getDisplayName, getPatchName, useIpcEvent } from '../common';
 import { RouterExtContext } from '../router-ext';
 import { StateContext } from '../state';
 import { Spacer } from './Flex';
@@ -139,7 +139,7 @@ export const StatusBar = () => {
     displays,
     status,
     updateStatus,
-    settings: { activeDisplayId },
+    settings: { activeDisplayId, patch },
   } = useContext(StateContext);
   const { navigateToSetting } = useContext(RouterExtContext);
   const show = useSettingsChangeListener();
@@ -152,6 +152,9 @@ export const StatusBar = () => {
   return (
     <StatusBarWrapper>
       <StatusBarItem>{VERSION}</StatusBarItem>
+      <InteractiveStatusBarItem onClick={() => navigateToSetting('patch')}>
+        patch: {getPatchName(patch)}
+      </InteractiveStatusBarItem>
       <InteractiveStatusBarItem
         onClick={() => navigateToSetting('activeDisplayId')}
       >

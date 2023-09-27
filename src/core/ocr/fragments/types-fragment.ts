@@ -1,10 +1,11 @@
 import { Point, similarity, unique } from '@/common';
 import {
-  DaemonId,
   DAEMONS_SIZE_MAX,
   DAEMONS_SIZE_MIN,
+  DaemonId,
   TypesRawData,
 } from '../../common';
+import { DAEMONS, LEGACY_DAEMONS } from '../../daemon-set';
 import {
   DAEMON_DATAMINE_V1,
   DAEMON_DATAMINE_V2,
@@ -92,9 +93,14 @@ export class BreachProtocolTypesFragment<
       BreachProtocolTypesFragment.daemonDictLang
     ) {
       const { lang } = this.options.recognizer;
-      const entries = Object.entries(daemonsI18n[lang]).map(
-        ([k, v]: [DaemonId, string]) => [v, k] as const
-      );
+      const daemons = this.options.patch === '1.x' ? LEGACY_DAEMONS : DAEMONS;
+      const daemonDictEntries = Object.entries(daemonsI18n[lang]) as [
+        DaemonId,
+        string
+      ][];
+      const entries = daemonDictEntries
+        .filter(([daemonId]) => daemons.has(daemonId))
+        .map(([daemonId, translation]) => [translation, daemonId] as const);
 
       BreachProtocolTypesFragment.daemonDict = Object.fromEntries(entries);
       BreachProtocolTypesFragment.daemonDictLang = lang;
@@ -146,7 +152,10 @@ export class BreachProtocolTypesFragment<
     const keys = Object.keys(BreachProtocolTypesFragment.daemonDict);
 
     return lines.map((t) => {
-      if (BreachProtocolTypesFragment.edgeCases.has(t)) {
+      if (
+        this.options.patch === '1.x' &&
+        BreachProtocolTypesFragment.edgeCases.has(t)
+      ) {
         return BreachProtocolTypesFragment.edgeCases.get(t);
       }
 
