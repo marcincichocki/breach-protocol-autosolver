@@ -1,6 +1,6 @@
 {
   "name": "breach-protocol-autosolver",
-  "version": "2.8.5",
+  "version": "2.9.0",
   "description": "Automatically solve breach protocol minigame in Cyberpunk 2077",
   "main": "dist/main.js",
   "private": true,

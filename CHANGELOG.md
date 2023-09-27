@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.5...v2.9.0) (2023-09-27)
+
+
+### Features
+
+* **core:** add support for patch 2.0 ([d138fd8](https://github.com/marcincichocki/breach-protocol-autosolver/commit/d138fd8c6630de0580a2a4a20e2d097f2f862c65))
+
 ### [2.8.5](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.4...v2.8.5) (2022-11-28)
 
 
