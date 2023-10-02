@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.9.0...v2.10.0) (2023-10-02)
+
+
+### Features
+
+* **core:** add ukrainian game language support ([bc3c3ac](https://github.com/marcincichocki/breach-protocol-autosolver/commit/bc3c3ac3ecc749de9dbf2eebe026de9775894e27))
+
 ## [2.9.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.8.5...v2.9.0) (2023-09-27)
 
 
