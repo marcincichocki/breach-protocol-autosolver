@@ -18,7 +18,8 @@ export type BreachProtocolLanguage =
   | 'ara'
   | 'chi_tra'
   | 'ces'
-  | 'hun';
+  | 'hun'
+  | 'ukr';
 
 type DaemonDict = Record<DaemonId, string>;
 
@@ -368,6 +369,26 @@ export const hun: DaemonDict = {
   [d.DAEMON_EXPERT_DATAMINE]: 'SZAKÉRTŐ ADATBÁNYÁSZAT',
 };
 
+export const ukr: DaemonDict = {
+  [d.DAEMON_DATAMINE_V1]: '',
+  [d.DAEMON_DATAMINE_V2]: '',
+  [d.DAEMON_DATAMINE_V3]: '',
+  [d.DAEMON_ICEPICK]: '',
+  [d.DAEMON_MASS_VULNERABILITY]: '',
+  [d.DAEMON_CAMERA_SHUTDOWN]: '',
+  [d.DAEMON_FRIENDLY_TURRETS]: '',
+  [d.DAEMON_TURRET_SHUTDOWN]: '',
+  [d.DAEMON_OPTICS_JAMMER]: '',
+  [d.DAEMON_WEAPONS_JAMMER]: '',
+  [d.DAEMON_DATAMINE_COPY_MALWARE]: 'ПОШУК ДАНИХ: КОПІЮВАННЯ ВІРУСУ',
+  [d.DAEMON_NEUTRALIZE_MALWARE]: 'ЗНЕШКОДИТИ ВІРУС',
+  [d.DAEMON_GAIN_ACCESS]: 'ОТРИМАТИ ДОСТУП',
+  [d.DAEMON_DATAMINE_CRAFTING_SPECS]: 'ПОШУК ДАНИХ: ДОКУМЕНТАЦІЯ',
+  [d.DAEMON_BASIC_DATAMINE]: 'БАЗОВЕ ДОБУВАННЯ ДАНИХ',
+  [d.DAEMON_ADVANCED_DATAMINE]: 'ПРОСУНУТЕ ДОБУВАННЯ ДАНИХ',
+  [d.DAEMON_EXPERT_DATAMINE]: 'ЕКСПЕРТНЕ ДОБУВАННЯ ДАНИХ',
+};
+
 export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   eng,
   pol,
@@ -386,4 +407,5 @@ export const daemonsI18n: Record<BreachProtocolLanguage, DaemonDict> = {
   chi_tra,
   ces,
   hun,
+  ukr,
 };

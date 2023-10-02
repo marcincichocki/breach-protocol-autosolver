@@ -1,6 +1,9 @@
-import { RemoveLastNHistoryEntriesAction } from '@/electron/common';
+import {
+  AppSettings,
+  RemoveLastNHistoryEntriesAction,
+} from '@/electron/common';
 import { getPatchName, nativeDialog } from '../common';
-import { Field, Label, OnBeforeValueChange } from './Form';
+import { Field, Label, OnBeforeValueChange, useForm } from './Form';
 import { RangeSlider } from './RangeSlider';
 import { Section } from './Section';
 import { Switch } from './Switch';
@@ -13,6 +16,7 @@ const patchOptions: SelectOption<string>[] = patches.map((value) => ({
 }));
 
 export const GeneralSettings = ({ historySize }: { historySize: number }) => {
+  const { values } = useForm<AppSettings>();
   const onBeforeHistorySizeChange: OnBeforeValueChange<number> = async (
     value,
     next
@@ -35,11 +39,29 @@ export const GeneralSettings = ({ historySize }: { historySize: number }) => {
     next();
   };
 
+  const ensureValidGameLanguageForPatch: OnBeforeValueChange<
+    '1.x' | '2.x'
+  > = async (value, next) => {
+    if (value === '1.x' && values.gameLang === 'ukr') {
+      await nativeDialog.alert({
+        message: 'Ukrainian localization was introduced in patch 2.0',
+        detail: 'Please change game language option before changing the patch.',
+      });
+
+      return;
+    }
+
+    next();
+  };
+
   return (
     <Section title="General">
       <Field name="patch">
         <Label>Cyberpunk patch</Label>
-        <Select options={patchOptions}></Select>
+        <Select
+          options={patchOptions}
+          onBeforeValueChange={ensureValidGameLanguageForPatch}
+        ></Select>
       </Field>
       <Field name="minimizeToTray">
         <Label>Minimize to tray</Label>
