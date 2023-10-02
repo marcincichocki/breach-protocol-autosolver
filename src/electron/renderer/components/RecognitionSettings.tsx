@@ -9,7 +9,7 @@ import { Section } from './Section';
 import { Select, SelectOption } from './Select';
 import { Switch } from './Switch';
 
-const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
+const v1GameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'polski', value: 'pol' },
   { name: 'English', value: 'eng' },
   { name: 'Español', value: 'spa' },
@@ -27,6 +27,11 @@ const gameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
   { name: 'magyar', value: 'hun' },
   { name: 'Türkçe', value: 'tur' },
   { name: 'ไทย', value: 'tha+eng' },
+];
+
+const v2GameLanguageOptions: SelectOption<BreachProtocolLanguage>[] = [
+  ...v1GameLanguageOptions,
+  { name: 'Українська', value: 'ukr' },
 ];
 
 interface ThresholdFieldProps {
@@ -109,7 +114,13 @@ export const RecognitionSettings = ({
       </Field>
       <Field name="gameLang">
         <Label>Game language</Label>
-        <Select options={gameLanguageOptions} />
+        <Select
+          options={
+            values.patch === '1.x'
+              ? v1GameLanguageOptions
+              : v2GameLanguageOptions
+          }
+        />
       </Field>
       <Field name="filterRecognizerResults">
         <Label>Filter OCR results</Label>
