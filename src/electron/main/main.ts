@@ -29,6 +29,7 @@ import {
   BreachProtocolCommands,
   BreachProtocolKeyBinds,
   COMMANDS,
+  defaultOptions,
   DropZoneFileValidationErrors,
   KEY_BINDS,
   PackageDetails,
@@ -115,6 +116,15 @@ export class Main {
         this.updater.checkForUpdates();
       },
     },
+    { type: 'separator' },
+    {
+      label: 'Restore default settings',
+      id: 'restore-default-settings',
+      enabled: false,
+      click: () => {
+        this.restoreDefaultSettings();
+      },
+    },
   ]);
 
   private trayMenu: MenuItemConstructorOptions[] = [
@@ -146,6 +156,7 @@ export class Main {
     const { worker, renderer } = createBrowserWindows();
     this.store = new Store(worker.webContents, renderer.webContents, [
       this.toggleKeyBind.bind(this),
+      this.toggleRestoreDefaultSettings.bind(this),
     ]);
 
     this.renderer = renderer;
@@ -532,5 +543,38 @@ export class Main {
         this.keyBindManager.enable();
       }
     }
+  }
+
+  private toggleRestoreDefaultSettings(action: Action) {
+    this.toggleMenuItemOnBootstrap('restore-default-settings', action);
+  }
+
+  private toggleMenuItemOnBootstrap(
+    menuItemId: string,
+    { type, payload }: Action
+  ) {
+    if (type === ActionTypes.SET_STATUS) {
+      const menuItem = this.menu.getMenuItemById(menuItemId);
+
+      menuItem.enabled = payload !== WorkerStatus.Bootstrap;
+    }
+  }
+
+  private async restoreDefaultSettings() {
+    const result = await nativeDialog.confirm({
+      message: 'Do you want to restore default settings?',
+    });
+
+    if (!result) {
+      return;
+    }
+
+    const {
+      settings: { activeDisplayId },
+    } = this.store.getState();
+    const defaultSettings = { ...defaultOptions, activeDisplayId };
+    const action = new UpdateSettingsAction(defaultSettings);
+
+    this.store.dispatch(action, true);
   }
 }

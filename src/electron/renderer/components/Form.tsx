@@ -112,6 +112,10 @@ export const Form = <T,>({
   const [values, setValues] = useState(initialValues);
   const registry = useFieldValueChangeRegistry<T>();
 
+  useEffect(() => {
+    setValues(initialValues);
+  }, [initialValues]);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
