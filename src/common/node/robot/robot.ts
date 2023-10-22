@@ -43,10 +43,7 @@ export abstract class BreachProtocolRobot {
 
   protected gameWindowTitle = 'Cyberpunk 2077';
 
-  constructor(
-    protected readonly settings: RobotSettings,
-    protected readonly scaling: number = 1
-  ) {}
+  constructor(protected readonly settings: RobotSettings) {}
 
   protected abstract getMappedKey(key: BreachProtocolRobotKeys): string;
 

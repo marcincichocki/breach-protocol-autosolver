@@ -10,11 +10,11 @@ export class NirCmdRobot extends WindowsRobot {
 
   constructor(
     settings: RobotSettings,
-    dpiScale: number,
+    private readonly scaling: number,
     private readonly width: number,
     private readonly height: number
   ) {
-    super(settings, dpiScale);
+    super(settings);
   }
 
   async activateGameWindow() {
@@ -34,9 +34,8 @@ export class NirCmdRobot extends WindowsRobot {
       await this.moveAway();
     }
 
-    const scaling = this.settings.useScaling ? this.scaling : 1;
-    const sX = (x - this.x) / scaling;
-    const sY = (y - this.y) / scaling;
+    const sX = x - this.x;
+    const sY = y - this.y;
     const r = await this.moveRelative(sX, sY);
 
     this.x = x;
@@ -57,6 +56,10 @@ export class NirCmdRobot extends WindowsRobot {
   }
 
   private moveRelative(x: number, y: number) {
-    return this.bin(`sendmouse move ${x} ${y}`);
+    return this.bin(`sendmouse move ${this.scale(x)} ${this.scale(y)}`);
+  }
+
+  private scale(value: number) {
+    return Math.round(value / this.scaling);
   }
 }
