@@ -37,12 +37,15 @@ const FieldDescription = ({ name }: { name: keyof AppSettings }) => {
 };
 
 const SettingsWrapper = styled(Col)`
-  max-width: 70%;
   margin: 0 auto;
   gap: 1rem;
   flex-grow: 1;
   justify-content: center;
-  align-items: center;
+
+  @media (min-width: 1280px) {
+    max-width: 70%;
+    align-items: center;
+  }
 `;
 
 export const Settings = () => {

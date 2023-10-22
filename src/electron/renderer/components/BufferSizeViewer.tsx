@@ -4,15 +4,20 @@ import { Highlight } from './HistoryViewer';
 import { getSquareColor, Square } from './Square';
 
 function getBufferSizeWrapperWidth() {
-  const square = `${BUFFER_SIZE_MAX} * var(--square)`;
-  const gap = `${BUFFER_SIZE_MAX - 1} * var(--gap)`;
+  // TODO: Use prop instead of constant as BUFFER_SIZE_MAX depends on patch.
+  const square = `${BUFFER_SIZE_MAX - 1} * var(--square)`;
+  const gap = `${BUFFER_SIZE_MAX - 2} * var(--gap)`;
 
   return [square, gap].join(' + ');
 }
 
 const BufferSizeWrapper = styled.div`
-  --square: 40px;
+  --square: 36px;
   --gap: 0.5rem;
+
+  @media (min-width: 1280px) {
+    --square: 40px;
+  }
 
   border: 1px solid var(--primary);
   background: var(--background);

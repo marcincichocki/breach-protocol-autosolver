@@ -1,5 +1,8 @@
 import type { BreachProtocolRecognizerBox } from '@/core';
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import { Media, MediaContext } from '../media';
+import { Col } from './Flex';
 
 function getStrokeRectCords(
   box: BreachProtocolRecognizerBox,
@@ -19,12 +22,13 @@ function renderFragmentToCanvas({
   image,
   boxes,
   showBoxes,
-}: FragmentPreviewProps & { canvas: HTMLCanvasElement }) {
+  media,
+}: FragmentPreviewProps & { canvas: HTMLCanvasElement; media: Media }) {
   const imageEl = new Image();
   const context = canvas.getContext('2d');
 
   imageEl.onload = () => {
-    const base = 600;
+    const base = media.xs ? 400 : 600;
     const scale = base / imageEl.width;
     const lineWidth = 2;
     canvas.width = base;
@@ -55,13 +59,24 @@ interface FragmentPreviewProps {
 
 export const FragmentPreview = (props: FragmentPreviewProps) => {
   const ref = useRef<HTMLCanvasElement>(null);
+  const media = useContext(MediaContext);
 
   useEffect(() => {
     renderFragmentToCanvas({
       ...props,
       canvas: ref.current,
+      media,
     });
-  }, [props.image, props.showBoxes]);
+  }, [props.image, props.showBoxes, media]);
 
   return <canvas ref={ref} />;
 };
+
+export const FragmentPreviewContainer = styled(Col)`
+  width: 400px;
+  flex-shrink: 0;
+
+  @media (min-width: 1280px) {
+    width: 600px;
+  }
+`;

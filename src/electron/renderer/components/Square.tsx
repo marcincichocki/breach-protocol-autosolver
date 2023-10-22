@@ -39,8 +39,12 @@ export const Square = styled.div<SquareProps>`
   align-items: center;
   width: var(--square);
   height: var(--square);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 500;
   position: relative;
   flex-shrink: 0;
+
+  @media (min-width: 1280px) {
+    font-size: 24px;
+  }
 `;

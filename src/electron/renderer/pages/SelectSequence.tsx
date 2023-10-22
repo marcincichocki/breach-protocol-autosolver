@@ -79,7 +79,7 @@ export const SelectSequence = () => {
 
   return (
     <>
-      <Col gap grow>
+      <Col gap flex={1}>
         <SequenceList>
           {result.items.map((r, i) => (
             <Sequence
@@ -101,7 +101,7 @@ export const SelectSequence = () => {
           </FlatButton>
         )}
       </Col>
-      <Col gap>
+      <Col gap flex={1}>
         <HistoryViewer
           entry={entry}
           customResult={activeResult}
