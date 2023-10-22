@@ -2,17 +2,13 @@ import { isDaemonsFragment } from '@/core';
 import {
   Action,
   ActionTypes,
-  Analysis,
   AnalysisResult,
   AppSettings,
   AppStats,
   BreachProtocolStatus,
   HistoryEntry,
   State,
-  UpdateStatus,
-  WorkerStatus,
 } from '@/electron/common';
-import type { ScreenshotDisplayOutput } from 'screenshot-desktop';
 
 type Handler<T = any, S = State> = (state: S, action: Action<T>) => State;
 
@@ -28,12 +24,14 @@ export function createReducer<S = State>(
   };
 }
 
-function createSetHandler<T = any>(prop: keyof State): Handler<T, State> {
+function createSetHandler<K extends keyof State>(
+  prop: K
+): Handler<State[K], State> {
   return (state, { payload }) => ({ ...state, [prop]: payload });
 }
 
-const setDisplays = createSetHandler<ScreenshotDisplayOutput[]>('displays');
-const setStatus = createSetHandler<WorkerStatus>('status');
+const setDisplays = createSetHandler('displays');
+const setStatus = createSetHandler('status');
 
 function getStatsFromHistoryEntry(
   {
@@ -108,8 +106,8 @@ const removeHistoryEntry: Handler<string> = (state, { payload }) => ({
   history: state.history.filter((e) => e.uuid !== payload),
 });
 
-const setUpdateStatus = createSetHandler<UpdateStatus>('updateStatus');
-const setAnalysis = createSetHandler<Analysis>('analysis');
+const setUpdateStatus = createSetHandler('updateStatus');
+const setAnalysis = createSetHandler('analysis');
 
 const addAnalysisResults: Handler<AnalysisResult> = (
   state: State,
@@ -125,6 +123,8 @@ const addAnalysisResults: Handler<AnalysisResult> = (
   };
 };
 
+const setStats = createSetHandler('stats');
+
 export const appReducer = createReducer<State>({
   [ActionTypes.SET_DISPLAYS]: setDisplays,
   [ActionTypes.SET_STATUS]: setStatus,
@@ -136,4 +136,5 @@ export const appReducer = createReducer<State>({
   [ActionTypes.SET_ANALYSIS]: setAnalysis,
   [ActionTypes.CLEAR_ANALYSIS]: setAnalysis,
   [ActionTypes.ADD_ANALYSIS_RESULTS]: addAnalysisResults,
+  [ActionTypes.SET_STATS]: setStats,
 });

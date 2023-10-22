@@ -26,6 +26,7 @@ import {
   Action,
   ActionTypes,
   AnalysisInput,
+  AppStats,
   BreachProtocolCommands,
   BreachProtocolKeyBinds,
   COMMANDS,
@@ -33,6 +34,7 @@ import {
   DropZoneFileValidationErrors,
   KEY_BINDS,
   PackageDetails,
+  SetStatsAction,
   UpdateSettingsAction,
   WorkerStatus,
 } from '../common';
@@ -123,6 +125,12 @@ export class Main {
       enabled: false,
       click: () => {
         this.restoreDefaultSettings();
+      },
+    },
+    {
+      label: 'Clear stats',
+      click: () => {
+        this.clearStats();
       },
     },
   ]);
@@ -574,6 +582,23 @@ export class Main {
     } = this.store.getState();
     const defaultSettings = { ...defaultOptions, activeDisplayId };
     const action = new UpdateSettingsAction(defaultSettings);
+
+    this.store.dispatch(action, true);
+  }
+
+  async clearStats() {
+    const result = await nativeDialog.confirm({
+      message: 'Do you want to clear stats?',
+    });
+
+    if (!result) {
+      return;
+    }
+
+    const { stats } = this.store.getState();
+    const entries = Object.entries(stats).map(([key]) => [key, 0]);
+    const clearedStats = Object.fromEntries(entries) as AppStats;
+    const action = new SetStatsAction(clearedStats);
 
     this.store.dispatch(action, true);
   }

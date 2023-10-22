@@ -4,6 +4,7 @@ import {
   Analysis,
   AnalysisResult,
   AppSettings,
+  AppStats,
   HistoryEntry,
   UpdateStatus,
   WorkerStatus,
@@ -20,6 +21,7 @@ export const ActionTypes = {
   SET_ANALYSIS: 'SET_ANALYSIS',
   CLEAR_ANALYSIS: 'CLEAR_ANALYSIS',
   ADD_ANALYSIS_RESULTS: 'ADD_ANALYSIS_RESULTS',
+  SET_STATS: 'SET_STATS',
 } as const;
 
 export class SetStatusAction implements Action {
@@ -82,4 +84,10 @@ export class AddAnalysisResultsAction implements Action {
   readonly type = ActionTypes.ADD_ANALYSIS_RESULTS;
 
   constructor(public readonly payload: AnalysisResult) {}
+}
+
+export class SetStatsAction implements Action {
+  readonly type = ActionTypes.SET_STATS;
+
+  constructor(public readonly payload: AppStats) {}
 }
