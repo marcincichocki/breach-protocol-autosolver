@@ -17,7 +17,6 @@ if (A_Args[1] = "click") {
 
 if (A_Args[1] = "reset") {
   MouseMove, 9999, 9999
-  MouseMove, 0, 0
 }
 
 if (A_Args[1] = "activate") {

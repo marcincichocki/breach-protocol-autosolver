@@ -1,5 +1,5 @@
 import { sleep } from '@/common';
-import { BreachProtocolRobotKeys } from './robot';
+import { BreachProtocolRobotKeys, RobotSettings } from './robot';
 import { WindowsRobot } from './win32';
 
 export class NirCmdRobot extends WindowsRobot {
@@ -7,6 +7,15 @@ export class NirCmdRobot extends WindowsRobot {
   private y = 0;
 
   protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
+
+  constructor(
+    settings: RobotSettings,
+    dpiScale: number,
+    private readonly width: number,
+    private readonly height: number
+  ) {
+    super(settings, dpiScale);
+  }
 
   async activateGameWindow() {
     await this.bin(`win activate stitle ${this.gameWindowTitle}`);
@@ -37,10 +46,10 @@ export class NirCmdRobot extends WindowsRobot {
   }
 
   moveAway() {
-    this.x = 0;
-    this.y = 0;
+    this.x = this.width;
+    this.y = this.height;
 
-    return this.moveRelative(-9999, -9999);
+    return this.moveRelative(this.width, this.height);
   }
 
   pressKey(key: BreachProtocolRobotKeys) {

@@ -3,3 +3,4 @@ export * from './image-container';
 export * from './ocr';
 export * from './recognizer';
 export * from './result';
+export { BoudingBox } from './bounding-box';

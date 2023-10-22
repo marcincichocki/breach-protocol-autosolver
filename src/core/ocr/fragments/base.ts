@@ -1,5 +1,6 @@
 import { chunk, getClosest, Point, unique } from '@/common';
 import { HexCode, HEX_CODES } from '../../common';
+import { BoudingBox } from '../bounding-box';
 import { FragmentContainer, ImageContainer } from '../image-container';
 import {
   BreachProtocolRecognizer,
@@ -102,7 +103,8 @@ export abstract class BreachProtocolFragment<
 
   protected getFragmentBoundingBox() {
     const { p1, p2 } = this;
-    const { width, height, left, top } = this.container.getCroppedBoundingBox();
+    const { width: x, height: y } = this.container.dimensions;
+    const { width, height, left, top } = new BoudingBox(x, y);
 
     return {
       left: Math.round(p1.x * width + left),
