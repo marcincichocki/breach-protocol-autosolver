@@ -1,5 +1,5 @@
 import { sleep } from '@/common';
-import { BreachProtocolRobotKeys } from './robot';
+import { BreachProtocolRobotKeys, RobotSettings } from './robot';
 import { WindowsRobot } from './win32';
 
 export class NirCmdRobot extends WindowsRobot {
@@ -7,6 +7,15 @@ export class NirCmdRobot extends WindowsRobot {
   private y = 0;
 
   protected readonly binPath = './resources/win32/nircmd/nircmd.exe';
+
+  constructor(
+    settings: RobotSettings,
+    private readonly scaling: number,
+    private readonly width: number,
+    private readonly height: number
+  ) {
+    super(settings);
+  }
 
   async activateGameWindow() {
     await this.bin(`win activate stitle ${this.gameWindowTitle}`);
@@ -25,9 +34,8 @@ export class NirCmdRobot extends WindowsRobot {
       await this.moveAway();
     }
 
-    const scaling = this.settings.useScaling ? this.scaling : 1;
-    const sX = (x - this.x) / scaling;
-    const sY = (y - this.y) / scaling;
+    const sX = x - this.x;
+    const sY = y - this.y;
     const r = await this.moveRelative(sX, sY);
 
     this.x = x;
@@ -37,10 +45,10 @@ export class NirCmdRobot extends WindowsRobot {
   }
 
   moveAway() {
-    this.x = 0;
-    this.y = 0;
+    this.x = this.width;
+    this.y = this.height;
 
-    return this.moveRelative(-9999, -9999);
+    return this.moveRelative(this.width, this.height);
   }
 
   pressKey(key: BreachProtocolRobotKeys) {
@@ -48,6 +56,10 @@ export class NirCmdRobot extends WindowsRobot {
   }
 
   private moveRelative(x: number, y: number) {
-    return this.bin(`sendmouse move ${x} ${y}`);
+    return this.bin(`sendmouse move ${this.scale(x)} ${this.scale(y)}`);
+  }
+
+  private scale(value: number) {
+    return Math.round(value / this.scaling);
   }
 }

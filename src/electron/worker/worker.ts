@@ -7,6 +7,7 @@ import {
   XDoToolRobot,
 } from '@/common/node';
 import {
+  BoudingBox,
   BreachProtocolBufferSizeFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolFragmentOptions,
@@ -310,12 +311,14 @@ export class BreachProtocolWorker {
         case 'ahk':
           return new AutoHotkeyRobot(this.settings);
         case 'nircmd':
-          const { activeDisplayId } = this.settings;
-          const { dpiScale } = this.displays.find(
+          const { activeDisplayId, useScaling } = this.settings;
+          const { dpiScale, width, height } = this.displays.find(
             (d) => d.id === activeDisplayId
           );
+          const scaling = useScaling ? dpiScale : 1;
+          const box = new BoudingBox(width, height);
 
-          return new NirCmdRobot(this.settings, dpiScale);
+          return new NirCmdRobot(this.settings, scaling, box.width, box.height);
         default:
           throw new Error(`Invalid engine "${this.settings.engine}" selected!`);
       }
