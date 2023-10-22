@@ -152,6 +152,7 @@ export class Store {
   private state = this.getInitialState();
 
   private middlewares: Middleware[] = [];
+  private stateImmediate: NodeJS.Immediate = null;
 
   constructor(
     private worker: WebContents,
@@ -163,11 +164,19 @@ export class Store {
   }
 
   dispatch(action: Action, notify = false) {
+    if (process.env.NODE_ENV === 'production') {
+      clearImmediate(this.stateImmediate);
+    }
+
     this.applyMiddleware(action);
     this.state = appReducer(this.state, action);
 
     if (notify) {
       this.notify(action);
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      this.stateImmediate = setImmediate(() => this.preserveState());
     }
   }
 
@@ -177,6 +186,8 @@ export class Store {
 
   dispose() {
     if (process.env.NODE_ENV === 'production') {
+      clearImmediate(this.stateImmediate);
+
       this.preserveState();
     }
 
@@ -248,7 +259,11 @@ export class Store {
       settings: { ...this.settings.store, screenshotDir },
       status: WorkerStatus.Bootstrap,
       updateStatus: null,
-      stats: this.stats.store,
+      stats: {
+        ...this.stats.store,
+        countSuccessSession: 0,
+        countErrorSession: 0,
+      },
       analysis: null,
     };
   }
@@ -300,10 +315,6 @@ export class Store {
   private preserveState() {
     this.history.set('data', this.state.history);
     this.settings.set(this.state.settings);
-    this.stats.set({
-      ...this.state.stats,
-      countSuccessSession: 0,
-      countErrorSession: 0,
-    });
+    this.stats.set(this.state.stats);
   }
 }
