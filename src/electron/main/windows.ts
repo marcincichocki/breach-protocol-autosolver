@@ -25,7 +25,7 @@ const DEFAULT_HEIGHT = 720;
 
 const rendererOptions: BrowserWindowConstructorOptions = {
   show: false,
-  minWidth: DEFAULT_WIDTH,
+  minWidth: 1080,
   minHeight: DEFAULT_HEIGHT,
   // In dev mode make more space for docked devtools.
   width: process.env.NODE_ENV === 'development' ? 2000 : DEFAULT_WIDTH,

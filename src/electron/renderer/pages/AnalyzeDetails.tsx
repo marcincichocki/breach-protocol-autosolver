@@ -5,6 +5,7 @@ import { fromCamelCase } from '../common';
 import {
   Col,
   FragmentPreview,
+  FragmentPreviewContainer,
   JSONTree,
   JSONTreeActions,
   JSONTreeCopy,
@@ -67,7 +68,7 @@ export const AnalyzeDetails = () => {
             </JSONTreeActions>
           </JSONTree>
         </Col>
-        <Col style={{ width: '600px', flexShrink: 0 }}>
+        <FragmentPreviewContainer>
           <Title>Fragment preview</Title>
           <Col grow scroll>
             <FragmentPreview
@@ -76,7 +77,7 @@ export const AnalyzeDetails = () => {
               showBoxes={true}
             />
           </Col>
-        </Col>
+        </FragmentPreviewContainer>
       </Row>
     </Col>
   );

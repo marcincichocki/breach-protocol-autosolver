@@ -13,17 +13,23 @@ import styled, { css } from 'styled-components';
 import { Highlight } from './HistoryViewer';
 import { getSquareColor, Square, SquareProps } from './Square';
 
-const cssVars = { size: 5, gutter: 16, square: 40, border: 1 };
-const cssVarsHighlight = { size: 7, border: 4 };
+const BORDER_SIZE = 1;
+const BORDER_HIGHLIGHT_SIZE = 4;
+const ARROW_SIZE = 5;
+const ARROW_HIGHLIGHT_SIZE = 7;
 
 const GridWrapper = styled.div<{ size: number }>`
-  --size: ${cssVars.size}px;
-  --gutter: ${cssVars.gutter}px;
-  --square: ${cssVars.square}px;
-  --border: ${cssVars.border}px;
+  --border: ${BORDER_SIZE}px;
+  --size: ${ARROW_SIZE}px;
+  --gutter: 16px;
+  --square: 36px;
 
-  width: 376px;
-  height: 376px;
+  @media (min-width: 1280px) {
+    --square: 40px;
+  }
+
+  width: calc(var(--square) * 7 + var(--gutter) * 6);
+  height: calc(var(--square) * 7 + var(--gutter) * 6);
   display: inline-grid;
   grid-gap: var(--gutter);
   padding: var(--gutter);
@@ -44,8 +50,8 @@ const GridSquare = styled(Square)`
   ${(p) =>
     p.highlight &&
     css`
-      --border: ${cssVarsHighlight.border}px;
-      --size: ${cssVarsHighlight.size}px;
+      --border: ${BORDER_HIGHLIGHT_SIZE}px;
+      --size: ${ARROW_HIGHLIGHT_SIZE}px;
     `}
 
   ${getSquarePathIndex}
@@ -114,7 +120,7 @@ function getLineSizeFor(o: GapOrientation) {
 }
 
 function getLinePosition({ dir, ignore }: LineProps) {
-  const borderSize = ignore ? `${cssVarsHighlight.border}px` : 'var(--border)';
+  const borderSize = ignore ? `${BORDER_HIGHLIGHT_SIZE}px` : 'var(--border)';
 
   return `${dir}: calc(var(--square) + var(--size) - ${borderSize})`;
 }
@@ -134,8 +140,8 @@ const Line = styled.div<LineProps>`
   ${(p) =>
     p.ignore &&
     css`
-      --border: ${cssVars.border}px;
-      --size: ${cssVars.size}px;
+      --border: ${BORDER_SIZE}px;
+      --size: ${ARROW_SIZE}px;
     `}
 
   color: var(--accent);

@@ -11,7 +11,7 @@ import {
   TestThresholdData,
   UpdateSettingsAction,
 } from '@/electron/common';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { dispatchAsyncRequest, fromCamelCase } from '../common';
@@ -21,6 +21,7 @@ import {
   FlatButton,
   Form,
   FragmentPreview,
+  FragmentPreviewContainer,
   JSONTree,
   JSONValidator,
   Label,
@@ -45,20 +46,6 @@ interface CalibrateFormValues {
   showBoxes: boolean;
   testThreshold: number;
 }
-
-const ThresholdUpdater = ({
-  threshold,
-}: {
-  threshold: number;
-}): JSX.Element => {
-  const { setValue } = useField<number>();
-
-  useEffect(() => {
-    setValue(threshold, { emit: false });
-  }, [threshold]);
-
-  return null;
-};
 
 const statusMessages = {
   [FragmentStatus.InvalidSize]: 'Invalid size',
@@ -177,6 +164,10 @@ export const CalibrateFragment = () => {
     fragmentId === FragmentId.Grid || fragmentId === FragmentId.Daemons
       ? hexCodeValidator
       : undefined;
+  const formValues: CalibrateFormValues = useMemo(
+    () => ({ showBoxes, testThreshold }),
+    [showBoxes, testThreshold]
+  );
 
   useLayoutEffect(() => {
     setTestResult(result);
@@ -227,7 +218,7 @@ export const CalibrateFragment = () => {
         <Row style={{ justifyContent: 'flex-end' }}>
           {hasSource ? (
             <Form<CalibrateFormValues>
-              initialValues={{ showBoxes, testThreshold }}
+              initialValues={formValues}
               onSubmit={handleSubmit}
             >
               <Field name="showBoxes" onValueChange={setShowBoxes}>
@@ -241,7 +232,7 @@ export const CalibrateFragment = () => {
                   max={255}
                   disabled={!ready || loading || isExperimental}
                 />
-                <ThresholdUpdater threshold={testThreshold} />
+                {/* <ThresholdUpdater threshold={testThreshold} /> */}
               </Field>
               <FlatButton
                 type="submit"
@@ -259,7 +250,7 @@ export const CalibrateFragment = () => {
           )}
         </Row>
       </Col>
-      <Col style={{ width: '600px', flexShrink: 0 }}>
+      <FragmentPreviewContainer>
         <Title>Fragment preview</Title>
         <Col
           grow
@@ -281,7 +272,7 @@ export const CalibrateFragment = () => {
             </>
           )}
         </Col>
-      </Col>
+      </FragmentPreviewContainer>
     </Row>
   );
 };

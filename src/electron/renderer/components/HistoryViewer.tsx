@@ -87,7 +87,7 @@ export const HistoryViewer = ({
         highlight={highlight}
         hasDaemonAttached={hasDaemonAttached}
       />
-      <Col gap grow>
+      <Col gap flex={0}>
         <BufferSizeViewer
           rawData={bufferSize}
           result={result}
