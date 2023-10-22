@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.10.0...v2.11.0) (2023-10-22)
+
+
+### Features
+
+* **client-electron:** add ability clear stats ([e598e04](https://github.com/marcincichocki/breach-protocol-autosolver/commit/e598e04172c38f06ca6b054f257979e39c95ece1))
+* **client-electron:** add ability to restore default settings ([4dc552a](https://github.com/marcincichocki/breach-protocol-autosolver/commit/4dc552afe437667140ee3ea78c4b07334f8af0b3))
+* **client-electron:** save state to files immediately  ([6ae3bfb](https://github.com/marcincichocki/breach-protocol-autosolver/commit/6ae3bfbd5d40a6098d63db4c962496b08604270b))
+* **client-electron:** set minimum width of renderer to 1080px ([eada534](https://github.com/marcincichocki/breach-protocol-autosolver/commit/eada534b69542a80ae922e63e0bbd053817a8eb5))
+
+
+### Bug Fixes
+
+* **common:** move cursor to the bottom right corner via nircmd ([3bf3efe](https://github.com/marcincichocki/breach-protocol-autosolver/commit/3bf3efebb6ae3b72ef4903bca388ea26005836d8)), closes [#374](https://github.com/marcincichocki/breach-protocol-autosolver/issues/374)
+
 ## [2.10.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.9.0...v2.10.0) (2023-10-02)
 
 
