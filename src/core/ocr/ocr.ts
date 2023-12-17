@@ -1,7 +1,6 @@
 import { capitalize } from '@/common';
 import {
   BreachProtocolBufferSizeFragment,
-  BreachProtocolBufferSizeTrimFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolFragment,
   BreachProtocolFragmentOptions,
@@ -25,7 +24,6 @@ export interface BreachProtocolOCROptions extends FragmentOptions {
   thresholdTypesAuto: boolean;
   thresholdBufferSize?: number;
   thresholdBufferSizeAuto: boolean;
-  experimentalBufferSizeRecognition?: boolean;
   skipTypesFragment?: boolean;
   useFixedBufferSize?: boolean;
   fixedBufferSize?: number;
@@ -62,14 +60,8 @@ class BreachProtocolFragmentFactory<TImage> {
   }
 
   private getFragmentCtor(id: FragmentId) {
-    if (id === FragmentId.BufferSize) {
-      if (this.options.useFixedBufferSize) {
-        return null;
-      }
-
-      if (this.options.experimentalBufferSizeRecognition) {
-        return BreachProtocolBufferSizeTrimFragment;
-      }
+    if (id === FragmentId.BufferSize && this.options.useFixedBufferSize) {
+      return null;
     }
 
     if (id === FragmentId.Types && this.options.skipTypesFragment) {

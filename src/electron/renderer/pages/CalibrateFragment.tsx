@@ -150,8 +150,6 @@ export const CalibrateFragment = () => {
   const [testResult, setTestResult] =
     useState<BreachProtocolFragmentResults[number]>(result);
   const isBufferSize = fragmentId === FragmentId.BufferSize;
-  const isExperimental =
-    entry.settings.experimentalBufferSizeRecognition && isBufferSize;
   const [loading, setLoading] = useState<boolean>(false);
   const [showBoxes, setShowBoxes] = useState(false);
   const [testThreshold, setTestThreshold] = useState<number>(
@@ -227,18 +225,11 @@ export const CalibrateFragment = () => {
               </Field>
               <Field name="testThreshold" onValueChange={onTestThreshold}>
                 <Label>Test threshold</Label>
-                <RangeSlider
-                  min={0}
-                  max={255}
-                  disabled={!ready || loading || isExperimental}
-                />
-                {/* <ThresholdUpdater threshold={testThreshold} /> */}
+                <RangeSlider min={0} max={255} disabled={!ready || loading} />
               </Field>
               <FlatButton
                 type="submit"
-                disabled={
-                  !ready || !testResult.isValid || loading || isExperimental
-                }
+                disabled={!ready || !testResult.isValid || loading}
                 color="accent"
                 style={{ alignSelf: 'flex-end' }}
               >

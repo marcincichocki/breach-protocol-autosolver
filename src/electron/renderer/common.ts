@@ -95,7 +95,7 @@ export function getPatchName(patch: '1.x' | '2.x') {
     return '1.63';
   }
 
-  return '2.0';
+  return '2.1';
 }
 
 export function createRootElement(id: string) {

@@ -15,7 +15,6 @@ import {
 } from '../common';
 import {
   BreachProtocolBufferSizeFragment,
-  BreachProtocolBufferSizeTrimFragment,
   BreachProtocolDaemonsFragment,
   BreachProtocolGridFragment,
   FragmentStatus,
@@ -160,17 +159,15 @@ async function expectRegistryEntryToEqualRawData(
   entry: RegistryEntry,
   settings?: Partial<AppSettings>
 ) {
-  const [ocr, trim] = await recognizeRegistryEntry(
+  const { rawData, isValid } = await recognizeRegistryEntry(
     entry,
     settings ?? entry.settings
   );
 
-  expect(ocr.rawData.grid).toEqual(entry.grid);
-  expect(ocr.rawData.daemons).toEqual(entry.daemons);
-  expect(ocr.rawData.bufferSize).toBe(entry.bufferSize);
-  expect(trim.rawData).toBe(entry.bufferSize);
-  expect(ocr.isValid).toBe(true);
-  expect(trim.isValid).toBe(true);
+  expect(rawData.grid).toEqual(entry.grid);
+  expect(rawData.daemons).toEqual(entry.daemons);
+  expect(rawData.bufferSize).toBe(entry.bufferSize);
+  expect(isValid).toBe(true);
 }
 
 async function recognizeRegistryEntry(
@@ -179,31 +176,20 @@ async function recognizeRegistryEntry(
 ) {
   const file = join('./src/core/bp-registry', entry.path);
   const image = sharp(file);
-
   const container = await SharpImageContainer.create(image, {
     downscaleSource,
   });
-  const extendedBufferSizeRecognitionRange =
-    settings?.extendedBufferSizeRecognitionRange ?? false;
-  const trimStrategy = new BreachProtocolBufferSizeTrimFragment(container, {
-    extendedBufferSizeRecognitionRange,
-    patch: '1.x',
-  });
   const recognizer = new WasmBreachProtocolRecognizer(null);
 
-  return Promise.all([
-    breachProtocolOCR(container, recognizer, {
-      patch: '1.x',
-      thresholdGridAuto: true,
-      thresholdTypesAuto: true,
-      thresholdDaemonsAuto: true,
-      thresholdBufferSizeAuto: true,
-      skipTypesFragment: true,
-      ...settings,
-    }),
-    // To not repeat tesseract ocr, trim strategy is running separately.
-    trimStrategy.recognize(),
-  ]);
+  return breachProtocolOCR(container, recognizer, {
+    patch: '1.x',
+    thresholdGridAuto: true,
+    thresholdTypesAuto: true,
+    thresholdDaemonsAuto: true,
+    thresholdBufferSizeAuto: true,
+    skipTypesFragment: true,
+    ...settings,
+  });
 }
 
 // @ts-ignore

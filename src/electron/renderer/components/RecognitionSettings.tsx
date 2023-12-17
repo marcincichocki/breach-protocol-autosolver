@@ -160,16 +160,11 @@ export const RecognitionSettings = ({
         </Field>
       ) : (
         <>
-          <Field name="experimentalBufferSizeRecognition">
-            <Label>Experimental buffer size recognition</Label>
-            <Switch />
-          </Field>
           <ThresholdField
             name="thresholdBufferSize"
             switchName="thresholdBufferSizeAuto"
             label="Buffer size threshold"
             switchLabel="Automatic buffer size threshold"
-            disabled={values.experimentalBufferSizeRecognition}
           />
           <Field name="extendedBufferSizeRecognitionRange">
             <Label>Extended buffer size range</Label>

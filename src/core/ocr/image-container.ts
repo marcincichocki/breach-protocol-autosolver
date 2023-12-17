@@ -28,10 +28,11 @@ export interface FragmentContainer<T> {
   /** Applies threshold transformation to fragment. */
   threshold(threshold: number, grayscale?: boolean): this;
 
+  /** Returns fragment as trimmed base64 data uri. */
+  toTrimmedBase64(threshold: number): Promise<EncodedFragmentContainerResult>;
+
   /** Returns fragment as base64 data uri. */
-  toBase64(options?: {
-    trim?: boolean;
-  }): Promise<EncodedFragmentContainerResult>;
+  toBase64(): Promise<EncodedFragmentContainerResult>;
 
   /** Returns fragment as raw pixel data. */
   toPixelData(): Promise<Uint8Array>;
