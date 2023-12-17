@@ -61,12 +61,6 @@ export const options: BreachProtocolOption[] = [
     defaultValue: BUILD_PLATFORM === 'win32',
   },
   {
-    id: 'experimentalBufferSizeRecognition',
-    description:
-      'Use experimental buffer size recognition. Recommended for very high in game gamma(above 1.5).',
-    defaultValue: false,
-  },
-  {
     id: 'format',
     description:
       'Source image format. Use png for better quality, or jpg for better performance.',
@@ -149,7 +143,7 @@ export const options: BreachProtocolOption[] = [
   {
     id: 'thresholdBufferSize',
     description: 'Fixed threshold value for buffer size fragment.',
-    defaultValue: 127,
+    defaultValue: 30,
   },
   {
     id: 'thresholdBufferSizeAuto',

@@ -59,7 +59,9 @@
         "thresholdGrid": 155,
         "thresholdGridAuto": false,
         "thresholdDaemons": 140,
-        "thresholdDaemonsAuto": false
+        "thresholdDaemonsAuto": false,
+        "thresholdBufferSizeAuto": false,
+        "thresholdBufferSize": 10
       }
     }
   ],

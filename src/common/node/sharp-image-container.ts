@@ -20,13 +20,14 @@ class SharpFragmentContainer implements FragmentContainer<sharp.Sharp> {
     return new SharpFragmentContainer(this.original);
   }
 
-  async toBase64({ trim }: { trim?: boolean } = {}) {
+  async toTrimmedBase64(threshold: number) {
     const buffer = await this.instance.toBuffer();
 
-    if (trim) {
-      return this.trim(buffer);
-    }
+    return this.trim(buffer, threshold);
+  }
 
+  async toBase64() {
+    const buffer = await this.instance.toBuffer();
     const { width, height, format } = await this.instance.metadata();
     const data = buffer.toString('base64');
     const uri = toBase64DataUri(format, data);
@@ -54,12 +55,14 @@ class SharpFragmentContainer implements FragmentContainer<sharp.Sharp> {
     return this;
   }
 
-  private async trim(buffer: Buffer) {
+  private async trim(buffer: Buffer, threshold: number) {
     try {
       const {
         data,
         info: { format, width, height },
-      } = await sharp(buffer).trim().toBuffer({ resolveWithObject: true });
+      } = await sharp(buffer)
+        .trim({ threshold })
+        .toBuffer({ resolveWithObject: true });
       const uri = toBase64DataUri(format, data.toString('base64'));
       const dimensions = { width, height };
 

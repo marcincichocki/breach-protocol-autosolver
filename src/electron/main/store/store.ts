@@ -1,5 +1,10 @@
 import { toBase64DataUri } from '@/common';
 import {
+  DAEMON_ADVANCED_DATAMINE,
+  DAEMON_BASIC_DATAMINE,
+  DAEMON_EXPERT_DATAMINE,
+} from '@/core';
+import {
   Action,
   ActionTypes,
   AppSettings,
@@ -19,11 +24,6 @@ import ElectronStore from 'electron-store';
 import { ensureDirSync, remove, removeSync } from 'fs-extra';
 import { join } from 'path';
 import { appReducer } from './reducer';
-import {
-  DAEMON_ADVANCED_DATAMINE,
-  DAEMON_BASIC_DATAMINE,
-  DAEMON_EXPERT_DATAMINE,
-} from '@/core';
 
 type Middleware = (action: Action) => void;
 
@@ -106,6 +106,11 @@ export class Store {
         if (newDaemons.length > 0) {
           store.set('daemonPriority', [...daemons, ...newDaemons]);
         }
+      },
+      '>=2.12.0': (store) => {
+        store.set('useFixedBufferSize', false);
+        store.set('thresholdBufferSizeAuto', true);
+        store.set('thresholdBufferSize', 30);
       },
     },
   });

@@ -409,7 +409,7 @@ export class BreachProtocolWorker {
   private async testThreshold(req: Request<TestThresholdData>) {
     const fragment = this.fragments[req.data.fragmentId];
 
-    return fragment.recognize(req.data.threshold, false);
+    return fragment.recognize(req.data.threshold);
   }
 
   private updateStatus(status: WorkerStatus) {
