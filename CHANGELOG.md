@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.11.0...v2.12.0) (2023-12-17)
+
+
+### Features
+
+* **core:** use trim strategy by default ([64cc08c](https://github.com/marcincichocki/breach-protocol-autosolver/commit/64cc08ca3903bdf076d415a9816d0a02a67699d1))
+
 ## [2.11.0](https://github.com/marcincichocki/breach-protocol-autosolver/compare/v2.10.0...v2.11.0) (2023-10-22)
 
 
